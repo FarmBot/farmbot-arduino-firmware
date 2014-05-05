@@ -10,10 +10,13 @@ void setup() {
 
 // The loop function is called in an endless loop
 void loop() {
-	String commandString = Serial.readStringUntil(commandEndChar);
-	if (commandString && commandString.length() > 0) {
-		Serial.print("Board 1 received : ");
-		Command* command = new Command(commandString);
+	if (Serial.available()) {
+		String commandString = Serial.readStringUntil(commandEndChar);
+		if (commandString && commandString.length() > 0) {
+			Serial.print("Board 1 received : ");
+			Command* command = new Command(commandString);
+			command->print();
+		}
 	}
 	delay(100);
 }
