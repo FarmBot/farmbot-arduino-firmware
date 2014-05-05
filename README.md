@@ -1,2 +1,3 @@
-farmbot_arduino_controller
+farmbot-arduino-controller
 ==========================
+Created with eclipseArduino V2
