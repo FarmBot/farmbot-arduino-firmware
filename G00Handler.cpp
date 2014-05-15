@@ -21,27 +21,75 @@ G00Handler * G00Handler::getInstance() {
 G00Handler::G00Handler() {
 }
 
+long adjustStepAmount(long steps) {
+	if(steps < 0) {
+		return steps + 1;
+	} else if(steps > 0) {
+		return steps - 1;
+	} else {
+		return 0;
+	}
+}
+
+long getNumberOfSteps(double destinationNumber, double currentNumber) {
+	return destinationNumber - currentNumber;
+}
+
+
 int GCodeHandler::execute(Command* command) {
-	double currentX = CurrentState::getInstance()->getX();
-	double destinationX = command->getX();
-	int step;
-	double fromX = currentX;
-	double toX = destinationX;
+	long xStepsNeeded = getNumberOfSteps(command->getX(), CurrentState::getInstance()->getX());
+	long yStepsNeeded = getNumberOfSteps(command->getY(), CurrentState::getInstance()->getY());
+	long zStepsNeeded = getNumberOfSteps(command->getZ(), CurrentState::getInstance()->getZ());
 
-	if(currentX > destinationX) {
-		step = -1;
-		fromX = destinationX;
-		toX = currentX;
+	if(xStepsNeeded > 0) {
+		digitalWrite(X_DIR_PIN, LOW);
+	} else {
+		digitalWrite(X_DIR_PIN, HIGH);
 	}
-	digitalWrite(X_ENABLE_PIN, HIGH);
-	Serial.print("From");
-	Serial.println(fromX);
-	Serial.print("To");
-	Serial.println(toX);
-	for(double pointX = fromX; pointX < toX; pointX += step){
+	if(yStepsNeeded > 0) {
+		digitalWrite(Y_DIR_PIN, LOW);
+	} else {
+		digitalWrite(Y_DIR_PIN, HIGH);
+	}
+	if(zStepsNeeded > 0) {
+		digitalWrite(Z_DIR_PIN, LOW);
+	} else {
+		digitalWrite(Z_DIR_PIN, HIGH);
+	}
 
-		digitalWrite(X_STEP_PIN, HIGH);
-		delay(1);
-		digitalWrite(X_STEP_PIN, LOW);
+	CurrentState::getInstance()->setX(CurrentState::getInstance()->getX() + xStepsNeeded);
+	CurrentState::getInstance()->setY(CurrentState::getInstance()->getY() + yStepsNeeded);
+	CurrentState::getInstance()->setZ(CurrentState::getInstance()->getZ() + zStepsNeeded);
+
+	digitalWrite(X_ENABLE_PIN, LOW);
+	digitalWrite(Y_ENABLE_PIN, LOW);
+	digitalWrite(Z_ENABLE_PIN, LOW);
+
+	while(xStepsNeeded != 0 || yStepsNeeded != 0 || zStepsNeeded != 0) {
+		if(xStepsNeeded != 0) {
+			digitalWrite(X_STEP_PIN, HIGH);
+		}
+		if(yStepsNeeded != 0) {
+			digitalWrite(Y_STEP_PIN, HIGH);
+		}
+		if(zStepsNeeded != 0) {
+			digitalWrite(Z_STEP_PIN, HIGH);
+		}
+		delay(5);
+		if(xStepsNeeded != 0) {
+			digitalWrite(X_STEP_PIN, LOW);
+			xStepsNeeded = adjustStepAmount(xStepsNeeded);
+		}
+		if(yStepsNeeded != 0) {
+			digitalWrite(Y_STEP_PIN, LOW);
+			yStepsNeeded = adjustStepAmount(yStepsNeeded);
+		}
+		if(zStepsNeeded != 0) {
+			digitalWrite(Z_STEP_PIN, LOW);
+			zStepsNeeded = adjustStepAmount(zStepsNeeded);
+		}
+
 	}
+
+	CurrentState::getInstance()->print();
 }

@@ -7,6 +7,7 @@
 
 #ifndef CURRENTSTATE_H_
 #define CURRENTSTATE_H_
+#include "Arduino.h"
 
 class CurrentState {
 public:
@@ -16,6 +17,10 @@ public:
 	double getZ();
 	double getFeedRate();
 	double getE();
+	void setX(double);
+	void setY(double);
+	void setZ(double);
+	void print();
 private:
 	CurrentState();
 	CurrentState(CurrentState const&);

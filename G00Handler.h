@@ -16,7 +16,8 @@ private:
 	G00Handler();
 	G00Handler(G00Handler const&);
 	void operator=(G00Handler const&);
-
+	long adjustStepAmount(long);
+	long getNumberOfSteps(double, double);
 };
 
 #endif /* G00HANDLER_H_ */
