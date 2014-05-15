@@ -1,5 +1,9 @@
+#ifndef COMMAND_H_
+#define COMMAND_H_
+
 #include "Arduino.h"
-#include "string.h"
+//#include "string.h"
+
 enum CommandCodeEnum
 {
   CODE_UNDEFINED = -1,
@@ -17,7 +21,15 @@ class Command {
 public:
 	Command(String);
 	void print();
+	CommandCodeEnum getCodeEnum();
+	double getX();
+	double getY();
+	double getZ();
+	double getFeedRate();
+	double getE();
 private:
 	CommandCodeEnum getGCodeEnum(char* code);
 	void getParameter(char* charPointer);
 };
+
+#endif /* COMMAND_H_ */

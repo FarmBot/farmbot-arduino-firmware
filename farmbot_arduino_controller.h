@@ -9,6 +9,7 @@
 #include "Arduino.h"
 //add your includes for the project farmbot_arduino_controller here
 #include "Command.h"
+#include "GCodeProcessor.h"
 
 //end of add your includes here
 #ifdef __cplusplus
