@@ -1,6 +1,7 @@
 // Do not remove the include below
 #include "farmbot_arduino_controller.h"
 #include "pins.h"
+#include "Config.h"
 
 static char commandEndChar = 0x0A;
 static GCodeProcessor* gCodeProcessor = new GCodeProcessor();
@@ -34,8 +35,9 @@ void loop() {
 		String commandString = Serial.readStringUntil(commandEndChar);
 		if (commandString && commandString.length() > 0) {
 			Command* command = new Command(commandString);
-			command->print();
-
+			if(LOGGING) {
+				command->print();
+			}
 			gCodeProcessor->execute(command);
 		}
 	}

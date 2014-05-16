@@ -14,12 +14,18 @@ GCodeProcessor::GCodeProcessor() {
 GCodeProcessor::~GCodeProcessor() {
 }
 
+void GCodeProcessor::printCommandLog(Command* command) {
+	Serial.print("command == NULL:");
+	Serial.println(command == NULL);
+	Serial.println("command->getCodeEnum() == CODE_UNDEFINED:");
+	Serial.println(command->getCodeEnum() == CODE_UNDEFINED);
+}
+
 int GCodeProcessor::execute(Command* command) {
 	if(command == NULL || command->getCodeEnum() == CODE_UNDEFINED) {
-		Serial.print("command == NULL:");
-		Serial.println(command == NULL);
-		Serial.println("command->getCodeEnum() == CODE_UNDEFINED:");
-		Serial.println(command->getCodeEnum() == CODE_UNDEFINED);
+		if(LOGGING) {
+			printCommandLog(command);
+		}
 		return -1;
 	}
 	GCodeHandler* handler = getGCodeHandler(command->getCodeEnum());
@@ -32,8 +38,10 @@ int GCodeProcessor::execute(Command* command) {
 
 GCodeHandler* GCodeProcessor::getGCodeHandler(CommandCodeEnum codeEnum) {
 	switch(codeEnum) {
-	case G0:
+	case G00:
 		return G00Handler::getInstance();
 	}
 	return NULL;
 }
+
+

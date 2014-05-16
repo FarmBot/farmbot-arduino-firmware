@@ -7,11 +7,11 @@
 enum CommandCodeEnum
 {
   CODE_UNDEFINED = -1,
-  G0 = 0,
-  G1,
-  G2,
-  G3,
-  G4
+  G00 = 0,
+  G01,
+  G02,
+  G03,
+  G04
 };
 
 #define NULL 0
@@ -25,8 +25,6 @@ public:
 	double getX();
 	double getY();
 	double getZ();
-	double getFeedRate();
-	double getE();
 private:
 	CommandCodeEnum getGCodeEnum(char* code);
 	void getParameter(char* charPointer);

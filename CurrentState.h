@@ -15,8 +15,6 @@ public:
 	double getX();
 	double getY();
 	double getZ();
-	double getFeedRate();
-	double getE();
 	void setX(double);
 	void setY(double);
 	void setZ(double);

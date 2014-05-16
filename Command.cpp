@@ -2,10 +2,6 @@
 
 const char axisCodes[3] = { 'X', 'Y', 'Z' };
 double axisValue[3] = { 0.0, 0.0, 0.0 };
-const char feedRateCode = 'F';
-double feedRate = 0.0;
-const char extrusionMotorCode = 'E';
-double extrusionMotor = 0.0;
 CommandCodeEnum commandCodeEnum = CODE_UNDEFINED;
 
 Command::Command(String commandString) {
@@ -29,20 +25,20 @@ Command::Command(String commandString) {
 }
 
 CommandCodeEnum Command::getGCodeEnum(char* code) {
-	if (strcmp(code, "G0") == 0) {
-		return G0;
+	if (strcmp(code, "G0") == 0 || strcmp(code, "G00") == 0) {
+		return G00;
 	}
-	if (strcmp(code, "G1") == 0) {
-		return G1;
+	if (strcmp(code, "G1") == 0 || strcmp(code, "G01") == 0) {
+		return G01;
 	}
-	if (strcmp(code, "G2") == 0) {
-		return G2;
+	if (strcmp(code, "G2") == 0 || strcmp(code, "G02") == 0) {
+		return G02;
 	}
-	if (strcmp(code, "G3") == 0) {
-		return G3;
+	if (strcmp(code, "G3") == 0 || strcmp(code, "G03") == 0) {
+		return G03;
 	}
-	if (strcmp(code, "G4") == 0) {
-		return G4;
+	if (strcmp(code, "G4") == 0 || strcmp(code, "G04") == 0) {
+		return G04;
 	}
 	return CODE_UNDEFINED;
 }
@@ -54,10 +50,6 @@ void Command::getParameter(char* charPointer) {
 		axisValue[1] = atof(charPointer + 1);
 	} else if (charPointer[0] == axisCodes[2]) {
 		axisValue[2] = atof(charPointer + 1);
-	} else if (charPointer[0] == feedRateCode) {
-		feedRate = atof(charPointer + 1);
-	} else if (charPointer[0] == extrusionMotorCode) {
-		extrusionMotor = atof(charPointer + 1);
 	}
 }
 
@@ -70,10 +62,6 @@ void Command::print() {
 	Serial.print(axisValue[1]);
 	Serial.print(", Z:");
 	Serial.println(axisValue[2]);
-	Serial.print("Extrusion motor:");
-	Serial.println(extrusionMotor);
-	Serial.print("Feed rate:");
-	Serial.println(feedRate);
 }
 
 CommandCodeEnum Command::getCodeEnum() {
@@ -89,13 +77,6 @@ double Command::getY() {
 }
 
 double Command::getZ() {
-	return axisValue[1];
+	return axisValue[2];
 }
 
-double Command::getE() {
-	return extrusionMotor;
-}
-
-double Command::getFeedRate() {
-	return feedRate;
-}
