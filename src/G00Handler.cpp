@@ -54,19 +54,19 @@ int GCodeHandler::execute(Command* command) {
 		Serial.println(zStepsNeeded);
 	}
 	if (xStepsNeeded > 0) {
-		digitalWrite(X_DIR_PIN, LOW);
-	} else {
 		digitalWrite(X_DIR_PIN, HIGH);
+	} else {
+		digitalWrite(X_DIR_PIN, LOW);
 	}
 	if (yStepsNeeded > 0) {
-		digitalWrite(Y_DIR_PIN, LOW);
-	} else {
 		digitalWrite(Y_DIR_PIN, HIGH);
+	} else {
+		digitalWrite(Y_DIR_PIN, LOW);
 	}
 	if (zStepsNeeded > 0) {
-		digitalWrite(Z_DIR_PIN, LOW);
-	} else {
 		digitalWrite(Z_DIR_PIN, HIGH);
+	} else {
+		digitalWrite(Z_DIR_PIN, LOW);
 	}
 
 	CurrentState::getInstance()->setX(
