@@ -12,12 +12,13 @@
 class CurrentState {
 public:
 	static CurrentState* getInstance();
-	double getX();
-	double getY();
-	double getZ();
-	void setX(double);
-	void setY(double);
-	void setZ(double);
+	unsigned int getX();
+	unsigned int getY();
+	unsigned int getZ();
+	unsigned int* getPoint();
+	void setX(unsigned int);
+	void setY(unsigned int);
+	void setZ(unsigned int);
 	void print();
 private:
 	CurrentState();

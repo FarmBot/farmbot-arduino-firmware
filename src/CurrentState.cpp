@@ -8,9 +8,9 @@
 #include "CurrentState.h"
 
 static CurrentState* instance;
-static double x = 0.0;
-static double y = 0.0;
-static double z = 0.0;
+static unsigned int x = 0.0;
+static unsigned int y = 0.0;
+static unsigned int z = 0.0;
 
 CurrentState * CurrentState::getInstance() {
 	if (!instance) {
@@ -22,27 +22,32 @@ CurrentState * CurrentState::getInstance() {
 CurrentState::CurrentState() {
 }
 
-double CurrentState::getX() {
+unsigned int CurrentState::getX() {
 	return x;
 }
 
-double CurrentState::getY() {
+unsigned int CurrentState::getY() {
 	return y;
 }
 
-double CurrentState::getZ() {
+unsigned int CurrentState::getZ() {
 	return z;
 }
 
-void CurrentState::setX(double newX) {
+unsigned int* CurrentState::getPoint() {
+	unsigned int currentPoint[3] = {x, y, z};
+	return currentPoint;
+}
+
+void CurrentState::setX(unsigned int newX) {
 	x = newX;
 }
 
-void CurrentState::setY(double newY) {
+void CurrentState::setY(unsigned int newY) {
 	y = newY;
 }
 
-void CurrentState::setZ(double newZ) {
+void CurrentState::setZ(unsigned int newZ) {
 	z = newZ;
 }
 
