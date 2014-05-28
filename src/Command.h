@@ -25,6 +25,7 @@ public:
 	double getX();
 	double getY();
 	double getZ();
+	double getS();
 private:
 	CommandCodeEnum getGCodeEnum(char* code);
 	void getParameter(char* charPointer);

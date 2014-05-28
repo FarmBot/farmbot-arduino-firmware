@@ -1,7 +1,9 @@
 #include "Command.h"
 
 const char axisCodes[3] = { 'X', 'Y', 'Z' };
+const char speedCode = 'S';
 double axisValue[3] = { 0.0, 0.0, 0.0 };
+double speedValue = 0.0;
 CommandCodeEnum commandCodeEnum = CODE_UNDEFINED;
 
 Command::Command(String commandString) {
@@ -50,6 +52,8 @@ void Command::getParameter(char* charPointer) {
 		axisValue[1] = atof(charPointer + 1);
 	} else if (charPointer[0] == axisCodes[2]) {
 		axisValue[2] = atof(charPointer + 1);
+	} else if (charPointer[0] == speedCode) {
+		speedValue = atof(charPointer + 1);
 	}
 }
 
@@ -62,6 +66,8 @@ void Command::print() {
 	Serial.print(axisValue[1]);
 	Serial.print(", Z:");
 	Serial.println(axisValue[2]);
+	Serial.print(", S:");
+	Serial.println(speedValue);
 }
 
 CommandCodeEnum Command::getCodeEnum() {
@@ -78,5 +84,9 @@ double Command::getY() {
 
 double Command::getZ() {
 	return axisValue[2];
+}
+
+double Command::getS() {
+	return speedValue;
 }
 

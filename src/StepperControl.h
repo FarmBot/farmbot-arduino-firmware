@@ -11,6 +11,7 @@
 #include "Arduino.h"
 #include "CurrentState.h"
 #include "pins.h"
+#include "Config.h"
 #include <stdio.h>
 #include <stdlib.h>
 

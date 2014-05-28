@@ -8,9 +8,10 @@
 #include "CurrentState.h"
 
 static CurrentState* instance;
-static unsigned int x = 0.0;
-static unsigned int y = 0.0;
-static unsigned int z = 0.0;
+unsigned int x = 0;
+unsigned int y = 0;
+unsigned int z = 0;
+unsigned int speed = 0;
 
 CurrentState * CurrentState::getInstance() {
 	if (!instance) {
@@ -20,6 +21,10 @@ CurrentState * CurrentState::getInstance() {
 };
 
 CurrentState::CurrentState() {
+	x = 0;
+	y = 0;
+	z = 0;
+	speed = 0;
 }
 
 unsigned int CurrentState::getX() {
@@ -59,6 +64,8 @@ void CurrentState::print() {
 	Serial.print(y);
 	Serial.print(", Z:");
 	Serial.println(z);
+	Serial.print(", speed:");
+	Serial.println(speed);
 }
 
 
