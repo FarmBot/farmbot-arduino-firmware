@@ -21,6 +21,8 @@ public:
 	int moveAbsolute(unsigned int xDest, unsigned int yDest,
 			unsigned int zDest, unsigned int maxStepsPerSecond,
 			unsigned int maxAccelerationStepsPerSecond);
+	int moveAbsoluteConstant(unsigned int xDest, unsigned int yDest,
+				unsigned int zDest, unsigned int maxStepsPerSecond);
 private:
 	StepperControl();
 	StepperControl(StepperControl const&);

@@ -22,9 +22,8 @@ G00Handler::G00Handler() {
 }
 
 int GCodeHandler::execute(Command* command) {
-	StepperControl::getInstance()->moveAbsolute(command->getX(),
-			command->getY(), command->getZ(), command->getS(),
-			command->getS()/10);
+	StepperControl::getInstance()->moveAbsoluteConstant(command->getX(),
+			command->getY(), command->getZ(), command->getS());
 	if (LOGGING) {
 		CurrentState::getInstance()->print();
 	}
