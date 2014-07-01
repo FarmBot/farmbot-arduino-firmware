@@ -21,7 +21,7 @@ G00Handler * G00Handler::getInstance() {
 G00Handler::G00Handler() {
 }
 
-int GCodeHandler::execute(Command* command) {
+int G00Handler::execute(Command* command) {
 	StepperControl::getInstance()->moveAbsoluteConstant(command->getX(),
 			command->getY(), command->getZ(), command->getS());
 	if (LOGGING) {

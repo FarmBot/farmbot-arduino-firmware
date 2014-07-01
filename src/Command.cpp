@@ -33,21 +33,23 @@ CommandCodeEnum Command::getGCodeEnum(char* code) {
 	if (strcmp(code, "G1") == 0 || strcmp(code, "G01") == 0) {
 		return G01;
 	}
-	if (strcmp(code, "G2") == 0 || strcmp(code, "G02") == 0) {
-		return G02;
-	}
-	if (strcmp(code, "G3") == 0 || strcmp(code, "G03") == 0) {
-		return G03;
-	}
-	if (strcmp(code, "G4") == 0 || strcmp(code, "G04") == 0) {
-		return G04;
+	if (strcmp(code, "G28") == 0) {
+		return G28;
 	}
 	return CODE_UNDEFINED;
+}
+
+double minusNotAllowed(double value) {
+	if(value < 0) {
+		return 0;
+	}
+	return value;
 }
 
 void Command::getParameter(char* charPointer) {
 	if (charPointer[0] == axisCodes[0]) {
 		axisValue[0] = atof(charPointer + 1);
+		axisValue[0] = minusNotAllowed(axisValue[0]);
 	} else if (charPointer[0] == axisCodes[1]) {
 		axisValue[1] = atof(charPointer + 1);
 	} else if (charPointer[0] == axisCodes[2]) {

@@ -33,13 +33,20 @@ int GCodeProcessor::execute(Command* command) {
 		Serial.println("This is false: handler == NULL");
 		return -1;
 	}
-	return handler->execute(command);
+	Serial.println("R01");
+	int execution = handler->execute(command);
+	if(execution == 0) {
+		Serial.println("R02");
+	}
+	return execution;
 };
 
 GCodeHandler* GCodeProcessor::getGCodeHandler(CommandCodeEnum codeEnum) {
 	switch(codeEnum) {
 	case G00:
 		return G00Handler::getInstance();
+	case G28:
+		return G28Handler::getInstance();
 	}
 	return NULL;
 }

@@ -48,14 +48,6 @@ void step(int axis, unsigned int &currentPoint, unsigned int steps,
 
 bool pointReached(unsigned int currentPoint[3],
 		unsigned int destinationPoint[3]) {
-	if (LOGGING) {
-		Serial.print("Current point:");
-		Serial.print(currentPoint[0]);
-		Serial.print(", ");
-		Serial.print(currentPoint[1]);
-		Serial.print(", ");
-		Serial.println(currentPoint[2]);
-	}
 	for (int i = 0; i < 3; i++) {
 		if (destinationPoint[i] != currentPoint[i]) {
 			return false;
@@ -241,6 +233,31 @@ int StepperControl::moveAbsolute(unsigned int xDest, unsigned int yDest,
 	return 0;
 }
 
+int endStopsReached() {
+	bool x_min_endstop=(digitalRead(X_MIN_PIN) == INVERT_ENDSTOPS);
+	bool x_max_endstop=(digitalRead(X_MAX_PIN) == INVERT_ENDSTOPS);
+	bool y_min_endstop=(digitalRead(Y_MIN_PIN) == INVERT_ENDSTOPS);
+	bool y_max_endstop=(digitalRead(Y_MAX_PIN) == INVERT_ENDSTOPS);
+	bool z_min_endstop=(digitalRead(Z_MIN_PIN) == INVERT_ENDSTOPS);
+	bool z_max_endstop=(digitalRead(Z_MAX_PIN) == INVERT_ENDSTOPS);
+	if(x_min_endstop || x_max_endstop || y_min_endstop || y_max_endstop || z_min_endstop || z_max_endstop) {
+		Serial.print("R03 ");
+		Serial.print(x_min_endstop);
+		Serial.print(" ");
+		Serial.print(x_max_endstop);
+		Serial.print(" ");
+		Serial.print(y_min_endstop);
+		Serial.print(" ");
+		Serial.print(y_max_endstop);
+		Serial.print(" ");
+		Serial.print(z_min_endstop);
+		Serial.print(" ");
+		Serial.println(z_max_endstop);
+		return 1;
+	}
+	return 0;
+}
+
 /**
  * xDest - destination X in steps
  * yDest - destination Y in steps
@@ -255,50 +272,12 @@ int StepperControl::moveAbsoluteConstant(unsigned int xDest, unsigned int yDest,
 			CurrentState::getInstance()->getZ() };
 	unsigned int destinationPoint[3] = { xDest, yDest, zDest };
 
-	Serial.print("Destination point:");
-	Serial.print(destinationPoint[0]);
-	Serial.print(", ");
-	Serial.print(destinationPoint[1]);
-	Serial.print(", ");
-	Serial.println(destinationPoint[2]);
-	Serial.print("Current point:");
-	Serial.print(currentPoint[0]);
-	Serial.print(", ");
-	Serial.print(currentPoint[1]);
-	Serial.print(", ");
-	Serial.println(currentPoint[2]);
-
-
 	unsigned int movementLength[3] = { getLength(destinationPoint[0], currentPoint[0]),
 			getLength(destinationPoint[1], currentPoint[1]),
 			getLength(destinationPoint[2], currentPoint[2])};
 	unsigned int maxLenth = getMaxLength(movementLength);
 	double lengthRatio[3] = { 1.0 * movementLength[0] / maxLenth, 1.0
 			* movementLength[1] / maxLenth, 1.0 * movementLength[2] / maxLenth };
-	Serial.print("Max length:");
-	Serial.print(maxLenth);
-	Serial.print("Length ratio:");
-	Serial.print(lengthRatio[0]);
-	Serial.print(", ");
-	Serial.print(lengthRatio[1]);
-	Serial.print(", ");
-	Serial.println(lengthRatio[2]);
-	Serial.print(", step per= ");
-	double sp = 1000 / (1.0*maxStepsPerSecond * lengthRatio[0] - 1);
-	Serial.print(sp);
-	Serial.print(", ");
-	sp = 1000 / (1.0*maxStepsPerSecond * lengthRatio[1] - 1);
-	Serial.print(sp);
-	Serial.print(", ");
-	sp = 1000 / (1.0*maxStepsPerSecond * lengthRatio[2] - 1);
-	Serial.println(sp);
-
-	Serial.print("MaxStepsPerSec==== ");
-	Serial.println(maxStepsPerSecond);
-
-	Serial.print("Calculation==== ");
-	sp = (1.0*maxStepsPerSecond * lengthRatio[0] - 1);
-	Serial.println(sp);
 
 	unsigned int currentMillis = 0;
 	unsigned int currentStepsPerSecond = maxStepsPerSecond;
@@ -310,6 +289,9 @@ int StepperControl::moveAbsoluteConstant(unsigned int xDest, unsigned int yDest,
 	setDirections(currentPoint, destinationPoint);
 
 	while (!pointReached(currentPoint, destinationPoint)) {
+		if(endStopsReached()) {
+			return -1;
+		}
 		bool stepMade = false;
 		for (int i = 0; i < 3; i++) {
 			if (currentPoint[i] != destinationPoint[i] && currentMillis - lastStepMillis[i]
@@ -322,19 +304,8 @@ int StepperControl::moveAbsoluteConstant(unsigned int xDest, unsigned int yDest,
 		delayMicroseconds(500);
 		if (stepMade) {
 			currentSteps++;
-			if (LOGGING) {
-				Serial.print("Step made:");
-				Serial.print(", Current step= ");
-				Serial.print(currentSteps);
-				Serial.print(", Current millis= ");
-				Serial.print(currentMillis);
-				Serial.print(", Current steps per sec= ");
-				Serial.println(currentStepsPerSecond);
-			}
 		}
 		currentMillis++;
-		//delay(1);
-		//delayMicroseconds(500);
 		if (stepMade) {
 			digitalWrite(X_STEP_PIN, LOW);
 			digitalWrite(Y_STEP_PIN, LOW);
@@ -344,12 +315,6 @@ int StepperControl::moveAbsoluteConstant(unsigned int xDest, unsigned int yDest,
 	}
 
 	//enableMotors(false);
-	Serial.print("FINISHED at: ");
-	Serial.print(currentPoint[0]);
-	Serial.print(", ");
-	Serial.print(currentPoint[1]);
-	Serial.print(", ");
-	Serial.println(currentPoint[2]);
 	CurrentState::getInstance()->setX(currentPoint[0]);
 	CurrentState::getInstance()->setY(currentPoint[1]);
 	CurrentState::getInstance()->setZ(currentPoint[2]);

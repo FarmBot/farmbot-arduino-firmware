@@ -9,9 +9,7 @@ enum CommandCodeEnum
   CODE_UNDEFINED = -1,
   G00 = 0,
   G01,
-  G02,
-  G03,
-  G04
+  G28
 };
 
 #define NULL 0
