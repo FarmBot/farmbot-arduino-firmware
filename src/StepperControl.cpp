@@ -258,6 +258,37 @@ int endStopsReached() {
 	return 0;
 }
 
+int endStopAxisReached(int axis_nr, bool movement_forward) {
+
+	bool min_endstop = false;
+	bool max_endstop = false;
+
+	// for the axis to check, retrieve the end stop status
+
+	if (axis_nr == 0) {
+		min_endstop=(digitalRead(X_MIN_PIN) == INVERT_ENDSTOPS);
+		max_endstop=(digitalRead(X_MAX_PIN) == INVERT_ENDSTOPS);
+	}
+
+	if (axis_nr == 1) {
+		min_endstop=(digitalRead(Y_MIN_PIN) == INVERT_ENDSTOPS);
+		max_endstop=(digitalRead(Y_MAX_PIN) == INVERT_ENDSTOPS);
+	}
+
+	if (axis_nr == 2) {
+		min_endstop=(digitalRead(Z_MIN_PIN) == INVERT_ENDSTOPS);
+		max_endstop=(digitalRead(Z_MAX_PIN) == INVERT_ENDSTOPS);
+	}
+
+	// if moving forward, only check the end stop max
+	// for moving backwards, check only the end stop min
+
+	if((!movement_forward && min_endstop) || (movement_forward && max_endstop)) {
+		return 1;
+	}
+	return 0;
+}
+
 /**
  * xDest - destination X in steps
  * yDest - destination Y in steps
@@ -284,22 +315,30 @@ int StepperControl::moveAbsoluteConstant(unsigned int xDest, unsigned int yDest,
 	unsigned int currentSteps = 0;
 	unsigned int lastStepMillis[3] = { 0, 0, 0 };
 
-	enableMotors(true);
+        bool movementDone     = false;
+        bool forwardMovement = true;
+
+        enableMotors(true);
 
 	setDirections(currentPoint, destinationPoint);
 
-	while (!pointReached(currentPoint, destinationPoint)) {
-		if(endStopsReached()) {
-			return -1;
-		}
+	while (!movementDone) {
 		bool stepMade = false;
-		for (int i = 0; i < 3; i++) {
-			if (currentPoint[i] != destinationPoint[i] && currentMillis - lastStepMillis[i]
-					> 1000 / (1.0*currentStepsPerSecond * lengthRatio[i] - 1)) {
-				step(i, currentPoint[i], 1, destinationPoint[i]);
-				stepMade = true;
-				lastStepMillis[i] = currentMillis;
+		if  (!pointReached(currentPoint, destinationPoint)) {
+			for (int i = 0; i < 3; i++) {
+        	                forwardMovement = (currentPoint[i] < destinationPoint[i]);
+				if (!endStopAxisReached(i, forwardMovement))
+				{
+					if (currentPoint[i] != destinationPoint[i] && currentMillis - lastStepMillis[i]
+						> 1000 / (1.0*currentStepsPerSecond * lengthRatio[i] - 1)) {
+						step(i, currentPoint[i], 1, destinationPoint[i]);
+						stepMade = true;
+						lastStepMillis[i] = currentMillis;
+					}
+        	                }
 			}
+		} else {
+			movementDone = true;
 		}
 		delayMicroseconds(500);
 		if (stepMade) {
@@ -310,6 +349,10 @@ int StepperControl::moveAbsoluteConstant(unsigned int xDest, unsigned int yDest,
 			digitalWrite(X_STEP_PIN, LOW);
 			digitalWrite(Y_STEP_PIN, LOW);
 			digitalWrite(Z_STEP_PIN, LOW);
+		}
+		if (!stepMade)
+		{
+			movementDone = true;
 		}
 		delayMicroseconds(500);
 	}
