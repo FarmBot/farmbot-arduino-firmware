@@ -11,6 +11,7 @@ Command line flash tool installation
 
 (in progress)
 
+```
 sudo apt-get install gcc-avr avr-libc avrdude python-configobj python-jinja2 python-serial
 
 mkdir tmp
@@ -27,10 +28,12 @@ sudo python setup.py install
 git clone git://github.com/amperka/ino.git
 
 make install
-
+```
 
 Command line flash tool use
 ==========================
 
+```
 ino build
 ino upload
+```
