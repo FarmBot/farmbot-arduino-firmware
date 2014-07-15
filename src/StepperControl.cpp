@@ -13,8 +13,8 @@ StepperControl * StepperControl::getInstance() {
 StepperControl::StepperControl() {
 }
 
-unsigned int getMaxLength(unsigned int lengths[3]) {
-	unsigned int max = lengths[0];
+unsigned long getMaxLength(unsigned long lengths[3]) {
+	unsigned long max = lengths[0];
 	for (int i = 1; i < 3; i++) {
 		if (lengths[i] > max) {
 			max = lengths[i];
@@ -23,8 +23,8 @@ unsigned int getMaxLength(unsigned int lengths[3]) {
 	return max;
 }
 
-void step(int axis, unsigned int &currentPoint, unsigned int steps,
-		unsigned int destinationPoint) {
+void step(int axis, long &currentPoint, unsigned int steps,
+		long destinationPoint) {
 	if (currentPoint < destinationPoint) {
 		currentPoint += steps;
 	} else if (currentPoint > destinationPoint) {
@@ -46,8 +46,8 @@ void step(int axis, unsigned int &currentPoint, unsigned int steps,
 	}
 }
 
-bool pointReached(unsigned int currentPoint[3],
-		unsigned int destinationPoint[3]) {
+bool pointReached(long currentPoint[3],
+		  long destinationPoint[3]) {
 	for (int i = 0; i < 3; i++) {
 		if (destinationPoint[i] != currentPoint[i]) {
 			return false;
@@ -93,6 +93,7 @@ void enableMotors(bool enable) {
 		digitalWrite(X_ENABLE_PIN, LOW);
 		digitalWrite(Y_ENABLE_PIN, LOW);
 		digitalWrite(Z_ENABLE_PIN, LOW);
+		delay(100);
 	} else {
 		digitalWrite(X_ENABLE_PIN, HIGH);
 		digitalWrite(Y_ENABLE_PIN, HIGH);
@@ -100,7 +101,7 @@ void enableMotors(bool enable) {
 	}
 }
 
-void setDirections(unsigned int* currentPoint, unsigned int* destinationPoint) {
+void setDirections(long* currentPoint, long* destinationPoint) {
 	if (currentPoint[0] < destinationPoint[0]) {
 		digitalWrite(X_DIR_PIN, HIGH);
 	} else {
@@ -118,7 +119,7 @@ void setDirections(unsigned int* currentPoint, unsigned int* destinationPoint) {
 	}
 }
 
-unsigned int getLength(unsigned int l1,unsigned int l2) {
+unsigned long getLength(long l1, long l2) {
 	if(l1 > l2) {
 		return l1 - l2;
 	} else {
@@ -133,13 +134,13 @@ unsigned int getLength(unsigned int l1,unsigned int l2) {
  * maxStepsPerSecond - maximum number of steps per second
  * maxAccelerationStepsPerSecond - maximum number of acceleration in steps per second
  */
-int StepperControl::moveAbsolute(unsigned int xDest, unsigned int yDest,
-		unsigned int zDest, unsigned int maxStepsPerSecond,
+int StepperControl::moveAbsolute(long xDest, long yDest,
+		long zDest, unsigned int maxStepsPerSecond,
 		unsigned int maxAccelerationStepsPerSecond) {
-	unsigned int currentPoint[3] = { CurrentState::getInstance()->getX(),
+	long currentPoint[3] = { CurrentState::getInstance()->getX(),
 			CurrentState::getInstance()->getY(),
 			CurrentState::getInstance()->getZ() };
-	unsigned int destinationPoint[3] = { xDest, yDest, zDest };
+	long destinationPoint[3] = { xDest, yDest, zDest };
 
 	Serial.print("Destination point:");
 	Serial.print(destinationPoint[0]);
@@ -155,10 +156,10 @@ int StepperControl::moveAbsolute(unsigned int xDest, unsigned int yDest,
 	Serial.println(currentPoint[2]);
 
 
-	unsigned int movementLength[3] = { getLength(destinationPoint[0], currentPoint[0]),
+	unsigned long movementLength[3] = { getLength(destinationPoint[0], currentPoint[0]),
 			getLength(destinationPoint[1], currentPoint[1]),
 			getLength(destinationPoint[2], currentPoint[2])};
-	unsigned int maxLenth = getMaxLength(movementLength);
+	unsigned long maxLenth = getMaxLength(movementLength);
 	double lengthRatio[3] = { 1.0 * movementLength[0] / maxLenth, 1.0
 			* movementLength[1] / maxLenth, 1.0 * movementLength[2] / maxLenth };
 	Serial.print("Max length:");
@@ -289,6 +290,32 @@ int endStopAxisReached(int axis_nr, bool movement_forward) {
 	return 0;
 }
 
+int reportEndStops() {
+	bool x_min_endstop=(digitalRead(X_MIN_PIN) == INVERT_ENDSTOPS);
+	bool x_max_endstop=(digitalRead(X_MAX_PIN) == INVERT_ENDSTOPS);
+	bool y_min_endstop=(digitalRead(Y_MIN_PIN) == INVERT_ENDSTOPS);
+	bool y_max_endstop=(digitalRead(Y_MAX_PIN) == INVERT_ENDSTOPS);
+	bool z_min_endstop=(digitalRead(Z_MIN_PIN) == INVERT_ENDSTOPS);
+	bool z_max_endstop=(digitalRead(Z_MAX_PIN) == INVERT_ENDSTOPS);
+	if(x_min_endstop || x_max_endstop || y_min_endstop || y_max_endstop || z_min_endstop || z_max_endstop) {
+		Serial.print("R03 ");
+		Serial.print(x_min_endstop);
+		Serial.print(" ");
+		Serial.print(x_max_endstop);
+		Serial.print(" ");
+		Serial.print(y_min_endstop);
+		Serial.print(" ");
+		Serial.print(y_max_endstop);
+		Serial.print(" ");
+		Serial.print(z_min_endstop);
+		Serial.print(" ");
+		Serial.println(z_max_endstop);
+		return 1;
+	}
+	return 0;
+}
+
+
 /**
  * xDest - destination X in steps
  * yDest - destination Y in steps
@@ -296,46 +323,100 @@ int endStopAxisReached(int axis_nr, bool movement_forward) {
  * maxStepsPerSecond - maximum number of steps per second
  * maxAccelerationStepsPerSecond - maximum number of acceleration in steps per second
  */
-int StepperControl::moveAbsoluteConstant(unsigned int xDest, unsigned int yDest,
-		unsigned int zDest, unsigned int maxStepsPerSecond) {
-	unsigned int currentPoint[3] = { CurrentState::getInstance()->getX(),
+int StepperControl::moveAbsoluteConstant(long xDest, long yDest,
+		long zDest, unsigned int maxStepsPerSecond, bool home) {
+
+	long currentPoint[3] = { CurrentState::getInstance()->getX(),
 			CurrentState::getInstance()->getY(),
 			CurrentState::getInstance()->getZ() };
-	unsigned int destinationPoint[3] = { xDest, yDest, zDest };
+	long destinationPoint[3] = { xDest, yDest, zDest };
 
-	unsigned int movementLength[3] = { getLength(destinationPoint[0], currentPoint[0]),
+	unsigned long movementLength[3] = { getLength(destinationPoint[0], currentPoint[0]),
 			getLength(destinationPoint[1], currentPoint[1]),
 			getLength(destinationPoint[2], currentPoint[2])};
-	unsigned int maxLenth = getMaxLength(movementLength);
+	unsigned long maxLenth = getMaxLength(movementLength);
 	double lengthRatio[3] = { 1.0 * movementLength[0] / maxLenth, 1.0
 			* movementLength[1] / maxLenth, 1.0 * movementLength[2] / maxLenth };
+	bool homeMoveReverse[3] = { AXIS_HOME_FORWARD_X, AXIS_HOME_FORWARD_Y, AXIS_HOME_FORWARD_Z };
 
-	unsigned int currentMillis = 0;
-	unsigned int currentStepsPerSecond = maxStepsPerSecond;
-	unsigned int currentSteps = 0;
-	unsigned int lastStepMillis[3] = { 0, 0, 0 };
+	unsigned long currentMillis = 0;
+	unsigned long currentStepsPerSecond = maxStepsPerSecond;
+	unsigned long currentSteps = 0;
+	unsigned long lastStepMillis[3] = { 0, 0, 0 };
 
-        bool movementDone     = false;
+
+/*
+	Serial.print("move abs const");
+	Serial.print(" x ");
+	Serial.print(xDest);
+	Serial.print(" y ");
+	Serial.print(yDest);
+	Serial.print(" z ");
+	Serial.print(zDest);
+	Serial.print(" s ");
+	Serial.print(maxStepsPerSecond);
+	Serial.print("\n");
+*/
+
+        bool movementDone    = false;
         bool forwardMovement = true;
+        bool moving          = false;
+	bool stepMade        = false;
 
+	reportEndStops();
         enableMotors(true);
-
 	setDirections(currentPoint, destinationPoint);
 
 	while (!movementDone) {
-		bool stepMade = false;
-		if  (!pointReached(currentPoint, destinationPoint)) {
+
+		stepMade = false;
+		moving   = false;
+
+		if  (!pointReached(currentPoint, destinationPoint) || home) {
 			for (int i = 0; i < 3; i++) {
         	                forwardMovement = (currentPoint[i] < destinationPoint[i]);
+				if (home){
+					// When home is active, keep moving until end point reached
+					forwardMovement     =  homeMoveReverse[i];
+				}
 				if (!endStopAxisReached(i, forwardMovement))
 				{
-					if (currentPoint[i] != destinationPoint[i] && currentMillis - lastStepMillis[i]
-						> 1000 / (1.0*currentStepsPerSecond * lengthRatio[i] - 1)) {
-						step(i, currentPoint[i], 1, destinationPoint[i]);
-						stepMade = true;
-						lastStepMillis[i] = currentMillis;
+					if (home && currentPoint[i] == destinationPoint[i]){
+						// When home is active, keep moving until end point reached
+
+						moving = true;
+                                                if
+                                                  (
+                                                        currentMillis - lastStepMillis[i] >
+                                                        1000 / HOME_MOVEMENT_SPEED_S_P_S
+                                                  ) {
+							long curVal = 1;
+							if (homeMoveReverse[i] == true)
+							{
+							  curVal = -1;
+							}
+                                                        step(i, curVal, 1, 0);
+                                                        stepMade = true;
+                                                        lastStepMillis[i] = currentMillis;
+                                                }
+					}
+					else
+					{
+						if (currentPoint[i] != destinationPoint[i]) {
+							moving = true;
+							if
+							  (
+								currentMillis - lastStepMillis[i] > 
+								1000 / (1.0*currentStepsPerSecond * lengthRatio[i] - 1)
+							  ) {
+								step(i, currentPoint[i], 1, destinationPoint[i]);
+								stepMade = true;
+								lastStepMillis[i] = currentMillis;
+							}
+						}
 					}
         	                }
+
 			}
 		} else {
 			movementDone = true;
@@ -350,14 +431,17 @@ int StepperControl::moveAbsoluteConstant(unsigned int xDest, unsigned int yDest,
 			digitalWrite(Y_STEP_PIN, LOW);
 			digitalWrite(Z_STEP_PIN, LOW);
 		}
-		if (!stepMade)
+		if (!moving)
 		{
 			movementDone = true;
 		}
 		delayMicroseconds(500);
 	}
 
-	//enableMotors(false);
+	reportEndStops();
+
+	/**/ enableMotors(false);
+
 	CurrentState::getInstance()->setX(currentPoint[0]);
 	CurrentState::getInstance()->setY(currentPoint[1]);
 	CurrentState::getInstance()->setZ(currentPoint[2]);

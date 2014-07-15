@@ -22,7 +22,11 @@ G28Handler::G28Handler() {
 }
 
 int G28Handler::execute(Command* command) {
-	StepperControl::getInstance()->moveAbsoluteConstant(0,0,0,HOME_MOVEMENT_SPEED_S_P_S);
+
+Serial.print("home\n");
+
+	StepperControl::getInstance()->moveAbsoluteConstant(0,0,0,0, true);
+	//StepperControl::getInstance()->moveAbsoluteConstant(0,0,0,HOME_MOVEMENT_SPEED_S_P_S,true);
 	if (LOGGING) {
 		CurrentState::getInstance()->print();
 	}
