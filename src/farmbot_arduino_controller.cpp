@@ -26,6 +26,11 @@ void setup() {
 	pinMode(Z_MIN_PIN   , INPUT );
 	pinMode(Z_MAX_PIN   , INPUT );
 
+
+	digitalWrite(X_ENABLE_PIN, HIGH);
+	digitalWrite(Y_ENABLE_PIN, HIGH);
+	digitalWrite(Z_ENABLE_PIN, HIGH);
+
 	Serial.begin(115200);
 }
 
