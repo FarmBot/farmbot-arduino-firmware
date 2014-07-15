@@ -18,11 +18,11 @@
 class StepperControl {
 public:
 	static StepperControl* getInstance();
-	int moveAbsolute(unsigned int xDest, unsigned int yDest,
-			unsigned int zDest, unsigned int maxStepsPerSecond,
+	int moveAbsolute(long xDest, long yDest,
+			long zDest, unsigned int maxStepsPerSecond,
 			unsigned int maxAccelerationStepsPerSecond);
-	int moveAbsoluteConstant(unsigned int xDest, unsigned int yDest,
-				unsigned int zDest, unsigned int maxStepsPerSecond, bool home);
+	int moveAbsoluteConstant(long xDest, long yDest,
+				 long zDest, unsigned int maxStepsPerSecond, bool home);
 private:
 	StepperControl();
 	StepperControl(StepperControl const&);
