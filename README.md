@@ -12,6 +12,7 @@ Command line flash tool installation
 (in progress)
 
 ```
+cd ~/
 sudo apt-get install gcc-avr avr-libc avrdude python-configobj python-jinja2 python-serial python-setuptools
 mkdir tmp
 cd tmp
@@ -24,10 +25,19 @@ cd ino
 sudo make install
 ```
 
+Downloading the code
+====================
+
+```
+cd ~/
+get clone https://github.com/FarmBot/farmbot-arduino-controller
+```
+
 Command line flash tool use
 ==========================
 
 ```
+cd ~/farmbot-arduino-controller
 ino build
 ino upload
 ```
