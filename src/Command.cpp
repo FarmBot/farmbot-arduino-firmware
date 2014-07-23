@@ -80,9 +80,9 @@ void Command::getParameter(char* charPointer) {
 }
 
 void Command::print() {
-	Serial.print("Command with code:G");
-	Serial.println(commandCodeEnum);
-	Serial.print("X:");
+	Serial.print("R99 Command with code:G");
+	Serial.print(commandCodeEnum);
+	Serial.print(", X:");
 	Serial.print(axisValue[0]);
 	Serial.print(", Y:");
 	Serial.print(axisValue[1]);

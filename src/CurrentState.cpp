@@ -62,7 +62,7 @@ void CurrentState::setEndStopState(unsigned int axis, unsigned int position, boo
 }
 
 void CurrentState::printPosition() {
-	Serial.print("R04");
+	Serial.print("R82");
 	Serial.print(" X");
 	Serial.print(x);
 	Serial.print(" Y");
@@ -85,7 +85,7 @@ void CurrentState::printBool(bool value)
 }
 
 void CurrentState::printEndStops() {
-	Serial.print("R03");
+	Serial.print("R81");
 	Serial.print(" XA");
 	printBool(endStopState[0][0]);
 	Serial.print(" XB");
