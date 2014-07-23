@@ -290,7 +290,11 @@ int endStopAxisReached(int axis_nr, bool movement_forward) {
 	return 0;
 }
 
-int reportEndStops() {
+void reportEndStops() {
+
+	CurrentState::getInstance()->printEndStops();
+
+/*
 	bool x_min_endstop=(digitalRead(X_MIN_PIN) == INVERT_ENDSTOPS);
 	bool x_max_endstop=(digitalRead(X_MAX_PIN) == INVERT_ENDSTOPS);
 	bool y_min_endstop=(digitalRead(Y_MIN_PIN) == INVERT_ENDSTOPS);
@@ -313,6 +317,16 @@ int reportEndStops() {
 		return 1;
 	}
 	return 0;
+*/
+}
+
+void storeEndStops() {
+	CurrentState::getInstance()->setEndStopState(0,0,digitalRead(X_MIN_PIN));
+	CurrentState::getInstance()->setEndStopState(0,1,digitalRead(X_MAX_PIN));
+	CurrentState::getInstance()->setEndStopState(1,0,digitalRead(Y_MIN_PIN));
+	CurrentState::getInstance()->setEndStopState(1,1,digitalRead(Y_MAX_PIN));
+	CurrentState::getInstance()->setEndStopState(2,0,digitalRead(Z_MIN_PIN));
+	CurrentState::getInstance()->setEndStopState(3,1,digitalRead(Z_MAX_PIN));
 }
 
 
@@ -324,7 +338,8 @@ int reportEndStops() {
  * maxAccelerationStepsPerSecond - maximum number of acceleration in steps per second
  */
 int StepperControl::moveAbsoluteConstant(long xDest, long yDest,
-		long zDest, unsigned int maxStepsPerSecond, bool home) {
+		long zDest, unsigned int maxStepsPerSecond, 
+                bool homeX, bool homeY, bool homeZ) {
 
 	long currentPoint[3] = { CurrentState::getInstance()->getX(),
 			CurrentState::getInstance()->getY(),
@@ -339,35 +354,28 @@ int StepperControl::moveAbsoluteConstant(long xDest, long yDest,
 			* movementLength[1] / maxLenth, 1.0 * movementLength[2] / maxLenth };
 	bool homeMoveReverse[3] = { AXIS_HOME_FORWARD_X, AXIS_HOME_FORWARD_Y, AXIS_HOME_FORWARD_Z };
 
+        bool homeAxis[3] = { homeX, homeY, homeZ };
+        bool home = homeX || homeY || homeZ;
+
 	unsigned long currentMillis = 0;
 	unsigned long currentStepsPerSecond = maxStepsPerSecond;
 	unsigned long currentSteps = 0;
 	unsigned long lastStepMillis[3] = { 0, 0, 0 };
 
 
-/*
-	Serial.print("move abs const");
-	Serial.print(" x ");
-	Serial.print(xDest);
-	Serial.print(" y ");
-	Serial.print(yDest);
-	Serial.print(" z ");
-	Serial.print(zDest);
-	Serial.print(" s ");
-	Serial.print(maxStepsPerSecond);
-	Serial.print("\n");
-*/
-
         bool movementDone    = false;
         bool forwardMovement = true;
         bool moving          = false;
 	bool stepMade        = false;
 
+	storeEndStops();
 	reportEndStops();
         enableMotors(true);
 	setDirections(currentPoint, destinationPoint);
 
 	while (!movementDone) {
+
+	        storeEndStops();
 
 		stepMade = false;
 		moving   = false;
@@ -379,7 +387,7 @@ int StepperControl::moveAbsoluteConstant(long xDest, long yDest,
 					// When home is active, keep moving until end point reached
 					forwardMovement     =  homeMoveReverse[i];
 				}
-				if (!endStopAxisReached(i, forwardMovement))
+				if (!endStopAxisReached(i, forwardMovement) && (!home || (home && homeAxis[i])))
 				{
 					if (home && currentPoint[i] == destinationPoint[i]){
 						// When home is active, keep moving until end point reached
@@ -438,12 +446,18 @@ int StepperControl::moveAbsoluteConstant(long xDest, long yDest,
 		delayMicroseconds(500);
 	}
 
-	reportEndStops();
-
 	/**/ enableMotors(false);
+
 
 	CurrentState::getInstance()->setX(currentPoint[0]);
 	CurrentState::getInstance()->setY(currentPoint[1]);
 	CurrentState::getInstance()->setZ(currentPoint[2]);
+
+	CurrentState::getInstance()->setZ(currentPoint[2]);
+	CurrentState::getInstance()->setZ(currentPoint[2]);
+
+        storeEndStops();
+	reportEndStops();
+
 	return 0;
 }

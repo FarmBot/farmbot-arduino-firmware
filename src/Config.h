@@ -8,7 +8,7 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-const int LOGGING = 0;
+const int LOGGING = 1;
 
 const unsigned int MAX_STEPS_PER_SECOND = 100;
 const unsigned int MAX_ACCELERATION_STEPS_PER_SECOND = 2;
@@ -19,5 +19,6 @@ const bool AXIS_HOME_FORWARD_X = false;
 const bool AXIS_HOME_FORWARD_Y = false;
 const bool AXIS_HOME_FORWARD_Z = true;
 
+const String SOFTWARE_VERSION = "GENESIS V.01.01";
 
 #endif /* CONFIG_H_ */

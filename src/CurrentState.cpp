@@ -8,10 +8,11 @@
 #include "CurrentState.h"
 
 static CurrentState* instance;
-unsigned int x = 0;
-unsigned int y = 0;
-unsigned int z = 0;
+long x = 0;
+long y = 0;
+long z = 0;
 unsigned int speed = 0;
+bool endStopState[3][2];
 
 CurrentState * CurrentState::getInstance() {
 	if (!instance) {
@@ -56,16 +57,53 @@ void CurrentState::setZ(unsigned int newZ) {
 	z = newZ;
 }
 
-void CurrentState::print() {
-	Serial.println("Current state");
-	Serial.print("X:");
+void CurrentState::setEndStopState(unsigned int axis, unsigned int position, bool state) {
+	endStopState[axis][position] = state;
+}
+
+void CurrentState::printPosition() {
+	Serial.print("R04");
+	Serial.print(" X");
 	Serial.print(x);
-	Serial.print(", Y:");
+	Serial.print(" Y");
 	Serial.print(y);
-	Serial.print(", Z:");
-	Serial.println(z);
-	Serial.print(", speed:");
-	Serial.println(speed);
+	Serial.print(" Z");
+	Serial.print(z);
+	Serial.print("\n");
+}
+
+void CurrentState::printBool(bool value)
+{
+	if (value)
+	{
+		Serial.print("1");
+	} 
+	else 
+	{
+		Serial.print("0");
+	}
+}
+
+void CurrentState::printEndStops() {
+	Serial.print("R03");
+	Serial.print(" XA");
+	printBool(endStopState[0][0]);
+	Serial.print(" XB");
+	printBool(endStopState[0][1]);
+	Serial.print(" YA");
+	printBool(endStopState[1][0]);
+	Serial.print(" YB");
+	printBool(endStopState[1][1]);
+	Serial.print(" ZA");
+	printBool(endStopState[2][0]);
+	Serial.print(" ZB");
+	printBool(endStopState[2][1]);
+	Serial.print("\n");
+}
+
+void CurrentState::print() {
+	printPosition();
+	printEndStops();
 }
 
 

@@ -19,7 +19,11 @@ public:
 	void setX(unsigned int);
 	void setY(unsigned int);
 	void setZ(unsigned int);
+	void setEndStopState(unsigned int, unsigned int, bool);
+	void printPosition();
+	void printEndStops();
 	void print();
+	void printBool(bool);
 private:
 	CurrentState();
 	CurrentState(CurrentState const&);
