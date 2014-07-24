@@ -242,18 +242,6 @@ int endStopsReached() {
 	bool z_min_endstop=(digitalRead(Z_MIN_PIN) == INVERT_ENDSTOPS);
 	bool z_max_endstop=(digitalRead(Z_MAX_PIN) == INVERT_ENDSTOPS);
 	if(x_min_endstop || x_max_endstop || y_min_endstop || y_max_endstop || z_min_endstop || z_max_endstop) {
-		Serial.print("R03 ");
-		Serial.print(x_min_endstop);
-		Serial.print(" ");
-		Serial.print(x_max_endstop);
-		Serial.print(" ");
-		Serial.print(y_min_endstop);
-		Serial.print(" ");
-		Serial.print(y_max_endstop);
-		Serial.print(" ");
-		Serial.print(z_min_endstop);
-		Serial.print(" ");
-		Serial.println(z_max_endstop);
 		return 1;
 	}
 	return 0;
@@ -293,42 +281,12 @@ int endStopAxisReached(int axis_nr, bool movement_forward) {
 void reportEndStops() {
 
 	CurrentState::getInstance()->printEndStops();
-
-/*
-	bool x_min_endstop=(digitalRead(X_MIN_PIN) == INVERT_ENDSTOPS);
-	bool x_max_endstop=(digitalRead(X_MAX_PIN) == INVERT_ENDSTOPS);
-	bool y_min_endstop=(digitalRead(Y_MIN_PIN) == INVERT_ENDSTOPS);
-	bool y_max_endstop=(digitalRead(Y_MAX_PIN) == INVERT_ENDSTOPS);
-	bool z_min_endstop=(digitalRead(Z_MIN_PIN) == INVERT_ENDSTOPS);
-	bool z_max_endstop=(digitalRead(Z_MAX_PIN) == INVERT_ENDSTOPS);
-	if(x_min_endstop || x_max_endstop || y_min_endstop || y_max_endstop || z_min_endstop || z_max_endstop) {
-		Serial.print("R03 ");
-		Serial.print(x_min_endstop);
-		Serial.print(" ");
-		Serial.print(x_max_endstop);
-		Serial.print(" ");
-		Serial.print(y_min_endstop);
-		Serial.print(" ");
-		Serial.print(y_max_endstop);
-		Serial.print(" ");
-		Serial.print(z_min_endstop);
-		Serial.print(" ");
-		Serial.println(z_max_endstop);
-		return 1;
-	}
-	return 0;
-*/
 }
 
 void storeEndStops() {
-	CurrentState::getInstance()->setEndStopState(0,0,digitalRead(X_MIN_PIN));
-	CurrentState::getInstance()->setEndStopState(0,1,digitalRead(X_MAX_PIN));
-	CurrentState::getInstance()->setEndStopState(1,0,digitalRead(Y_MIN_PIN));
-	CurrentState::getInstance()->setEndStopState(1,1,digitalRead(Y_MAX_PIN));
-	CurrentState::getInstance()->setEndStopState(2,0,digitalRead(Z_MIN_PIN));
-	CurrentState::getInstance()->setEndStopState(3,1,digitalRead(Z_MAX_PIN));
-}
 
+	CurrentState::getInstance()->storeEndStops();
+}
 
 /**
  * xDest - destination X in steps

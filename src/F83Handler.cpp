@@ -25,8 +25,6 @@ F83Handler::F83Handler() {
 
 int F83Handler::execute(Command* command) {
 
-Serial.print("home\n");
-
         if (LOGGING) {
                 Serial.print("R99 Report server version\n");
         }
@@ -35,10 +33,6 @@ Serial.print("home\n");
 	Serial.print(SOFTWARE_VERSION);
 	Serial.print("\n");
 
-        StepperControl::getInstance()->moveAbsoluteConstant(0,0,0,0, false, false, true);
-        if (LOGGING) {
-                CurrentState::getInstance()->print();
-        }
         return 0;
 }
 

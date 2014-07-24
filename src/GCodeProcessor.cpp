@@ -37,6 +37,8 @@ int GCodeProcessor::execute(Command* command) {
 	int execution = handler->execute(command);
 	if(execution == 0) {
 		Serial.println("R02");
+	} else {
+		Serial.println("R03");
 	}
 	return execution;
 };

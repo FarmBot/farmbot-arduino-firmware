@@ -31,6 +31,7 @@ Serial.print("home\n");
                 Serial.print("R99 Report end stops\n");
         }
 
+        CurrentState::getInstance()->storeEndStops();
         CurrentState::getInstance()->printEndStops();
 
         return 0;
