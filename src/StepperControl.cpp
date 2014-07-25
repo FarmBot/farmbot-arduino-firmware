@@ -23,7 +23,38 @@ unsigned long getMaxLength(unsigned long lengths[3]) {
 	return max;
 }
 
-void step(int axis, long &currentPoint, unsigned int steps,
+int endStopAxisReached(int axis_nr, bool movement_forward) {
+
+	bool min_endstop = false;
+	bool max_endstop = false;
+
+	// for the axis to check, retrieve the end stop status
+
+	if (axis_nr == 0) {
+		min_endstop=(digitalRead(X_MIN_PIN) == INVERT_ENDSTOPS);
+		max_endstop=(digitalRead(X_MAX_PIN) == INVERT_ENDSTOPS);
+	}
+
+	if (axis_nr == 1) {
+		min_endstop=(digitalRead(Y_MIN_PIN) == INVERT_ENDSTOPS);
+		max_endstop=(digitalRead(Y_MAX_PIN) == INVERT_ENDSTOPS);
+	}
+
+	if (axis_nr == 2) {
+		min_endstop=(digitalRead(Z_MIN_PIN) == INVERT_ENDSTOPS);
+		max_endstop=(digitalRead(Z_MAX_PIN) == INVERT_ENDSTOPS);
+	}
+
+	// if moving forward, only check the end stop max
+	// for moving backwards, check only the end stop min
+
+	if((!movement_forward && min_endstop) || (movement_forward && max_endstop)) {
+		return 1;
+	}
+	return 0;
+}
+
+void step(int axis, long &currentPoint, unsigned long steps,
 		long destinationPoint) {
 	if (currentPoint < destinationPoint) {
 		currentPoint += steps;
@@ -44,6 +75,14 @@ void step(int axis, long &currentPoint, unsigned int steps,
 		//digitalWrite(Z_STEP_PIN, LOW);
 		break;
 	}
+
+	// if the home end stop is reached, set the current position
+	if (endStopAxisReached(axis, false))
+	{
+		currentPoint = 0;
+Serial.print("R99 end point reached\n");
+	}
+
 }
 
 bool pointReached(long currentPoint[3],
@@ -247,40 +286,13 @@ int endStopsReached() {
 	return 0;
 }
 
-int endStopAxisReached(int axis_nr, bool movement_forward) {
-
-	bool min_endstop = false;
-	bool max_endstop = false;
-
-	// for the axis to check, retrieve the end stop status
-
-	if (axis_nr == 0) {
-		min_endstop=(digitalRead(X_MIN_PIN) == INVERT_ENDSTOPS);
-		max_endstop=(digitalRead(X_MAX_PIN) == INVERT_ENDSTOPS);
-	}
-
-	if (axis_nr == 1) {
-		min_endstop=(digitalRead(Y_MIN_PIN) == INVERT_ENDSTOPS);
-		max_endstop=(digitalRead(Y_MAX_PIN) == INVERT_ENDSTOPS);
-	}
-
-	if (axis_nr == 2) {
-		min_endstop=(digitalRead(Z_MIN_PIN) == INVERT_ENDSTOPS);
-		max_endstop=(digitalRead(Z_MAX_PIN) == INVERT_ENDSTOPS);
-	}
-
-	// if moving forward, only check the end stop max
-	// for moving backwards, check only the end stop min
-
-	if((!movement_forward && min_endstop) || (movement_forward && max_endstop)) {
-		return 1;
-	}
-	return 0;
-}
-
 void reportEndStops() {
 
 	CurrentState::getInstance()->printEndStops();
+}
+
+void reportPosition(){
+	CurrentState::getInstance()->printPosition();
 }
 
 void storeEndStops() {
@@ -315,16 +327,24 @@ int StepperControl::moveAbsoluteConstant(long xDest, long yDest,
         bool homeAxis[3] = { homeX, homeY, homeZ };
         bool home = homeX || homeY || homeZ;
 
-	unsigned long currentMillis = 0;
+	unsigned long currentMillis         = 0;
 	unsigned long currentStepsPerSecond = maxStepsPerSecond;
-	unsigned long currentSteps = 0;
-	unsigned long lastStepMillis[3] = { 0, 0, 0 };
+	unsigned long currentSteps          = 0;
+	unsigned long lastStepMillis[3]     = { 0, 0, 0 };
 
+	unsigned long timeStart             = millis();
 
         bool movementDone    = false;
         bool forwardMovement = true;
         bool moving          = false;
 	bool stepMade        = false;
+
+	int error            = 0;
+
+
+Serial.print("R99 zdest ");
+Serial.print(zDest);
+Serial.print("\n");
 
 	storeEndStops();
 	reportEndStops();
@@ -345,8 +365,7 @@ int StepperControl::moveAbsoluteConstant(long xDest, long yDest,
 					// When home is active, keep moving until end point reached
 					forwardMovement     =  homeMoveReverse[i];
 				}
-				if (!endStopAxisReached(i, forwardMovement) && (!home || (home && homeAxis[i])))
-				{
+				if (!endStopAxisReached(i, forwardMovement) && (!home || (home && homeAxis[i]))) {
 					if (home && currentPoint[i] == destinationPoint[i]){
 						// When home is active, keep moving until end point reached
 
@@ -382,7 +401,6 @@ int StepperControl::moveAbsoluteConstant(long xDest, long yDest,
 						}
 					}
         	                }
-
 			}
 		} else {
 			movementDone = true;
@@ -401,6 +419,14 @@ int StepperControl::moveAbsoluteConstant(long xDest, long yDest,
 		{
 			movementDone = true;
 		}
+		if (millis() - timeStart > MOVEMENT_TIMEOUT * 1000)
+		{
+Serial.print("R99 movement timeout");
+Serial.print("\n");
+			movementDone = true;
+			error        = 1;
+		}
+
 		delayMicroseconds(500);
 	}
 
@@ -416,6 +442,7 @@ int StepperControl::moveAbsoluteConstant(long xDest, long yDest,
 
         storeEndStops();
 	reportEndStops();
+	reportPosition();
 
-	return 0;
+	return error;
 }

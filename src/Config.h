@@ -19,6 +19,8 @@ const bool AXIS_HOME_FORWARD_X = false;
 const bool AXIS_HOME_FORWARD_Y = false;
 const bool AXIS_HOME_FORWARD_Z = true;
 
+const unsigned int MOVEMENT_TIMEOUT = 30;
+
 const String SOFTWARE_VERSION = "GENESIS V.01.01";
 
 #endif /* CONFIG_H_ */
