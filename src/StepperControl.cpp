@@ -435,8 +435,11 @@ Serial.print(" spd ");
 Serial.print(axisSpeed);
 Serial.print("\n");
 
-Serial.print("R99 end ");
+Serial.print("R99 ");
+Serial.print(" end up ");
 Serial.print(endStopAxisReached(i, movementUp));
+Serial.print(" end home ");
+Serial.print(endStopAxisReached(i, !movementToHome));
 Serial.print("\n");
 
 Serial.print("R99 ");
@@ -449,17 +452,18 @@ Serial.print(homeAxis[i]);
 Serial.print("\n");
 */
 				// If end stop reached, don't move anymore
-				if ((homeAxis[i] && !endStopAxisReached(i, false)) || (!homeAxis[i] &&  !endStopAxisReached(i, movementUp) &&  currentPoint[i] !=  destinationPoint[i] )) {
+				if ((homeAxis[i] && !endStopAxisReached(i, false)) || (!homeAxis[i] &&  !endStopAxisReached(i, !movementToHome) &&  currentPoint[i] !=  destinationPoint[i] )) {
 					moving = true;
-//Serial.print("R99 ");
-//Serial.print(" current ");
-//Serial.print(currentMillis);
-//Serial.print(" last ");
-//Serial.print(lastStepMillis[i]);
-//Serial.print(" spd ");
-//Serial.print( 1000 / axisSpeed);
-//Serial.print("\n");
-
+/*
+Serial.print("R99 ");
+Serial.print(" current ");
+Serial.print(currentMillis);
+Serial.print(" last ");
+Serial.print(lastStepMillis[i]);
+Serial.print(" spd ");
+Serial.print( 1000 / axisSpeed);
+Serial.print("\n");
+*/
 					// Only do a step every x milliseconds
 					if (currentMillis - lastStepMillis[i] >= 1000 / axisSpeed) {
 						if (homeAxis[i] && currentPoint[i] == 0) {
