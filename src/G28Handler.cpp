@@ -1,5 +1,5 @@
 /*
- * G00Handler.cpp
+ * G28Handler.cpp
  *
  *  Created on: 15 maj 2014
  *      Author: MattLech
@@ -25,7 +25,8 @@ int G28Handler::execute(Command* command) {
 
 Serial.print("home\n");
 
-	StepperControl::getInstance()->moveAbsoluteConstant(0,0,0,0, true);
+	StepperControl::getInstance()->moveAbsoluteConstant(0,0,0,0, false, false, true);
+	StepperControl::getInstance()->moveAbsoluteConstant(0,0,0,0, true,  true,  false);
 	//StepperControl::getInstance()->moveAbsoluteConstant(0,0,0,HOME_MOVEMENT_SPEED_S_P_S,true);
 	if (LOGGING) {
 		CurrentState::getInstance()->print();

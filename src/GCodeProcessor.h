@@ -7,11 +7,20 @@
 
 #ifndef GCODEPROCESSOR_H_
 #define GCODEPROCESSOR_H_
+
+#include "Command.h"
+#include "Config.h"
+
 #include "GCodeHandler.h"
 #include "G00Handler.h"
 #include "G28Handler.h"
-#include "Command.h"
-#include "Config.h"
+
+#include "F11Handler.h"
+#include "F12Handler.h"
+#include "F13Handler.h"
+#include "F81Handler.h"
+#include "F82Handler.h"
+#include "F83Handler.h"
 
 class GCodeProcessor {
 public:

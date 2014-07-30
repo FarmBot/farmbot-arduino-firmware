@@ -22,7 +22,8 @@ public:
 			long zDest, unsigned int maxStepsPerSecond,
 			unsigned int maxAccelerationStepsPerSecond);
 	int moveAbsoluteConstant(long xDest, long yDest,
-				 long zDest, unsigned int maxStepsPerSecond, bool home);
+				 long zDest, unsigned int maxStepsPerSecond, 
+				 bool homeX, bool homeY, bool homeZ);
 private:
 	StepperControl();
 	StepperControl(StepperControl const&);

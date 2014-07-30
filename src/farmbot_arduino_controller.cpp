@@ -44,6 +44,7 @@ void loop() {
 				command->print();
 			}
 			gCodeProcessor->execute(command);
+			free(command);
 		}
 	}
 	delay(100);

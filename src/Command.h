@@ -7,9 +7,18 @@
 enum CommandCodeEnum
 {
   CODE_UNDEFINED = -1,
-  G00 = 0,
-  G01,
-  G28
+  G00 =   0,
+  G01 =   1,
+  G28 =  28,
+  F01 = 101,
+  F02 = 102,
+  F03 = 103,
+  F11 = 111,
+  F12 = 112,
+  F13 = 113,
+  F81 = 181,
+  F82 = 182,
+  F83 = 183
 };
 
 #define NULL 0

@@ -8,18 +8,24 @@
 #ifndef CURRENTSTATE_H_
 #define CURRENTSTATE_H_
 #include "Arduino.h"
+#include "pins.h"
 
 class CurrentState {
 public:
 	static CurrentState* getInstance();
-	unsigned int getX();
-	unsigned int getY();
-	unsigned int getZ();
-	unsigned int* getPoint();
-	void setX(unsigned int);
-	void setY(unsigned int);
-	void setZ(unsigned int);
+	long getX();
+	long getY();
+	long getZ();
+	long* getPoint();
+	void setX(long);
+	void setY(long);
+	void setZ(long);
+	void setEndStopState(unsigned int, unsigned int, bool);
+	void printPosition();
+	void storeEndStops();
+	void printEndStops();
 	void print();
+	void printBool(bool);
 private:
 	CurrentState();
 	CurrentState(CurrentState const&);

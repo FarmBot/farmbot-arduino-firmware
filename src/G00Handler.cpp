@@ -23,7 +23,8 @@ G00Handler::G00Handler() {
 
 int G00Handler::execute(Command* command) {
 	StepperControl::getInstance()->moveAbsoluteConstant(command->getX(),
-			command->getY(), command->getZ(), command->getS(), false);
+			command->getY(), command->getZ(), command->getS(), 
+			false, false, false);
 	if (LOGGING) {
 		CurrentState::getInstance()->print();
 	}
