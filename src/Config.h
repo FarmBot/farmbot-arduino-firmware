@@ -10,17 +10,23 @@
 
 const int LOGGING = 0;
 
-const unsigned int MAX_STEPS_PER_SECOND = 1000;
-const unsigned int MAX_ACCELERATION_STEPS_PER_SECOND = 2;
-const unsigned int HOME_MOVEMENT_SPEED_S_P_S = 200;
+//const unsigned long STEPS_FOR_ACC_DEC = 20;
+//const unsigned int MAX_ACCELERATION_STEPS_PER_SECOND = 2;
+
+const unsigned int MOVEMENT_STEPS_ACC_DEC        = 100;
+const unsigned int MOVEMENT_MAX_STEPS_PER_SECOND = 1000;
+const unsigned int MOVEMENT_HOME_SPEED_S_P_S     = 200;
+const unsigned int MOVEMENT_TIMEOUT              = 30;
+const unsigned int MOVEMENT_SPEED_BASE_TIME      = 2000;
+const unsigned int MOVEMENT_DELAY                = 500;
+
 const unsigned int INVERT_ENDSTOPS = 1;
 
 const bool AXIS_HOME_UP_X = false;
 const bool AXIS_HOME_UP_Y = false;
 const bool AXIS_HOME_UP_Z = true;
 
-const unsigned int MOVEMENT_TIMEOUT = 30;
 
-const String SOFTWARE_VERSION = "GENESIS V.01.01";
+const String SOFTWARE_VERSION = "GENESIS V.01.02";
 
 #endif /* CONFIG_H_ */

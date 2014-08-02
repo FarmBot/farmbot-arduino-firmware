@@ -97,14 +97,16 @@ bool pointReached(long currentPoint[3],
 	return true;
 }
 
+/*
 unsigned int calculateSpeed(unsigned int &currentStepsPerSecond,
 		unsigned int maxStepsPerSecond, unsigned int currentSteps,
 		unsigned int currentMillis, unsigned int maxLength,
 		unsigned int &accelerationSteps,
 		unsigned int maxAccelerationStepsPerSecond) {
+
 	if (currentStepsPerSecond < maxStepsPerSecond) {
 		if (currentSteps < maxLength / 2) {
-			accelerationSteps = currentSteps;
+ 			accelerationSteps = currentSteps;
 			if (currentMillis % 100 == 0) {
 				currentStepsPerSecond += maxAccelerationStepsPerSecond / 10;
 			}
@@ -127,6 +129,85 @@ unsigned int calculateSpeed(unsigned int &currentStepsPerSecond,
 		currentStepsPerSecond = maxAccelerationStepsPerSecond;
 	}
 	return currentStepsPerSecond;
+}
+*/
+
+unsigned int calculateSpeed(long sourcePosition, long currentPosition, long destinationPosition, long minSpeed, long maxSpeed, long stepsAccDec) {
+
+	int newSpeed = 0;
+
+	long curPos = abs(currentPosition);
+
+	long staPos;
+	long endPos;
+
+	if (abs(sourcePosition) < abs(destinationPosition)) {
+		staPos = abs(sourcePosition);
+		endPos = abs(destinationPosition);;
+	} else {
+		staPos = abs(destinationPosition);;
+		endPos = abs(sourcePosition);
+	}
+
+	unsigned long halfway = ((endPos - staPos) / 2) + staPos;
+
+	// Set the minimum speed if the position would be out of bounds
+	if (curPos < staPos || curPos > endPos) {
+		newSpeed = minSpeed;
+	} else {
+		if (curPos >= staPos && curPos <= halfway) {
+			// accelerating
+			if (curPos > (staPos + stepsAccDec)) {
+				// now beyond the accelleration point to go full speed
+				newSpeed = maxSpeed + 1;
+			} else {
+				// speeding up, increase speed linear within the first period
+				newSpeed = (1.0 * (curPos - staPos) / stepsAccDec * (maxSpeed - minSpeed)) + minSpeed;
+			}
+		} else {
+			// decelerating
+			if (curPos < (endPos - stepsAccDec)) {
+				// still before the deceleration point so keep going at full speed
+				newSpeed = maxSpeed + 2;
+			} else {
+				// speeding up, increase speed linear within the first period
+				newSpeed = (1.0 * (endPos - curPos) / stepsAccDec * (maxSpeed - minSpeed)) + minSpeed;
+			}
+		}
+	}
+
+//Serial.print("R99");
+
+//Serial.print(" a ");
+//Serial.print(endPos);
+//Serial.print(" b ");
+//Serial.print((endPos - stepsAccDec));
+//Serial.print(" c ");
+//Serial.print(curPos < (endPos - stepsAccDec));
+
+
+//Serial.print(" sta ");
+//Serial.print(staPos);
+//Serial.print(" cur ");
+//Serial.print(curPos);
+//Serial.print(" end ");
+//Serial.print(endPos);
+//Serial.print(" half ");
+//Serial.print(halfway);
+//Serial.print(" len ");
+//Serial.print(stepsAccDec);
+//Serial.print(" min ");
+//Serial.print(minSpeed);
+//Serial.print(" max ");
+//Serial.print(maxSpeed);
+//Serial.print(" spd ");
+
+//Serial.print(" ");
+//Serial.print(newSpeed);
+
+//Serial.print("\n");
+
+	return newSpeed;
 }
 
 void enableMotors(bool enable) {
@@ -318,9 +399,14 @@ int StepperControl::moveAbsoluteConstant(long xDest, long yDest,
 		long zDest, unsigned int maxStepsPerSecond, 
                 bool homeX, bool homeY, bool homeZ) {
 
+	long sourcePoint[3] = { CurrentState::getInstance()->getX(),
+			CurrentState::getInstance()->getY(),
+			CurrentState::getInstance()->getZ() };
+
 	long currentPoint[3] = { CurrentState::getInstance()->getX(),
 			CurrentState::getInstance()->getY(),
 			CurrentState::getInstance()->getZ() };
+
 	long destinationPoint[3] = { xDest, yDest, zDest };
 
 	unsigned long movementLength[3] = { getLength(destinationPoint[0], currentPoint[0]),
@@ -351,7 +437,7 @@ int StepperControl::moveAbsoluteConstant(long xDest, long yDest,
 	int error            = 0;
 
 	if (maxStepsPerSecond == 0) {
-		 maxStepsPerSecond = MAX_STEPS_PER_SECOND;
+		 maxStepsPerSecond = MOVEMENT_MAX_STEPS_PER_SECOND;
 	}
 /*
 Serial.print("R99 zdest ");
@@ -405,15 +491,19 @@ Serial.print("\n");
 
 				// Set the speed for movement
 				//axisSpeed = (1.0*currentStepsPerSecond * lengthRatio[i] - 1);
-				axisSpeed = maxStepsPerSecond;
 
+//				axisSpeed = maxStepsPerSecond;
+//if (i == 0) {
+				axisSpeed = calculateSpeed(sourcePoint[i],currentPoint[i],destinationPoint[i],
+						 MOVEMENT_HOME_SPEED_S_P_S, MOVEMENT_MAX_STEPS_PER_SECOND, MOVEMENT_STEPS_ACC_DEC);
+//}
 				if (homeAxis[i]){
 					// When home is active, the direction is fixed
 					movementUp     = homeIsUp[i];
 					movementToHome = true;
 					if (currentPoint[i] == 0) {
 						// Go slow when theoretical end point reached but there is no end stop siganl
-						axisSpeed = HOME_MOVEMENT_SPEED_S_P_S;
+						axisSpeed = MOVEMENT_HOME_SPEED_S_P_S;
 					}
 				} else {
 					// For normal movement, move in direction of destination
@@ -425,7 +515,8 @@ Serial.print("\n");
 Serial.print("R99 axis ");
 Serial.print(i);
 Serial.print("\n");
-
+*/
+/*
 Serial.print("R99");
 Serial.print(" up ");
 Serial.print(movementUp);
@@ -465,7 +556,7 @@ Serial.print( 1000 / axisSpeed);
 Serial.print("\n");
 */
 					// Only do a step every x milliseconds
-					if (currentMillis - lastStepMillis[i] >= 1000 / axisSpeed) {
+					if (currentMillis - lastStepMillis[i] >= MOVEMENT_SPEED_BASE_TIME / axisSpeed) {
 						if (homeAxis[i] && currentPoint[i] == 0) {
 							if (homeIsUp[i]) {
 								currentPoint[i] = -1;
@@ -489,7 +580,7 @@ Serial.print("\n");
 			movementDone = true;
 //			Serial.print("R99 points reached\n");
 		}
-		delayMicroseconds(500);
+		delayMicroseconds(MOVEMENT_DELAY);
 		if (stepMade) {
 			currentSteps++;
 		}
@@ -505,7 +596,7 @@ Serial.print("\n");
 //Serial.print("R99 movement done\n");
 		}
 //		if (millis() - timeStart > 2 * 1000)
-		if (millis() - timeStart > MOVEMENT_TIMEOUT * 1000)
+		if (millis() - timeStart > MOVEMENT_TIMEOUT * MOVEMENT_SPEED_BASE_TIME)
 		{
 //Serial.print("R99 movement timeout");
 //Serial.print("\n");
