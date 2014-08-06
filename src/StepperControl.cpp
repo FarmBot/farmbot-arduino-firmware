@@ -395,27 +395,58 @@ void storeEndStops() {
  * maxStepsPerSecond - maximum number of steps per second
  * maxAccelerationStepsPerSecond - maximum number of acceleration in steps per second
  */
-int StepperControl::moveAbsoluteConstant(long xDest, long yDest,
-		long zDest, unsigned int maxStepsPerSecond, 
-                bool homeX, bool homeY, bool homeZ) {
+int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest, 
+						unsigned int xMaxSpd, unsigned int yMaxSpd, unsigned int zMaxSpd,
+                				bool xHome, bool yHome, bool zHome) {
 
-	long sourcePoint[3] = { CurrentState::getInstance()->getX(),
-			CurrentState::getInstance()->getY(),
-			CurrentState::getInstance()->getZ() };
+	long sourcePoint[3] = { 	CurrentState::getInstance()->getX(),
+					CurrentState::getInstance()->getY(),
+					CurrentState::getInstance()->getZ() };
 
-	long currentPoint[3] = { CurrentState::getInstance()->getX(),
-			CurrentState::getInstance()->getY(),
-			CurrentState::getInstance()->getZ() };
+	long currentPoint[3] = { 	CurrentState::getInstance()->getX(),
+					CurrentState::getInstance()->getY(),
+					CurrentState::getInstance()->getZ() };
 
 	long destinationPoint[3] = { xDest, yDest, zDest };
 
-	unsigned long movementLength[3] = { getLength(destinationPoint[0], currentPoint[0]),
-			getLength(destinationPoint[1], currentPoint[1]),
-			getLength(destinationPoint[2], currentPoint[2])};
+	unsigned long movementLength[3] = { 	getLength(destinationPoint[0], currentPoint[0]),
+						getLength(destinationPoint[1], currentPoint[1]),
+						getLength(destinationPoint[2], currentPoint[2])};
 	unsigned long maxLenth = getMaxLength(movementLength);
-	double lengthRatio[3] = { 1.0 * movementLength[0] / maxLenth, 1.0
-			* movementLength[1] / maxLenth, 1.0 * movementLength[2] / maxLenth };
-	bool homeIsUp[3] = { AXIS_HOME_UP_X, AXIS_HOME_UP_Y, AXIS_HOME_UP_Z };
+
+	double lengthRatio[3] = { 	1.0 * movementLength[0] / maxLenth, 
+					1.0 * movementLength[1] / maxLenth,
+					1.0 * movementLength[2] / maxLenth };
+
+	//bool homeIsUp[3] = { AXIS_HOME_UP_X, AXIS_HOME_UP_Y, AXIS_HOME_UP_Z };
+	bool homeIsUp[3] = { 	ParameterList::getInstance()-getValue(MOVEMENT_HOME_UP_X),
+				ParameterList::getInstance()-getValue(MOVEMENT_HOME_UP_Y),
+				ParameterList::getInstance()-getValue(MOVEMENT_HOME_UP_Z) };
+
+	bool speedMax[3] = { 	ParameterList::getInstance()-getValue(MOVEMENT_MAX_SPD_X),
+				ParameterList::getInstance()-getValue(MOVEMENT_MAX_SPD_Y),
+				ParameterList::getInstance()-getValue(MOVEMENT_MAX_SPD_Z) };
+
+	bool speedMin[3] = { 	ParameterList::getInstance()-getValue(MOVEMENT_MIN_SPD_X),
+				ParameterList::getInstance()-getValue(MOVEMENT_MIN_SPD_Y),
+				ParameterList::getInstance()-getValue(MOVEMENT_MIN_SPD_Z) };
+
+	bool stepsAcc[3] = { 	ParameterList::getInstance()-getValue(MOVEMENT_STEPS_ACC_DEC_X),
+				ParameterList::getInstance()-getValue(MOVEMENT_STEPS_ACC_DEC_Y),
+				ParameterList::getInstance()-getValue(MOVEMENT_STEPS_ACC_DEC_Z) };
+
+	bool motorInv[3] = { 	ParameterList::getInstance()-getValue(MOVEMENT_INVERT_MOTOR_X),
+				ParameterList::getInstance()-getValue(MOVEMENT_INVERT_MOTOR_Y),
+				ParameterList::getInstance()-getValue(MOVEMENT_INVERT_MOTOR_Z) };
+
+	bool endStInv[3] = { 	ParameterList::getInstance()-getValue(MOVEMENT_INVERT_ENDPOINTS_X),
+				ParameterList::getInstance()-getValue(MOVEMENT_INVERT_ENDPOINTS_Y),
+				ParameterList::getInstance()-getValue(MOVEMENT_INVERT_ENDPOINTS_Z) };
+
+	bool timeOut[3] = { 	ParameterList::getInstance()-getValue(MOVEMENT_TIMEOUT_X),
+				ParameterList::getInstance()-getValue(MOVEMENT_TIMEOUT_X),
+				ParameterList::getInstance()-getValue(MOVEMENT_TIMEOUT_X) };
+
 
         bool homeAxis[3] = { homeX, homeY, homeZ };
         bool home = homeX || homeY || homeZ;
@@ -436,9 +467,20 @@ int StepperControl::moveAbsoluteConstant(long xDest, long yDest,
 
 	int error            = 0;
 
-	if (maxStepsPerSecond == 0) {
-		 maxStepsPerSecond = MOVEMENT_MAX_STEPS_PER_SECOND;
+	// if a speed is given in the command, use that instead of the config speed
+
+	if (xMaxSpd > 0 && xMaxSpd < speedMax[0]) {
+		speedMax[0] = xMaxSpd;
 	}
+
+	if (yMaxSpd > 0 && yMaxSpd < speedMax[1]) {
+		speedMax[1] = yMaxSpd;
+	}
+
+	if (zMaxSpd > 0 && zMaxSpd < speedMax[2]) {
+		speedMax[2] = zMaxSpd;
+	}
+
 /*
 Serial.print("R99 zdest ");
 Serial.print(zDest);
@@ -452,6 +494,8 @@ Serial.print("R99 current z ");
 Serial.print(currentPoint[2]);
 Serial.print("\n");
 */
+	// Prepare for movement
+
 	storeEndStops();
 	reportEndStops();
         enableMotors(true);
@@ -471,6 +515,8 @@ Serial.print("\n");
 		}
 	}
 
+	// Start movement
+
 	while (!movementDone) {
 
 	        storeEndStops();
@@ -484,7 +530,7 @@ Serial.print("\n");
 			Serial.print("\n");
 		}
 */
-		// Keek moving until destination reached or while moving home and end stop not reached
+		// Keep moving until destination reached or while moving home and end stop not reached
 		if  (!pointReached(currentPoint, destinationPoint) || home) {
 			// Check eachh axis
 			for (int i = 0; i < 3; i++) {
@@ -494,8 +540,8 @@ Serial.print("\n");
 
 //				axisSpeed = maxStepsPerSecond;
 //if (i == 0) {
-				axisSpeed = calculateSpeed(sourcePoint[i],currentPoint[i],destinationPoint[i],
-						 MOVEMENT_HOME_SPEED_S_P_S, MOVEMENT_MAX_STEPS_PER_SECOND, MOVEMENT_STEPS_ACC_DEC);
+				axisSpeed = calculateSpeed(	sourcePoint[i],currentPoint[i],destinationPoint[i],
+						 		speedMax[i], speedMax[i], speedAcc[i]);
 //}
 				if (homeAxis[i]){
 					// When home is active, the direction is fixed
@@ -503,7 +549,7 @@ Serial.print("\n");
 					movementToHome = true;
 					if (currentPoint[i] == 0) {
 						// Go slow when theoretical end point reached but there is no end stop siganl
-						axisSpeed = MOVEMENT_HOME_SPEED_S_P_S;
+						axisSpeed = speedMin[i];
 					}
 				} else {
 					// For normal movement, move in direction of destination
@@ -542,9 +588,15 @@ Serial.print(" home ");
 Serial.print(homeAxis[i]);
 Serial.print("\n");
 */
-				// If end stop reached, don't move anymore
-				if ((homeAxis[i] && !endStopAxisReached(i, false)) || (!homeAxis[i] &&  !endStopAxisReached(i, !movementToHome) &&  currentPoint[i] !=  destinationPoint[i] )) {
-					moving = true;
+
+				if (millis() - timeStart > timeOut[i] * MOVEMENT_SPEED_BASE_TIME) {
+					error        = 1;
+				} else {
+
+
+					// If end stop reached, don't move anymore
+					if ((homeAxis[i] && !endStopAxisReached(i, false)) || (!homeAxis[i] &&  !endStopAxisReached(i, !movementToHome) &&  currentPoint[i] !=  destinationPoint[i] )) {
+						moving = true;
 /*
 Serial.print("R99 ");
 Serial.print(" current ");
@@ -555,24 +607,26 @@ Serial.print(" spd ");
 Serial.print( 1000 / axisSpeed);
 Serial.print("\n");
 */
-					// Only do a step every x milliseconds
-					if (currentMillis - lastStepMillis[i] >= MOVEMENT_SPEED_BASE_TIME / axisSpeed) {
-						if (homeAxis[i] && currentPoint[i] == 0) {
-							if (homeIsUp[i]) {
-								currentPoint[i] = -1;
-							} else {
-								currentPoint[i] =  1;
+						// Only do a step every x milliseconds
+						if (currentMillis - lastStepMillis[i] >= MOVEMENT_SPEED_BASE_TIME / axisSpeed) {
+							if (homeAxis[i] && currentPoint[i] == 0) {
+								if (homeIsUp[i]) {
+									currentPoint[i] = -1;
+								} else {
+									currentPoint[i] =  1;
+								}
 							}
-						}
 
 //Serial.print("R99 ");
 //Serial.print(" step ");
 //Serial.print("\n");
+/**/
 
 
-						step(i, currentPoint[i], 1, destinationPoint[i]);
-						stepMade = true;
-						lastStepMillis[i] = currentMillis;
+							step(i, currentPoint[i], 1, destinationPoint[i]);
+							stepMade = true;
+							lastStepMillis[i] = currentMillis;
+						}
 					}
         	                }
 			}
@@ -595,14 +649,11 @@ Serial.print("\n");
 			movementDone = true;
 //Serial.print("R99 movement done\n");
 		}
-//		if (millis() - timeStart > 2 * 1000)
-		if (millis() - timeStart > MOVEMENT_TIMEOUT * MOVEMENT_SPEED_BASE_TIME)
-		{
-//Serial.print("R99 movement timeout");
-//Serial.print("\n");
-			movementDone = true;
-			error        = 1;
-		}
+//		if (millis() - timeStart > MOVEMENT_TIMEOUT * MOVEMENT_SPEED_BASE_TIME)
+//		{
+//			movementDone = true;
+//			error        = 1;
+//		}
 
 		delayMicroseconds(500);
 	}
