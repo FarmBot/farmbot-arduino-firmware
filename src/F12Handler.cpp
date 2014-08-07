@@ -28,7 +28,7 @@ int F12Handler::execute(Command* command) {
                 Serial.print("R99 HOME Y\n");
         }
 
-        StepperControl::getInstance()->moveAbsoluteConstant(0,0,0,0, false, true, false);
+        StepperControl::getInstance()->moveAbsoluteConstant(0,0,0, 0,0,0, false, true, false);
         if (LOGGING) {
                 CurrentState::getInstance()->print();
         }

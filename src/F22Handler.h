@@ -23,8 +23,8 @@ private:
 	F22Handler();
 	F22Handler(F22Handler const&);
 	void operator=(F22Handler const&);
-	long adjustStepAmount(long);
-	long getNumberOfSteps(double, double);
+	//long adjustStepAmount(long);
+	//long getNumberOfSteps(double, double);
 };
 
 #endif /* F22HANDLER_H_ */

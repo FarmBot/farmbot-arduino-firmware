@@ -1,4 +1,4 @@
-#include "Command.h"
+#include "ParameterList.h"
 
 static ParameterList* instance;
 
@@ -69,9 +69,6 @@ int ParameterList::writeValue(int id, long value) {
 	return 0;
 }
 
-
-int 
-
 int ParameterList::readValue(int id) {
 
 	long value =  paramValues[id];
@@ -88,6 +85,6 @@ int ParameterList::readValue(int id) {
 }
 
 
-long ParameterList::getValue(int id {
+long ParameterList::getValue(int id) {
 	return  paramValues[id];
 }

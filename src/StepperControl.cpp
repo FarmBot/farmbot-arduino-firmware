@@ -25,24 +25,28 @@ unsigned long getMaxLength(unsigned long lengths[3]) {
 
 int endStopAxisReached(int axis_nr, bool movement_forward) {
 
+        bool endStInv[3] = {    ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_X),
+                                ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Y),
+                                ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Z) };
+
 	bool min_endstop = false;
 	bool max_endstop = false;
 
 	// for the axis to check, retrieve the end stop status
 
 	if (axis_nr == 0) {
-		min_endstop=(digitalRead(X_MIN_PIN) == INVERT_ENDSTOPS);
-		max_endstop=(digitalRead(X_MAX_PIN) == INVERT_ENDSTOPS);
+		min_endstop=(digitalRead(X_MIN_PIN) == endStInv[0]);
+		max_endstop=(digitalRead(X_MAX_PIN) == endStInv[0]);
 	}
 
 	if (axis_nr == 1) {
-		min_endstop=(digitalRead(Y_MIN_PIN) == INVERT_ENDSTOPS);
-		max_endstop=(digitalRead(Y_MAX_PIN) == INVERT_ENDSTOPS);
+		min_endstop=(digitalRead(Y_MIN_PIN) == endStInv[1]);
+		max_endstop=(digitalRead(Y_MAX_PIN) == endStInv[1]);
 	}
 
 	if (axis_nr == 2) {
-		min_endstop=(digitalRead(Z_MIN_PIN) == INVERT_ENDSTOPS);
-		max_endstop=(digitalRead(Z_MAX_PIN) == INVERT_ENDSTOPS);
+		min_endstop=(digitalRead(Z_MIN_PIN) == endStInv[2]);
+		max_endstop=(digitalRead(Z_MAX_PIN) == endStInv[2]);
 	}
 
 	// if moving forward, only check the end stop max
@@ -224,20 +228,25 @@ void enableMotors(bool enable) {
 }
 
 void setDirections(long* currentPoint, long* destinationPoint, bool* homeAxis) {
+
+        bool homeIsUp[3] = {    ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_X),
+                                ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Y),
+                                ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Z) };
+
 	//if (currentPoint[0] < destinationPoint[0]) {
-	if  ((!homeAxis[0] && currentPoint[0] < destinationPoint[0]) || (homeAxis[0] &&  AXIS_HOME_UP_X) ) {
+	if  ((!homeAxis[0] && currentPoint[0] < destinationPoint[0]) || (homeAxis[0] &&  homeIsUp[0]) ) {
 		digitalWrite(X_DIR_PIN, HIGH);
 	} else {
 		digitalWrite(X_DIR_PIN, LOW);
 	}
 	//if (currentPoint[1] < destinationPoint[1]) {
-	if  ((!homeAxis[1] && currentPoint[1] < destinationPoint[1]) || (homeAxis[1] &&  AXIS_HOME_UP_Y) ) {
+	if  ((!homeAxis[1] && currentPoint[1] < destinationPoint[1]) || (homeAxis[1] &&  homeIsUp[1]) ) {
 		digitalWrite(Y_DIR_PIN, HIGH);
 	} else {
 		digitalWrite(Y_DIR_PIN, LOW);
 	}
 	//if (currentPoint[2] < destinationPoint[2]) {
-	if  ((!homeAxis[2] && currentPoint[2] < destinationPoint[2]) || (homeAxis[2] &&  AXIS_HOME_UP_Z) ) {
+	if  ((!homeAxis[2] && currentPoint[2] < destinationPoint[2]) || (homeAxis[2] &&  homeIsUp[2]) ) {
 		digitalWrite(Z_DIR_PIN, HIGH);
 	} else {
 		digitalWrite(Z_DIR_PIN, LOW);
@@ -362,12 +371,17 @@ int StepperControl::moveAbsolute(long xDest, long yDest,
 */
 
 int endStopsReached() {
-	bool x_min_endstop=(digitalRead(X_MIN_PIN) == INVERT_ENDSTOPS);
-	bool x_max_endstop=(digitalRead(X_MAX_PIN) == INVERT_ENDSTOPS);
-	bool y_min_endstop=(digitalRead(Y_MIN_PIN) == INVERT_ENDSTOPS);
-	bool y_max_endstop=(digitalRead(Y_MAX_PIN) == INVERT_ENDSTOPS);
-	bool z_min_endstop=(digitalRead(Z_MIN_PIN) == INVERT_ENDSTOPS);
-	bool z_max_endstop=(digitalRead(Z_MAX_PIN) == INVERT_ENDSTOPS);
+
+        bool endStInv[3] = {    ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_X),
+                                ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Y),
+                                ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Z) };
+
+	bool x_min_endstop=(digitalRead(X_MIN_PIN) == endStInv[0]);
+	bool x_max_endstop=(digitalRead(X_MAX_PIN) == endStInv[0]);
+	bool y_min_endstop=(digitalRead(Y_MIN_PIN) == endStInv[1]);
+	bool y_max_endstop=(digitalRead(Y_MAX_PIN) == endStInv[1]);
+	bool z_min_endstop=(digitalRead(Z_MIN_PIN) == endStInv[2]);
+	bool z_max_endstop=(digitalRead(Z_MAX_PIN) == endStInv[2]);
 	if(x_min_endstop || x_max_endstop || y_min_endstop || y_max_endstop || z_min_endstop || z_max_endstop) {
 		return 1;
 	}
@@ -419,40 +433,40 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 					1.0 * movementLength[2] / maxLenth };
 
 	//bool homeIsUp[3] = { AXIS_HOME_UP_X, AXIS_HOME_UP_Y, AXIS_HOME_UP_Z };
-	bool homeIsUp[3] = { 	ParameterList::getInstance()-getValue(MOVEMENT_HOME_UP_X),
-				ParameterList::getInstance()-getValue(MOVEMENT_HOME_UP_Y),
-				ParameterList::getInstance()-getValue(MOVEMENT_HOME_UP_Z) };
+	bool homeIsUp[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_X),
+				ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Y),
+				ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Z) };
 
-	bool speedMax[3] = { 	ParameterList::getInstance()-getValue(MOVEMENT_MAX_SPD_X),
-				ParameterList::getInstance()-getValue(MOVEMENT_MAX_SPD_Y),
-				ParameterList::getInstance()-getValue(MOVEMENT_MAX_SPD_Z) };
+	bool speedMax[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_X),
+				ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Y),
+				ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Z) };
 
-	bool speedMin[3] = { 	ParameterList::getInstance()-getValue(MOVEMENT_MIN_SPD_X),
-				ParameterList::getInstance()-getValue(MOVEMENT_MIN_SPD_Y),
-				ParameterList::getInstance()-getValue(MOVEMENT_MIN_SPD_Z) };
+	bool speedMin[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_X),
+				ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Y),
+				ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Z) };
 
-	bool stepsAcc[3] = { 	ParameterList::getInstance()-getValue(MOVEMENT_STEPS_ACC_DEC_X),
-				ParameterList::getInstance()-getValue(MOVEMENT_STEPS_ACC_DEC_Y),
-				ParameterList::getInstance()-getValue(MOVEMENT_STEPS_ACC_DEC_Z) };
+	bool stepsAcc[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_X),
+				ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Y),
+				ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Z) };
 
-	bool motorInv[3] = { 	ParameterList::getInstance()-getValue(MOVEMENT_INVERT_MOTOR_X),
-				ParameterList::getInstance()-getValue(MOVEMENT_INVERT_MOTOR_Y),
-				ParameterList::getInstance()-getValue(MOVEMENT_INVERT_MOTOR_Z) };
+	bool motorInv[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_X),
+				ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Y),
+				ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Z) };
 
-	bool endStInv[3] = { 	ParameterList::getInstance()-getValue(MOVEMENT_INVERT_ENDPOINTS_X),
-				ParameterList::getInstance()-getValue(MOVEMENT_INVERT_ENDPOINTS_Y),
-				ParameterList::getInstance()-getValue(MOVEMENT_INVERT_ENDPOINTS_Z) };
+	bool endStInv[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_X),
+				ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Y),
+				ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Z) };
 
-	bool timeOut[3] = { 	ParameterList::getInstance()-getValue(MOVEMENT_TIMEOUT_X),
-				ParameterList::getInstance()-getValue(MOVEMENT_TIMEOUT_X),
-				ParameterList::getInstance()-getValue(MOVEMENT_TIMEOUT_X) };
+	bool timeOut[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X),
+				ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X),
+				ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X) };
 
 
-        bool homeAxis[3] = { homeX, homeY, homeZ };
-        bool home = homeX || homeY || homeZ;
+        bool homeAxis[3] = { xHome, yHome, zHome };
+        bool home = xHome || yHome || zHome;
 
  	unsigned long currentMillis         = 0;
-	unsigned long currentStepsPerSecond = maxStepsPerSecond;
+	//unsigned long currentStepsPerSecond = maxStepsPerSecond;
 	unsigned long currentSteps          = 0;
 	unsigned long lastStepMillis[3]     = { 0, 0, 0 };
 
@@ -541,7 +555,7 @@ Serial.print("\n");
 //				axisSpeed = maxStepsPerSecond;
 //if (i == 0) {
 				axisSpeed = calculateSpeed(	sourcePoint[i],currentPoint[i],destinationPoint[i],
-						 		speedMax[i], speedMax[i], speedAcc[i]);
+						 		speedMax[i], speedMax[i], stepsAcc[i]);
 //}
 				if (homeAxis[i]){
 					// When home is active, the direction is fixed

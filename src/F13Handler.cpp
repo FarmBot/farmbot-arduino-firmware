@@ -30,7 +30,7 @@ Serial.print("home\n");
                 Serial.print("R99 HOME Z\n");
         }
 
-        StepperControl::getInstance()->moveAbsoluteConstant(0,0,0,0, false, false, true);
+        StepperControl::getInstance()->moveAbsoluteConstant(0,0,0, 0,0,0, false, false, true);
         if (LOGGING) {
                 CurrentState::getInstance()->print();
         }

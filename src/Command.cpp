@@ -1,14 +1,16 @@
 #include "Command.h"
 
 const char axisCodes[3]       = { 'X', 'Y', 'Z' };
+const char axisSpeedCodes[3]  = { 'A', 'B', 'C' };
 const char speedCode          = 'S';
 const char parameterIdCode    = 'P';
 const char parameterValueCode = 'V';
 
-double axisValue[3] = { 0.0, 0.0, 0.0 };
-double speedValue   = 0.0;
-long parameterId    = 0;
-long parameterValue = 0;
+double axisValue[3] 		= { 0.0, 0.0, 0.0 };
+long   axisSpeedValue[3] 	= { 0, 0, 0 };
+double speedValue   		= 0.0;
+long   parameterId    		= 0;
+long   parameterValue 		= 0;
 
 CommandCodeEnum commandCodeEnum = CODE_UNDEFINED;
 
@@ -89,6 +91,14 @@ void Command::getParameter(char* charPointer) {
 		axisValue[1] = atof(charPointer + 1);
 	} else if (charPointer[0] == axisCodes[2]) {
 		axisValue[2] = atof(charPointer + 1);
+
+	} else if (charPointer[0] == axisSpeedCodes[0]) {
+		axisSpeedValue[0] = atof(charPointer + 1);
+	} else if (charPointer[0] == axisSpeedCodes[1]) {
+		axisSpeedValue[1] = atof(charPointer + 1);
+	} else if (charPointer[0] == axisSpeedCodes[2]) {
+		axisSpeedValue[2] = atof(charPointer + 1);
+
 	} else if (charPointer[0] == speedCode) {
 		speedValue = atof(charPointer + 1);
 	} else if (charPointer[0] == parameterIdCode) {
@@ -124,6 +134,18 @@ double Command::getY() {
 }
 
 double Command::getZ() {
+	return axisValue[2];
+}
+
+long Command::getA() {
+	return axisValue[0];
+}
+
+long Command::getB() {
+	return axisValue[1];
+}
+
+long Command::getC() {
 	return axisValue[2];
 }
 

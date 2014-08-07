@@ -36,6 +36,11 @@ public:
 	double getY();
 	double getZ();
 	double getS();
+	double getP();
+	double getV();
+	long getA();
+	long getB();
+	long getC();
 private:
 	CommandCodeEnum getGCodeEnum(char* code);
 	void getParameter(char* charPointer);

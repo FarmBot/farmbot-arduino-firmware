@@ -10,16 +10,35 @@
 
 enum ParamListEnum
 {
-  PARAM_VERSION = 0,
-  MOVEMENT_TIMEOUT_X,
-  MOVEMENT_TIMEOUT_Y,
-  MOVEMENT_TIMEOUT_Z,
-  MOVEMENT_INVERT_ENDPOINTS_X,
-  MOVEMENT_INVERT_ENDPOINTS_Y,
-  MOVEMENT_INVERT_ENDPOINTS_Z,
-  MOVEMENT_INVERT_MOTOR_X,
-  MOVEMENT_INVERT_MOTOR_Y,
-  MOVEMENT_INVERT_MOTOR_Z
+	PARAM_VERSION 			= 0,
+
+	MOVEMENT_TIMEOUT_X		,
+	MOVEMENT_TIMEOUT_Y		,
+	MOVEMENT_TIMEOUT_Z		,
+
+	MOVEMENT_INVERT_ENDPOINTS_X	,
+	MOVEMENT_INVERT_ENDPOINTS_Y	,
+	MOVEMENT_INVERT_ENDPOINTS_Z	,
+
+	MOVEMENT_INVERT_MOTOR_X		,
+	MOVEMENT_INVERT_MOTOR_Y		,
+	MOVEMENT_INVERT_MOTOR_Z		,
+
+	MOVEMENT_STEPS_ACC_DEC_X	,
+	MOVEMENT_STEPS_ACC_DEC_Y	,
+	MOVEMENT_STEPS_ACC_DEC_Z	,
+
+	MOVEMENT_HOME_UP_X		,
+	MOVEMENT_HOME_UP_Y		,
+	MOVEMENT_HOME_UP_Z		,
+
+	MOVEMENT_MIN_SPD_X		,
+	MOVEMENT_MIN_SPD_Y		,
+	MOVEMENT_MIN_SPD_Z		,
+
+	MOVEMENT_MAX_SPD_X		,
+	MOVEMENT_MAX_SPD_Y		,
+	MOVEMENT_MAX_SPD_Z
 
 };
 
@@ -31,12 +50,12 @@ class ParameterList {
         ParamListEnum paramListEnum;
 public:
         static ParameterList* getInstance();
-	void writeValue(int id, long value);
-	void readValue(int id);
-	long getParamValue(int id);
+	int writeValue(int id, long value);
+	int readValue(int id);
+	long getValue(int id);
 private:
 	ParameterList();
-        virtual ~ParameterList();
+//        virtual ~ParameterList();
 	long paramValues[50];
 };
 
