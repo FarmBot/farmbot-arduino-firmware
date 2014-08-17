@@ -23,7 +23,7 @@ F21Handler::F21Handler() {
 
 int F21Handler::execute(Command* command) {
 
-	//ParameterList::getInstance()->readValue(command->getP());
+	ParameterList::getInstance()->readValue(command->getP());
 
 	return 0;
 }

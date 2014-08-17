@@ -1,31 +1,16 @@
 #include "ParameterList.h"
 
-static ParameterList* instance;
+static ParameterList* instanceParam;
+long paramValues[150];
 
 ParameterList * ParameterList::getInstance() {
-        if (!instance) {
-                instance = new ParameterList();
+        if (!instanceParam) {
+                instanceParam = new ParameterList();
         };
-        return instance;
+        return instanceParam;
 }
 
-
 ParameterList::ParameterList() {
-
-/*
-const unsigned int MOVEMENT_STEPS_ACC_DEC        = 100;
-const unsigned int MOVEMENT_MAX_STEPS_PER_SECOND = 1000;
-const unsigned int MOVEMENT_HOME_SPEED_S_P_S     = 200;
-const unsigned int MOVEMENT_TIMEOUT              = 30;
-const unsigned int MOVEMENT_SPEED_BASE_TIME      = 2000;
-const unsigned int MOVEMENT_DELAY                = 500;
-
-const unsigned int INVERT_ENDSTOPS = 1;
-
-const bool AXIS_HOME_UP_X = false;
-const bool AXIS_HOME_UP_Y = false;
-const bool AXIS_HOME_UP_Z = true;
-*/
 
 
 	paramValues[PARAM_VERSION]               = PARAM_VERSION_DEFAULT;
@@ -73,6 +58,7 @@ int ParameterList::readValue(int id) {
 
 	long value =  paramValues[id];
 
+/*
 	Serial.print("R22");
 	Serial.print(" ");
 	Serial.print("P");
@@ -80,11 +66,25 @@ int ParameterList::readValue(int id) {
 	Serial.print(" ");
 	Serial.print("V");
 	Serial.print(value);
+	Serial.print("\n");
+*/
 
 	return 0;
 }
 
 
 long ParameterList::getValue(int id) {
+
+/*
+	Serial.print("R99");
+	Serial.print(" ");
+	Serial.print("getValue");
+	Serial.print(" id ");
+	Serial.print(id);
+	Serial.print(" value");
+	Serial.print(paramValues[id]);
+	Serial.print("\n");
+*/
+
 	return  paramValues[id];
 }

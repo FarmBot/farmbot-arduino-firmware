@@ -31,28 +31,45 @@ int endStopAxisReached(int axis_nr, bool movement_forward) {
 
 	bool min_endstop = false;
 	bool max_endstop = false;
+	bool invert = false;
+
+	if (endStInv[axis_nr]) {
+		invert = true;
+	}
 
 	// for the axis to check, retrieve the end stop status
 
 	if (axis_nr == 0) {
-		min_endstop=(digitalRead(X_MIN_PIN) == endStInv[0]);
-		max_endstop=(digitalRead(X_MAX_PIN) == endStInv[0]);
+		min_endstop=(digitalRead(X_MIN_PIN) ^ invert);
+		max_endstop=(digitalRead(X_MAX_PIN) ^ invert);
 	}
 
 	if (axis_nr == 1) {
-		min_endstop=(digitalRead(Y_MIN_PIN) == endStInv[1]);
-		max_endstop=(digitalRead(Y_MAX_PIN) == endStInv[1]);
+		min_endstop=(digitalRead(Y_MIN_PIN) ^ invert);
+		max_endstop=(digitalRead(Y_MAX_PIN) ^ invert);
 	}
 
 	if (axis_nr == 2) {
-		min_endstop=(digitalRead(Z_MIN_PIN) == endStInv[2]);
-		max_endstop=(digitalRead(Z_MAX_PIN) == endStInv[2]);
+		min_endstop=(digitalRead(Z_MIN_PIN) ^ invert);
+		max_endstop=(digitalRead(Z_MAX_PIN) ^ invert);
 	}
+/*
+Serial.print("R99 end stop axis");
+Serial.print(" min_endstop ");
+Serial.print(min_endstop);
+Serial.print(" max_endstop ");
+Serial.print(max_endstop);
+Serial.print(" invert ");
+Serial.print(invert);
+Serial.print("\n");
+*/
 
 	// if moving forward, only check the end stop max
 	// for moving backwards, check only the end stop min
 
 	if((!movement_forward && min_endstop) || (movement_forward && max_endstop)) {
+//Serial.print("R99 end point reached\n");
+
 		return 1;
 	}
 	return 0;
@@ -60,11 +77,20 @@ int endStopAxisReached(int axis_nr, bool movement_forward) {
 
 void step(int axis, long &currentPoint, unsigned long steps,
 		long destinationPoint) {
+
+/*
+Serial.print("R99 ");
+Serial.print("currentPoint ");
+Serial.print(currentPoint);
+Serial.print("\n");
+*/
+
 	if (currentPoint < destinationPoint) {
 		currentPoint += steps;
 	} else if (currentPoint > destinationPoint) {
 		currentPoint -= steps;
 	}
+
 	switch (axis) {
 	case 0:
 		digitalWrite(X_STEP_PIN, HIGH);
@@ -80,14 +106,24 @@ void step(int axis, long &currentPoint, unsigned long steps,
 		break;
 	}
 
+/*
+Serial.print("R99 ");
+Serial.print("currentPoint ");
+Serial.print(currentPoint);
+Serial.print("\n");
+*/
 	// if the home end stop is reached, set the current position
 	if (endStopAxisReached(axis, false))
 	{
 		currentPoint = 0;
-//Serial.print("R99 end point reached\n");
+//Serial.print("R99 end point reached when stepping\n");
 	}
-
-
+/*
+Serial.print("R99 ");
+Serial.print("currentPoint ");
+Serial.print(currentPoint);
+Serial.print("\n");
+*/
 
 }
 
@@ -437,15 +473,15 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 				ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Y),
 				ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Z) };
 
-	bool speedMax[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_X),
+	long speedMax[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_X),
 				ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Y),
 				ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Z) };
 
-	bool speedMin[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_X),
+	long speedMin[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_X),
 				ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Y),
 				ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Z) };
 
-	bool stepsAcc[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_X),
+	long stepsAcc[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_X),
 				ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Y),
 				ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Z) };
 
@@ -457,10 +493,43 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 				ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Y),
 				ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Z) };
 
-	bool timeOut[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X),
+	long timeOut[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X),
 				ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X),
 				ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X) };
 
+
+/*
+Serial.print("R99 * ");
+Serial.print("\n");
+
+Serial.print("R99 ");
+Serial.print(" homeisup y (end) ");
+Serial.print(ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Y));
+Serial.print("\n");
+
+
+Serial.print("R99 ");
+Serial.print(" speedMin ");
+Serial.print(speedMin[0]);
+Serial.print(" | ");
+Serial.print(speedMin[1]);
+Serial.print(" | ");
+Serial.print(speedMin[2]);
+Serial.print(" timeOut ");
+Serial.print(timeOut[0]);
+Serial.print(" | ");
+Serial.print(timeOut[1]);
+Serial.print(" | ");
+Serial.print(timeOut[2]);
+Serial.print("\n");
+
+Serial.print("R99 ");
+Serial.print(" homeisup y ");
+Serial.print(homeIsUp[1]);
+Serial.print(" | ");
+Serial.print(ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Y));
+Serial.print("\n");
+*/
 
         bool homeAxis[3] = { xHome, yHome, zHome };
         bool home = xHome || yHome || zHome;
@@ -496,18 +565,29 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 	}
 
 /*
-Serial.print("R99 zdest ");
-Serial.print(zDest);
-Serial.print("\n");
-
-Serial.print("R99 home ");
-Serial.print(home);
-Serial.print("\n");
-
-Serial.print("R99 current z ");
-Serial.print(currentPoint[2]);
+Serial.print("R99 ydest ");
+Serial.print(yDest);
 Serial.print("\n");
 */
+//Serial.print("R99 home ");
+//Serial.print(home);
+//Serial.print("\n");
+/*
+Serial.print("R99 current y ");
+Serial.print(currentPoint[1]);
+Serial.print("\n");
+*/
+/*
+Serial.print("R99");
+Serial.print(" x ");
+Serial.print(speedMax[0]);
+Serial.print(" y ");
+Serial.print(speedMax[1]);
+Serial.print(" z ");
+Serial.print(speedMax[2]);
+Serial.print("\n");
+*/
+
 	// Prepare for movement
 
 	storeEndStops();
@@ -529,10 +609,28 @@ Serial.print("\n");
 		}
 	}
 
+/*
+Serial.print("R99 ydest ");
+Serial.print(yDest);
+Serial.print("\n");
+
+Serial.print("R99 homeisup y "); 
+Serial.print(homeIsUp[1]); 
+Serial.print("\n");
+
+Serial.print("R99 current y ");
+Serial.print(currentPoint[1]);
+Serial.print("\n");
+*/
 	// Start movement
 
 	while (!movementDone) {
 
+/*
+Serial.print("R99");
+Serial.print(" moving ");
+Serial.print("\n");
+*/
 	        storeEndStops();
 
 		stepMade = false;
@@ -546,7 +644,13 @@ Serial.print("\n");
 */
 		// Keep moving until destination reached or while moving home and end stop not reached
 		if  (!pointReached(currentPoint, destinationPoint) || home) {
-			// Check eachh axis
+/*
+Serial.print("R99");
+Serial.print(" after check ");
+Serial.print("\n");
+*/
+
+			// Check each axis
 			for (int i = 0; i < 3; i++) {
 
 				// Set the speed for movement
@@ -571,12 +675,53 @@ Serial.print("\n");
 					movementToHome = (abs(currentPoint[i]) >= abs(destinationPoint[i]));
 				}
 
+
+
+
+				if (millis() - timeStart > timeOut[i] * MOVEMENT_SPEED_BASE_TIME) {
+					error        = 1;
+
+Serial.print("R99 timeout axis ");
+Serial.print(i);
+Serial.print("\n");
+
+				} else {
+
+
+					// If end stop reached, don't move anymore
+					if ((homeAxis[i] && !endStopAxisReached(i, false)) || (!homeAxis[i] &&  !endStopAxisReached(i, !movementToHome) &&  currentPoint[i] !=  destinationPoint[i] )) {
+						moving = true;
+
+
+/*
+Serial.print("R99 ");
+Serial.print(" moving ");
+Serial.print(" axis ");
+Serial.print(i);
+Serial.print(" axisspeed ");
+Serial.print(axisSpeed);
+Serial.print("\n");
+*/
+
+/*
+Serial.print("R99 ");
+Serial.print(" current ");
+Serial.print(currentMillis);
+Serial.print(" last ");
+Serial.print(lastStepMillis[i]);
+Serial.print(" spd ");
+Serial.print( MOVEMENT_SPEED_BASE_TIME / axisSpeed);
+Serial.print("\n");
+*/
+						// Only do a step every x milliseconds
+						if (currentMillis - lastStepMillis[i] >= MOVEMENT_SPEED_BASE_TIME / axisSpeed) {
+
 /*
 Serial.print("R99 axis ");
 Serial.print(i);
 Serial.print("\n");
-*/
-/*
+
+
 Serial.print("R99");
 Serial.print(" up ");
 Serial.print(movementUp);
@@ -603,26 +748,10 @@ Serial.print(homeAxis[i]);
 Serial.print("\n");
 */
 
-				if (millis() - timeStart > timeOut[i] * MOVEMENT_SPEED_BASE_TIME) {
-					error        = 1;
-				} else {
 
 
-					// If end stop reached, don't move anymore
-					if ((homeAxis[i] && !endStopAxisReached(i, false)) || (!homeAxis[i] &&  !endStopAxisReached(i, !movementToHome) &&  currentPoint[i] !=  destinationPoint[i] )) {
-						moving = true;
-/*
-Serial.print("R99 ");
-Serial.print(" current ");
-Serial.print(currentMillis);
-Serial.print(" last ");
-Serial.print(lastStepMillis[i]);
-Serial.print(" spd ");
-Serial.print( 1000 / axisSpeed);
-Serial.print("\n");
-*/
-						// Only do a step every x milliseconds
-						if (currentMillis - lastStepMillis[i] >= MOVEMENT_SPEED_BASE_TIME / axisSpeed) {
+
+
 							if (homeAxis[i] && currentPoint[i] == 0) {
 								if (homeIsUp[i]) {
 									currentPoint[i] = -1;
@@ -630,16 +759,19 @@ Serial.print("\n");
 									currentPoint[i] =  1;
 								}
 							}
+/*
+Serial.print("R99 ");
+Serial.print(" step ");
+Serial.print("\n");
+*/
 
-//Serial.print("R99 ");
-//Serial.print(" step ");
-//Serial.print("\n");
-/**/
 
 
 							step(i, currentPoint[i], 1, destinationPoint[i]);
 							stepMade = true;
 							lastStepMillis[i] = currentMillis;
+
+
 						}
 					}
         	                }
@@ -672,19 +804,23 @@ Serial.print("\n");
 		delayMicroseconds(500);
 	}
 
-	/**/ enableMotors(false);
-
+	enableMotors(false);
 
 	CurrentState::getInstance()->setX(currentPoint[0]);
 	CurrentState::getInstance()->setY(currentPoint[1]);
 	CurrentState::getInstance()->setZ(currentPoint[2]);
 
-	CurrentState::getInstance()->setZ(currentPoint[2]);
-	CurrentState::getInstance()->setZ(currentPoint[2]);
+//	CurrentState::getInstance()->setZ(currentPoint[2]);
+//	CurrentState::getInstance()->setZ(currentPoint[2]);
 
         storeEndStops();
 	reportEndStops();
 	reportPosition();
-
+/*
+Serial.print("R99 ");
+Serial.print(" homeisup y (end) ");
+Serial.print(ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Y));
+Serial.print("\n");
+*/
 	return error;
 }

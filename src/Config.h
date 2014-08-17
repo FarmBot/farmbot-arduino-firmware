@@ -48,9 +48,9 @@ const long MOVEMENT_HOME_UP_X_DEFAULT           = 0;
 const long MOVEMENT_HOME_UP_Y_DEFAULT           = 0;
 const long MOVEMENT_HOME_UP_Z_DEFAULT           = 1;
 
-const long MOVEMENT_MIN_SPD_X_DEFAULT           = 0;
-const long MOVEMENT_MIN_SPD_Y_DEFAULT           = 0;
-const long MOVEMENT_MIN_SPD_Z_DEFAULT           = 0;
+const long MOVEMENT_MIN_SPD_X_DEFAULT           = 200;
+const long MOVEMENT_MIN_SPD_Y_DEFAULT           = 200;
+const long MOVEMENT_MIN_SPD_Z_DEFAULT           = 200;
 
 const long MOVEMENT_MAX_SPD_X_DEFAULT           = 1000;
 const long MOVEMENT_MAX_SPD_Y_DEFAULT           = 1000;

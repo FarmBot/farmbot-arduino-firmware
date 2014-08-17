@@ -10,11 +10,11 @@
 
 #include "Arduino.h"
 #include "CurrentState.h"
+#include "ParameterList.h"
 #include "pins.h"
 #include "Config.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "ParameterList.h"
 
 class StepperControl {
 public:

@@ -23,7 +23,7 @@ F22Handler::F22Handler() {
 
 int F22Handler::execute(Command* command) {
 
-	//ParameterList::getInstance()->readValue(command->getP());
+	ParameterList::getInstance()->readValue(command->getP());
 
 	return 0;
 }
