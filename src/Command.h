@@ -36,8 +36,8 @@ public:
 	double getY();
 	double getZ();
 	double getS();
-	double getP();
-	double getV();
+	long getP();
+	long getV();
 	long getA();
 	long getB();
 	long getC();

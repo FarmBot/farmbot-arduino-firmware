@@ -51,6 +51,21 @@ int ParameterList::writeValue(int id, long value) {
 
 	paramValues[id] = value;
 
+/*
+	Serial.print("R99");
+	Serial.print(" ");
+	Serial.print("writeValue");
+	Serial.print(" ");
+	Serial.print("P");
+	Serial.print(" ");
+	Serial.print(id);
+	Serial.print(" ");
+	Serial.print("V");
+	Serial.print(" ");
+	Serial.print(value);
+	Serial.print("\n");
+*/
+
 	return 0;
 }
 
@@ -58,8 +73,8 @@ int ParameterList::readValue(int id) {
 
 	long value =  paramValues[id];
 
-/*
-	Serial.print("R22");
+
+	Serial.print("R21");
 	Serial.print(" ");
 	Serial.print("P");
 	Serial.print(id);
@@ -67,7 +82,7 @@ int ParameterList::readValue(int id) {
 	Serial.print("V");
 	Serial.print(value);
 	Serial.print("\n");
-*/
+
 
 	return 0;
 }

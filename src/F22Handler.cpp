@@ -23,7 +23,26 @@ F22Handler::F22Handler() {
 
 int F22Handler::execute(Command* command) {
 
-	ParameterList::getInstance()->readValue(command->getP());
+/*
+Serial.print("R99");
+Serial.print(" ");
+Serial.print("write value");
+Serial.print(" ");
+Serial.print("P");
+
+Serial.print(" ");
+Serial.print(command->getP());
+Serial.print(" ");
+
+Serial.print("V");
+Serial.print(" ");
+Serial.print(command->getV());
+Serial.print(" ");
+
+Serial.print("\n");
+*/
+
+	ParameterList::getInstance()->writeValue(command->getP(), command->getV());
 
 	return 0;
 }
