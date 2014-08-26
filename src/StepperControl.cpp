@@ -216,36 +216,39 @@ unsigned int calculateSpeed(long sourcePosition, long currentPosition, long dest
 		}
 	}
 
-//Serial.print("R99");
+if (millis() % 200 == 0 && currentPosition != destinationPosition) {
 
-//Serial.print(" a ");
-//Serial.print(endPos);
-//Serial.print(" b ");
-//Serial.print((endPos - stepsAccDec));
-//Serial.print(" c ");
-//Serial.print(curPos < (endPos - stepsAccDec));
+	Serial.print("R99");
+
+//	Serial.print(" a ");
+//	Serial.print(endPos);
+//	Serial.print(" b ");
+//	Serial.print((endPos - stepsAccDec));
+//	Serial.print(" c ");
+//	Serial.print(curPos < (endPos - stepsAccDec));
 
 
-//Serial.print(" sta ");
-//Serial.print(staPos);
-//Serial.print(" cur ");
-//Serial.print(curPos);
-//Serial.print(" end ");
-//Serial.print(endPos);
-//Serial.print(" half ");
-//Serial.print(halfway);
-//Serial.print(" len ");
-//Serial.print(stepsAccDec);
-//Serial.print(" min ");
-//Serial.print(minSpeed);
-//Serial.print(" max ");
-//Serial.print(maxSpeed);
-//Serial.print(" spd ");
+	Serial.print(" sta ");
+	Serial.print(staPos);
+	Serial.print(" cur ");
+	Serial.print(curPos);
+	Serial.print(" end ");
+	Serial.print(endPos);
+	Serial.print(" half ");
+	Serial.print(halfway);
+	Serial.print(" len ");
+	Serial.print(stepsAccDec);
+//	Serial.print(" min ");
+//	Serial.print(minSpeed);
+//	Serial.print(" max ");
+//	Serial.print(maxSpeed);
+	Serial.print(" spd ");
 
-//Serial.print(" ");
-//Serial.print(newSpeed);
+	Serial.print(" ");
+	Serial.print(newSpeed);
 
-//Serial.print("\n");
+	Serial.print("\n");
+}
 
 	return newSpeed;
 }
@@ -577,14 +580,37 @@ Serial.print("R99 current y ");
 Serial.print(currentPoint[1]);
 Serial.print("\n");
 */
+
 /*
 Serial.print("R99");
+Serial.print(" max ");
 Serial.print(" x ");
 Serial.print(speedMax[0]);
 Serial.print(" y ");
 Serial.print(speedMax[1]);
 Serial.print(" z ");
 Serial.print(speedMax[2]);
+Serial.print("\n");
+
+
+Serial.print("R99");
+Serial.print(" min ");
+Serial.print(" x ");
+Serial.print(speedMin[0]);
+Serial.print(" y ");
+Serial.print(speedMin[1]);
+Serial.print(" z ");
+Serial.print(speedMin[2]);
+Serial.print("\n");
+
+Serial.print("R99");
+Serial.print(" stepsAcc ");
+Serial.print(" x ");
+Serial.print(stepsAcc[0]);
+Serial.print(" y ");
+Serial.print(stepsAcc[1]);
+Serial.print(" z ");
+Serial.print(stepsAcc[2]);
 Serial.print("\n");
 */
 
@@ -657,10 +683,24 @@ Serial.print("\n");
 				//axisSpeed = (1.0*currentStepsPerSecond * lengthRatio[i] - 1);
 
 //				axisSpeed = maxStepsPerSecond;
-//if (i == 0) {
+
 				axisSpeed = calculateSpeed(	sourcePoint[i],currentPoint[i],destinationPoint[i],
-						 		speedMax[i], speedMax[i], stepsAcc[i]);
-//}
+						 		speedMin[i], speedMax[i], stepsAcc[i]);
+
+/*
+if (i == 0) {
+	if (millis() % 200 == 0) {
+		Serial.print("R99");
+		Serial.print(" axisSpeed ");
+		Serial.print(axisSpeed);
+		Serial.print("\n");
+		
+	}
+}
+*/
+
+
+
 				if (homeAxis[i]){
 					// When home is active, the direction is fixed
 					movementUp     = homeIsUp[i];
@@ -680,11 +720,11 @@ Serial.print("\n");
 
 				if (millis() - timeStart > timeOut[i] * MOVEMENT_SPEED_BASE_TIME) {
 					error        = 1;
-
+/*
 Serial.print("R99 timeout axis ");
 Serial.print(i);
 Serial.print("\n");
-
+*/
 				} else {
 
 
