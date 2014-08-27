@@ -53,23 +53,11 @@ int endStopAxisReached(int axis_nr, bool movement_forward) {
 		min_endstop=(digitalRead(Z_MIN_PIN) ^ invert);
 		max_endstop=(digitalRead(Z_MAX_PIN) ^ invert);
 	}
-/*
-Serial.print("R99 end stop axis");
-Serial.print(" min_endstop ");
-Serial.print(min_endstop);
-Serial.print(" max_endstop ");
-Serial.print(max_endstop);
-Serial.print(" invert ");
-Serial.print(invert);
-Serial.print("\n");
-*/
 
 	// if moving forward, only check the end stop max
 	// for moving backwards, check only the end stop min
 
 	if((!movement_forward && min_endstop) || (movement_forward && max_endstop)) {
-//Serial.print("R99 end point reached\n");
-
 		return 1;
 	}
 	return 0;
@@ -77,13 +65,6 @@ Serial.print("\n");
 
 void step(int axis, long &currentPoint, unsigned long steps,
 		long destinationPoint) {
-
-/*
-Serial.print("R99 ");
-Serial.print("currentPoint ");
-Serial.print(currentPoint);
-Serial.print("\n");
-*/
 
 	if (currentPoint < destinationPoint) {
 		currentPoint += steps;
@@ -106,25 +87,11 @@ Serial.print("\n");
 		break;
 	}
 
-/*
-Serial.print("R99 ");
-Serial.print("currentPoint ");
-Serial.print(currentPoint);
-Serial.print("\n");
-*/
 	// if the home end stop is reached, set the current position
 	if (endStopAxisReached(axis, false))
 	{
 		currentPoint = 0;
-//Serial.print("R99 end point reached when stepping\n");
 	}
-/*
-Serial.print("R99 ");
-Serial.print("currentPoint ");
-Serial.print(currentPoint);
-Serial.print("\n");
-*/
-
 }
 
 bool pointReached(long currentPoint[3],
@@ -216,39 +183,41 @@ unsigned int calculateSpeed(long sourcePosition, long currentPosition, long dest
 		}
 	}
 
-if (millis() % 200 == 0 && currentPosition != destinationPosition) {
+	if (LOGGING) {
+		if (millis() % 200 == 0 && currentPosition != destinationPosition) {
 
-	Serial.print("R99");
+			Serial.print("R99");
 
-//	Serial.print(" a ");
-//	Serial.print(endPos);
-//	Serial.print(" b ");
-//	Serial.print((endPos - stepsAccDec));
-//	Serial.print(" c ");
-//	Serial.print(curPos < (endPos - stepsAccDec));
+		//	Serial.print(" a ");
+		//	Serial.print(endPos);
+		//	Serial.print(" b ");
+		//	Serial.print((endPos - stepsAccDec));
+		//	Serial.print(" c ");
+		//	Serial.print(curPos < (endPos - stepsAccDec));
 
 
-	Serial.print(" sta ");
-	Serial.print(staPos);
-	Serial.print(" cur ");
-	Serial.print(curPos);
-	Serial.print(" end ");
-	Serial.print(endPos);
-	Serial.print(" half ");
-	Serial.print(halfway);
-	Serial.print(" len ");
-	Serial.print(stepsAccDec);
-//	Serial.print(" min ");
-//	Serial.print(minSpeed);
-//	Serial.print(" max ");
-//	Serial.print(maxSpeed);
-	Serial.print(" spd ");
+			Serial.print(" sta ");
+			Serial.print(staPos);
+			Serial.print(" cur ");
+			Serial.print(curPos);
+			Serial.print(" end ");
+			Serial.print(endPos);
+			Serial.print(" half ");
+			Serial.print(halfway);
+			Serial.print(" len ");
+			Serial.print(stepsAccDec);
+		//	Serial.print(" min ");
+		//	Serial.print(minSpeed);
+		//	Serial.print(" max ");
+		//	Serial.print(maxSpeed);
+			Serial.print(" spd ");
 
-	Serial.print(" ");
-	Serial.print(newSpeed);
+			Serial.print(" ");
+			Serial.print(newSpeed);
 
-	Serial.print("\n");
-}
+			Serial.print("\n");
+		}
+	}
 
 	return newSpeed;
 }
@@ -299,115 +268,6 @@ unsigned long getLength(long l1, long l2) {
 		return l2 - l1;
 	}
 }
-
-/**
- * xDest - destination X in steps
- * yDest - destination Y in steps
- * zDest - destination Z in steps
- * maxStepsPerSecond - maximum number of steps per second
- * maxAccelerationStepsPerSecond - maximum number of acceleration in steps per second
- */
-/*
-int StepperControl::moveAbsolute(long xDest, long yDest,
-		long zDest, unsigned int maxStepsPerSecond,
-		unsigned int maxAccelerationStepsPerSecond) {
-	long currentPoint[3] = { CurrentState::getInstance()->getX(),
-			CurrentState::getInstance()->getY(),
-			CurrentState::getInstance()->getZ() };
-	long destinationPoint[3] = { xDest, yDest, zDest };
-
-	Serial.print("Destination point:");
-	Serial.print(destinationPoint[0]);
-	Serial.print(", ");
-	Serial.print(destinationPoint[1]);
-	Serial.print(", ");
-	Serial.println(destinationPoint[2]);
-	Serial.print("Current point:");
-	Serial.print(currentPoint[0]);
-	Serial.print(", ");
-	Serial.print(currentPoint[1]);
-	Serial.print(", ");
-	Serial.println(currentPoint[2]);
-
-
-	unsigned long movementLength[3] = { getLength(destinationPoint[0], currentPoint[0]),
-			getLength(destinationPoint[1], currentPoint[1]),
-			getLength(destinationPoint[2], currentPoint[2])};
-	unsigned long maxLenth = getMaxLength(movementLength);
-	double lengthRatio[3] = { 1.0 * movementLength[0] / maxLenth, 1.0
-			* movementLength[1] / maxLenth, 1.0 * movementLength[2] / maxLenth };
-	Serial.print("Max length:");
-	Serial.print(maxLenth);
-	Serial.print("Length ratio:");
-	Serial.print(lengthRatio[0]);
-	Serial.print(", ");
-	Serial.print(lengthRatio[1]);
-	Serial.print(", ");
-	Serial.println(lengthRatio[2]);
-
-	unsigned int accelerationMilliseconds = maxStepsPerSecond
-			/ maxAccelerationStepsPerSecond * 1000;
-
-	unsigned int currentMillis = 0;
-	unsigned int currentStepsPerSecond = 0;
-	unsigned int currentSteps = 0;
-	unsigned int lastStepMillis[3] = { 0, 0, 0 };
-	unsigned int accelerationSteps = 0;
-
-	enableMotors(true);
-
-	setDirections(currentPoint, destinationPoint);
-
-	while (!pointReached(currentPoint, destinationPoint)) {
-		currentStepsPerSecond = calculateSpeed(currentStepsPerSecond,
-				maxStepsPerSecond, currentSteps, currentMillis, maxLenth,
-				accelerationSteps, maxAccelerationStepsPerSecond);
-		bool stepMade = false;
-		for (int i = 0; i < 3; i++) {
-			if (abs(lastStepMillis[i] - currentMillis)
-					> 1000 / (1.0*currentStepsPerSecond * lengthRatio[i] - 1)) {
-				step(i, currentPoint[i], 1, destinationPoint[i]);
-				stepMade = true;
-				lastStepMillis[i] = currentMillis;
-			}
-		}
-		delayMicroseconds(500);
-		if (stepMade) {
-			currentSteps++;
-			if (LOGGING) {
-				Serial.print("Step made:");
-				Serial.print(", Current step= ");
-				Serial.print(currentSteps);
-				Serial.print(", Current millis= ");
-				Serial.print(currentMillis);
-				Serial.print(", Current steps per sec= ");
-				Serial.println(currentStepsPerSecond);
-			}
-		}
-		currentMillis++;
-		//delay(1);
-		//delayMicroseconds(500);
-		if (stepMade) {
-			digitalWrite(X_STEP_PIN, LOW);
-			digitalWrite(Y_STEP_PIN, LOW);
-			digitalWrite(Z_STEP_PIN, LOW);
-		}
-		delayMicroseconds(500);
-	}
-
-	//enableMotors(false);
-	Serial.print("FINISHED at: ");
-	Serial.print(currentPoint[0]);
-	Serial.print(", ");
-	Serial.print(currentPoint[1]);
-	Serial.print(", ");
-	Serial.println(currentPoint[2]);
-	CurrentState::getInstance()->setX(currentPoint[0]);
-	CurrentState::getInstance()->setY(currentPoint[1]);
-	CurrentState::getInstance()->setZ(currentPoint[2]);
-	return 0;
-}
-*/
 
 int endStopsReached() {
 
@@ -471,7 +331,6 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 					1.0 * movementLength[1] / maxLenth,
 					1.0 * movementLength[2] / maxLenth };
 
-	//bool homeIsUp[3] = { AXIS_HOME_UP_X, AXIS_HOME_UP_Y, AXIS_HOME_UP_Z };
 	bool homeIsUp[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_X),
 				ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Y),
 				ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Z) };
@@ -499,40 +358,6 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 	long timeOut[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X),
 				ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X),
 				ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X) };
-
-
-/*
-Serial.print("R99 * ");
-Serial.print("\n");
-
-Serial.print("R99 ");
-Serial.print(" homeisup y (end) ");
-Serial.print(ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Y));
-Serial.print("\n");
-
-
-Serial.print("R99 ");
-Serial.print(" speedMin ");
-Serial.print(speedMin[0]);
-Serial.print(" | ");
-Serial.print(speedMin[1]);
-Serial.print(" | ");
-Serial.print(speedMin[2]);
-Serial.print(" timeOut ");
-Serial.print(timeOut[0]);
-Serial.print(" | ");
-Serial.print(timeOut[1]);
-Serial.print(" | ");
-Serial.print(timeOut[2]);
-Serial.print("\n");
-
-Serial.print("R99 ");
-Serial.print(" homeisup y ");
-Serial.print(homeIsUp[1]);
-Serial.print(" | ");
-Serial.print(ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Y));
-Serial.print("\n");
-*/
 
         bool homeAxis[3] = { xHome, yHome, zHome };
         bool home = xHome || yHome || zHome;
@@ -567,53 +392,6 @@ Serial.print("\n");
 		speedMax[2] = zMaxSpd;
 	}
 
-/*
-Serial.print("R99 ydest ");
-Serial.print(yDest);
-Serial.print("\n");
-*/
-//Serial.print("R99 home ");
-//Serial.print(home);
-//Serial.print("\n");
-/*
-Serial.print("R99 current y ");
-Serial.print(currentPoint[1]);
-Serial.print("\n");
-*/
-
-/*
-Serial.print("R99");
-Serial.print(" max ");
-Serial.print(" x ");
-Serial.print(speedMax[0]);
-Serial.print(" y ");
-Serial.print(speedMax[1]);
-Serial.print(" z ");
-Serial.print(speedMax[2]);
-Serial.print("\n");
-
-
-Serial.print("R99");
-Serial.print(" min ");
-Serial.print(" x ");
-Serial.print(speedMin[0]);
-Serial.print(" y ");
-Serial.print(speedMin[1]);
-Serial.print(" z ");
-Serial.print(speedMin[2]);
-Serial.print("\n");
-
-Serial.print("R99");
-Serial.print(" stepsAcc ");
-Serial.print(" x ");
-Serial.print(stepsAcc[0]);
-Serial.print(" y ");
-Serial.print(stepsAcc[1]);
-Serial.print(" z ");
-Serial.print(stepsAcc[2]);
-Serial.print("\n");
-*/
-
 	// Prepare for movement
 
 	storeEndStops();
@@ -635,71 +413,23 @@ Serial.print("\n");
 		}
 	}
 
-/*
-Serial.print("R99 ydest ");
-Serial.print(yDest);
-Serial.print("\n");
-
-Serial.print("R99 homeisup y "); 
-Serial.print(homeIsUp[1]); 
-Serial.print("\n");
-
-Serial.print("R99 current y ");
-Serial.print(currentPoint[1]);
-Serial.print("\n");
-*/
 	// Start movement
 
 	while (!movementDone) {
 
-/*
-Serial.print("R99");
-Serial.print(" moving ");
-Serial.print("\n");
-*/
 	        storeEndStops();
 
 		stepMade = false;
 		moving   = false;
-/*
-		if  (pointReached(currentPoint, destinationPoint)) {
-			Serial.print("R99 point reached ");
-			Serial.print(currentPoint[2]);
-			Serial.print("\n");
-		}
-*/
+
 		// Keep moving until destination reached or while moving home and end stop not reached
 		if  (!pointReached(currentPoint, destinationPoint) || home) {
-/*
-Serial.print("R99");
-Serial.print(" after check ");
-Serial.print("\n");
-*/
 
 			// Check each axis
 			for (int i = 0; i < 3; i++) {
 
-				// Set the speed for movement
-				//axisSpeed = (1.0*currentStepsPerSecond * lengthRatio[i] - 1);
-
-//				axisSpeed = maxStepsPerSecond;
-
 				axisSpeed = calculateSpeed(	sourcePoint[i],currentPoint[i],destinationPoint[i],
 						 		speedMin[i], speedMax[i], stepsAcc[i]);
-
-/*
-if (i == 0) {
-	if (millis() % 200 == 0) {
-		Serial.print("R99");
-		Serial.print(" axisSpeed ");
-		Serial.print(axisSpeed);
-		Serial.print("\n");
-		
-	}
-}
-*/
-
-
 
 				if (homeAxis[i]){
 					// When home is active, the direction is fixed
@@ -715,16 +445,8 @@ if (i == 0) {
 					movementToHome = (abs(currentPoint[i]) >= abs(destinationPoint[i]));
 				}
 
-
-
-
 				if (millis() - timeStart > timeOut[i] * MOVEMENT_SPEED_BASE_TIME) {
 					error        = 1;
-/*
-Serial.print("R99 timeout axis ");
-Serial.print(i);
-Serial.print("\n");
-*/
 				} else {
 
 
@@ -732,93 +454,36 @@ Serial.print("\n");
 					if ((homeAxis[i] && !endStopAxisReached(i, false)) || (!homeAxis[i] &&  !endStopAxisReached(i, !movementToHome) &&  currentPoint[i] !=  destinationPoint[i] )) {
 						moving = true;
 
-
-/*
-Serial.print("R99 ");
-Serial.print(" moving ");
-Serial.print(" axis ");
-Serial.print(i);
-Serial.print(" axisspeed ");
-Serial.print(axisSpeed);
-Serial.print("\n");
-*/
-
-/*
-Serial.print("R99 ");
-Serial.print(" current ");
-Serial.print(currentMillis);
-Serial.print(" last ");
-Serial.print(lastStepMillis[i]);
-Serial.print(" spd ");
-Serial.print( MOVEMENT_SPEED_BASE_TIME / axisSpeed);
-Serial.print("\n");
-*/
-						// Only do a step every x milliseconds
+						// Only do a step every x milliseconds (x is calculated above)
 						if (currentMillis - lastStepMillis[i] >= MOVEMENT_SPEED_BASE_TIME / axisSpeed) {
 
-/*
-Serial.print("R99 axis ");
-Serial.print(i);
-Serial.print("\n");
-
-
-Serial.print("R99");
-Serial.print(" up ");
-Serial.print(movementUp);
-Serial.print(" tohome ");
-Serial.print(movementToHome);
-Serial.print(" spd ");
-Serial.print(axisSpeed);
-Serial.print("\n");
-
-Serial.print("R99 ");
-Serial.print(" end up ");
-Serial.print(endStopAxisReached(i, movementUp));
-Serial.print(" end home ");
-Serial.print(endStopAxisReached(i, !movementToHome));
-Serial.print("\n");
-
-Serial.print("R99 ");
-Serial.print(" current ");
-Serial.print(currentPoint[i]);
-Serial.print(" dest ");
-Serial.print(destinationPoint[i]);
-Serial.print(" home ");
-Serial.print(homeAxis[i]);
-Serial.print("\n");
-*/
-
-
-
-
-
 							if (homeAxis[i] && currentPoint[i] == 0) {
+								// Keep moving toward end stop even when position is zero
+								// but end stop is not yet active
 								if (homeIsUp[i]) {
 									currentPoint[i] = -1;
 								} else {
 									currentPoint[i] =  1;
 								}
 							}
-/*
-Serial.print("R99 ");
-Serial.print(" step ");
-Serial.print("\n");
-*/
 
-
-
+							// set a step on the motors
 							step(i, currentPoint[i], 1, destinationPoint[i]);
 							stepMade = true;
 							lastStepMillis[i] = currentMillis;
-
-
 						}
+
+					}
+
+					// If end stop for home is active, set the position to zero
+					if (endStopAxisReached(i, false))
+					{
+						currentPoint[i] = 0;
 					}
         	                }
 			}
 		} else {
 			movementDone = true;
-//			Serial.print("R99 points reached\n");
 		}
 		delayMicroseconds(MOVEMENT_DELAY);
 		if (stepMade) {
@@ -833,13 +498,7 @@ Serial.print("\n");
 		if (!moving)
 		{
 			movementDone = true;
-//Serial.print("R99 movement done\n");
 		}
-//		if (millis() - timeStart > MOVEMENT_TIMEOUT * MOVEMENT_SPEED_BASE_TIME)
-//		{
-//			movementDone = true;
-//			error        = 1;
-//		}
 
 		delayMicroseconds(500);
 	}
@@ -850,17 +509,9 @@ Serial.print("\n");
 	CurrentState::getInstance()->setY(currentPoint[1]);
 	CurrentState::getInstance()->setZ(currentPoint[2]);
 
-//	CurrentState::getInstance()->setZ(currentPoint[2]);
-//	CurrentState::getInstance()->setZ(currentPoint[2]);
-
         storeEndStops();
 	reportEndStops();
 	reportPosition();
-/*
-Serial.print("R99 ");
-Serial.print(" homeisup y (end) ");
-Serial.print(ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Y));
-Serial.print("\n");
-*/
+
 	return error;
 }
