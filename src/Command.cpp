@@ -1,9 +1,17 @@
 #include "Command.h"
 
-const char axisCodes[3] = { 'X', 'Y', 'Z' };
-const char speedCode = 'S';
-double axisValue[3] = { 0.0, 0.0, 0.0 };
-double speedValue = 0.0;
+const char axisCodes[3]       = { 'X', 'Y', 'Z' };
+const char axisSpeedCodes[3]  = { 'A', 'B', 'C' };
+const char speedCode          = 'S';
+const char parameterIdCode    = 'P';
+const char parameterValueCode = 'V';
+
+double axisValue[3] 		= { 0.0, 0.0, 0.0 };
+long   axisSpeedValue[3] 	= { 0, 0, 0 };
+double speedValue   		= 0.0;
+long   parameterId    		= 0;
+long   parameterValue 		= 0;
+
 CommandCodeEnum commandCodeEnum = CODE_UNDEFINED;
 
 Command::Command(String commandString) {
@@ -46,6 +54,16 @@ CommandCodeEnum Command::getGCodeEnum(char* code) {
 		return F13;
 	}
 
+	if (strcmp(code, "F20") == 0) {
+		return F20;
+	}
+	if (strcmp(code, "F21") == 0) {
+		return F21;
+	}
+	if (strcmp(code, "F22") == 0) {
+		return F22;
+	}
+
 	if (strcmp(code, "F81") == 0) {
 		return F81;
 	}
@@ -69,27 +87,43 @@ double minusNotAllowed(double value) {
 void Command::getParameter(char* charPointer) {
 	if (charPointer[0] == axisCodes[0]) {
 		axisValue[0] = atof(charPointer + 1);
-//		axisValue[0] = minusNotAllowed(axisValue[0]);
 	} else if (charPointer[0] == axisCodes[1]) {
 		axisValue[1] = atof(charPointer + 1);
 	} else if (charPointer[0] == axisCodes[2]) {
 		axisValue[2] = atof(charPointer + 1);
+
+	} else if (charPointer[0] == axisSpeedCodes[0]) {
+		axisSpeedValue[0] = atof(charPointer + 1);
+	} else if (charPointer[0] == axisSpeedCodes[1]) {
+		axisSpeedValue[1] = atof(charPointer + 1);
+	} else if (charPointer[0] == axisSpeedCodes[2]) {
+		axisSpeedValue[2] = atof(charPointer + 1);
+
 	} else if (charPointer[0] == speedCode) {
-		speedValue = atof(charPointer + 1);
+		speedValue      = atof(charPointer + 1);
+	} else if (charPointer[0] == parameterIdCode) {
+		parameterId     = atof(charPointer + 1);
+	} else if (charPointer[0] == parameterValueCode) {
+		parameterValue  = atof(charPointer + 1);
 	}
 }
 
 void Command::print() {
-	Serial.print("R99 Command with code:G");
+	Serial.print("R99 Command with code: ");
 	Serial.print(commandCodeEnum);
-	Serial.print(", X:");
+	Serial.print(", X: ");
 	Serial.print(axisValue[0]);
-	Serial.print(", Y:");
+	Serial.print(", Y: ");
 	Serial.print(axisValue[1]);
-	Serial.print(", Z:");
-	Serial.println(axisValue[2]);
-	Serial.print(", S:");
-	Serial.println(speedValue);
+	Serial.print(", Z: ");
+	Serial.print(axisValue[2]);
+	Serial.print(", S: ");
+	Serial.print(speedValue);
+	Serial.print(", P: ");
+	Serial.print(parameterId);
+	Serial.print(", V: ");
+	Serial.print(parameterValue);
+	Serial.print("\n");
 }
 
 CommandCodeEnum Command::getCodeEnum() {
@@ -108,7 +142,23 @@ double Command::getZ() {
 	return axisValue[2];
 }
 
-double Command::getS() {
-	return speedValue;
+long Command::getA() {
+	return axisValue[0];
+}
+
+long Command::getB() {
+	return axisValue[1];
+}
+
+long Command::getC() {
+	return axisValue[2];
+}
+
+long Command::getP() {
+	return parameterId;
+}
+
+long Command::getV() {
+	return parameterValue;
 }
 

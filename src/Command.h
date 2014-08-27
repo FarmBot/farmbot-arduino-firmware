@@ -16,6 +16,9 @@ enum CommandCodeEnum
   F11 = 111,
   F12 = 112,
   F13 = 113,
+  F20 = 120,
+  F21 = 121,
+  F22 = 122,
   F81 = 181,
   F82 = 182,
   F83 = 183
@@ -33,6 +36,11 @@ public:
 	double getY();
 	double getZ();
 	double getS();
+	long getP();
+	long getV();
+	long getA();
+	long getB();
+	long getC();
 private:
 	CommandCodeEnum getGCodeEnum(char* code);
 	void getParameter(char* charPointer);
