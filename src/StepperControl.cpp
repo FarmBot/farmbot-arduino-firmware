@@ -235,30 +235,47 @@ void enableMotors(bool enable) {
 	}
 }
 
-void setDirections(long* currentPoint, long* destinationPoint, bool* homeAxis) {
+void setDirectionAxis(int* dirPin, long* currentPoint, long* destinationPoint, bool* goHome, bool* homeIsUp, bool* motorInv) {
+
+       if  (((!goHome && currentPoint < destinationPoint) || (goHome &&  homeIsUp)) ^ motorInv) {
+                digitalWrite(dirPin, HIGH);
+        } else {
+                digitalWrite(dirPin, LOW);
+        }
+
+
+}
+
+void setDirections(long* currentPoint, long* destinationPoint, bool* homeAxis, bool* motorInv) {
 
         bool homeIsUp[3] = {    ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_X),
                                 ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Y),
                                 ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Z) };
 
+	setDirectionAxis(X_DIR_PIN, currentPoint[0], destinationPoint[0], homeAxis[0], homeIsUp[0], motorInv[0]);
+	setDirectionAxis(Y_DIR_PIN, currentPoint[1], destinationPoint[1], homeAxis[1], homeIsUp[1], motorInv[1]);
+	setDirectionAxis(Z_DIR_PIN, currentPoint[2], destinationPoint[2], homeAxis[2], homeIsUp[2], motorInv[2]);
+
+/*
 	//if (currentPoint[0] < destinationPoint[0]) {
-	if  ((!homeAxis[0] && currentPoint[0] < destinationPoint[0]) || (homeAxis[0] &&  homeIsUp[0]) ) {
+	if  (((!homeAxis[0] && currentPoint[0] < destinationPoint[0]) || (homeAxis[0] &&  homeIsUp[0])) ^ motorInv[0]) {
 		digitalWrite(X_DIR_PIN, HIGH);
 	} else {
 		digitalWrite(X_DIR_PIN, LOW);
 	}
 	//if (currentPoint[1] < destinationPoint[1]) {
-	if  ((!homeAxis[1] && currentPoint[1] < destinationPoint[1]) || (homeAxis[1] &&  homeIsUp[1]) ) {
+	if  (((!homeAxis[1] && currentPoint[1] < destinationPoint[1]) || (homeAxis[1] &&  homeIsUp[1])) ^  motorInv[1]) {
 		digitalWrite(Y_DIR_PIN, HIGH);
 	} else {
 		digitalWrite(Y_DIR_PIN, LOW);
 	}
 	//if (currentPoint[2] < destinationPoint[2]) {
-	if  ((!homeAxis[2] && currentPoint[2] < destinationPoint[2]) || (homeAxis[2] &&  homeIsUp[2]) ) {
+	if  (((!homeAxis[2] && currentPoint[2] < destinationPoint[2]) || (homeAxis[2] &&  homeIsUp[2])) ^  motorInv[2]) {
 		digitalWrite(Z_DIR_PIN, HIGH);
 	} else {
 		digitalWrite(Z_DIR_PIN, LOW);
 	}
+*/
 }
 
 unsigned long getLength(long l1, long l2) {
@@ -299,6 +316,17 @@ void reportPosition(){
 void storeEndStops() {
 
 	CurrentState::getInstance()->storeEndStops();
+}
+
+/**
+ * water is dosed by setting the pin for the water high for a number of miliseconds
+ *
+ */
+
+void doseWaterByTime(long time) {
+	digitalWrite(HEATER_1_PIN, HIGH);
+	delay(time);
+	digitalWrite(HEATER_1_PIN, LOW);
 }
 
 /**
@@ -398,7 +426,7 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 	reportEndStops();
         enableMotors(true);
 
-	setDirections(currentPoint, destinationPoint, homeAxis);
+	setDirections(currentPoint, destinationPoint, homeAxis, motorInv);
 
 
 	// Limit normal movmement to the home position
@@ -449,7 +477,7 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 					error        = 1;
 				} else {
 
-
+					if ()
 					// If end stop reached, don't move anymore
 					if ((homeAxis[i] && !endStopAxisReached(i, false)) || (!homeAxis[i] &&  !endStopAxisReached(i, !movementToHome) &&  currentPoint[i] !=  destinationPoint[i] )) {
 						moving = true;
@@ -515,3 +543,146 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 
 	return error;
 }
+
+//
+// Calibration
+//
+
+/*
+int StepperControl::calibrateAxis(int axis) {
+
+
+	long speedMinLst[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_X),
+					ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Y),
+					ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Z) };
+
+	long speedMin = speedMinLst[axis];
+
+        long stepPin[3] = {	X_STEP_PIN,
+				Y_STEP_PIN,
+				Z_STEP_PIN };
+
+        long dirPin[3]  = {	X_DIR_PIN,
+				Y_DIR_PIN,
+				Z_DIR_PIN };
+
+	// Set the coordinate variables for homing, so the default functions can be used for settign direction
+
+        long sourcePoint[3] 		= { 
+        long destinationPoint[3] 	= { xDest, yDest, zDest };
+
+
+
+//	long timeOut[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X),
+//				ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X),
+//				ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X) };
+
+ 	unsigned long currentMillis         = 0;
+
+	unsigned long currentSteps          = 0;
+	unsigned long lastStepMillis        = 0;
+
+	unsigned long timeStart             = millis();
+
+        bool movementDone    = false;
+        //bool movementUp      = false;
+        //bool movementToHome  = false;
+        //bool moving          = false;
+	//bool stepMade        = false;
+	//int  axisSpeed       = 0;
+
+	int error            = 0;
+
+
+	// Prepare for movement
+
+	storeEndStops();
+	reportEndStops();
+        enableMotors(true);
+
+	// Move towards home
+
+	movementDone = false;
+	setDirectionAxis(dirPin[0], 0, -1, homeAxis[0], homeIsUp[0], motorInv[0]);
+
+	while (!movementDone) {
+
+		// Move until the end stop for home position is reached
+		if (!endStopAxisReached(axis,false)) {
+
+			if (millis() - timeStart > timeOut[i] * MOVEMENT_SPEED_BASE_TIME) {
+				movementDone = true;
+				error        = 1;
+			} else {
+
+				// If end stop reached, don't move anymore
+				if ((homeAxis[i] && !endStopAxisReached(i, false)) || (!homeAxis[i] &&  !endStopAxisReached(i, !movementToHome) &&  currentPoint[i] !=  destinationPoint[i] )) {
+
+					moving = true;
+
+					// Only do a step every x milliseconds (x is calculated above)
+					if (currentMillis - lastStepMillis[i] >= MOVEMENT_SPEED_BASE_TIME / speedMin) {
+						digitalWrite(X_STEP_PIN, HIGH);
+					}
+				}
+
+				// If end stop for home is active, set the position to zero
+				if (endStopAxisReached(i, false))
+				{
+					currentPoint[i] = 0;
+				}
+       	                }
+
+			delayMicroseconds(MOVEMENT_DELAY/2);
+			currentMillis++;
+			digitalWrite(X_STEP_PIN, LOW);
+			delayMicroseconds(MOVEMENT_DELAY/2);
+
+		} else {
+			movementDone = true;
+		}
+	}
+
+
+	// Move into the other direction now, and measure the number of steps
+
+	digitalWrite(X_STEP_PIN, LOW);	
+
+
+
+	// Start movement
+
+
+
+		stepMade = false;
+		moving   = false;
+
+		} else {
+			movementDone = true;
+		}
+
+		if (stepMade) {
+			currentSteps++;
+		}
+		digitalWrite(Y_STEP_PIN, LOW);
+		digitalWrite(Z_STEP_PIN, LOW);
+		if (!moving)
+		{
+			movementDone = true;
+		}
+
+	}
+
+	enableMotors(false);
+
+	CurrentState::getInstance()->setX(currentPoint[0]);
+	CurrentState::getInstance()->setY(currentPoint[1]);
+	CurrentState::getInstance()->setZ(currentPoint[2]);
+
+        storeEndStops();
+	reportEndStops();
+	reportPosition();
+
+	return error;
+}
+*/

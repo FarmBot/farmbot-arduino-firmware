@@ -56,7 +56,9 @@ const long MOVEMENT_MAX_SPD_X_DEFAULT           = 1000;
 const long MOVEMENT_MAX_SPD_Y_DEFAULT           = 1000;
 const long MOVEMENT_MAX_SPD_Z_DEFAULT           = 1000;
 
+const long STATUS_GENERAL_DEFAULT               = 0;
 
-const String SOFTWARE_VERSION = "GENESIS V.01.02";
+
+const String SOFTWARE_VERSION = "GENESIS V.01.03";
 
 #endif /* CONFIG_H_ */
