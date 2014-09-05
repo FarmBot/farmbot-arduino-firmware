@@ -22,6 +22,7 @@ public:
 	int setMode(int pinNr, int mode);
 	int writeValue(int pinNr, int value);
 	int readValue(int pinNr);
+	int writePulse(int pinNr, int valueOne, int valueTwo, long time);
 
 private:
         PinControl();

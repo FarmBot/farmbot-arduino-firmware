@@ -235,7 +235,7 @@ void enableMotors(bool enable) {
 	}
 }
 
-void setDirectionAxis(int* dirPin, long* currentPoint, long* destinationPoint, bool* goHome, bool* homeIsUp, bool* motorInv) {
+void setDirectionAxis(int dirPin, long currentPoint, long destinationPoint, bool goHome, bool homeIsUp, bool motorInv) {
 
        if  (((!goHome && currentPoint < destinationPoint) || (goHome &&  homeIsUp)) ^ motorInv) {
                 digitalWrite(dirPin, HIGH);
@@ -477,7 +477,7 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 					error        = 1;
 				} else {
 
-					if ()
+					//if ()
 					// If end stop reached, don't move anymore
 					if ((homeAxis[i] && !endStopAxisReached(i, false)) || (!homeAxis[i] &&  !endStopAxisReached(i, !movementToHome) &&  currentPoint[i] !=  destinationPoint[i] )) {
 						moving = true;
@@ -528,7 +528,7 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 			movementDone = true;
 		}
 
-		delayMicroseconds(500);
+		delayMicroseconds(MOVEMENT_DELAY);
 	}
 
 	enableMotors(false);

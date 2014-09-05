@@ -25,7 +25,7 @@ F43Handler::F43Handler() {
 
 int F43Handler::execute(Command* command) {
 
-        StatusList::getInstance()->readValue(command->getP());
+        PinControl::getInstance()->setMode(command->getP(),command->getM());
 
         return 0;
 }

@@ -23,7 +23,7 @@ F42Handler::F42Handler() {
 
 int F42Handler::execute(Command* command) {
 
-        StatusList::getInstance()->readValue(command->getP());
+        PinControl::getInstance()->readValue(command->getP());
 
         return 0;
 }

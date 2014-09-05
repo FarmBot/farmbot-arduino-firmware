@@ -22,8 +22,6 @@ private:
         F42Handler();
         F42Handler(F42Handler const&);
         void operator=(F42Handler const&);
-        //long adjustStepAmount(long);
-        //long getNumberOfSteps(double, double);
 };
 
 #endif /* F42HANDLER_H_ */

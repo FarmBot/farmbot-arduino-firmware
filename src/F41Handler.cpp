@@ -25,7 +25,7 @@ F41Handler::F41Handler() {
 
 int F41Handler::execute(Command* command) {
 
-        StatusList::getInstance()->readValue(command->getP());
+        PinControl::getInstance()->writeValue(command->getP(),command->getV());
 
         return 0;
 }

@@ -25,3 +25,10 @@ int writeValue(int pinNr, int value) {
 int readValue(int pinNr) {
 	return 0;
 }
+
+int  writePulse(int pinNr, int valueOne, int valueTwo, long time) {
+	writeValue( pinNr, valueOne);
+	delay(time);
+	writeValue( pinNr, valueTwo);
+	return 0;
+}
