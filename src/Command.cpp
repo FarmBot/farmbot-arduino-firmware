@@ -168,6 +168,8 @@ void Command::print() {
 	Serial.print(time);
 	Serial.print(", E: ");
 	Serial.print(element);
+	Serial.print(", M: ");
+	Serial.print(mode);
 	Serial.print("\n");
 }
 
@@ -217,5 +219,9 @@ long Command::getT() {
 
 long Command::getE() {
 	return element;
+}
+
+long Command::getM() {
+	return mode;
 }
 
