@@ -7,7 +7,7 @@
  */
 
 #ifndef PINCONTROL_H_
-#define STEPPERCONTROL_H_
+#define PINCONTROL_H_
 
 #include "Arduino.h"
 #include "pins.h"
