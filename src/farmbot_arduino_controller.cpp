@@ -26,6 +26,10 @@ void setup() {
 	pinMode(Z_MIN_PIN   , INPUT );
 	pinMode(Z_MAX_PIN   , INPUT );
 
+	pinMode(HEATER_0_PIN, OUTPUT);
+	pinMode(HEATER_1_PIN, OUTPUT);
+	pinMode(FAN_PIN     , OUTPUT);
+	pinMode(LED_PIN     , OUTPUT);
 
 	digitalWrite(X_ENABLE_PIN, HIGH);
 	digitalWrite(Y_ENABLE_PIN, HIGH);

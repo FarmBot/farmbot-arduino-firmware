@@ -15,10 +15,12 @@ PinControl::PinControl() {
 }
 
 int PinControl::setMode(int pinNr, int mode) {
+	pinMode(pinNr   , mode );
 	return 0;
 }
 
 int PinControl::writeValue(int pinNr, int value) {
+	digitalWrite(pinNr, value);
 	return 0;
 }
 
