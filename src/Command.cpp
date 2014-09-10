@@ -5,12 +5,20 @@ const char axisSpeedCodes[3]  = { 'A', 'B', 'C' };
 const char speedCode          = 'S';
 const char parameterIdCode    = 'P';
 const char parameterValueCode = 'V';
+const char parameterValue2Code= 'W';
+const char elementCode        = 'E';
+const char timeCode           = 'T';
+const char modeCode           = 'M';
 
 double axisValue[3] 		= { 0.0, 0.0, 0.0 };
 long   axisSpeedValue[3] 	= { 0, 0, 0 };
 double speedValue   		= 0.0;
 long   parameterId    		= 0;
 long   parameterValue 		= 0;
+long   parameterValue2          = 0;
+long   element                  = 0;
+long   time                     = 0;
+long   mode                     = 0;
 
 CommandCodeEnum commandCodeEnum = CODE_UNDEFINED;
 
@@ -64,6 +72,26 @@ CommandCodeEnum Command::getGCodeEnum(char* code) {
 		return F22;
 	}
 
+	if (strcmp(code, "F31") == 0) {
+		return F31;
+	}
+	if (strcmp(code, "F32") == 0) {
+		return F32;
+	}
+
+	if (strcmp(code, "F41") == 0) {
+		return F41;
+	}
+	if (strcmp(code, "F42") == 0) {
+		return F42;
+	}
+	if (strcmp(code, "F43") == 0) {
+		return F43;
+	}
+	if (strcmp(code, "F44") == 0) {
+		return F44;
+	}
+
 	if (strcmp(code, "F81") == 0) {
 		return F81;
 	}
@@ -85,27 +113,37 @@ double minusNotAllowed(double value) {
 }
 
 void Command::getParameter(char* charPointer) {
-	if (charPointer[0] == axisCodes[0]) {
-		axisValue[0] = atof(charPointer + 1);
-	} else if (charPointer[0] == axisCodes[1]) {
-		axisValue[1] = atof(charPointer + 1);
-	} else if (charPointer[0] == axisCodes[2]) {
-		axisValue[2] = atof(charPointer + 1);
+	if (charPointer[0]        == axisCodes[0]         ){
+		axisValue[0]      =  atof(charPointer + 1 );
+	} else if (charPointer[0] == axisCodes[1]         ){
+		axisValue[1]      =  atof(charPointer + 1 );
+	} else if (charPointer[0] == axisCodes[2]         ){
+		axisValue[2]      =  atof(charPointer + 1 );
 
-	} else if (charPointer[0] == axisSpeedCodes[0]) {
-		axisSpeedValue[0] = atof(charPointer + 1);
-	} else if (charPointer[0] == axisSpeedCodes[1]) {
-		axisSpeedValue[1] = atof(charPointer + 1);
-	} else if (charPointer[0] == axisSpeedCodes[2]) {
-		axisSpeedValue[2] = atof(charPointer + 1);
+	} else if (charPointer[0] == axisSpeedCodes[0]    ){
+		axisSpeedValue[0] =  atof(charPointer + 1 );
+	} else if (charPointer[0] == axisSpeedCodes[1]    ){
+		axisSpeedValue[1] =  atof(charPointer + 1 );
+	} else if (charPointer[0] == axisSpeedCodes[2]    ){
+		axisSpeedValue[2] =  atof(charPointer + 1 );
 
-	} else if (charPointer[0] == speedCode) {
-		speedValue      = atof(charPointer + 1);
-	} else if (charPointer[0] == parameterIdCode) {
-		parameterId     = atof(charPointer + 1);
-	} else if (charPointer[0] == parameterValueCode) {
-		parameterValue  = atof(charPointer + 1);
+	} else if (charPointer[0] == speedCode            ){
+		speedValue        =  atof(charPointer + 1 );
+	} else if (charPointer[0] == parameterIdCode      ){
+		parameterId       =  atof(charPointer + 1 );
+	} else if (charPointer[0] == parameterValueCode   ){
+		parameterValue    =  atof(charPointer + 1 );
+
+	} else if (charPointer[0] == parameterValue2Code  ){
+		parameterValue2   =  atof(charPointer + 1 );
+	} else if (charPointer[0] == elementCode          ){
+		element           =  atof(charPointer + 1 );
+	} else if (charPointer[0] == timeCode             ){
+		time              =  atof(charPointer + 1 );
+	} else if (charPointer[0] == modeCode             ){
+		mode              =  atof(charPointer + 1 );
 	}
+
 }
 
 void Command::print() {
@@ -123,6 +161,15 @@ void Command::print() {
 	Serial.print(parameterId);
 	Serial.print(", V: ");
 	Serial.print(parameterValue);
+
+	Serial.print(", W: ");
+	Serial.print(parameterValue2);
+	Serial.print(", T: ");
+	Serial.print(time);
+	Serial.print(", E: ");
+	Serial.print(element);
+	Serial.print(", M: ");
+	Serial.print(mode);
 	Serial.print("\n");
 }
 
@@ -160,5 +207,21 @@ long Command::getP() {
 
 long Command::getV() {
 	return parameterValue;
+}
+
+long Command::getW() {
+	return parameterValue2;
+}
+
+long Command::getT() {
+	return time;
+}
+
+long Command::getE() {
+	return element;
+}
+
+long Command::getM() {
+	return mode;
 }
 
