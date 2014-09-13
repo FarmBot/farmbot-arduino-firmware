@@ -25,7 +25,7 @@ F44Handler::F44Handler() {
 
 int F44Handler::execute(Command* command) {
 
-        PinControl::getInstance()->writePulse(command->getP(),command->getV(),command->getW(),command->getT());
+        PinControl::getInstance()->writePulse(command->getP(),command->getV(),command->getW(),command->getT(), command->getM());
 
         return 0;
 }

@@ -20,9 +20,9 @@ public:
         static PinControl* getInstance();
 
 	int setMode(int pinNr, int mode);
-	int writeValue(int pinNr, int value);
-	int readValue(int pinNr);
-	int writePulse(int pinNr, int valueOne, int valueTwo, long time);
+	int writeValue(int pinNr, int value, int mode);
+	int readValue(int pinNr, int mode);
+	int writePulse(int pinNr, int valueOne, int valueTwo, long time, int mode);
 
 private:
         PinControl();
