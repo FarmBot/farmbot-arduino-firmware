@@ -23,6 +23,24 @@ unsigned long getMaxLength(unsigned long lengths[3]) {
 	return max;
 }
 
+bool endStopMin(int axis_nr) {
+
+        long stepPin[3] = {     X_MIN_PIN,
+                                Y_MIN_PIN,
+                                Z_MIN_PIN };
+
+	return  digitalRead(stepPin[axis_nr]);
+}
+
+bool endStopMax(int axis_nr) {
+
+        long stepPin[3] = {     X_MAX_PIN,
+                                Y_MAX_PIN,
+                                Z_MAX_PIN };
+
+        return  digitalRead(stepPin[axis_nr]);
+}
+
 int endStopAxisReached(int axis_nr, bool movement_forward) {
 
         bool endStInv[3] = {    ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_X),
@@ -39,6 +57,14 @@ int endStopAxisReached(int axis_nr, bool movement_forward) {
 
 	// for the axis to check, retrieve the end stop status
 
+	if (!invert) {
+		min_endstop = endStopMin(axis_nr);
+		max_endstop = endStopMax(axis_nr);
+	} else {
+		min_endstop = endStopMax(axis_nr);
+		max_endstop = endStopMin(axis_nr);
+	}
+/*
 	if (axis_nr == 0) {
 		min_endstop=(digitalRead(X_MIN_PIN) ^ invert);
 		max_endstop=(digitalRead(X_MAX_PIN) ^ invert);
@@ -53,6 +79,7 @@ int endStopAxisReached(int axis_nr, bool movement_forward) {
 		min_endstop=(digitalRead(Z_MIN_PIN) ^ invert);
 		max_endstop=(digitalRead(Z_MAX_PIN) ^ invert);
 	}
+*/
 
 	// if moving forward, only check the end stop max
 	// for moving backwards, check only the end stop min
@@ -548,15 +575,50 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 // Calibration
 //
 
-/*
 int StepperControl::calibrateAxis(int axis) {
 
 
-	long speedMinLst[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_X),
-					ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Y),
-					ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Z) };
+//        long sourcePoint[3] = {         CurrentState::getInstance()->getX(),
+//                                        CurrentState::getInstance()->getY(),
+//                                        CurrentState::getInstance()->getZ() };
 
-	long speedMin = speedMinLst[axis];
+//        long currentPoint[3] = {        CurrentState::getInstance()->getX(),
+//                                        CurrentState::getInstance()->getY(),
+//                                        CurrentState::getInstance()->getZ() };
+
+//        long destinationPoint[3] = { xDest, yDest, zDest };
+
+//        unsigned long movementLength[3] = {     getLength(destinationPoint[0], currentPoint[0]),
+//                                                getLength(destinationPoint[1], currentPoint[1]),
+//                                                getLength(destinationPoint[2], currentPoint[2])};
+//        unsigned long maxLenth = getMaxLength(movementLength);
+
+//        double lengthRatio[3] = {       1.0 * movementLength[0] / maxLenth,
+//                                        1.0 * movementLength[1] / maxLenth,
+//                                        1.0 * movementLength[2] / maxLenth };
+
+	bool motorInv[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_X),
+				ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Y),
+				ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Z) };
+
+        bool homeAxis[3] = {false,false,false};
+
+        bool homeIsUp[3] = {false,false,false};
+
+        long speedMin[3] = {200,200,200};
+
+//        bool motorInv[3] = {false,false,false};
+
+        bool endStInv[3] = {false,false,false};
+
+        long timeOut[3] = {5000,5000,5000};
+
+
+//	long speedMinLst[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_X),
+//					ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Y),
+//					ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Z) };
+
+//	long speedMin = speedMinLst[axis];
 
         long stepPin[3] = {	X_STEP_PIN,
 				Y_STEP_PIN,
@@ -568,8 +630,10 @@ int StepperControl::calibrateAxis(int axis) {
 
 	// Set the coordinate variables for homing, so the default functions can be used for settign direction
 
-        long sourcePoint[3] 		= { 
-        long destinationPoint[3] 	= { xDest, yDest, zDest };
+        long sourcePoint[3] 		= { 0, 0, 0 };
+        long destinationPoint[3] 	= { 0, 0, 0 };
+
+//        long destinationPoint[3] 	= { xDest, yDest, zDest };
 
 
 
@@ -591,6 +655,9 @@ int StepperControl::calibrateAxis(int axis) {
 	//bool stepMade        = false;
 	//int  axisSpeed       = 0;
 
+	bool invertEndStops  = false;
+	int  stepsCount	     = 0;
+
 	int error            = 0;
 
 
@@ -598,38 +665,82 @@ int StepperControl::calibrateAxis(int axis) {
 
 	storeEndStops();
 	reportEndStops();
-        enableMotors(true);
+
+	// Preliminary checks
+
+	if (endStopMin(axis) || endStopMax(axis)) {
+		Serial.print("R99 Calibration eror: end stop active before start");
+		return 1;
+	}
 
 	// Move towards home
 
-	movementDone = false;
-	setDirectionAxis(dirPin[0], 0, -1, homeAxis[0], homeIsUp[0], motorInv[0]);
+        enableMotors(true);
 
-	while (!movementDone) {
+	movementDone = false;
+	setDirectionAxis(dirPin[0], 0, -1, homeAxis[axis], homeIsUp[axis], motorInv[axis]);
+
+	while (!movementDone && error == 0) {
 
 		// Move until the end stop for home position is reached
-		if (!endStopAxisReached(axis,false)) {
+		if (!endStopMin(axis) && !endStopMax(axis)) {
 
-			if (millis() - timeStart > timeOut[i] * MOVEMENT_SPEED_BASE_TIME) {
+			if (millis() - timeStart > timeOut[axis] * MOVEMENT_SPEED_BASE_TIME) {
 				movementDone = true;
 				error        = 1;
 			} else {
 
-				// If end stop reached, don't move anymore
-				if ((homeAxis[i] && !endStopAxisReached(i, false)) || (!homeAxis[i] &&  !endStopAxisReached(i, !movementToHome) &&  currentPoint[i] !=  destinationPoint[i] )) {
-
-					moving = true;
-
-					// Only do a step every x milliseconds (x is calculated above)
-					if (currentMillis - lastStepMillis[i] >= MOVEMENT_SPEED_BASE_TIME / speedMin) {
-						digitalWrite(X_STEP_PIN, HIGH);
-					}
+				// Only do a step every x milliseconds (x is calculated above)
+				if (currentMillis - lastStepMillis >= MOVEMENT_SPEED_BASE_TIME / speedMin[axis]) {
+					digitalWrite(X_STEP_PIN, HIGH);
 				}
+       	                }
 
-				// If end stop for home is active, set the position to zero
-				if (endStopAxisReached(i, false))
-				{
-					currentPoint[i] = 0;
+			delayMicroseconds(MOVEMENT_DELAY/2);
+			currentMillis++;
+			digitalWrite(X_STEP_PIN, LOW);
+			delayMicroseconds(MOVEMENT_DELAY/2);
+
+		} else {
+			movementDone = true;
+
+			// If end stop for home is active, set the position to zero
+			if (endStopMax(axis))
+			{
+				invertEndStops = true;
+			}
+		}
+	}
+
+	// Store the status of the system halfway
+
+	//CurrentState::getInstance()->setX(currentPoint[0]);
+	//CurrentState::getInstance()->setY(currentPoint[1]);
+	//CurrentState::getInstance()->setZ(currentPoint[2]);
+
+        storeEndStops();
+	reportEndStops();
+	reportPosition();
+
+	// Move into the other direction now, and measure the number of steps
+
+	movementDone = false;
+	setDirectionAxis(dirPin[0], 0, 1, homeAxis[axis], homeIsUp[axis], motorInv[axis]);
+
+	while (!movementDone && error == 0) {
+
+		// Move until the end stop at the other side of the axis is reached
+		if ((!invertEndStops && !endStopMax(axis)) || (invertEndStops && !endStopMin(axis))) {
+
+			if (millis() - timeStart > timeOut[axis] * MOVEMENT_SPEED_BASE_TIME) {
+				movementDone = true;
+				error        = 1;
+			} else {
+
+				// Only do a step every x milliseconds (x is calculated above)
+				if (currentMillis - lastStepMillis >= MOVEMENT_SPEED_BASE_TIME / speedMin[axis]) {
+					digitalWrite(X_STEP_PIN, HIGH);
+					stepsCount++;
 				}
        	                }
 
@@ -643,46 +754,15 @@ int StepperControl::calibrateAxis(int axis) {
 		}
 	}
 
-
-	// Move into the other direction now, and measure the number of steps
-
-	digitalWrite(X_STEP_PIN, LOW);	
-
-
-
-	// Start movement
-
-
-
-		stepMade = false;
-		moving   = false;
-
-		} else {
-			movementDone = true;
-		}
-
-		if (stepMade) {
-			currentSteps++;
-		}
-		digitalWrite(Y_STEP_PIN, LOW);
-		digitalWrite(Z_STEP_PIN, LOW);
-		if (!moving)
-		{
-			movementDone = true;
-		}
-
-	}
-
 	enableMotors(false);
 
-	CurrentState::getInstance()->setX(currentPoint[0]);
-	CurrentState::getInstance()->setY(currentPoint[1]);
-	CurrentState::getInstance()->setZ(currentPoint[2]);
+	//CurrentState::getInstance()->setX(currentPoint[0]);
+	//CurrentState::getInstance()->setY(currentPoint[1]);
+	//CurrentState::getInstance()->setZ(currentPoint[2]);
 
         storeEndStops();
 	reportEndStops();
-	reportPosition();
+	//reportPosition();
 
 	return error;
 }
-*/
