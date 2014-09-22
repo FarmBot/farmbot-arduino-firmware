@@ -597,6 +597,10 @@ int StepperControl::calibrateAxis(int axis) {
 //                                        1.0 * movementLength[1] / maxLenth,
 //                                        1.0 * movementLength[2] / maxLenth };
 
+        int  parMotInv[3] = { 31, 32, 33};
+        int  parEndInv[3] = { 21, 22, 23};
+        int  parNbrStp[3] = {901,902,903};
+
 	bool motorInv[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_X),
 				ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Y),
 				ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Z) };
@@ -655,6 +659,7 @@ int StepperControl::calibrateAxis(int axis) {
 	//bool stepMade        = false;
 	//int  axisSpeed       = 0;
 
+	int  paramValueInt   = 0;
 	bool invertEndStops  = false;
 	int  stepsCount	     = 0;
 
@@ -712,15 +717,30 @@ int StepperControl::calibrateAxis(int axis) {
 		}
 	}
 
-	// Store the status of the system halfway
+	// Report back the end stop setting
 
-	//CurrentState::getInstance()->setX(currentPoint[0]);
-	//CurrentState::getInstance()->setY(currentPoint[1]);
-	//CurrentState::getInstance()->setZ(currentPoint[2]);
+	if (error == 0) {
+		if (invertEndStops) {
+			paramValueInt = 1;
+		} else {
+			paramValueInt = 0;
+		}
+
+		Serial.print("R23");
+		Serial.print(" ");
+		Serial.print("P");
+		Serial.print(parEndInv[axis]);
+		Serial.print(" ");
+		Serial.print("V");
+		Serial.print(paramValueInt)
+		Serial.print("\n")
+	}
+
+	// Store the status of the system
 
         storeEndStops();
 	reportEndStops();
-	reportPosition();
+	//reportPosition();
 
 	// Move into the other direction now, and measure the number of steps
 
@@ -754,11 +774,20 @@ int StepperControl::calibrateAxis(int axis) {
 		}
 	}
 
-	enableMotors(false);
+	// Report back the end stop setting
 
-	//CurrentState::getInstance()->setX(currentPoint[0]);
-	//CurrentState::getInstance()->setY(currentPoint[1]);
-	//CurrentState::getInstance()->setZ(currentPoint[2]);
+	if (error == 0) {
+		Serial.print("R23");
+		Serial.print(" ");
+		Serial.print("P");
+		Serial.print(parNbrStp[axis]);
+		Serial.print(" ");
+		Serial.print("V");
+		Serial.print(paramValueInt)
+		Serial.print("\n")
+	}
+
+	enableMotors(false);
 
         storeEndStops();
 	reportEndStops();
