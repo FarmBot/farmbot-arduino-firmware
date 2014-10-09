@@ -19,6 +19,10 @@
 #include "F12Handler.h"
 #include "F13Handler.h"
 
+#include "F14Handler.h"
+#include "F15Handler.h"
+#include "F16Handler.h"
+
 #include "F21Handler.h"
 #include "F22Handler.h"
 

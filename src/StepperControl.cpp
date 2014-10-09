@@ -599,7 +599,7 @@ int StepperControl::calibrateAxis(int axis) {
 
         int  parMotInv[3] = { 31, 32, 33};
         int  parEndInv[3] = { 21, 22, 23};
-        int  parNbrStp[3] = {901,902,903};
+        int  parNbrStp[3] = {801,802,803};
 
 	bool motorInv[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_X),
 				ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Y),
@@ -732,8 +732,8 @@ int StepperControl::calibrateAxis(int axis) {
 		Serial.print(parEndInv[axis]);
 		Serial.print(" ");
 		Serial.print("V");
-		Serial.print(paramValueInt)
-		Serial.print("\n")
+		Serial.print(paramValueInt);
+		Serial.print("\n");
 	}
 
 	// Store the status of the system
@@ -783,8 +783,8 @@ int StepperControl::calibrateAxis(int axis) {
 		Serial.print(parNbrStp[axis]);
 		Serial.print(" ");
 		Serial.print("V");
-		Serial.print(paramValueInt)
-		Serial.print("\n")
+		Serial.print(paramValueInt);
+		Serial.print("\n");
 	}
 
 	enableMotors(false);
