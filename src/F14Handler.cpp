@@ -24,13 +24,17 @@ F14Handler::F14Handler() {
 
 int F14Handler::execute(Command* command) {
 
-Serial.print("home\n");
+	int ret = 0;
 
         if (LOGGING) {
                 Serial.print("R99 CALIBRATE X\n");
         }
 
-        StepperControl::getInstance()->calibrateAxis(0);
+        ret = StepperControl::getInstance()->calibrateAxis(0);
+
+	if (ret == 0) {
+		StepperControl::getInstance()->moveAbsoluteConstant(0,0,0, 0,0,0, true, false, false);
+	}
 
         if (LOGGING) {
                 CurrentState::getInstance()->print();

@@ -418,7 +418,7 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
         bool home = xHome || yHome || zHome;
 
  	unsigned long currentMillis         = 0;
-	//unsigned long currentStepsPerSecond = maxStepsPerSecond;
+
 	unsigned long currentSteps          = 0;
 	unsigned long lastStepMillis[3]     = { 0, 0, 0 };
 
@@ -544,7 +544,14 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 		if (stepMade) {
 			currentSteps++;
 		}
+
 		currentMillis++;
+		if (currentMillis % 10000 == 0)
+		{
+			// Periodically send message still active
+			Serial.print("R04\n");
+		}
+
 		if (stepMade) {
 			digitalWrite(X_STEP_PIN, LOW);
 			digitalWrite(Y_STEP_PIN, LOW);
@@ -611,8 +618,6 @@ int StepperControl::calibrateAxis(int axis) {
 
         long speedMin[3] = {200,200,200};
 
-//        bool motorInv[3] = {false,false,false};
-
         bool endStInv[3] = {false,false,false};
 
         long timeOut[3] = {5000,5000,5000};
@@ -653,11 +658,6 @@ int StepperControl::calibrateAxis(int axis) {
 	unsigned long timeStart             = millis();
 
         bool movementDone    = false;
-        //bool movementUp      = false;
-        //bool movementToHome  = false;
-        //bool moving          = false;
-	//bool stepMade        = false;
-	//int  axisSpeed       = 0;
 
 	int  paramValueInt   = 0;
 	bool invertEndStops  = false;
@@ -674,9 +674,19 @@ int StepperControl::calibrateAxis(int axis) {
 	// Preliminary checks
 
 	if (endStopMin(axis) || endStopMax(axis)) {
-		Serial.print("R99 Calibration eror: end stop active before start");
+		Serial.print("R99 Calibration error: end stop active before start\n");
 		return 1;
 	}
+
+
+
+/*
+Serial.print("R99");
+Serial.print(" ");
+Serial.print("calibration start");
+Serial.print("\n");
+*/
+
 
 	// Move towards home
 
@@ -698,13 +708,21 @@ int StepperControl::calibrateAxis(int axis) {
 				// Only do a step every x milliseconds (x is calculated above)
 				if (currentMillis - lastStepMillis >= MOVEMENT_SPEED_BASE_TIME / speedMin[axis]) {
 					digitalWrite(X_STEP_PIN, HIGH);
+					lastStepMillis = currentMillis;
 				}
        	                }
 
-			delayMicroseconds(MOVEMENT_DELAY/2);
+			delayMicroseconds(MOVEMENT_DELAY);
+
 			currentMillis++;
+	                if (currentMillis % 10000 == 0)
+	                {
+				// Periodically send message still active
+	                        Serial.print("R04\n");
+	                }
+
 			digitalWrite(X_STEP_PIN, LOW);
-			delayMicroseconds(MOVEMENT_DELAY/2);
+			delayMicroseconds(MOVEMENT_DELAY);
 
 		} else {
 			movementDone = true;
@@ -716,6 +734,23 @@ int StepperControl::calibrateAxis(int axis) {
 			}
 		}
 	}
+
+
+/*
+Serial.print("R99");
+Serial.print(" ");
+Serial.print("calibration halfway");
+Serial.print(" ");
+Serial.print("end stop invert");
+Serial.print(" ");
+Serial.print(invertEndStops);
+Serial.print(" ");
+Serial.print("error");
+Serial.print(" ");
+Serial.print(error);
+Serial.print("\n");
+*/
+
 
 	// Report back the end stop setting
 
@@ -744,6 +779,7 @@ int StepperControl::calibrateAxis(int axis) {
 
 	// Move into the other direction now, and measure the number of steps
 
+	stepsCount = 0;
 	movementDone = false;
 	setDirectionAxis(dirPin[0], 0, 1, homeAxis[axis], homeIsUp[axis], motorInv[axis]);
 
@@ -761,18 +797,47 @@ int StepperControl::calibrateAxis(int axis) {
 				if (currentMillis - lastStepMillis >= MOVEMENT_SPEED_BASE_TIME / speedMin[axis]) {
 					digitalWrite(X_STEP_PIN, HIGH);
 					stepsCount++;
+					lastStepMillis = currentMillis;
 				}
        	                }
 
-			delayMicroseconds(MOVEMENT_DELAY/2);
+			delayMicroseconds(MOVEMENT_DELAY);
+
 			currentMillis++;
+	                if (currentMillis % 10000 == 0)
+        	        {
+				// Periodically send message still active
+	                        Serial.print("R04\n");
+	                }
+
+
 			digitalWrite(X_STEP_PIN, LOW);
-			delayMicroseconds(MOVEMENT_DELAY/2);
+			delayMicroseconds(MOVEMENT_DELAY);
 
 		} else {
 			movementDone = true;
 		}
 	}
+
+
+
+
+/*
+Serial.print("R99");
+Serial.print(" ");
+Serial.print("calibration done");
+Serial.print(" ");
+Serial.print("nr steps");
+Serial.print(" ");
+Serial.print(stepsCount);
+Serial.print(" ");
+Serial.print("error");
+Serial.print(" ");
+Serial.print(error);
+Serial.print("\n");
+*/
+
+
 
 	// Report back the end stop setting
 
@@ -783,7 +848,7 @@ int StepperControl::calibrateAxis(int axis) {
 		Serial.print(parNbrStp[axis]);
 		Serial.print(" ");
 		Serial.print("V");
-		Serial.print(paramValueInt);
+		Serial.print(stepsCount);
 		Serial.print("\n");
 	}
 
@@ -791,7 +856,21 @@ int StepperControl::calibrateAxis(int axis) {
 
         storeEndStops();
 	reportEndStops();
-	//reportPosition();
+
+
+        switch (axis) {
+		case 0:
+			CurrentState::getInstance()->setX(stepsCount);
+			break;
+		case 1:
+		        CurrentState::getInstance()->setY(stepsCount);
+			break;
+		case 2:
+		        CurrentState::getInstance()->setZ(stepsCount);
+			break;
+	}
+
+	reportPosition();
 
 	return error;
 }
