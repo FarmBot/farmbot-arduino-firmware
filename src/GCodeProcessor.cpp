@@ -57,6 +57,13 @@ GCodeHandler* GCodeProcessor::getGCodeHandler(CommandCodeEnum codeEnum) {
 	case F13:
 		return F13Handler::getInstance();
 
+	case F14:
+		return F14Handler::getInstance();
+	case F15:
+		return F15Handler::getInstance();
+	case F16:
+		return F16Handler::getInstance();
+
 	case F21:
 		return F21Handler::getInstance();
 	case F22:
