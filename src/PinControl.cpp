@@ -39,23 +39,27 @@ int PinControl::readValue(int pinNr, int mode) {
 		if (digitalRead(pinNr) == 0){
 			value = 1;
 		}
-		return 0;
 	}
 	if (mode == 1) {
 		value = analogRead(pinNr);
-		return 0;
 	}
 
-	Serial.print("R41");
-	Serial.print(" ");
-	Serial.print("P");
-	Serial.print(pinNr);
-	Serial.print(" ");
-	Serial.print("V");
-	Serial.print(value);
-	Serial.print("\n");
+	if (mode == 0 || mode == 1) {
 
-	return 1;
+		Serial.print("R41");
+		Serial.print(" ");
+		Serial.print("P");
+		Serial.print(pinNr);
+		Serial.print(" ");
+		Serial.print("V");
+		Serial.print(value);
+		Serial.print("\n");
+
+		return 0;
+	}
+	else {
+		return 1;
+	}
 }
 
 int  PinControl::writePulse(int pinNr, int valueOne, int valueTwo, long time, int mode) {
