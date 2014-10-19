@@ -111,6 +111,13 @@ W         |Secondary value        |#
 L         |Number                 |#
 E         |Element (in tool mount)|#
 M         |Mode                   |0 = output / 1 = input
+          |                       |
+X1        |End stop minimum x axis|0/1
+X2        |End stop maximum x axis|0/1
+Y1        |End stop minimum y axis|0/1
+Y2        |End stop maximum y axis|0/1
+Z1        |End stop minimum z axis|0/1
+Z2        |End stop maximum z axis|0/1
 
 Arduino paramter numbers
 ------------------------
