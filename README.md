@@ -91,8 +91,8 @@ F        |22    |P V       |Write parameter
 F        |23    |P V       |Update parameter (during calibration)
 F        |31    |P         |Read status
 F        |32    |P V       |Write status
-F        |41    |P V       |Set a value on an arduino pin
-F        |42    |P         |Read a value from an arduino pin
+F        |41    |P V M     |Set a value on an arduino pin
+F        |42    |P M       |Read a value from an arduino pin
 F        |43    |P M       |Set the mode of a pin in arduino
 F        |44    |P V W T   |Set the value V on an arduino pin, wait for time T, set value W on the arduino pin
 F        |51    |E P V     |Set a value on the tool mount with I2C
@@ -135,7 +135,8 @@ V         |Value number           |#
 W         |Secondary value        |#
 L         |Number                 |#
 E         |Element (in tool mount)|#
-M         |Mode                   |0 = output / 1 = input
+M         |Mode (set pin mode)    |0 = output / 1 = input
+M         |Mode (read/write)      |0 = output / 1 = input
           |                       |
 X1        |End stop minimum x axis|0/1
 X2        |End stop maximum x axis|0/1
@@ -171,7 +172,6 @@ MOVEMENT_MIN_SPD_Z           |63
 MOVEMENT_MAX_SPD_X           |71
 MOVEMENT_MAX_SPD_Y           |72
 MOVEMENT_MAX_SPD_Z           |73
-MOVEMENT_STEPS_PER_UNIT_X    |901
-MOVEMENT_STEPS_PER_UNIT_Y    |902
-MOVEMENT_STEPS_PER_UNIT_Z    |903
-
+MOVEMENT_STEPS_PER_UNIT_X    |901 (not in arduino)
+MOVEMENT_STEPS_PER_UNIT_Y    |902 (not in arduino)
+MOVEMENT_STEPS_PER_UNIT_Z    |903 (not in arduino)
