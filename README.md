@@ -136,7 +136,7 @@ W         |Secondary value        |#
 L         |Number                 |#
 E         |Element (in tool mount)|#
 M         |Mode (set pin mode)    |0 = output / 1 = input
-M         |Mode (read/write)      |0 = output / 1 = input
+M         |Mode (read/write)      |0 = digital / 1 = analog
           |                       |
 X1        |End stop minimum x axis|0/1
 X2        |End stop maximum x axis|0/1
