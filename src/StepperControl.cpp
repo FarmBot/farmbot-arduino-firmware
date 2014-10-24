@@ -282,27 +282,6 @@ void setDirections(long* currentPoint, long* destinationPoint, bool* homeAxis, b
 	setDirectionAxis(X_DIR_PIN, currentPoint[0], destinationPoint[0], homeAxis[0], homeIsUp[0], motorInv[0]);
 	setDirectionAxis(Y_DIR_PIN, currentPoint[1], destinationPoint[1], homeAxis[1], homeIsUp[1], motorInv[1]);
 	setDirectionAxis(Z_DIR_PIN, currentPoint[2], destinationPoint[2], homeAxis[2], homeIsUp[2], motorInv[2]);
-
-/*
-	//if (currentPoint[0] < destinationPoint[0]) {
-	if  (((!homeAxis[0] && currentPoint[0] < destinationPoint[0]) || (homeAxis[0] &&  homeIsUp[0])) ^ motorInv[0]) {
-		digitalWrite(X_DIR_PIN, HIGH);
-	} else {
-		digitalWrite(X_DIR_PIN, LOW);
-	}
-	//if (currentPoint[1] < destinationPoint[1]) {
-	if  (((!homeAxis[1] && currentPoint[1] < destinationPoint[1]) || (homeAxis[1] &&  homeIsUp[1])) ^  motorInv[1]) {
-		digitalWrite(Y_DIR_PIN, HIGH);
-	} else {
-		digitalWrite(Y_DIR_PIN, LOW);
-	}
-	//if (currentPoint[2] < destinationPoint[2]) {
-	if  (((!homeAxis[2] && currentPoint[2] < destinationPoint[2]) || (homeAxis[2] &&  homeIsUp[2])) ^  motorInv[2]) {
-		digitalWrite(Z_DIR_PIN, HIGH);
-	} else {
-		digitalWrite(Z_DIR_PIN, LOW);
-	}
-*/
 }
 
 unsigned long getLength(long l1, long l2) {
@@ -429,8 +408,8 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
         bool movementToHome  = false;
         bool moving          = false;
 	bool stepMade        = false;
-	int  axisSpeed       = 0;
-
+	int incomingByte     = 0;
+	int axisSpeed        = 0;
 	int error            = 0;
 
 	// if a speed is given in the command, use that instead of the config speed
@@ -458,7 +437,6 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 
 	// Limit normal movmement to the home position
 	for (int i = 0; i < 3; i++) {
-
 		if (!homeIsUp[i] && destinationPoint[i] < 0) {
 			destinationPoint[i] = 0;
 		}
@@ -474,11 +452,19 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 
 	        storeEndStops();
 
+		// Check if there is an emergency stop command
+		if (Serial.available() > 0) {
+                	incomingByte = Serial.read();
+			if (incomingByte == 69 || incomingByte == 101) {
+				movementDone = true;
+			} 
+	        }
+
 		stepMade = false;
 		moving   = false;
 
 		// Keep moving until destination reached or while moving home and end stop not reached
-		if  (!pointReached(currentPoint, destinationPoint) || home) {
+		if  ((!pointReached(currentPoint, destinationPoint) || home) && !movementDone) {
 
 			// Check each axis
 			for (int i = 0; i < 3; i++) {
@@ -585,25 +571,6 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 int StepperControl::calibrateAxis(int axis) {
 
 
-//        long sourcePoint[3] = {         CurrentState::getInstance()->getX(),
-//                                        CurrentState::getInstance()->getY(),
-//                                        CurrentState::getInstance()->getZ() };
-
-//        long currentPoint[3] = {        CurrentState::getInstance()->getX(),
-//                                        CurrentState::getInstance()->getY(),
-//                                        CurrentState::getInstance()->getZ() };
-
-//        long destinationPoint[3] = { xDest, yDest, zDest };
-
-//        unsigned long movementLength[3] = {     getLength(destinationPoint[0], currentPoint[0]),
-//                                                getLength(destinationPoint[1], currentPoint[1]),
-//                                                getLength(destinationPoint[2], currentPoint[2])};
-//        unsigned long maxLenth = getMaxLength(movementLength);
-
-//        double lengthRatio[3] = {       1.0 * movementLength[0] / maxLenth,
-//                                        1.0 * movementLength[1] / maxLenth,
-//                                        1.0 * movementLength[2] / maxLenth };
-
         int  parMotInv[3] = { 31, 32, 33};
         int  parEndInv[3] = { 21, 22, 23};
         int  parNbrStp[3] = {801,802,803};
@@ -622,13 +589,6 @@ int StepperControl::calibrateAxis(int axis) {
 
         long timeOut[3] = {5000,5000,5000};
 
-
-//	long speedMinLst[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_X),
-//					ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Y),
-//					ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Z) };
-
-//	long speedMin = speedMinLst[axis];
-
         long stepPin[3] = {	X_STEP_PIN,
 				Y_STEP_PIN,
 				Z_STEP_PIN };
@@ -642,14 +602,6 @@ int StepperControl::calibrateAxis(int axis) {
         long sourcePoint[3] 		= { 0, 0, 0 };
         long destinationPoint[3] 	= { 0, 0, 0 };
 
-//        long destinationPoint[3] 	= { xDest, yDest, zDest };
-
-
-
-//	long timeOut[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X),
-//				ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X),
-//				ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X) };
-
  	unsigned long currentMillis         = 0;
 
 	unsigned long currentSteps          = 0;
@@ -662,7 +614,7 @@ int StepperControl::calibrateAxis(int axis) {
 	int  paramValueInt   = 0;
 	bool invertEndStops  = false;
 	int  stepsCount	     = 0;
-
+	int incomingByte     = 0;
 	int error            = 0;
 
 
@@ -697,8 +649,17 @@ Serial.print("\n");
 
 	while (!movementDone && error == 0) {
 
+                // Check if there is an emergency stop command
+                if (Serial.available() > 0) {
+                        incomingByte = Serial.read();
+                        if (incomingByte == 69 || incomingByte == 101) {
+                                movementDone = true;
+				error = 1;
+                        }
+                }
+
 		// Move until the end stop for home position is reached
-		if (!endStopMin(axis) && !endStopMax(axis)) {
+		if ((!endStopMin(axis) && !endStopMax(axis)) && !movementDone) {
 
 			if (millis() - timeStart > timeOut[axis] * MOVEMENT_SPEED_BASE_TIME) {
 				movementDone = true;
@@ -785,8 +746,18 @@ Serial.print("\n");
 
 	while (!movementDone && error == 0) {
 
+                // Check if there is an emergency stop command
+                if (Serial.available() > 0) {
+                        incomingByte = Serial.read();
+                        if (incomingByte == 69 || incomingByte == 101) {
+                                movementDone = true;
+				error = 1;
+                        }
+                }
+
+
 		// Move until the end stop at the other side of the axis is reached
-		if ((!invertEndStops && !endStopMax(axis)) || (invertEndStops && !endStopMin(axis))) {
+		if (((!invertEndStops && !endStopMax(axis)) || (invertEndStops && !endStopMin(axis))) && !movementDone) {
 
 			if (millis() - timeStart > timeOut[axis] * MOVEMENT_SPEED_BASE_TIME) {
 				movementDone = true;
