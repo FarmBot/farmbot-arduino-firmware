@@ -9,32 +9,57 @@ Created with eclipseArduino V2 - For more details see http://www.baeyens.it/ecli
 Command line flash tool installation
 ==========================
 
-(in progress)
+```
 
 sudo apt-get install gcc-avr avr-libc avrdude python-configobj python-jinja2 python-serial
-
 mkdir tmp
-
 cd tmp
-
 git clone https://github.com/miracle2k/python-glob2
-
 cd python-glob2
-
 sudo python setup.py install
-
-
 git clone git://github.com/amperka/ino.git
-
 make install
-
+```
 
 Command line flash tool use
 ==========================
 
+```
 ino build
 ino upload
+```
 
+Software overview
+=================
+
+All files are in /src
+
+Farmbot_arduino_controller contains the setup() and main(). This the main sequence:
+
+```
+     +--------------------------+
+     |farmbot_arduino_controller|
+     +-----------+--------------+
+                 v
+     +--------------------------+
+     |Command                   |
+     +-----------+--------------+
+                 v
+     +--------------------------+
+     |GCodeProcessor            |
+     +-----------+--------------+
+                 v
+     +--------------------------+
+     |***Handler                |
+     +-------+-----------+------+
+             |           |
+             |           +---+
+             v               v
+     +--------------+   +-----------+
+     |StepperControl|   | PinControl|
+     +--------------+   +-----------+
+
+```
 
 Codes used for communication
 ============================
@@ -111,6 +136,13 @@ W         |Secondary value        |#
 L         |Number                 |#
 E         |Element (in tool mount)|#
 M         |Mode                   |0 = output / 1 = input
+          |                       |
+X1        |End stop minimum x axis|0/1
+X2        |End stop maximum x axis|0/1
+Y1        |End stop minimum y axis|0/1
+Y2        |End stop maximum y axis|0/1
+Z1        |End stop minimum z axis|0/1
+Z2        |End stop maximum z axis|0/1
 
 Arduino paramter numbers
 ------------------------
