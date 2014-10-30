@@ -67,7 +67,7 @@ void CurrentState::storeEndStops() {
         CurrentState::getInstance()->setEndStopState(1,0,digitalRead(Y_MIN_PIN));
         CurrentState::getInstance()->setEndStopState(1,1,digitalRead(Y_MAX_PIN));
         CurrentState::getInstance()->setEndStopState(2,0,digitalRead(Z_MIN_PIN));
-        CurrentState::getInstance()->setEndStopState(3,1,digitalRead(Z_MAX_PIN));
+        CurrentState::getInstance()->setEndStopState(2,1,digitalRead(Z_MAX_PIN));
 }
 
 void CurrentState::printPosition() {
