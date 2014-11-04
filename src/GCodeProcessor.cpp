@@ -3,6 +3,7 @@
  *
  *  Created on: 15 maj 2014
  *      Author: MattLech
+ *      Author: Tim Evers
  */
 
 #include "GCodeProcessor.h"
@@ -83,6 +84,9 @@ GCodeHandler* GCodeProcessor::getGCodeHandler(CommandCodeEnum codeEnum) {
 		return F43Handler::getInstance();
 	case F44:
 		return F44Handler::getInstance();
+
+	case F61:
+		return F61Handler::getInstance();
 
 	case F81:
 		return F81Handler::getInstance();

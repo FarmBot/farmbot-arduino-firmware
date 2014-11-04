@@ -3,6 +3,8 @@
 #include "pins.h"
 #include "Config.h"
 
+#include "ServoControl.h"
+
 static char commandEndChar = 0x0A;
 static GCodeProcessor* gCodeProcessor = new GCodeProcessor();
 
@@ -31,11 +33,17 @@ void setup() {
 	pinMode(FAN_PIN     , OUTPUT);
 	pinMode(LED_PIN     , OUTPUT);
 
+	//pinMode(SERVO_0_PIN , OUTPUT);
+	//pinMode(SERVO_1_PIN , OUTPUT);
+
 	digitalWrite(X_ENABLE_PIN, HIGH);
 	digitalWrite(Y_ENABLE_PIN, HIGH);
 	digitalWrite(Z_ENABLE_PIN, HIGH);
 
 	Serial.begin(115200);
+
+	ServoControl::getInstance()->attach();
+
 }
 
 // The loop function is called in an endless loop
@@ -52,4 +60,7 @@ void loop() {
 		}
 	}
 	delay(100);
+
+	//ServoControl::getInstance()->SetAngle(90);
+
 }
