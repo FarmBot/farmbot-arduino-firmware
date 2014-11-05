@@ -97,6 +97,7 @@ F        |43    |P M       |Set the mode of a pin in arduino
 F        |44    |P V W T   |Set the value V on an arduino pin, wait for time T, set value W on the arduino pin
 F        |51    |E P V     |Set a value on the tool mount with I2C
 F        |52    |E P       |Read value from the tool mount with I2C
+F        |61    |P V       |Set the servo on the pin (only pin 4 and 5) to the requested angle
 F        |81    |          |Report end stop
 F        |82    |          |Report current position
 F        |83    |          |Report software version
