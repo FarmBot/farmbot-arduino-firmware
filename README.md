@@ -10,20 +10,20 @@ Command line flash tool installation
 ==========================
 
 ```
-
 sudo apt-get install gcc-avr avr-libc avrdude python-configobj python-jinja2 python-serial
 mkdir tmp
 cd tmp
 git clone https://github.com/miracle2k/python-glob2
 cd python-glob2
+wget https://bootstrap.pypa.io/ez_setup.py -O - | sudo python
 sudo python setup.py install
 git clone git://github.com/amperka/ino.git
-make install
+sudo make install
 ```
 
 Command line flash tool use
 ==========================
-
+From the farmbot-arduino-controller directory,
 ```
 ino build
 ino upload
