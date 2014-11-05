@@ -19,7 +19,7 @@ public:
 	static ServoControl* getInstance();
 
 	int attach();
-	int setAngle(int motor, int angle);
+	int setAngle(int pin, int angle);
 private:
 	ServoControl();
 	ServoControl(ServoControl const&);

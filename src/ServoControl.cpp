@@ -1,5 +1,4 @@
 #include "ServoControl.h"
-
 #include "Servo.h"
 
 /*
@@ -27,13 +26,29 @@ int ServoControl::attach() {
 	servos[1].attach(SERVO_1_PIN);
 }
 
-int ServoControl::setAngle(int motor, int angle) {
+int ServoControl::setAngle(int pin, int angle) {
 
-	switch(motor) {
-		case 1:
+/*
+	Serial.print("R99");
+	Serial.print(" ");
+	Serial.print("SERVO");
+	Serial.print(" ");
+	Serial.print("pin");
+	Serial.print(" ");
+	Serial.print(pin);
+	Serial.print(" ");
+	Serial.print("angle");
+	Serial.print(" ");
+	Serial.print(angle);
+	Serial.print(" ");
+	Serial.print("\n");
+*/
+
+	switch(pin) {
+		case 4:
 		        servos[0].write(angle);
 			break;
-		case 2:
+		case 5:
 		        servos[1].write(angle);
 			break;
 		default:  
