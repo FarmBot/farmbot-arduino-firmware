@@ -18,6 +18,7 @@ cd python-glob2
 wget https://bootstrap.pypa.io/ez_setup.py -O - | sudo python
 sudo python setup.py install
 git clone git://github.com/amperka/ino.git
+cd ino
 sudo make install
 ```
 
