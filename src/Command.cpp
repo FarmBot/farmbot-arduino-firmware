@@ -23,6 +23,9 @@ long   mode                     = 0;
 CommandCodeEnum commandCodeEnum = CODE_UNDEFINED;
 
 Command::Command(String commandString) {
+
+	commandString = commandString + " ";
+
 	char charBuf[commandString.length()];
 	commandString.toCharArray(charBuf, commandString.length());
 	char* charPointer;
@@ -43,6 +46,8 @@ Command::Command(String commandString) {
 }
 
 CommandCodeEnum Command::getGCodeEnum(char* code) {
+
+
 	if (strcmp(code, "G0") == 0 || strcmp(code, "G00") == 0) {
 		return G00;
 	}

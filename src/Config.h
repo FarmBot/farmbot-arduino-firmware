@@ -27,6 +27,7 @@ const unsigned int MOVEMENT_SPEED_BASE_TIME      = 2000;
 const unsigned int MOVEMENT_DELAY                = 500;
 
 const long PARAM_VERSION_DEFAULT                = 0;
+const long PARAM_TEST_DEFAULT                   = 0;
 
 const long MOVEMENT_TIMEOUT_X_DEFAULT           = 30;
 const long MOVEMENT_TIMEOUT_Y_DEFAULT           = 30;
