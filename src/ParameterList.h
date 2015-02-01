@@ -11,6 +11,7 @@
 enum ParamListEnum
 {
 	PARAM_VERSION 			= 0,
+	PARAM_TEST 			= 1,
 
 	MOVEMENT_TIMEOUT_X		= 11,
 	MOVEMENT_TIMEOUT_Y		= 12,

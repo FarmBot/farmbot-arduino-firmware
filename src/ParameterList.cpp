@@ -14,6 +14,7 @@ ParameterList::ParameterList() {
 
 
 	paramValues[PARAM_VERSION]               = PARAM_VERSION_DEFAULT;
+	paramValues[PARAM_TEST]                  = PARAM_TEST_DEFAULT;
 
 	paramValues[MOVEMENT_TIMEOUT_X]          = MOVEMENT_TIMEOUT_X_DEFAULT;
 	paramValues[MOVEMENT_TIMEOUT_Y]          = MOVEMENT_TIMEOUT_Y_DEFAULT;
