@@ -13,6 +13,7 @@
 #include "pins.h"
 #include "Config.h"
 #include "StepperControl.h"
+#include "PinControl.h"
 
 class F81Handler : public GCodeHandler {
 public:
