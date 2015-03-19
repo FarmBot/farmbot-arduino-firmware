@@ -31,8 +31,17 @@ Serial.print("home\n");
                 Serial.print("R99 Report end stops\n");
         }
 
+	// Report back the end stops
         CurrentState::getInstance()->storeEndStops();
         CurrentState::getInstance()->printEndStops();
+
+	// Also report back some selected pin numbers: 8, 9, 10, 13
+	PinControl::getInstance()->readValue( 8, 0);
+	PinControl::getInstance()->readValue( 9, 0);
+	PinControl::getInstance()->readValue(10, 0);
+	PinControl::getInstance()->readValue(13, 0);
+
+
 
         return 0;
 }
