@@ -140,12 +140,12 @@ E         |Element (in tool mount)|#
 M         |Mode (set pin mode)    |0 = output / 1 = input
 M         |Mode (read/write)      |0 = digital / 1 = analog
           |                       |
-X1        |End stop minimum x axis|0/1
-X2        |End stop maximum x axis|0/1
-Y1        |End stop minimum y axis|0/1
-Y2        |End stop maximum y axis|0/1
-Z1        |End stop minimum z axis|0/1
-Z2        |End stop maximum z axis|0/1
+XA        |End stop 1 on x axis   |0/1
+XB        |End stop 2 on x axis   |0/1
+YA        |End stop 1 on y axis   |0/1
+YB        |End stop 2 on y axis   |0/1
+ZA        |End stop 1 on z axis   |0/1
+ZB        |End stop 2 on z axis   |0/1
 
 Arduino paramter numbers
 ------------------------
