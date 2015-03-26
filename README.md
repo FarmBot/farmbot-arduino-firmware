@@ -75,12 +75,12 @@ Code type|Number|Parameters|Function
          |      |          |Codes send to the arduino
          |      |          |
 G        |      |          |G-Code, the codes working the same as a 3D printer
-G        | 0    |X Y Z S   |Move to location at given speed for axis (don't have to be a straight line), in absolute coordinates
-G        | 1    |X Y Z S   |Move to location on a straight line
+G        |00    |X Y Z S   |Move to location at given speed for axis (don't have to be a straight line), in absolute coordinates
+G        |01    |X Y Z S   |Move to location on a straight line
 G        |28    |          |Move home all axis
 F        |      |          |Farm commands, commands specially added for the farmbot
-F        | 1    |T         |Dose amount of water using time in millisecond
-F        | 2    |N         |Dose amount of water using flow meter that measures pulses
+F        |01    |T         |Dose amount of water using time in millisecond
+F        |02    |N         |Dose amount of water using flow meter that measures pulses
 F        |11    |          |Home X axis
 F        |12    |          |Home Y axis
 F        |13    |          |Home Z axis
@@ -107,10 +107,10 @@ E        |      |          |Emergency stop
          |      |          |Codes received from the arduino
          |      |          |
 R        |      |          |Report messages
-R        | 1    |          |Current command started
-R        | 2    |          |Current command finished succesfully
-R        | 3    |          |Current command finished with error
-R        | 4    |          |Current command running
+R        |01    |          |Current command started
+R        |02    |          |Current command finished succesfully
+R        |03    |          |Current command finished with error
+R        |04    |          |Current command running
 R        |21    |P V       |Report parameter value
 R        |31    |P V       |Report status value
 R        |41    |P V       |Report pin value
