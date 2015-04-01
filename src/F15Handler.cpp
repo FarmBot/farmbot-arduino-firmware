@@ -24,8 +24,6 @@ F15Handler::F15Handler() {
 
 int F15Handler::execute(Command* command) {
 
-Serial.print("home\n");
-
         if (LOGGING) {
                 Serial.print("R99 HOME Z\n");
         }

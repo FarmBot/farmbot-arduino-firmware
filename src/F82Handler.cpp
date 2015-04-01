@@ -25,8 +25,6 @@ F82Handler::F82Handler() {
 
 int F82Handler::execute(Command* command) {
 
-Serial.print("home\n");
-
         if (LOGGING) {
                 Serial.print("R99 Report current position\n");
         }

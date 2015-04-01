@@ -48,7 +48,12 @@ void setup() {
 
 // The loop function is called in an endless loop
 void loop() {
+
+	//unsigned long lastAction;
+	//unsigned long currentTime;
+
 	if (Serial.available()) {
+
 		String commandString = Serial.readStringUntil(commandEndChar);
 		if (commandString && commandString.length() > 0) {
 			Command* command = new Command(commandString);
@@ -60,6 +65,8 @@ void loop() {
 		}
 	}
 	delay(100);
+
+	Serial.print("R00\n");
 
 	//ServoControl::getInstance()->SetAngle(90);
 

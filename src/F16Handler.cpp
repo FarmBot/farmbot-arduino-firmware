@@ -24,8 +24,6 @@ F16Handler::F16Handler() {
 
 int F16Handler::execute(Command* command) {
 
-Serial.print("home\n");
-
         if (LOGGING) {
                 Serial.print("R99 HOME Z\n");
         }
