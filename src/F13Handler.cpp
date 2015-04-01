@@ -24,8 +24,6 @@ F13Handler::F13Handler() {
 
 int F13Handler::execute(Command* command) {
 
-Serial.print("home\n");
-
         if (LOGGING) {
                 Serial.print("R99 HOME Z\n");
         }
