@@ -8,6 +8,9 @@
 static char commandEndChar = 0x0A;
 static GCodeProcessor* gCodeProcessor = new GCodeProcessor();
 
+unsigned long lastAction;
+unsigned long currentTime;
+
 //The setup function is called once at startup of the sketch
 void setup() {
 	pinMode(X_STEP_PIN  , OUTPUT);
@@ -44,18 +47,22 @@ void setup() {
 
 	ServoControl::getInstance()->attach();
 
+	lastAction = millis();
+
 }
 
 // The loop function is called in an endless loop
 void loop() {
 
-	//unsigned long lastAction;
-	//unsigned long currentTime;
+
 
 	if (Serial.available()) {
 
 		String commandString = Serial.readStringUntil(commandEndChar);
 		if (commandString && commandString.length() > 0) {
+
+			lastAction = millis();
+
 			Command* command = new Command(commandString);
 			if(LOGGING) {
 				command->print();
@@ -64,10 +71,20 @@ void loop() {
 			free(command);
 		}
 	}
-	delay(100);
+	delay(10);
 
-	Serial.print("R00\n");
+	currentTime = millis();
+	if (currentTime < lastAction) {
+		// If the device timer overruns, reset the idle counter
+		lastAction = millis();
+	}
+	else {
 
-	//ServoControl::getInstance()->SetAngle(90);
+		if ((currentTime - lastAction) > 5000) {
+			// After an idle time, send the idle message
+			Serial.print("R00\n");
+			lastAction = millis();
+		}
+	}
 
 }
