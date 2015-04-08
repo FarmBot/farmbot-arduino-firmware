@@ -82,7 +82,7 @@ void loop() {
 
 		if ((currentTime - lastAction) > 5000) {
 			// After an idle time, send the idle message
-			Serial.print("R00\n");
+			Serial.print("R00\r\n");
 			lastAction = millis();
 		}
 	}
