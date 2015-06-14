@@ -26,6 +26,7 @@ public:
 				 unsigned int xMaxSpd, unsigned int yMaxSpd, unsigned int zMaxSpd,
 				 bool homeX, bool homeY, bool homeZ);
 	int calibrateAxis(int axis);
+	void initInterrupt();
 private:
 	StepperControl();
 	StepperControl(StepperControl const&);
