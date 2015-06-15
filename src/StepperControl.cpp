@@ -21,6 +21,7 @@ unsigned long maxLenth          = 0;
 unsigned long moveTicks[3]      = {0,0,0};
 unsigned long stepOnTick[3]     = {0,0,0};
 unsigned long stepOffTick[3]    = {0,0,0};
+unsigned long axisSpeed[3]      = {0,0,0};
 double lengthRatio[3]           = {0,0,0};
 long speedMax[3]                = {0,0,0};
 long speedMin[3]                = {0,0,0};
@@ -31,6 +32,8 @@ bool motorInv[3]                = {false,false,false};
 bool endStInv[3]                = {false,false,false};
 bool homeAxis[3]                = {false,false,false};
 bool axisActive[3]              = {false,false,false};
+bool movementUp[3]              = {false,false,false};
+bool movementToHome[3]          = {false,false,false};
 bool home                       = false;
 
 
@@ -396,70 +399,20 @@ void doseWaterByTime(long time) {
 void checkAxisDirection(int i) {
 	if (homeAxis[i]){
 		// When home is active, the direction is fixed
-		movementUp     = homeIsUp[i];
-		movementToHome = true;
+		movementUp[i]     = homeIsUp[i];
+		movementToHome[i] = true;
 
 		if (currentPoint[i] == 0) {
 			// Go slow when theoretical end point reached but there is no end stop siganl
-			axisSpeed = speedMin[i];
+			axisSpeed[i] = speedMin[i];
 		} else {
 			// For normal movement, move in direction of destination
-	                movementUp     = (    currentPoint[i]  <      destinationPoint[i] );
-			movementToHome = (abs(currentPoint[i]) >= abs(destinationPoint[i]));
+	                movementUp[i]     = (    currentPoint[i]  <      destinationPoint[i] );
+			movementToHome[i] = (abs(currentPoint[i]) >= abs(destinationPoint[i]));
 		}
 	}
 
 }
-
-void checkAxis(int i) {
-
-	if ((!pointReached(currentPoint, destinationPoint) || home) && !movementDone) {
-		// home or destination not reached, keep moving
-
-		axisSpeed = calculateSpeed(	sourcePoint[i],currentPoint[i],destinationPoint[i],
-				 		speedMin[i], speedMax[i], stepsAcc[i]);
-
-		checkAxisDirection(i);
-
-		// If end stop reached, don't move anymore
-		if ((homeAxis[i] && !endStopAxisReached(i, false)) || (!homeAxis[i] &&  !endStopAxisReached(i, !movementToHome) &&  currentPoint[i] !=  destinationPoint[i] )) {
-
-
-			// Set the moments when the step is set to true and false
-			// Take the requested speed (steps / second) and divide by the interrupt speed (interrupts per seconde)
-			// This gives the number of interrupts (called ticks here) before the pulse needs to be set for the next step
-			moveOnTicks[i]  = axisSpeed / MOVEMENT_INTERRUPT_SPEED /2;
-			moveOffTicks[i] = axisSpeed / MOVEMENT_INTERRUPT_SPEED;
-
-		}
-
-		// If end stop for home is active, set the position to zero
-		if (endStopAxisReached(i, false)) {
-			currentPoint[i] = 0;
-		}
-
-	} else {
-		// Destination or home reached. Deactivate the axis.
-		moveAxisActive[i] = false;
-	}
-}
-
-void checkTicksAxis(int i) {
-
-	if (axisAcive[i]) {
-		if (moveTicks[i] >= stepOffTick[3]) {
-			resetStep(i, false);
-			checkAxis(i);
-		}
-		else {
-
-			if (moveTicks[i] >= stepOnTick[i]) {
-				stepAxis(i, true);
-			}
-		}
-	}
-}
-
 
 void stepAxis(int i, bool state) {
 
@@ -476,12 +429,61 @@ void stepAxis(int i, bool state) {
 
 	// set a step on the motors
 	step(i, currentPoint[i], 1, destinationPoint[i]);
-	stepMade = true;
-	lastStepMillis[i] = currentMillis;
-	}
-
+	//stepMade = true;
+	//lastStepMillis[i] = currentMillis;
 
 }
+
+void checkAxis(int i) {
+
+	if ((!pointReached(currentPoint, destinationPoint) || home) && axisActive[i]) {
+		// home or destination not reached, keep moving
+
+		axisSpeed[i] = calculateSpeed(	sourcePoint[i],currentPoint[i],destinationPoint[i],
+				 		speedMin[i], speedMax[i], stepsAcc[i]);
+
+		checkAxisDirection(i);
+
+		// If end stop reached, don't move anymore
+		if ((homeAxis[i] && !endStopAxisReached(i, false)) || (!homeAxis[i] &&  !endStopAxisReached(i, !movementToHome[i]) &&  currentPoint[i] !=  destinationPoint[i] )) {
+
+
+			// Set the moments when the step is set to true and false
+			// Take the requested speed (steps / second) and divide by the interrupt speed (interrupts per seconde)
+			// This gives the number of interrupts (called ticks here) before the pulse needs to be set for the next step
+			stepOnTick[i]  = moveTicks[i] + axisSpeed[i] / MOVEMENT_INTERRUPT_SPEED /2;
+			stepOffTick[i] = moveTicks[i] + axisSpeed[i] / MOVEMENT_INTERRUPT_SPEED   ;
+
+		}
+
+		// If end stop for home is active, set the position to zero
+		if (endStopAxisReached(i, false)) {
+			currentPoint[i] = 0;
+		}
+
+	} else {
+		// Destination or home reached. Deactivate the axis.
+		axisActive[i] = false;
+	}
+}
+
+void checkTicksAxis(int i) {
+
+	if (axisActive[i]) {
+		if (moveTicks[i] >= stepOffTick[3]) {
+			resetStep(i);
+			checkAxis(i);
+		}
+		else {
+
+			if (moveTicks[i] >= stepOnTick[i]) {
+				stepAxis(i, true);
+			}
+		}
+	}
+}
+
+
 
 // Handle movement by checking each axis
 void handleMovementInterrupt(void){
@@ -513,55 +515,60 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 						unsigned int xMaxSpd, unsigned int yMaxSpd, unsigned int zMaxSpd,
                 				bool xHome, bool yHome, bool zHome) {
 
-	sourcePoint[3] = { 	CurrentState::getInstance()->getX(),
-					CurrentState::getInstance()->getY(),
-					CurrentState::getInstance()->getZ() };
+	sourcePoint[0] 		= CurrentState::getInstance()->getX();
+	sourcePoint[1] 		= CurrentState::getInstance()->getY();
+	sourcePoint[2] 		= CurrentState::getInstance()->getZ();
 
-	currentPoint[3] = { 	CurrentState::getInstance()->getX(),
-					CurrentState::getInstance()->getY(),
-					CurrentState::getInstance()->getZ() };
+	currentPoint[0] 	= CurrentState::getInstance()->getX();
+	currentPoint[1]		= CurrentState::getInstance()->getY();
+	currentPoint[2]		= CurrentState::getInstance()->getZ();
 
-	destinationPoint[3] = { xDest, yDest, zDest };
+	destinationPoint[0] 	= xDest;
+        destinationPoint[1] 	= yDest;
+        destinationPoint[2] 	= zDest;
 
-	movementLength[3] = { 	getLength(destinationPoint[0], currentPoint[0]),
-				getLength(destinationPoint[1], currentPoint[1]),
-				getLength(destinationPoint[2], currentPoint[2])};
+	movementLength[3] 	= getLength(destinationPoint[0], currentPoint[0]);
+	movementLength[3] 	= getLength(destinationPoint[1], currentPoint[1]);
+	movementLength[3] 	= getLength(destinationPoint[2], currentPoint[2]);
 
-	maxLenth = getMaxLength(movementLength);
+	maxLenth 		= getMaxLength(movementLength);
 
-	lengthRatio[3] = { 	1.0 * movementLength[0] / maxLenth, 
-				1.0 * movementLength[1] / maxLenth,
-				1.0 * movementLength[2] / maxLenth };
+	lengthRatio[0]		= 1.0 * movementLength[0] / maxLenth;
+	lengthRatio[1]		= 1.0 * movementLength[1] / maxLenth;
+	lengthRatio[2]		= 1.0 * movementLength[2] / maxLenth;
 
-	homeIsUp[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_X),
-				ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Y),
-				ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Z) };
+	homeIsUp[0]		= ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_X);
+	homeIsUp[1]		= ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Y);
+	homeIsUp[2]		= ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Z);
 
-	speedMax[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_X),
-				ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Y),
-				ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Z) };
+	speedMax[0]		= ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_X);
+	speedMax[1]		= ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Y);
+	speedMax[2]		= ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Z);
 
-	speedMin[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_X),
-				ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Y),
-				ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Z) };
+	speedMin[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_X);
+	speedMin[1]		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Y);
+	speedMin[2]		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Z);
 
-	stepsAcc[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_X),
-				ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Y),
-				ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Z) };
+	stepsAcc[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_X);
+	stepsAcc[1]		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Y);
+	stepsAcc[2]		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Z);
 
-	motorInv[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_X),
-				ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Y),
-				ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Z) };
+	motorInv[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_X);
+	motorInv[1]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Y);
+	motorInv[2]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Z);
 
-	endStInv[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_X),
-				ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Y),
-				ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Z) };
+	endStInv[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_X);
+	endStInv[1]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Y);
+	endStInv[2]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Z);
 
-	timeOut[3] = { 		ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X),
-				ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X),
-				ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X) };
+	timeOut[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
+	timeOut[1]		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
+	timeOut[2]		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
 
-        homeAxis[3] = { xHome, yHome, zHome };
+        homeAxis[0]		= xHome;
+	homeAxis[1]		= yHome;
+	homeAxis[2]		= zHome;
+
         home = xHome || yHome || zHome;
 
  	unsigned long currentMillis         = 0;
@@ -613,9 +620,9 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 
 	// Start movement
 
-	moveAxisActive[0] = true;
-	moveAxisActive[1] = true;
-	moveAxisActive[2] = true;
+	axisActive[0] = true;
+	axisActive[1] = true;
+	axisActive[2] = true;
 
 	checkAxis(0);
 	checkAxis(1);
@@ -624,20 +631,20 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 	Timer1.start();
 
 	// Let the interrupt handle all the movements
-	while (moveAxisActive[0] || moveAxisActive[1] || moveAxisActive[2]) {
+	while (axisActive[0] || axisActive[1] || axisActive[2]) {
 
 		delay(1);
 
 	        storeEndStops();
 
 		// Check timeouts
-		if (moveAxisActive[0] == true && millis() - timeStart > timeOut[0]) {
+		if (axisActive[0] == true && millis() - timeStart > timeOut[0]) {
 			error = 1;
 		}
-		if (moveAxisActive[1] == true && millis() - timeStart > timeOut[1]) {
+		if (axisActive[1] == true && millis() - timeStart > timeOut[1]) {
 			error = 1;
 		}
-		if (moveAxisActive[2] == true && millis() - timeStart > timeOut[2]) {
+		if (axisActive[2] == true && millis() - timeStart > timeOut[2]) {
 			error = 1;
 		}
 
@@ -651,9 +658,9 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 
 		if (error == 1) {
 			Timer1.stop();
-			moveAxisActive[0] = false;
-			moveAxisActive[1] = false;
-			moveAxisActive[2] = false;
+			axisActive[0] = false;
+			axisActive[1] = false;
+			axisActive[2] = false;
 		}
 
 		// Periodically send message still active
