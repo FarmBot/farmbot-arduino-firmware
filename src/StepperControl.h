@@ -25,6 +25,8 @@ public:
 	int moveAbsoluteConstant(long xDest, long yDest, long zDest, 
 				 unsigned int xMaxSpd, unsigned int yMaxSpd, unsigned int zMaxSpd,
 				 bool homeX, bool homeY, bool homeZ);
+
+	void handleMovementInterrupt();
 	int calibrateAxis(int axis);
 	void initInterrupt();
 private:

@@ -13,6 +13,8 @@ StepperControl * StepperControl::getInstance() {
 
 const int MOVEMENT_INTERRUPT_SPEED = 1000; // Interrupt cycle in micro seconds
 
+int test = 0;
+
 long sourcePoint[3]             = {0,0,0};
 long currentPoint[3]            = {0,0,0};
 long destinationPoint[3]        = {0,0,0};
@@ -47,8 +49,10 @@ int ledState = LOW;
 void blinkLed() {
 	if (ledState == LOW) {
 		ledState = HIGH;
+//Serial.print("R99 led on");
 	} else {
 		ledState = LOW;
+//Serial.print("R99 led off");
 	}
 	digitalWrite(LED_PIN, ledState);
 }
@@ -429,6 +433,7 @@ void stepAxis(int i, bool state) {
 
 	// set a step on the motors
 	step(i, currentPoint[i], 1, destinationPoint[i]);
+        blinkLed();
 	//stepMade = true;
 	//lastStepMillis[i] = currentMillis;
 
@@ -436,11 +441,29 @@ void stepAxis(int i, bool state) {
 
 void checkAxis(int i) {
 
+Serial.print("R99 check axis ");
+Serial.print(i);
+Serial.print(" axis active ");
+Serial.print(axisActive[i]);
+Serial.print(" current point ");
+Serial.print(currentPoint[i]);
+Serial.print(" destination point ");
+Serial.print(destinationPoint[i]);
+Serial.print("\n");
+
+
+
 	if ((!pointReached(currentPoint, destinationPoint) || home) && axisActive[i]) {
+Serial.print("R99 point not reached yet\n");
 		// home or destination not reached, keep moving
 
 		axisSpeed[i] = calculateSpeed(	sourcePoint[i],currentPoint[i],destinationPoint[i],
 				 		speedMin[i], speedMax[i], stepsAcc[i]);
+
+Serial.print("R99 axis speed ");
+Serial.print(axisSpeed[i]);
+Serial.print("\n");
+
 
 		checkAxisDirection(i);
 
@@ -469,6 +492,16 @@ void checkAxis(int i) {
 
 void checkTicksAxis(int i) {
 
+Serial.print("R99 checkTicksAxis ");
+Serial.print(" destination point ");
+Serial.print(destinationPoint[0]);
+Serial.print("  ");
+Serial.print("test ");
+Serial.print(test);
+Serial.print("\n");
+
+	moveTicks[i]++;
+
 	if (axisActive[i]) {
 		if (moveTicks[i] >= stepOffTick[3]) {
 			resetStep(i);
@@ -486,7 +519,17 @@ void checkTicksAxis(int i) {
 
 
 // Handle movement by checking each axis
-void handleMovementInterrupt(void){
+void StepperControl::handleMovementInterrupt(void){
+/**/Serial.print("R99 interrupt\n");
+
+Serial.print("R99 interrupt data ");
+Serial.print(" destination point ");
+Serial.print(destinationPoint[0]);
+Serial.print("  ");
+Serial.print("test ");
+Serial.print(test);
+Serial.print("\n");
+
         checkTicksAxis(0);
         checkTicksAxis(1);
         checkTicksAxis(2);
@@ -495,10 +538,21 @@ void handleMovementInterrupt(void){
 
 }
 
+bool interruptBusy = false;
+void handleMovementInterruptTest(void) {
+	if (interruptBusy == false) {
+		interruptBusy = true;
+		//StepperControl::getInstance()->handleMovementInterrupt();
+		blinkLed();
+		interruptBusy = false;
+	}
+}
+
 // Start the interrupt used for moviing
 // Interrupt management code library written by Paul Stoffregen
 void StepperControl::initInterrupt() {
-        Timer1.attachInterrupt(handleMovementInterrupt);
+        //Timer1.attachInterrupt(StepperControl::getInstance()->handleMovementInterrupt);
+        Timer1.attachInterrupt(handleMovementInterruptTest);
         Timer1.initialize(MOVEMENT_INTERRUPT_SPEED);
         Timer1.stop();
 }
@@ -527,11 +581,29 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
         destinationPoint[1] 	= yDest;
         destinationPoint[2] 	= zDest;
 
-	movementLength[3] 	= getLength(destinationPoint[0], currentPoint[0]);
-	movementLength[3] 	= getLength(destinationPoint[1], currentPoint[1]);
-	movementLength[3] 	= getLength(destinationPoint[2], currentPoint[2]);
+//test = 1;
+
+//Serial.print("R99 ");
+//Serial.print(" destination ");
+//Serial.print(destinationPoint[0]);
+//Serial.print("  ");
+//Serial.print("\n");
+
+	movementLength[0] 	= getLength(destinationPoint[0], currentPoint[0]);
+	movementLength[1] 	= getLength(destinationPoint[1], currentPoint[1]);
+	movementLength[2] 	= getLength(destinationPoint[2], currentPoint[2]);
+
+//Serial.print("R99 ");
+//Serial.print(" during vars ");
+//Serial.print(destinationPoint[0]);
+//Serial.print("\n");
 
 	maxLenth 		= getMaxLength(movementLength);
+
+//Serial.print("R99 ");
+//Serial.print(" during vars ");
+//Serial.print(destinationPoint[0]);
+//Serial.print("\n");
 
 	lengthRatio[0]		= 1.0 * movementLength[0] / maxLenth;
 	lengthRatio[1]		= 1.0 * movementLength[1] / maxLenth;
@@ -571,6 +643,12 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 
         home = xHome || yHome || zHome;
 
+//Serial.print("R99 ");
+//Serial.print(" after vars ");
+//Serial.print(destinationPoint[0]);
+//Serial.print("\n");
+
+
  	unsigned long currentMillis         = 0;
 
 	unsigned long timeStart             = millis();
@@ -607,6 +685,13 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 	reportEndStops();
         enableMotors(true);
 
+//Serial.print("R99 ");
+//Serial.print(" before home check ");
+//Serial.print(destinationPoint[0]);
+//Serial.print(" home is up ");
+//Serial.print(homeIsUp[0]);
+//Serial.print("\n");
+ 
 	// Limit normal movmement to the home position
 	for (int i = 0; i < 3; i++) {
 		if (!homeIsUp[i] && destinationPoint[i] < 0) {
@@ -624,21 +709,49 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 	axisActive[1] = true;
 	axisActive[2] = true;
 
+//Serial.print("R99 ");
+//Serial.print(" before check axis ");
+//Serial.print(destinationPoint[0]);
+//Serial.print("\n");
+
+
+
 	checkAxis(0);
-	checkAxis(1);
-	checkAxis(2);
+//	checkAxis(1);
+//	checkAxis(2);
+
+//Serial.print("R99 ");
+//Serial.print(" after check axis ");
+//Serial.print(destinationPoint[0]);
+//Serial.print("\n");
+
 
 	Timer1.start();
 
+/**/Serial.print("R99 started\n");
+
+/**/Serial.print("R99 timeout ");
+/**/Serial.print(timeOut[0]);
+/**/Serial.print("\n");
+
 	// Let the interrupt handle all the movements
 	while (axisActive[0] || axisActive[1] || axisActive[2]) {
-
+/**///Serial.print("R99 while loop\n");
 		delay(1);
+
+	checkAxis(0);
+//	checkAxis(1);
+//	checkAxis(2);
+
+
+//axisActive[0] = false;
+axisActive[1] = false;
+axisActive[2] = false;
 
 	        storeEndStops();
 
 		// Check timeouts
-		if (axisActive[0] == true && millis() - timeStart > timeOut[0]) {
+		if (axisActive[0] == true && millis() - timeStart > timeOut[0] * 10) {
 			error = 1;
 		}
 		if (axisActive[1] == true && millis() - timeStart > timeOut[1]) {
@@ -657,6 +770,7 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 	        }
 
 		if (error == 1) {
+Serial.print("R99 error\n");
 			Timer1.stop();
 			axisActive[0] = false;
 			axisActive[1] = false;
@@ -671,6 +785,8 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 		}
 
 	}
+
+/**/Serial.print("R99 stopped\n");
 
 	Timer1.stop();
 	enableMotors(false);
