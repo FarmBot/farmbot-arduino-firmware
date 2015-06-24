@@ -22,8 +22,27 @@ G00Handler::G00Handler() {
 }
 
 int G00Handler::execute(Command* command) {
+
+
+//	Serial.print("R99");
+//	Serial.print(" X ");
+//	Serial.print(command->getX());
+//	Serial.print(" Y ");
+//	Serial.print(command->getY());
+//	Serial.print(" Z ");
+//	Serial.print(command->getZ());
+//	Serial.print(" A ");
+//	Serial.print(command->getA());
+//	Serial.print(" B ");
+//	Serial.print(command->getB());
+//	Serial.print(" C ");
+//	Serial.print(command->getC());
+//	Serial.print("\n");
+
+
 	StepperControl::getInstance()->moveAbsoluteConstant(
-			command->getX(), command->getY(), command->getZ(), 
+			command->getX(), command->getY(), command->getZ(),
+			//0,0,0,
 			command->getA(), command->getB(), command->getC(), 
 			false, false, false);
 	if (LOGGING) {
