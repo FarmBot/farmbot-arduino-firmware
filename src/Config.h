@@ -56,13 +56,13 @@ const long MOVEMENT_MIN_SPD_Y_DEFAULT           = 200;
 const long MOVEMENT_MIN_SPD_Z_DEFAULT           = 200;
 
 // Maxumum speed in steps per second
-const long MOVEMENT_MAX_SPD_X_DEFAULT           = 1000;
-const long MOVEMENT_MAX_SPD_Y_DEFAULT           = 1000;
-const long MOVEMENT_MAX_SPD_Z_DEFAULT           = 1000;
+const long MOVEMENT_MAX_SPD_X_DEFAULT           = 4000;
+const long MOVEMENT_MAX_SPD_Y_DEFAULT           = 4000;
+const long MOVEMENT_MAX_SPD_Z_DEFAULT           = 4000;
 
 const long STATUS_GENERAL_DEFAULT               = 0;
 
 
-const String SOFTWARE_VERSION = "GENESIS V.01.03";
+const String SOFTWARE_VERSION = "GENESIS V.01.04";
 
 #endif /* CONFIG_H_ */
