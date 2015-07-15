@@ -277,46 +277,43 @@ unsigned int calculateSpeed(long sourcePosition, long currentPosition, long dest
 		}
 	}
 
-	if (LOGGING) {
-	//if (1==1) {
-		//if (1==1) {
-		//if (millis() % 200 == 0 && currentPosition != destinationPosition) {
-		if (millis() - lastCalcLog > 1000) {
+/*
+	if (millis() - lastCalcLog > 1000) {
 
-			lastCalcLog = millis();
+		lastCalcLog = millis();
 
-			Serial.print("R99");
+		Serial.print("R99");
 
-		//	Serial.print(" a ");
-		//	Serial.print(endPos);
-		//	Serial.print(" b ");
-		//	Serial.print((endPos - stepsAccDec));
-		//	Serial.print(" c ");
-		//	Serial.print(curPos < (endPos - stepsAccDec));
+	//	Serial.print(" a ");
+	//	Serial.print(endPos);
+	//	Serial.print(" b ");
+	//	Serial.print((endPos - stepsAccDec));
+	//	Serial.print(" c ");
+	//	Serial.print(curPos < (endPos - stepsAccDec));
 
 
-			Serial.print(" sta ");
-			Serial.print(staPos);
-			Serial.print(" cur ");
-			Serial.print(curPos);
-			Serial.print(" end ");
-			Serial.print(endPos);
-			Serial.print(" half ");
-			Serial.print(halfway);
-			Serial.print(" len ");
-			Serial.print(stepsAccDec);
-			Serial.print(" min ");
-			Serial.print(minSpeed);
-			Serial.print(" max ");
-			Serial.print(maxSpeed);
-			Serial.print(" spd ");
+		Serial.print(" sta ");
+		Serial.print(staPos);
+		Serial.print(" cur ");
+		Serial.print(curPos);
+		Serial.print(" end ");
+		Serial.print(endPos);
+		Serial.print(" half ");
+		Serial.print(halfway);
+		Serial.print(" len ");
+		Serial.print(stepsAccDec);
+		Serial.print(" min ");
+		Serial.print(minSpeed);
+		Serial.print(" max ");
+		Serial.print(maxSpeed);
+		Serial.print(" spd ");
 
-			Serial.print(" ");
-			Serial.print(newSpeed);
+		Serial.print(" ");
+		Serial.print(newSpeed);
 
-			Serial.print("\n");
-		}
+		Serial.print("\n");
 	}
+*/
 
 	// Return the calculated speed, in steps per second
 	return newSpeed;
@@ -413,17 +410,16 @@ void checkAxisDirection(int i) {
 		// When home is active, the direction is fixed
 		movementUp[i]     = homeIsUp[i];
 		movementToHome[i] = true;
-
-		if (currentPoint[i] == 0) {
-			// Go slow when theoretical end point reached but there is no end stop siganl
-			axisSpeed[i] = speedMin[i];
-		} else {
-			// For normal movement, move in direction of destination
-	                movementUp[i]     = (    currentPoint[i]  <      destinationPoint[i] );
-			movementToHome[i] = (abs(currentPoint[i]) >= abs(destinationPoint[i]));
-		}
+	} else {
+		// For normal movement, move in direction of destination
+                movementUp[i]     = (    currentPoint[i]  <      destinationPoint[i] );
+		movementToHome[i] = (abs(currentPoint[i]) >= abs(destinationPoint[i]));
 	}
 
+	if (currentPoint[i] == 0) {
+		// Go slow when theoretical end point reached but there is no end stop siganl
+		axisSpeed[i] = speedMin[i];
+	}
 }
 
 void stepAxis(int i, bool state) {
@@ -450,6 +446,8 @@ void stepAxis(int i, bool state) {
 void checkAxis(int i) {
 
 	//moveTicks[i]++;
+	checkAxisDirection(i);
+
 
 /*
 Serial.print("R99 check axis ");
@@ -460,12 +458,21 @@ Serial.print(" current point ");
 Serial.print(currentPoint[i]);
 Serial.print(" destination point ");
 Serial.print(destinationPoint[i]);
+
+Serial.print(" home stop reached ");
+Serial.print(endStopAxisReached(i, false));
+Serial.print(" axis stop reached ");
+Serial.print(endStopAxisReached(i, true));
+Serial.print(" home axis ");
+Serial.print(homeAxis[i]);
+Serial.print(" movement to home ");
+Serial.print(movementToHome[i]);
 Serial.print("\n");
 */
 
 
 	//if ((!pointReached(currentPoint, destinationPoint) || home) && axisActive[i]) {
-	if (((currentPoint[i] != destinationPoint[i]) || home) && axisActive[i]) {
+	if (((currentPoint[i] != destinationPoint[i]) || homeAxis[i]) && axisActive[i]) {
 //Serial.print("R99 point not reached yet\n");
 		// home or destination not reached, keep moving
 /*
@@ -483,11 +490,19 @@ Serial.print("\n");
 //Serial.print(axisSpeed[i]);
 //Serial.print("\n");
 
-
-		checkAxisDirection(i);
-
+/*
+Serial.print("R99 check axis b  ");
+Serial.print(i);
+Serial.print(" home part true ");
+Serial.print(homeAxis[i] && !endStopAxisReached(i, false));
+Serial.print(" !homeAxis[i] ");
+Serial.print(!homeAxis[i]);
+Serial.print(" !endStopAxisReached(i, !movementToHome[i]) ");
+Serial.print(!endStopAxisReached(i, !movementToHome[i]));
+Serial.print("\n");
+*/
 		// If end stop reached, don't move anymore
-		if ((homeAxis[i] && !endStopAxisReached(i, false)) || (!homeAxis[i] &&  !endStopAxisReached(i, !movementToHome[i]) &&  currentPoint[i] !=  destinationPoint[i] )) {
+		if ((homeAxis[i] && !endStopAxisReached(i, false)) || (!homeAxis[i] &&  !endStopAxisReached(i, !movementToHome[i]))) {
 
 			// Set the moments when the step is set to true and false
 
@@ -523,16 +538,21 @@ Serial.print("\n");
 */
 			}
 		}
-
-		// If end stop for home is active, set the position to zero
-		if (endStopAxisReached(i, false)) {
-			currentPoint[i] = 0;
+		else {
+			axisActive[i] = false;
 		}
 
 	} else {
 		// Destination or home reached. Deactivate the axis.
 		axisActive[i] = false;
 	}
+
+	// If end stop for home is active, set the position to zero
+	if (endStopAxisReached(i, false)) {
+		currentPoint[i] = 0;
+	}
+
+
 }
 
 void checkTicksAxis(int i) {
@@ -779,9 +799,9 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 //Serial.print("\n");
 
 
-//	checkTicksAxis(0);
-//	checkTicksAxis(1);
-//	checkTicksAxis(2);
+	checkTicksAxis(0);
+	checkTicksAxis(1);
+	checkTicksAxis(2);
 
 
 //axisActive[0] = false;
