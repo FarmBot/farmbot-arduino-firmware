@@ -92,10 +92,10 @@ F        |22    |P V       |Write parameter
 F        |23    |P V       |Update parameter (during calibration)
 F        |31    |P         |Read status
 F        |32    |P V       |Write status
-F        |41    |P V M     |Set a value on an arduino pin
-F        |42    |P M       |Read a value from an arduino pin
-F        |43    |P M       |Set the mode of a pin in arduino
-F        |44    |P V W T   |Set the value V on an arduino pin, wait for time T, set value W on the arduino pin
+F        |41    |P V M     |Set a value on an arduino pin (digital/analog)
+F        |42    |P M       |Read a value from an arduino pin (digital/analog)
+F        |43    |P M       |Set the mode of a pin in arduino (input/output)
+F        |44    |P V W T M |Set the value V on an arduino pin, wait for time T, set value W on the arduino pin (d/a)
 F        |51    |E P V     |Set a value on the tool mount with I2C
 F        |52    |E P       |Read value from the tool mount with I2C
 F        |61    |P V       |Set the servo on the pin (only pin 4 and 5) to the requested angle
