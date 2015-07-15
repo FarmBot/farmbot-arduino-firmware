@@ -1,4 +1,5 @@
 #include "StepperControl.h"
+#include "TimerOne.h"
 
 static StepperControl* instance;
 
@@ -10,7 +11,55 @@ StepperControl * StepperControl::getInstance() {
 }
 ;
 
+const int MOVEMENT_INTERRUPT_SPEED = 100; // Interrupt cycle in micro seconds
+
+int test = 0;
+
+long sourcePoint[3]             = {0,0,0};
+long currentPoint[3]            = {0,0,0};
+long destinationPoint[3]        = {0,0,0};
+unsigned long movementLength[3] = {0,0,0};
+unsigned long maxLenth          = 0;
+unsigned long moveTicks[3]      = {0,0,0};
+unsigned long stepOnTick[3]     = {0,0,0};
+unsigned long stepOffTick[3]    = {0,0,0};
+unsigned long axisSpeed[3]      = {0,0,0};
+double lengthRatio[3]           = {0,0,0};
+long speedMax[3]                = {0,0,0};
+long speedMin[3]                = {0,0,0};
+long stepsAcc[3]                = {0,0,0};
+long timeOut[3]                 = {0,0,0};
+bool homeIsUp[3]                = {false,false,false};
+bool motorInv[3]                = {false,false,false};
+bool endStInv[3]                = {false,false,false};
+bool homeAxis[3]                = {false,false,false};
+bool axisActive[3]              = {false,false,false};
+bool movementUp[3]              = {false,false,false};
+bool movementToHome[3]          = {false,false,false};
+bool home                       = false;
+
+
+// ** test code
+
+// The interrupt will blink the LED, and keep
+// track of how many times it has blinked.
+int ledState = LOW;
+//volatile unsigned long blinkCount = 0; // use volatile for shared variables
+
+void blinkLed() {
+	if (ledState == LOW) {
+		ledState = HIGH;
+//Serial.print("R99 led on");
+	} else {
+		ledState = LOW;
+//Serial.print("R99 led off");
+	}
+	digitalWrite(LED_PIN, ledState);
+}
+
+
 StepperControl::StepperControl() {
+
 }
 
 unsigned long getMaxLength(unsigned long lengths[3]) {
@@ -121,6 +170,21 @@ void step(int axis, long &currentPoint, unsigned long steps,
 	}
 }
 
+void resetStep(int axis) {
+	switch (axis) {
+	case 0:
+		digitalWrite(X_STEP_PIN, LOW);
+		break;
+	case 1:
+		digitalWrite(Y_STEP_PIN, LOW);
+		break;
+	case 2:
+		digitalWrite(Z_STEP_PIN, LOW);
+		break;
+	}
+
+}
+
 bool pointReached(long currentPoint[3],
 		  long destinationPoint[3]) {
 	for (int i = 0; i < 3; i++) {
@@ -166,6 +230,9 @@ unsigned int calculateSpeed(unsigned int &currentStepsPerSecond,
 }
 */
 
+
+unsigned int lastCalcLog = 0;
+
 unsigned int calculateSpeed(long sourcePosition, long currentPosition, long destinationPosition, long minSpeed, long maxSpeed, long stepsAccDec) {
 
 	int newSpeed = 0;
@@ -210,42 +277,45 @@ unsigned int calculateSpeed(long sourcePosition, long currentPosition, long dest
 		}
 	}
 
-	if (LOGGING) {
-		if (millis() % 200 == 0 && currentPosition != destinationPosition) {
+/*
+	if (millis() - lastCalcLog > 1000) {
 
-			Serial.print("R99");
+		lastCalcLog = millis();
 
-		//	Serial.print(" a ");
-		//	Serial.print(endPos);
-		//	Serial.print(" b ");
-		//	Serial.print((endPos - stepsAccDec));
-		//	Serial.print(" c ");
-		//	Serial.print(curPos < (endPos - stepsAccDec));
+		Serial.print("R99");
+
+	//	Serial.print(" a ");
+	//	Serial.print(endPos);
+	//	Serial.print(" b ");
+	//	Serial.print((endPos - stepsAccDec));
+	//	Serial.print(" c ");
+	//	Serial.print(curPos < (endPos - stepsAccDec));
 
 
-			Serial.print(" sta ");
-			Serial.print(staPos);
-			Serial.print(" cur ");
-			Serial.print(curPos);
-			Serial.print(" end ");
-			Serial.print(endPos);
-			Serial.print(" half ");
-			Serial.print(halfway);
-			Serial.print(" len ");
-			Serial.print(stepsAccDec);
-		//	Serial.print(" min ");
-		//	Serial.print(minSpeed);
-		//	Serial.print(" max ");
-		//	Serial.print(maxSpeed);
-			Serial.print(" spd ");
+		Serial.print(" sta ");
+		Serial.print(staPos);
+		Serial.print(" cur ");
+		Serial.print(curPos);
+		Serial.print(" end ");
+		Serial.print(endPos);
+		Serial.print(" half ");
+		Serial.print(halfway);
+		Serial.print(" len ");
+		Serial.print(stepsAccDec);
+		Serial.print(" min ");
+		Serial.print(minSpeed);
+		Serial.print(" max ");
+		Serial.print(maxSpeed);
+		Serial.print(" spd ");
 
-			Serial.print(" ");
-			Serial.print(newSpeed);
+		Serial.print(" ");
+		Serial.print(newSpeed);
 
-			Serial.print("\n");
-		}
+		Serial.print("\n");
 	}
+*/
 
+	// Return the calculated speed, in steps per second
 	return newSpeed;
 }
 
@@ -335,6 +405,242 @@ void doseWaterByTime(long time) {
 	digitalWrite(HEATER_1_PIN, LOW);
 }
 
+void checkAxisDirection(int i) {
+	if (homeAxis[i]){
+		// When home is active, the direction is fixed
+		movementUp[i]     = homeIsUp[i];
+		movementToHome[i] = true;
+	} else {
+		// For normal movement, move in direction of destination
+                movementUp[i]     = (    currentPoint[i]  <      destinationPoint[i] );
+		movementToHome[i] = (abs(currentPoint[i]) >= abs(destinationPoint[i]));
+	}
+
+	if (currentPoint[i] == 0) {
+		// Go slow when theoretical end point reached but there is no end stop siganl
+		axisSpeed[i] = speedMin[i];
+	}
+}
+
+void stepAxis(int i, bool state) {
+
+	if (homeAxis[i] && currentPoint[i] == 0) {
+
+		// Keep moving toward end stop even when position is zero
+		// but end stop is not yet active
+		if (homeIsUp[i]) {
+			currentPoint[i] = -1;
+		} else {
+			currentPoint[i] =  1;
+		}
+	}
+
+	// set a step on the motors
+	step(i, currentPoint[i], 1, destinationPoint[i]);
+        blinkLed();
+	//stepMade = true;
+	//lastStepMillis[i] = currentMillis;
+
+}
+
+void checkAxis(int i) {
+
+	//moveTicks[i]++;
+	checkAxisDirection(i);
+
+
+/*
+Serial.print("R99 check axis ");
+Serial.print(i);
+Serial.print(" axis active ");
+Serial.print(axisActive[i]);
+Serial.print(" current point ");
+Serial.print(currentPoint[i]);
+Serial.print(" destination point ");
+Serial.print(destinationPoint[i]);
+
+Serial.print(" home stop reached ");
+Serial.print(endStopAxisReached(i, false));
+Serial.print(" axis stop reached ");
+Serial.print(endStopAxisReached(i, true));
+Serial.print(" home axis ");
+Serial.print(homeAxis[i]);
+Serial.print(" movement to home ");
+Serial.print(movementToHome[i]);
+Serial.print("\n");
+*/
+
+
+	//if ((!pointReached(currentPoint, destinationPoint) || home) && axisActive[i]) {
+	if (((currentPoint[i] != destinationPoint[i]) || homeAxis[i]) && axisActive[i]) {
+//Serial.print("R99 point not reached yet\n");
+		// home or destination not reached, keep moving
+/*
+		Serial.print("R99 calc axis speed");
+		Serial.print(" speed max ");
+		Serial.print(speedMax[i]);
+		Serial.print("\n");
+*/
+
+		// Get the axis speed, in steps per second
+		axisSpeed[i] = calculateSpeed(	sourcePoint[i],currentPoint[i],destinationPoint[i],
+				 		speedMin[i], speedMax[i], stepsAcc[i]);
+
+//Serial.print("R99 axis speed ");
+//Serial.print(axisSpeed[i]);
+//Serial.print("\n");
+
+/*
+Serial.print("R99 check axis b  ");
+Serial.print(i);
+Serial.print(" home part true ");
+Serial.print(homeAxis[i] && !endStopAxisReached(i, false));
+Serial.print(" !homeAxis[i] ");
+Serial.print(!homeAxis[i]);
+Serial.print(" !endStopAxisReached(i, !movementToHome[i]) ");
+Serial.print(!endStopAxisReached(i, !movementToHome[i]));
+Serial.print("\n");
+*/
+		// If end stop reached, don't move anymore
+		if ((homeAxis[i] && !endStopAxisReached(i, false)) || (!homeAxis[i] &&  !endStopAxisReached(i, !movementToHome[i]))) {
+
+			// Set the moments when the step is set to true and false
+
+			if (axisSpeed[i] > 0)
+			{
+/*
+				Serial.print("R99 calculated steps ");
+				Serial.print(" ** additional ticks steps ");
+				Serial.print(1000.0 * 1000.0 / MOVEMENT_INTERRUPT_SPEED / axisSpeed[i]);
+				Serial.print("\n");
+*/
+
+				// Take the requested speed (steps / second) and divide by the interrupt speed (interrupts per seconde)
+				// This gives the number of interrupts (called ticks here) before the pulse needs to be set for the next step
+				stepOnTick[i]  = moveTicks[i] + (1000.0 * 1000.0 / MOVEMENT_INTERRUPT_SPEED / axisSpeed[i] / 2);
+				stepOffTick[i] = moveTicks[i] + (1000.0 * 1000.0 / MOVEMENT_INTERRUPT_SPEED / axisSpeed[i]    );
+				//stepOnTick[i]  = moveTicks[i] + (axisSpeed[i] * 1000 / MOVEMENT_INTERRUPT_SPEED / 2);
+				//stepOffTick[i] = moveTicks[i] + (axisSpeed[i] * 1000 / MOVEMENT_INTERRUPT_SPEED    );
+
+/*
+				Serial.print("R99 calculated steps ");
+				Serial.print(" interrupt speed ");
+				Serial.print(MOVEMENT_INTERRUPT_SPEED);
+				Serial.print(" axisSpeed ");
+				Serial.print(axisSpeed[i]);
+				Serial.print(" moveTicks ");
+				Serial.print(moveTicks[i]);
+				Serial.print(" stepOnTick ");
+				Serial.print(stepOnTick[i]);
+				Serial.print(" stepOffTick ");
+				Serial.print(stepOffTick[i]);
+				Serial.print("\n");
+*/
+			}
+		}
+		else {
+			axisActive[i] = false;
+		}
+
+	} else {
+		// Destination or home reached. Deactivate the axis.
+		axisActive[i] = false;
+	}
+
+	// If end stop for home is active, set the position to zero
+	if (endStopAxisReached(i, false)) {
+		currentPoint[i] = 0;
+	}
+
+
+}
+
+void checkTicksAxis(int i) {
+
+	moveTicks[i]++;
+
+//Serial.print("R99 checkTicksAxis ");
+//Serial.print(" destination point ");
+//Serial.print(destinationPoint[0]);
+//Serial.print(" moveTicks ");
+//Serial.print(moveTicks[i]);
+//Serial.print(" stepOnTick ");
+//Serial.print(stepOnTick[i]);
+//Serial.print(" stepOffTick ");
+//Serial.print(stepOffTick[i]);
+//Serial.print("\n");
+
+	if (axisActive[i]) {
+		if (moveTicks[i] >= stepOffTick[i]) {
+
+/*
+Serial.print("R99 reset step ");
+Serial.print(" moveTicks ");
+Serial.print(moveTicks[i]);
+Serial.print("\n");
+*/
+			// Negative flank for the steps
+			resetStep(i);
+			checkAxis(i);
+		}
+		else {
+
+			if (moveTicks[i] == stepOnTick[i]) {
+/*
+Serial.print("R99 set step ");
+Serial.print(" moveTicks ");
+Serial.print(moveTicks[i]);
+Serial.print("\n");
+*/
+				// Positive flank for the steps
+				stepAxis(i, true);
+			}
+		}
+	}
+}
+
+
+
+// Handle movement by checking each axis
+void StepperControl::handleMovementInterrupt(void){
+//Serial.print("R99 interrupt\n");
+
+//Serial.print("R99 interrupt data ");
+//Serial.print(" destination point ");
+//Serial.print(destinationPoint[0]);
+//Serial.print("  ");
+//Serial.print("test ");
+//Serial.print(test);
+//Serial.print("\n");
+
+        checkTicksAxis(0);
+        checkTicksAxis(1);
+        checkTicksAxis(2);
+
+//      blinkLed();
+
+}
+
+bool interruptBusy = false;
+void handleMovementInterruptTest(void) {
+	if (interruptBusy == false) {
+		interruptBusy = true;
+		StepperControl::getInstance()->handleMovementInterrupt();
+		//blinkLed();
+		interruptBusy = false;
+	}
+}
+
+// Start the interrupt used for moviing
+// Interrupt management code library written by Paul Stoffregen
+void StepperControl::initInterrupt() {
+        //Timer1.attachInterrupt(StepperControl::getInstance()->handleMovementInterrupt);
+        Timer1.attachInterrupt(handleMovementInterruptTest);
+        Timer1.initialize(MOVEMENT_INTERRUPT_SPEED);
+        Timer1.stop();
+}
+
+
 /**
  * xDest - destination X in steps
  * yDest - destination Y in steps
@@ -346,70 +652,92 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 						unsigned int xMaxSpd, unsigned int yMaxSpd, unsigned int zMaxSpd,
                 				bool xHome, bool yHome, bool zHome) {
 
-	long sourcePoint[3] = { 	CurrentState::getInstance()->getX(),
-					CurrentState::getInstance()->getY(),
-					CurrentState::getInstance()->getZ() };
 
-	long currentPoint[3] = { 	CurrentState::getInstance()->getX(),
-					CurrentState::getInstance()->getY(),
-					CurrentState::getInstance()->getZ() };
+//Serial.print("R99 ");
+//Serial.print(" xMaxSpd ");
+//Serial.print(xMaxSpd);
+//Serial.print("\n");
 
-	long destinationPoint[3] = { xDest, yDest, zDest };
+	sourcePoint[0] 		= CurrentState::getInstance()->getX();
+	sourcePoint[1] 		= CurrentState::getInstance()->getY();
+	sourcePoint[2] 		= CurrentState::getInstance()->getZ();
 
-	unsigned long movementLength[3] = { 	getLength(destinationPoint[0], currentPoint[0]),
-						getLength(destinationPoint[1], currentPoint[1]),
-						getLength(destinationPoint[2], currentPoint[2])};
-	unsigned long maxLenth = getMaxLength(movementLength);
+	currentPoint[0] 	= CurrentState::getInstance()->getX();
+	currentPoint[1]		= CurrentState::getInstance()->getY();
+	currentPoint[2]		= CurrentState::getInstance()->getZ();
 
-	double lengthRatio[3] = { 	1.0 * movementLength[0] / maxLenth, 
-					1.0 * movementLength[1] / maxLenth,
-					1.0 * movementLength[2] / maxLenth };
+	destinationPoint[0] 	= xDest;
+        destinationPoint[1] 	= yDest;
+        destinationPoint[2] 	= zDest;
 
-	bool homeIsUp[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_X),
-				ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Y),
-				ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Z) };
+	movementLength[0] 	= getLength(destinationPoint[0], currentPoint[0]);
+	movementLength[1] 	= getLength(destinationPoint[1], currentPoint[1]);
+	movementLength[2] 	= getLength(destinationPoint[2], currentPoint[2]);
 
-	long speedMax[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_X),
-				ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Y),
-				ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Z) };
+	maxLenth 		= getMaxLength(movementLength);
 
-	long speedMin[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_X),
-				ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Y),
-				ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Z) };
+	lengthRatio[0]		= 1.0 * movementLength[0] / maxLenth;
+	lengthRatio[1]		= 1.0 * movementLength[1] / maxLenth;
+	lengthRatio[2]		= 1.0 * movementLength[2] / maxLenth;
 
-	long stepsAcc[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_X),
-				ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Y),
-				ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Z) };
+	homeIsUp[0]		= ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_X);
+	homeIsUp[1]		= ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Y);
+	homeIsUp[2]		= ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Z);
 
-	bool motorInv[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_X),
-				ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Y),
-				ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Z) };
+	speedMax[0]		= ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_X);
+	speedMax[1]		= ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Y);
+	speedMax[2]		= ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Z);
 
-	bool endStInv[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_X),
-				ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Y),
-				ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Z) };
+	speedMin[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_X);
+	speedMin[1]		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Y);
+	speedMin[2]		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Z);
 
-	long timeOut[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X),
-				ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X),
-				ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X) };
+	stepsAcc[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_X);
+	stepsAcc[1]		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Y);
+	stepsAcc[2]		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Z);
 
-        bool homeAxis[3] = { xHome, yHome, zHome };
-        bool home = xHome || yHome || zHome;
+	motorInv[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_X);
+	motorInv[1]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Y);
+	motorInv[2]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Z);
+
+	endStInv[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_X);
+	endStInv[1]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Y);
+	endStInv[2]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Z);
+
+	timeOut[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
+	timeOut[1]		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
+	timeOut[2]		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
+
+        homeAxis[0]		= xHome;
+	homeAxis[1]		= yHome;
+	homeAxis[2]		= zHome;
+
+	moveTicks[0]		= 0;
+	moveTicks[1]		= 0;
+	moveTicks[2]		= 0;
+
+        home = xHome || yHome || zHome;
+
+//Serial.print("R99 ");
+//Serial.print(" after vars ");
+//Serial.print(destinationPoint[0]);
+//Serial.print("\n");
+
 
  	unsigned long currentMillis         = 0;
 
-	unsigned long currentSteps          = 0;
-	unsigned long lastStepMillis[3]     = { 0, 0, 0 };
-
 	unsigned long timeStart             = millis();
+
 
         bool movementDone    = false;
         bool movementUp      = false;
         bool movementToHome  = false;
+
         bool moving          = false;
+
 	bool stepMade        = false;
 	int incomingByte     = 0;
-	int axisSpeed        = 0;
+	//int axisSpeed        = 0;
 	int error            = 0;
 
 	// if a speed is given in the command, use that instead of the config speed
@@ -428,12 +756,12 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 
 	// Prepare for movement
 
+	setDirections(currentPoint, destinationPoint, homeAxis, motorInv);
+
+
 	storeEndStops();
 	reportEndStops();
         enableMotors(true);
-
-	setDirections(currentPoint, destinationPoint, homeAxis, motorInv);
-
 
 	// Limit normal movmement to the home position
 	for (int i = 0; i < 3; i++) {
@@ -448,109 +776,92 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 
 	// Start movement
 
-	while (!movementDone) {
+	axisActive[0] = true;
+	axisActive[1] = true;
+	axisActive[2] = true;
+
+	checkAxis(0);
+	checkAxis(1);
+	checkAxis(2);
+
+	Timer1.start();
+
+
+	// Let the interrupt handle all the movements
+	while (axisActive[0] || axisActive[1] || axisActive[2]) {
+/**///Serial.print("R99 while loop\n");
+		//delay(50);
+		delayMicroseconds(100);
+
+//Serial.print("R99 ");
+//Serial.print(" maximim speed ");
+//Serial.print(speedMax[0]);
+//Serial.print("\n");
+
+
+	checkTicksAxis(0);
+	checkTicksAxis(1);
+	checkTicksAxis(2);
+
+
+//axisActive[0] = false;
+//axisActive[1] = false;
+//axisActive[2] = false;
+
+/*
+			Serial.print("R99");
+			Serial.print(" cur ");
+			Serial.print(currentPoint[0]);
+			Serial.print(" end ");
+			Serial.print(destinationPoint[0]);
+			Serial.print(" max spd ");
+			Serial.print(speedMax[0]);
+			Serial.print(" axis spd ");
+			Serial.print(axisSpeed[0]);
+			Serial.print("\n");
+*/
 
 	        storeEndStops();
+
+		// Check timeouts
+		if (axisActive[0] == true && ((millis() >= timeStart && millis() - timeStart > timeOut[0] * 1000) || (millis() < timeStart && millis() > timeOut[0] * 1000))) {
+			error = 1;
+		}
+		if (axisActive[1] == true && ((millis() >= timeStart && millis() - timeStart > timeOut[0] * 1000) || (millis() < timeStart && millis() > timeOut[0] * 1000))) {
+			error = 1;
+		}
+		if (axisActive[2] == true && ((millis() >= timeStart && millis() - timeStart > timeOut[0] * 1000) || (millis() < timeStart && millis() > timeOut[0] * 1000))) {
+			error = 1;
+		}
 
 		// Check if there is an emergency stop command
 		if (Serial.available() > 0) {
                 	incomingByte = Serial.read();
 			if (incomingByte == 69 || incomingByte == 101) {
-				movementDone = true;
-			} 
+				error = 1;
+			}
 	        }
 
-		stepMade = false;
-		moving   = false;
-
-		// Keep moving until destination reached or while moving home and end stop not reached
-		if  ((!pointReached(currentPoint, destinationPoint) || home) && !movementDone) {
-
-			// Check each axis
-			for (int i = 0; i < 3; i++) {
-
-				axisSpeed = calculateSpeed(	sourcePoint[i],currentPoint[i],destinationPoint[i],
-						 		speedMin[i], speedMax[i], stepsAcc[i]);
-
-				if (homeAxis[i]){
-					// When home is active, the direction is fixed
-					movementUp     = homeIsUp[i];
-					movementToHome = true;
-					if (currentPoint[i] == 0) {
-						// Go slow when theoretical end point reached but there is no end stop siganl
-						axisSpeed = speedMin[i];
-					}
-				} else {
-					// For normal movement, move in direction of destination
-	        	                movementUp     = (    currentPoint[i]  <      destinationPoint[i] );
-					movementToHome = (abs(currentPoint[i]) >= abs(destinationPoint[i]));
-				}
-
-				if (millis() - timeStart > timeOut[i] * MOVEMENT_SPEED_BASE_TIME) {
-					error        = 1;
-				} else {
-
-					//if ()
-					// If end stop reached, don't move anymore
-					if ((homeAxis[i] && !endStopAxisReached(i, false)) || (!homeAxis[i] &&  !endStopAxisReached(i, !movementToHome) &&  currentPoint[i] !=  destinationPoint[i] )) {
-						moving = true;
-
-						// Only do a step every x milliseconds (x is calculated above)
-						if (currentMillis - lastStepMillis[i] >= MOVEMENT_SPEED_BASE_TIME / axisSpeed) {
-
-							if (homeAxis[i] && currentPoint[i] == 0) {
-								// Keep moving toward end stop even when position is zero
-								// but end stop is not yet active
-								if (homeIsUp[i]) {
-									currentPoint[i] = -1;
-								} else {
-									currentPoint[i] =  1;
-								}
-							}
-
-							// set a step on the motors
-							step(i, currentPoint[i], 1, destinationPoint[i]);
-							stepMade = true;
-							lastStepMillis[i] = currentMillis;
-						}
-
-					}
-
-					// If end stop for home is active, set the position to zero
-					if (endStopAxisReached(i, false))
-					{
-						currentPoint[i] = 0;
-					}
-        	                }
-			}
-		} else {
-			movementDone = true;
-		}
-		delayMicroseconds(MOVEMENT_DELAY);
-		if (stepMade) {
-			currentSteps++;
+		if (error == 1) {
+Serial.print("R99 error\n");
+			Timer1.stop();
+			axisActive[0] = false;
+			axisActive[1] = false;
+			axisActive[2] = false;
 		}
 
+		// Periodically send message still active
 		currentMillis++;
-		if (currentMillis % 10000 == 0)
+		if (currentMillis % 2500 == 0)
 		{
-			// Periodically send message still active
 			Serial.print("R04\n");
 		}
 
-		if (stepMade) {
-			digitalWrite(X_STEP_PIN, LOW);
-			digitalWrite(Y_STEP_PIN, LOW);
-			digitalWrite(Z_STEP_PIN, LOW);
-		}
-		if (!moving)
-		{
-			movementDone = true;
-		}
-
-		delayMicroseconds(MOVEMENT_DELAY);
 	}
 
+/**/Serial.print("R99 stopped\n");
+
+	Timer1.stop();
 	enableMotors(false);
 
 	CurrentState::getInstance()->setX(currentPoint[0]);
@@ -614,8 +925,8 @@ int StepperControl::calibrateAxis(int axis) {
 	int  paramValueInt   = 0;
 	bool invertEndStops  = false;
 	int  stepsCount	     = 0;
-	int incomingByte     = 0;
-	int error            = 0;
+	int  incomingByte     = 0;
+	int  error            = 0;
 
 
 	// Prepare for movement
@@ -661,7 +972,7 @@ Serial.print("\n");
 		// Move until the end stop for home position is reached
 		if ((!endStopMin(axis) && !endStopMax(axis)) && !movementDone) {
 
-			if (millis() - timeStart > timeOut[axis] * MOVEMENT_SPEED_BASE_TIME) {
+			if ((millis() >= timeStart && millis() - timeStart > timeOut[axis] * 1000) || (millis() < timeStart && millis() > timeOut[axis] * 1000)) {
 				movementDone = true;
 				error        = 1;
 			} else {
@@ -845,3 +1156,4 @@ Serial.print("\n");
 
 	return error;
 }
+

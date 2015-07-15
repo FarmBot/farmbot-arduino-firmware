@@ -209,15 +209,15 @@ double Command::getZ() {
 }
 
 long Command::getA() {
-	return axisValue[0];
+	return axisSpeedValue[0];
 }
 
 long Command::getB() {
-	return axisValue[1];
+	return axisSpeedValue[1];
 }
 
 long Command::getC() {
-	return axisValue[2];
+	return axisSpeedValue[2];
 }
 
 long Command::getP() {

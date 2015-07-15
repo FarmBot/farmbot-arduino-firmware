@@ -2,7 +2,7 @@
 #include "farmbot_arduino_controller.h"
 #include "pins.h"
 #include "Config.h"
-
+#include "StepperControl.h"
 #include "ServoControl.h"
 
 static char commandEndChar = 0x0A;
@@ -46,6 +46,7 @@ void setup() {
 	Serial.begin(115200);
 
 	ServoControl::getInstance()->attach();
+	StepperControl::getInstance()->initInterrupt();
 
 	lastAction = millis();
 
