@@ -46,19 +46,19 @@ const long MOVEMENT_HOME_UP_Y_DEFAULT           = 0;
 const long MOVEMENT_HOME_UP_Z_DEFAULT           = 1;
 
 // numver of steps used for acceleration or deceleration
-const long MOVEMENT_STEPS_ACC_DEC_X_DEFAULT     = 200;
-const long MOVEMENT_STEPS_ACC_DEC_Y_DEFAULT     = 200;
-const long MOVEMENT_STEPS_ACC_DEC_Z_DEFAULT     = 200;
+const long MOVEMENT_STEPS_ACC_DEC_X_DEFAULT     = 500;
+const long MOVEMENT_STEPS_ACC_DEC_Y_DEFAULT     = 500;
+const long MOVEMENT_STEPS_ACC_DEC_Z_DEFAULT     = 500;
 
 // Minimum speed in steps per second
-const long MOVEMENT_MIN_SPD_X_DEFAULT           = 200;
-const long MOVEMENT_MIN_SPD_Y_DEFAULT           = 200;
-const long MOVEMENT_MIN_SPD_Z_DEFAULT           = 200;
+const long MOVEMENT_MIN_SPD_X_DEFAULT           = 50;
+const long MOVEMENT_MIN_SPD_Y_DEFAULT           = 50;
+const long MOVEMENT_MIN_SPD_Z_DEFAULT           = 50;
 
 // Maxumum speed in steps per second
-const long MOVEMENT_MAX_SPD_X_DEFAULT           = 4000;
-const long MOVEMENT_MAX_SPD_Y_DEFAULT           = 4000;
-const long MOVEMENT_MAX_SPD_Z_DEFAULT           = 4000;
+const long MOVEMENT_MAX_SPD_X_DEFAULT           = 1500;
+const long MOVEMENT_MAX_SPD_Y_DEFAULT           = 1500;
+const long MOVEMENT_MAX_SPD_Z_DEFAULT           = 1500;
 
 const long STATUS_GENERAL_DEFAULT               = 0;
 
