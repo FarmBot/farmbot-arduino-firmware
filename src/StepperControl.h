@@ -11,6 +11,7 @@
 #include "Arduino.h"
 #include "CurrentState.h"
 #include "ParameterList.h"
+#include "StepperControlAxis.h"
 #include "pins.h"
 #include "Config.h"
 #include <stdio.h>
