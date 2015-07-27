@@ -25,6 +25,7 @@ public:
 	long sourcePoint;
 	long currentPoint;
 	long destinationPoint;
+
 	unsigned long movementLength;
 	unsigned long maxLenth;
 	unsigned long moveTicks;
@@ -32,18 +33,11 @@ public:
 	unsigned long stepOffTick;
 	unsigned long axisSpeed;
 	double lengthRatio;
-	long speedMax;
-	long speedMin;
-	long stepsAcc;
-	long timeOut;
-	bool homeIsUp;
-	bool motorInv;
-	bool endStInv;
-	bool homeAxis;
 	bool axisActive;
 	bool movementUp;
 	bool movementToHome;
 	bool home;
+	bool homeAxis;
 
 	void checkTicksAxis();
 
@@ -51,20 +45,39 @@ private:
 
 	int lastCalcLog = 0;
 
+	// pin settings
+	int pinStep;
+	int pinDirection;
+	int pinEnable;
+	int pinMin;
+	int pinMax;
+
+	// motor settings
+	long motorSpeedMax;
+	long motorSpeedMin;
+	long motorStepsAcc;
+	long motorTimeOut;
+	bool motorHomeIsUp;
+	bool motorMotorInv;
+	bool motorEndStopInv;
+
+	void loadPinNumbers(int step, int dir, int enable, int min, int max);
+	void loadMotorSettings(	long speedMax, long speedMin, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, bool endStInv);
+
 
 	bool endStopMin();
 	bool endStopMax();
 	bool endStopAxisReached(bool movement_forward);
 	void step(long &currentPoint, unsigned long steps, long destinationPoint);
-	void stepAxis(bool state);
+	void stepAxis();
 	void resetStep();
-	bool pointReached(long currentPoint[3], long destinationPoint[3]);
+	bool pointReached(long currentPoint, long destinationPoint);
 	unsigned int calculateSpeed(long sourcePosition, long currentPosition, long destinationPosition, long minSpeed, long maxSpeed, long stepsAccDec);
 	void enableMotors(bool enable);
-	void setDirectionAxis(int dirPin, long currentPoint, long destinationPoint, bool goHome, bool homeIsUp, bool motorInv);
-	void setDirections(long* currentPoint, long* destinationPoint, bool* homeAxis, bool* motorInv);
+	void setDirectionAxis(long currentPoint, long destinationPoint, bool goHome, bool homeIsUp, bool motorInv);
+	//void setDirections(long* currentPoint, long* destinationPoint, bool* homeAxis, bool* motorInv);
 	unsigned long getLength(long l1, long l2);
-	int endStopsReached();
+	bool endStopsReached();
 	void reportPosition();
 	void storeEndStops();
 	void reportEndStops();
