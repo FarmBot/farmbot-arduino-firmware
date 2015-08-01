@@ -20,11 +20,7 @@ class StepperControlAxis {
 
 public:
 
-	long interruptSpeed;
-
-	long sourcePoint;
-	long currentPoint;
-	long destinationPoint;
+	StepperControlAxis();
 
 	unsigned long movementLength;
 	unsigned long maxLenth;
@@ -32,14 +28,24 @@ public:
 	unsigned long stepOnTick;
 	unsigned long stepOffTick;
 	unsigned long axisSpeed;
-	double lengthRatio;
+	//double lengthRatio;
 	bool axisActive;
 	bool movementUp;
 	bool movementToHome;
-	bool home;
-	bool homeAxis;
+	//bool homeAxis;
 
+	void enableMotors(bool enable);
+	void checkAxis();
 	void checkTicksAxis();
+
+	void loadPinNumbers(int step, int dir, int enable, int min, int max);
+	void loadMotorSettings(	long speedMax, long speedMin, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, bool endStInv, long interruptSpeed);
+	void loadCoordinates(long sourcePoint, long destinationPoint, bool home);
+	bool isAxisActive();
+	bool endStopAxisReached(bool movement_forward);
+	bool endStopMin();
+	bool endStopMax();
+	bool endStopsReached();
 
 private:
 
@@ -60,32 +66,26 @@ private:
 	bool motorHomeIsUp;
 	bool motorMotorInv;
 	bool motorEndStopInv;
+	long motorInterruptSpeed;
 
-	void loadPinNumbers(int step, int dir, int enable, int min, int max);
-	void loadMotorSettings(	long speedMax, long speedMin, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, bool endStInv);
+	long coordSourcePoint;
+	long coordCurrentPoint;
+	long coordDestinationPoint;
+	bool coordHomeAxis;
 
-
-	bool endStopMin();
-	bool endStopMax();
-	bool endStopAxisReached(bool movement_forward);
 	void step(long &currentPoint, unsigned long steps, long destinationPoint);
 	void stepAxis();
 	void resetStep();
 	bool pointReached(long currentPoint, long destinationPoint);
 	unsigned int calculateSpeed(long sourcePosition, long currentPosition, long destinationPosition, long minSpeed, long maxSpeed, long stepsAccDec);
-	void enableMotors(bool enable);
 	void setDirectionAxis(long currentPoint, long destinationPoint, bool goHome, bool homeIsUp, bool motorInv);
 	//void setDirections(long* currentPoint, long* destinationPoint, bool* homeAxis, bool* motorInv);
 	unsigned long getLength(long l1, long l2);
-	bool endStopsReached();
-	void reportPosition();
-	void storeEndStops();
-	void reportEndStops();
+	//void reportPosition();
+	//void storeEndStops();
+	//void reportEndStops();
 	void checkAxisDirection();
-	void checkAxis();
 
-
-	StepperControlAxis();
 	//StepperControlAxis(StepperControlAxis const&);
 	//void operator=(StepperControlAxis const&);
 };
