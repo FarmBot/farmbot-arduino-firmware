@@ -13,57 +13,7 @@ StepperControl * StepperControl::getInstance() {
 
 const int MOVEMENT_INTERRUPT_SPEED = 100; // Interrupt cycle in micro seconds
 
-int test = 0;
-
-long sourcePoint[3]             = {0,0,0};
-long currentPoint[3]            = {0,0,0};
-long destinationPoint[3]        = {0,0,0};
-//unsigned long movementLength[3] = {0,0,0};
-unsigned long maxLenth          = 0;
-//unsigned long moveTicks[3]      = {0,0,0};
-//unsigned long stepOnTick[3]     = {0,0,0};
-//unsigned long stepOffTick[3]    = {0,0,0};
-//unsigned long axisSpeed[3]      = {0,0,0};
-//double lengthRatio[3]           = {0,0,0};
-long speedMax[3]                = {0,0,0};
-//long speedMin[3]                = {0,0,0};
-//long stepsAcc[3]                = {0,0,0};
-//long timeOut[3]                 = {0,0,0};
-//bool homeIsUp[3]                = {false,false,false};
-//bool motorInv[3]                = {false,false,false};
-//bool endStInv[3]                = {false,false,false};
-//bool homeAxis[3]                = {false,false,false};
-//bool axisActive[3]              = {false,false,false};
-//bool movementUp[3]              = {false,false,false};
-//bool movementToHome[3]          = {false,false,false};
-//bool home                       = false;
-
-
-// ** test code
-
-/*
-// The interrupt will blink the LED, and keep
-// track of how many times it has blinked.
-int ledState = LOW;
-//volatile unsigned long blinkCount = 0; // use volatile for shared variables
-
-void blinkLed() {
-	if (ledState == LOW) {
-		ledState = HIGH;
-//Serial.print("R99 led on");
-	} else {
-		ledState = LOW;
-//Serial.print("R99 led off");
-	}
-	digitalWrite(LED_PIN, ledState);
-}
-
-*/
-
 StepperControl::StepperControl() {
-	//axisX = new StepperControlAxis();
-	//axisY = new StepperControlAxis();
-	//axisZ = new StepperControlAxis();
 	axisX = StepperControlAxis();
 	axisY = StepperControlAxis();
 	axisZ = StepperControlAxis();
@@ -72,95 +22,6 @@ StepperControl::StepperControl() {
 	axisY.loadPinNumbers(Y_STEP_PIN, Y_DIR_PIN, Y_ENABLE_PIN, Y_MIN_PIN, Y_MAX_PIN);
 	axisZ.loadPinNumbers(Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN, Z_MIN_PIN, Z_MAX_PIN);
 }
-
-unsigned long StepperControl::getMaxLength(unsigned long lengths[3]) {
-	unsigned long max = lengths[0];
-	for (int i = 1; i < 3; i++) {
-		if (lengths[i] > max) {
-			max = lengths[i];
-		}
-	}
-	return max;
-}
-
-void StepperControl::enableMotors(bool enable) {
-	axisX.enableMotors(enable);
-	axisY.enableMotors(enable);
-	axisZ.enableMotors(enable);
-	delay(100);
-}
-
-bool StepperControl::endStopsReached() {
-
-	if (	axisX.endStopsReached() ||
-		axisY.endStopsReached() ||
-		axisZ.endStopsReached()) {
-		return true;
-	}
-	return false;
-
-}
-
-void StepperControl::reportEndStops() {
-	CurrentState::getInstance()->printEndStops();
-}
-
-void StepperControl::reportPosition(){
-	CurrentState::getInstance()->printPosition();
-}
-
-void StepperControl::storeEndStops() {
-	CurrentState::getInstance()->storeEndStops();
-}
-
-/**
- * water is dosed by setting the pin for the water high for a number of miliseconds
- *
- */
-
-//void StepperControl::doseWaterByTime(long time) {
-//	digitalWrite(HEATER_1_PIN, HIGH);
-//	delay(time);
-//	digitalWrite(HEATER_1_PIN, LOW);
-//}
-
-
-// Handle movement by checking each axis
-void StepperControl::handleMovementInterrupt(void){
-//Serial.print("R99 interrupt\n");
-
-//Serial.print("R99 interrupt data ");
-//Serial.print(" destination point ");
-//Serial.print(destinationPoint[0]);
-//Serial.print("  ");
-//Serial.print("test ");
-//Serial.print(test);
-//Serial.print("\n");
-
-        axisX.checkTicksAxis();
-        axisY.checkTicksAxis();
-        axisZ.checkTicksAxis();
-}
-
-bool interruptBusy = false;
-void handleMovementInterruptTest(void) {
-	if (interruptBusy == false) {
-		interruptBusy = true;
-		StepperControl::getInstance()->handleMovementInterrupt();
-		//blinkLed();
-		interruptBusy = false;
-	}
-}
-
-// Start the interrupt used for moviing
-// Interrupt management code library written by Paul Stoffregen
-void StepperControl::initInterrupt() {
-        //Timer1.attachInterrupt(StepperControl::getInstance()->handleMovementInterrupt);
-        Timer1.attachInterrupt(handleMovementInterruptTest);
-        Timer1.initialize(MOVEMENT_INTERRUPT_SPEED);
-        Timer1.stop();
-}
-
 
 /**
  * xDest - destination X in steps
@@ -172,12 +33,6 @@ void StepperControl::initInterrupt() {
 int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest, 
 						unsigned int xMaxSpd, unsigned int yMaxSpd, unsigned int zMaxSpd,
                 				bool xHome, bool yHome, bool zHome) {
-
-
-//Serial.print("R99 ");
-//Serial.print(" xMaxSpd ");
-//Serial.print(xMaxSpd);
-//Serial.print("\n");
 
 	// Load settings
 
@@ -216,26 +71,12 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 	timeOut[1]		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
 	timeOut[2]		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
 
-//Serial.print("R99 ");
-//Serial.print(" after vars ");
-//Serial.print(destinationPoint[0]);
-//Serial.print("\n");
-
 
  	unsigned long currentMillis         = 0;
-
 	unsigned long timeStart             = millis();
 
 
-        //bool movementDone    = false;
-        //bool movementUp      = false;
-        //bool movementToHome  = false;
-
-        //bool moving          = false;
-
-	//bool stepMade        = false;
 	int incomingByte     = 0;
-	//int axisSpeed        = 0;
 	int error            = 0;
 
 	// if a speed is given in the command, use that instead of the config speed
@@ -285,43 +126,22 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
         axisY.loadMotorSettings(speedMax[1], speedMin[1], stepsAcc[1], timeOut[1], homeIsUp[1], motorInv[1], endStInv[1], MOVEMENT_INTERRUPT_SPEED);
         axisZ.loadMotorSettings(speedMax[2], speedMin[2], stepsAcc[2], timeOut[2], homeIsUp[2], motorInv[2], endStInv[2], MOVEMENT_INTERRUPT_SPEED);
 
-	// Prepare for movement
+	// Load coordinates
 
+	long sourcePoint[3]     = {0,0,0};
 	sourcePoint[0] 		= CurrentState::getInstance()->getX();
 	sourcePoint[1] 		= CurrentState::getInstance()->getY();
 	sourcePoint[2] 		= CurrentState::getInstance()->getZ();
 
+	long currentPoint[3]    = {0,0,0};
 	currentPoint[0] 	= CurrentState::getInstance()->getX();
 	currentPoint[1]		= CurrentState::getInstance()->getY();
 	currentPoint[2]		= CurrentState::getInstance()->getZ();
 
+	long destinationPoint[3]= {0,0,0};
 	destinationPoint[0] 	= xDest;
         destinationPoint[1] 	= yDest;
         destinationPoint[2] 	= zDest;
-
-	//movementLength[0] 	= getLength(destinationPoint[0], currentPoint[0]);
-	//movementLength[1] 	= getLength(destinationPoint[1], currentPoint[1]);
-	//movementLength[2] 	= getLength(destinationPoint[2], currentPoint[2]);
-
-	//maxLenth 		= getMaxLength(movementLength);
-
-        //home = xHome || yHome || zHome;
-
-
-	axisX.loadCoordinates(currentPoint[0],destinationPoint[0],xHome);
-	axisY.loadCoordinates(currentPoint[1],destinationPoint[1],yHome);
-	axisZ.loadCoordinates(currentPoint[2],destinationPoint[2],zHome);
-
-	//axisX.setDirection()
-	//axisY.setDirection()
-	//axisZ.setDirection()
-
-	storeEndStops();
-	reportEndStops();
-
-        enableMotors(true);
-
-
 
 	// Limit normal movmement to the home position
 	for (int i = 0; i < 3; i++) {
@@ -334,15 +154,30 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 		}
 	}
 
+	axisX.loadCoordinates(currentPoint[0],destinationPoint[0],xHome);
+	axisY.loadCoordinates(currentPoint[1],destinationPoint[1],yHome);
+	axisZ.loadCoordinates(currentPoint[2],destinationPoint[2],zHome);
+
+	// Prepare for movement
+
+	//axisX.setDirection()
+	//axisY.setDirection()
+	//axisZ.setDirection()
+
+	storeEndStops();
+	reportEndStops();
+
+        enableMotors();
+
 	// Start movement
 
 	axisActive[0] = true;
 	axisActive[1] = true;
 	axisActive[2] = true;
 
-	axisX.checkAxis();
-	axisY.checkAxis();
-	axisZ.checkAxis();
+	axisX.checkMovement();
+	axisY.checkMovement();
+	axisZ.checkMovement();
 
 	//Timer1.start();
 
@@ -357,10 +192,9 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 		//Serial.print(speedMax[0]);
 		//Serial.print("\n");
 
-
-		axisX.checkTicksAxis();
-		axisY.checkTicksAxis();
-		axisZ.checkTicksAxis();
+		axisX.checkTiming();
+		axisY.checkTiming();
+		axisZ.checkTiming();
 
 		axisActive[0] = axisX.isAxisActive();
 		axisActive[1] = axisY.isAxisActive();
@@ -411,7 +245,7 @@ int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest,
 	/**/Serial.print("R99 stopped\n");
 
 	Timer1.stop();
-	enableMotors(false);
+	disableMotors();
 
 	CurrentState::getInstance()->setX(currentPoint[0]);
 	CurrentState::getInstance()->setY(currentPoint[1]);
@@ -707,4 +541,103 @@ Serial.print("\n");
 */
 	return error;
 }
+
+
+// Handle movement by checking each axis
+void StepperControl::handleMovementInterrupt(void){
+//Serial.print("R99 interrupt\n");
+
+//Serial.print("R99 interrupt data ");
+//Serial.print(" destination point ");
+//Serial.print(destinationPoint[0]);
+//Serial.print("  ");
+//Serial.print("test ");
+//Serial.print(test);
+//Serial.print("\n");
+
+        axisX.checkTiming();
+        axisY.checkTiming();
+        axisZ.checkTiming();
+}
+
+bool interruptBusy = false;
+void handleMovementInterruptTest(void) {
+	if (interruptBusy == false) {
+		interruptBusy = true;
+		StepperControl::getInstance()->handleMovementInterrupt();
+		//blinkLed();
+		interruptBusy = false;
+	}
+}
+
+// Start the interrupt used for moviing
+// Interrupt management code library written by Paul Stoffregen
+void StepperControl::initInterrupt() {
+        //Timer1.attachInterrupt(StepperControl::getInstance()->handleMovementInterrupt);
+        Timer1.attachInterrupt(handleMovementInterruptTest);
+        Timer1.initialize(MOVEMENT_INTERRUPT_SPEED);
+        Timer1.stop();
+}
+
+
+
+
+unsigned long StepperControl::getMaxLength(unsigned long lengths[3]) {
+	unsigned long max = lengths[0];
+	for (int i = 1; i < 3; i++) {
+		if (lengths[i] > max) {
+			max = lengths[i];
+		}
+	}
+	return max;
+}
+
+void StepperControl::enableMotors() {
+	axisX.enableMotor();
+	axisY.enableMotor();
+	axisZ.enableMotor();
+	delay(100);
+}
+
+void StepperControl::disableMotors() {
+	axisX.disableMotor();
+	axisY.disableMotor();
+	axisZ.disableMotor();
+	delay(100);
+}
+
+bool StepperControl::endStopsReached() {
+
+	if (	axisX.endStopsReached() ||
+		axisY.endStopsReached() ||
+		axisZ.endStopsReached()) {
+		return true;
+	}
+	return false;
+
+}
+
+void StepperControl::reportEndStops() {
+	CurrentState::getInstance()->printEndStops();
+}
+
+void StepperControl::reportPosition(){
+	CurrentState::getInstance()->printPosition();
+}
+
+void StepperControl::storeEndStops() {
+	CurrentState::getInstance()->storeEndStops();
+}
+
+/**
+ * water is dosed by setting the pin for the water high for a number of miliseconds
+ *
+ */
+
+//void StepperControl::doseWaterByTime(long time) {
+//	digitalWrite(HEATER_1_PIN, HIGH);
+//	delay(time);
+//	digitalWrite(HEATER_1_PIN, LOW);
+//}
+
 

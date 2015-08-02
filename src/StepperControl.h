@@ -34,6 +34,9 @@ public:
 	void handleMovementInterrupt();
 	int calibrateAxis(int axis);
 	void initInterrupt();
+	void enableMotors();
+	void disableMotors();
+
 private:
 	StepperControlAxis axisX;
 	StepperControlAxis axisY;
@@ -46,7 +49,6 @@ private:
         void reportEndStops();
 
 	unsigned long getMaxLength(unsigned long lengths[3]);
-	void enableMotors(bool enable);
 	bool endStopsReached();
 
 };

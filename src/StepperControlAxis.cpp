@@ -168,12 +168,12 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
 	return newSpeed;
 }
 
-void StepperControlAxis::enableMotors(bool enable) {
-	if (enable) {
-		digitalWrite(pinEnable, LOW);
-	} else {
-		digitalWrite(pinEnable, HIGH);
-	}
+void StepperControlAxis::enableMotor() {
+	digitalWrite(pinEnable, HIGH);
+}
+
+void StepperControlAxis::disableMotor() {
+	digitalWrite(pinEnable, LOW);
 }
 
 void StepperControlAxis::setDirectionAxis(long currentPoint, long destinationPoint, bool goHome, bool homeIsUp, bool motorInv) {
@@ -197,18 +197,6 @@ bool StepperControlAxis::endStopsReached() {
 	return ((digitalRead(pinMin) == motorEndStopInv) || (digitalRead(pinMax) == motorEndStopInv));
 }
 
-//void StepperControlAxis::reportEndStops() {
-//	CurrentState::getInstance()->printEndStops();
-//}
-
-//void StepperControlAxis::reportPosition(){
-//	CurrentState::getInstance()->printPosition();
-//}
-
-//void StepperControlAxis::storeEndStops() {
-//	CurrentState::getInstance()->storeEndStops();
-//}
-
 void StepperControlAxis::checkAxisDirection() {
 	if (coordHomeAxis){
 		// When home is active, the direction is fixed
@@ -226,7 +214,7 @@ void StepperControlAxis::checkAxisDirection() {
 	}
 }
 
-void StepperControlAxis::stepAxis() {
+void StepperControlAxis::stepMotor() {
 
 	if (coordHomeAxis && coordCurrentPoint == 0) {
 
@@ -241,13 +229,9 @@ void StepperControlAxis::stepAxis() {
 
 	// set a step on the motors
 	step(coordCurrentPoint, 1, coordDestinationPoint);
-
-	//stepMade = true;
-	//lastStepMillis[i] = currentMillis;
-
 }
 
-void StepperControlAxis::checkAxis() {
+void StepperControlAxis::checkMovement() {
 
 	int i = 1;
 
@@ -339,7 +323,7 @@ Serial.print("\n");
 
 }
 
-void StepperControlAxis::checkTicksAxis() {
+void StepperControlAxis::checkTiming() {
 
 	int i;
 
@@ -348,15 +332,15 @@ void StepperControlAxis::checkTicksAxis() {
 	if (axisActive) {
 		if (moveTicks >= stepOffTick) {
 
-/*
+
 Serial.print("R99 reset step ");
 Serial.print(" moveTicks ");
-Serial.print(moveTicks[i]);
+Serial.print(moveTicks);
 Serial.print("\n");
-*/
+
 			// Negative flank for the steps
 			resetStep();
-			checkAxis();
+			checkMovement();
 		}
 		else {
 
@@ -368,7 +352,7 @@ Serial.print(moveTicks[i]);
 Serial.print("\n");
 */
 				// Positive flank for the steps
-				stepAxis();
+				stepMotor();
 			}
 		}
 	}
@@ -399,6 +383,8 @@ void StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint
 	coordSourcePoint	= sourcePoint;
         coordCurrentPoint	= destinationPoint;
         coordHomeAxis		= home;
+
+	moveTicks		= 0;
 
 }
 
