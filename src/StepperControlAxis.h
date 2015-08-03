@@ -38,6 +38,9 @@ public:
 	bool endStopsReached();
 	bool endStopAxisReached(bool movement_forward);
 
+	void setMotorStep();
+	void resetMotorStep();
+
 private:
 
 	int lastCalcLog = 0;
@@ -76,9 +79,8 @@ private:
 	bool movementUp;
 	bool movementToHome;
 
+	void setStepAxis();
 	void step(long &currentPoint, unsigned long steps, long destinationPoint);
-	void stepMotor();
-	void resetStep();
 	bool pointReached(long currentPoint, long destinationPoint);
 	unsigned int calculateSpeed(long sourcePosition, long currentPosition, long destinationPosition, long minSpeed, long maxSpeed, long stepsAccDec);
 	void setDirectionAxis(long currentPoint, long destinationPoint, bool goHome, bool homeIsUp, bool motorInv);

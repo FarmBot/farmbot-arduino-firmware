@@ -30,7 +30,7 @@ StepperControl::StepperControl() {
  * maxStepsPerSecond - maximum number of steps per second
  * maxAccelerationStepsPerSecond - maximum number of acceleration in steps per second
  */
-int StepperControl::moveAbsoluteConstant(	long xDest, long yDest, long zDest, 
+int StepperControl::moveToCoords(		long xDest, long yDest, long zDest, 
 						unsigned int xMaxSpd, unsigned int yMaxSpd, unsigned int zMaxSpd,
                 				bool xHome, bool yHome, bool zHome) {
 
