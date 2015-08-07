@@ -25,21 +25,27 @@ public:
 	void loadPinNumbers(int step, int dir, int enable, int min, int max);
 	void loadMotorSettings(	long speedMax, long speedMin, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, bool endStInv, long interruptSpeed);
 	void loadCoordinates(long sourcePoint, long destinationPoint, bool home);
+	void setMaxSpeed(long speed);
 
 	void enableMotor();
 	void disableMotor();
 	void checkMovement();
 	void checkTiming();
 
-
 	bool isAxisActive();
 	bool endStopMin();
 	bool endStopMax();
 	bool endStopsReached();
 	bool endStopAxisReached(bool movement_forward);
+	long currentPoint();
 
 	void setMotorStep();
 	void resetMotorStep();
+
+	void setDirectionUp();
+	void setDirectionDown();
+	void setDirectionHome();
+	void setDirectionAway();
 
 private:
 
@@ -53,20 +59,20 @@ private:
 	int pinMax;
 
 	// motor settings
-	long motorSpeedMax;
-	long motorSpeedMin;
-	long motorStepsAcc;
-	long motorTimeOut;
-	bool motorHomeIsUp;
-	bool motorMotorInv;
-	bool motorEndStopInv;
-	long motorInterruptSpeed;
+	long motorSpeedMax;		// maximum speed in steps per second
+	long motorSpeedMin;		// minimum speed in steps per second
+	long motorStepsAcc;		// number of steps used for acceleration
+	long motorTimeOut;		// timeout in seconds
+	bool motorHomeIsUp;		// direction to move when reached 0 on axis but no end stop detected while homing
+	bool motorMotorInv;		// invert motot direction
+	bool motorEndStopInv;		// invert input (true/false) of end stops
+	long motorInterruptSpeed;	// period of interrupt in micro seconds
 
 	// coordinates
-	long coordSourcePoint;
+	long coordSourcePoint;		// all coordinated in steps
 	long coordCurrentPoint;
 	long coordDestinationPoint;
-	bool coordHomeAxis;
+	bool coordHomeAxis;		// homing command
 
 	// movement handling
 	unsigned long movementLength;
@@ -83,7 +89,7 @@ private:
 	void step(long &currentPoint, unsigned long steps, long destinationPoint);
 	bool pointReached(long currentPoint, long destinationPoint);
 	unsigned int calculateSpeed(long sourcePosition, long currentPosition, long destinationPosition, long minSpeed, long maxSpeed, long stepsAccDec);
-	void setDirectionAxis(long currentPoint, long destinationPoint, bool goHome, bool homeIsUp, bool motorInv);
+	void setDirectionAxis();
 	unsigned long getLength(long l1, long l2);
 	void checkAxisDirection();
 

@@ -44,6 +44,7 @@ private:
 
 	bool axisActive[3];
 
+	void loadMotorSettings();
         void reportPosition();
         void storeEndStops();
         void reportEndStops();
@@ -51,6 +52,13 @@ private:
 	unsigned long getMaxLength(unsigned long lengths[3]);
 	bool endStopsReached();
 
+        bool homeIsUp[3];
+        long speedMax[3];
+        long speedMin[3];
+        long stepsAcc[3];
+        bool motorInv[3];
+        bool endStInv[3];
+        long timeOut[3];
 };
 
 #endif /* STEPPERCONTROL_H_ */

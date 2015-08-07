@@ -34,44 +34,6 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 						unsigned int xMaxSpd, unsigned int yMaxSpd, unsigned int zMaxSpd,
                 				bool xHome, bool yHome, bool zHome) {
 
-	// Load settings
-
-	bool homeIsUp[3]        = {false,false,false};
-	homeIsUp[0]		= ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_X);
-	homeIsUp[1]		= ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Y);
-	homeIsUp[2]		= ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Z);
-
-	long speedMax[3]        = {0,0,0};
-	speedMax[0]		= ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_X);
-	speedMax[1]		= ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Y);
-	speedMax[2]		= ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Z);
-
-	long speedMin[3]        = {0,0,0};
-	speedMin[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_X);
-	speedMin[1]		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Y);
-	speedMin[2]		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Z);
-
-	long stepsAcc[3]        = {0,0,0};
-	stepsAcc[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_X);
-	stepsAcc[1]		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Y);
-	stepsAcc[2]		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Z);
-
-	bool motorInv[3]        = {false,false,false};
-	motorInv[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_X);
-	motorInv[1]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Y);
-	motorInv[2]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Z);
-
-	bool endStInv[3]        = {false,false,false};
-	endStInv[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_X);
-	endStInv[1]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Y);
-	endStInv[2]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Z);
-
-	long timeOut[3]         = {0,0,0};
-	timeOut[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
-	timeOut[1]		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
-	timeOut[2]		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
-
-
  	unsigned long currentMillis         = 0;
 	unsigned long timeStart             = millis();
 
@@ -79,7 +41,16 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 	int incomingByte     = 0;
 	int error            = 0;
 
+	// load motor settings
+
+	loadMotorSettings();
+
 	// if a speed is given in the command, use that instead of the config speed
+
+	long speedMax[3]        = {0,0,0};
+	speedMax[0] 		= xMaxSpd;
+	speedMax[1] 		= yMaxSpd;
+	speedMax[2] 		= zMaxSpd;
 
 	if (xMaxSpd > 0 && xMaxSpd < speedMax[0]) {
 		speedMax[0] = xMaxSpd;
@@ -94,39 +65,11 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 	}
 
 
-        homeIsUp[0]		= ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_X);
-	homeIsUp[1]		= ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Y);
-	homeIsUp[2]		= ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Z);
+        axisX.setMaxSpeed(speedMax[0]);
+        axisY.setMaxSpeed(speedMax[1]);
+        axisZ.setMaxSpeed(speedMax[2]);
 
-	speedMax[0]		= ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_X);
-	speedMax[1]		= ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Y);
-	speedMax[2]		= ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Z);
-
-	speedMin[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_X);
-	speedMin[1]		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Y);
-	speedMin[2]		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Z);
-
-	stepsAcc[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_X);
-	stepsAcc[1]		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Y);
-	stepsAcc[2]		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Z);
-
-	motorInv[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_X);
-	motorInv[1]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Y);
-	motorInv[2]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Z);
-
-	endStInv[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_X);
-	endStInv[1]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Y);
-	endStInv[2]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Z);
-
-	timeOut[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
-	timeOut[1]		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_Y);
-	timeOut[2]		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_Z);
-
-        axisX.loadMotorSettings(speedMax[0], speedMin[0], stepsAcc[0], timeOut[0], homeIsUp[0], motorInv[0], endStInv[0], MOVEMENT_INTERRUPT_SPEED);
-        axisY.loadMotorSettings(speedMax[1], speedMin[1], stepsAcc[1], timeOut[1], homeIsUp[1], motorInv[1], endStInv[1], MOVEMENT_INTERRUPT_SPEED);
-        axisZ.loadMotorSettings(speedMax[2], speedMin[2], stepsAcc[2], timeOut[2], homeIsUp[2], motorInv[2], endStInv[2], MOVEMENT_INTERRUPT_SPEED);
-
-	// Load coordinates
+	// Load coordinates into axis class
 
 	long sourcePoint[3]     = {0,0,0};
 	sourcePoint[0] 		= CurrentState::getInstance()->getX();
@@ -143,16 +86,7 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
         destinationPoint[1] 	= yDest;
         destinationPoint[2] 	= zDest;
 
-	// Limit normal movmement to the home position
-	for (int i = 0; i < 3; i++) {
-		if (!homeIsUp[i] && destinationPoint[i] < 0) {
-			destinationPoint[i] = 0;
-		}
-
-		if ( homeIsUp[i] && destinationPoint[i] > 0) {
-			destinationPoint[i] = 0;
-		}
-	}
+	// Load coordinates into motor control
 
 	axisX.loadCoordinates(currentPoint[0],destinationPoint[0],xHome);
 	axisY.loadCoordinates(currentPoint[1],destinationPoint[1],yHome);
@@ -176,8 +110,8 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 	axisActive[2] = true;
 
 	axisX.checkMovement();
-	axisY.checkMovement();
-	axisZ.checkMovement();
+//	axisY.checkMovement();
+//	axisZ.checkMovement();
 
 	//Timer1.start();
 
@@ -186,12 +120,16 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 
 		//delay(50);
 		delayMicroseconds(100);
-
-		//Serial.print("R99 ");
-		//Serial.print(" maximim speed ");
-		//Serial.print(speedMax[0]);
-		//Serial.print("\n");
-
+/*
+		Serial.print("R99 ");
+		Serial.print(" x axis active ");
+		Serial.print(axisActive[0]);
+		Serial.print(" y axis active ");
+		Serial.print(axisActive[1]);
+		Serial.print(" z axis active ");
+		Serial.print(axisActive[2]);
+		Serial.print("\n");
+*/
 		axisX.checkTiming();
 		axisY.checkTiming();
 		axisZ.checkTiming();
@@ -201,8 +139,8 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 		axisActive[2] = axisZ.isAxisActive();
 
 		//axisActive[0] = false;
-		//axisActive[1] = false;
-		//axisActive[2] = false;
+		axisActive[1] = false;
+		axisActive[2] = false;
 
 	        storeEndStops();
 
@@ -247,6 +185,10 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 	Timer1.stop();
 	disableMotors();
 
+	currentPoint[0] = axisX.currentPoint();
+	currentPoint[1] = axisY.currentPoint();
+	currentPoint[2] = axisZ.currentPoint();
+
 	CurrentState::getInstance()->setX(currentPoint[0]);
 	CurrentState::getInstance()->setY(currentPoint[1]);
 	CurrentState::getInstance()->setZ(currentPoint[2]);
@@ -264,39 +206,16 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 
 int StepperControl::calibrateAxis(int axis) {
 
-	int error = 1;
+	// Load motor settings
 
-/*
-        int  parMotInv[3] = { 31, 32, 33};
-        int  parEndInv[3] = { 21, 22, 23};
-        int  parNbrStp[3] = {801,802,803};
+	loadMotorSettings();
 
-	bool motorInv[3] = { 	ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_X),
-				ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Y),
-				ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Z) };
-
-        bool homeAxis[3] = {false,false,false};
-
-        bool homeIsUp[3] = {false,false,false};
-
-        long speedMin[3] = {200,200,200};
-
-        bool endStInv[3] = {false,false,false};
-
-        long timeOut[3] = {5000,5000,5000};
-
-        long stepPin[3] = {	X_STEP_PIN,
-				Y_STEP_PIN,
-				Z_STEP_PIN };
-
-        long dirPin[3]  = {	X_DIR_PIN,
-				Y_DIR_PIN,
-				Z_DIR_PIN };
+        //long timeOut[3] = {5000,5000,5000};
 
 	// Set the coordinate variables for homing, so the default functions can be used for settign direction
 
-        long sourcePoint[3] 		= { 0, 0, 0 };
-        long destinationPoint[3] 	= { 0, 0, 0 };
+        //long sourcePoint[3] 		= { 0, 0, 0 };
+        //long destinationPoint[3] 	= { 0, 0, 0 };
 
  	unsigned long currentMillis         = 0;
 
@@ -308,25 +227,50 @@ int StepperControl::calibrateAxis(int axis) {
         bool movementDone    = false;
 
 	int  paramValueInt   = 0;
-	bool invertEndStops  = false;
 	int  stepsCount	     = 0;
 	int  incomingByte     = 0;
 	int  error            = 0;
 
 
+	bool invertEndStops = false;
+	int parEndInv;
+	int parNbrStp;
 	// Prepare for movement
 
 	storeEndStops();
 	reportEndStops();
 
+
+	// Select the right axis
+	StepperControlAxis calibAxis;
+	switch (axis) {
+		case 1:
+			calibAxis = axisX;
+			parEndInv = MOVEMENT_INVERT_ENDPOINTS_X;
+			parNbrStp = MOVEMENT_AXIS_NR_STEPS_X;
+			break;
+		case 2:
+			calibAxis = axisY;
+			parEndInv = MOVEMENT_INVERT_ENDPOINTS_Y;;
+			parNbrStp = MOVEMENT_AXIS_NR_STEPS_Y;
+			break;
+		case 3:
+			calibAxis = axisZ;
+			parEndInv = MOVEMENT_INVERT_ENDPOINTS_Z;
+			parNbrStp = MOVEMENT_AXIS_NR_STEPS_Z;
+			break;
+		default:
+			Serial.print("R99 Calibration error: invalid axis selected\n");
+			return 1;
+	}
+
+
 	// Preliminary checks
 
-	if (endStopMin(axis) || endStopMax(axis)) {
+	if (calibAxis.endStopMin() || calibAxis.endStopMax()) {
 		Serial.print("R99 Calibration error: end stop active before start\n");
 		return 1;
 	}
-*/
-
 
 /*
 Serial.print("R99");
@@ -335,14 +279,13 @@ Serial.print("calibration start");
 Serial.print("\n");
 */
 
-/*
+
 	// Move towards home
 
-        enableMotors(true);
+        calibAxis.enableMotor();
+	calibAxis.setDirectionHome();
 
 	movementDone = false;
-	setDirectionAxis(dirPin[0], 0, -1, homeAxis[axis], homeIsUp[axis], motorInv[axis]);
-
 	while (!movementDone && error == 0) {
 
                 // Check if there is an emergency stop command
@@ -355,7 +298,7 @@ Serial.print("\n");
                 }
 
 		// Move until the end stop for home position is reached
-		if ((!endStopMin(axis) && !endStopMax(axis)) && !movementDone) {
+		if ((!calibAxis.endStopMin() && !calibAxis.endStopMax()) && !movementDone) {
 
 			if ((millis() >= timeStart && millis() - timeStart > timeOut[axis] * 1000) || (millis() < timeStart && millis() > timeOut[axis] * 1000)) {
 				movementDone = true;
@@ -364,7 +307,7 @@ Serial.print("\n");
 
 				// Only do a step every x milliseconds (x is calculated above)
 				if (currentMillis - lastStepMillis >= MOVEMENT_SPEED_BASE_TIME / speedMin[axis]) {
-					digitalWrite(X_STEP_PIN, HIGH);
+					calibAxis.setMotorStep();
 					lastStepMillis = currentMillis;
 				}
        	                }
@@ -378,20 +321,19 @@ Serial.print("\n");
 	                        Serial.print("R04\n");
 	                }
 
-			digitalWrite(X_STEP_PIN, LOW);
+			calibAxis.resetMotorStep();
 			delayMicroseconds(MOVEMENT_DELAY);
 
 		} else {
 			movementDone = true;
 
 			// If end stop for home is active, set the position to zero
-			if (endStopMax(axis))
+			if (calibAxis.endStopMax())
 			{
 				invertEndStops = true;
 			}
 		}
 	}
-*/
 
 /*
 Serial.print("R99");
@@ -408,7 +350,7 @@ Serial.print(error);
 Serial.print("\n");
 */
 
-/*
+
 	// Report back the end stop setting
 
 	if (error == 0) {
@@ -421,7 +363,7 @@ Serial.print("\n");
 		Serial.print("R23");
 		Serial.print(" ");
 		Serial.print("P");
-		Serial.print(parEndInv[axis]);
+		Serial.print(parEndInv);
 		Serial.print(" ");
 		Serial.print("V");
 		Serial.print(paramValueInt);
@@ -438,7 +380,8 @@ Serial.print("\n");
 
 	stepsCount = 0;
 	movementDone = false;
-	setDirectionAxis(dirPin[0], 0, 1, homeAxis[axis], homeIsUp[axis], motorInv[axis]);
+	//setDirectionAxis(dirPin[0], 0, 1, homeAxis[axis], homeIsUp[axis], motorInv[axis]);
+	calibAxis.setDirectionAway();
 
 	while (!movementDone && error == 0) {
 
@@ -453,7 +396,7 @@ Serial.print("\n");
 
 
 		// Move until the end stop at the other side of the axis is reached
-		if (((!invertEndStops && !endStopMax(axis)) || (invertEndStops && !endStopMin(axis))) && !movementDone) {
+		if (((!invertEndStops && !calibAxis.endStopMax()) || (invertEndStops && !calibAxis.endStopMin())) && !movementDone) {
 
 			if (millis() - timeStart > timeOut[axis] * MOVEMENT_SPEED_BASE_TIME) {
 				movementDone = true;
@@ -462,7 +405,7 @@ Serial.print("\n");
 
 				// Only do a step every x milliseconds (x is calculated above)
 				if (currentMillis - lastStepMillis >= MOVEMENT_SPEED_BASE_TIME / speedMin[axis]) {
-					digitalWrite(X_STEP_PIN, HIGH);
+					calibAxis.setMotorStep();
 					stepsCount++;
 					lastStepMillis = currentMillis;
 				}
@@ -478,7 +421,7 @@ Serial.print("\n");
 	                }
 
 
-			digitalWrite(X_STEP_PIN, LOW);
+			calibAxis.resetMotorStep();
 			delayMicroseconds(MOVEMENT_DELAY);
 
 		} else {
@@ -487,7 +430,7 @@ Serial.print("\n");
 	}
 
 
-*/
+
 
 /*
 Serial.print("R99");
@@ -505,21 +448,21 @@ Serial.print("\n");
 */
 
 
-/*
+
 	// Report back the end stop setting
 
 	if (error == 0) {
 		Serial.print("R23");
 		Serial.print(" ");
 		Serial.print("P");
-		Serial.print(parNbrStp[axis]);
+		Serial.print(parNbrStp);
 		Serial.print(" ");
 		Serial.print("V");
 		Serial.print(stepsCount);
 		Serial.print("\n");
 	}
 
-	enableMotors(false);
+	calibAxis.enableMotor();
 
         storeEndStops();
 	reportEndStops();
@@ -538,7 +481,7 @@ Serial.print("\n");
 	}
 
 	reportPosition();
-*/
+
 	return error;
 }
 
@@ -641,3 +584,35 @@ void StepperControl::storeEndStops() {
 //}
 
 
+void StepperControl::loadMotorSettings() {
+
+	// Load settings
+
+	homeIsUp[0]		= ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_X);
+	homeIsUp[1]		= ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Y);
+	homeIsUp[2]		= ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Z);
+
+	speedMax[0]		= ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_X);
+	speedMax[1]		= ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Y);
+	speedMax[2]		= ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Z);
+
+	speedMin[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_X);
+	speedMin[1]		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Y);
+	speedMin[2]		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Z);
+
+	stepsAcc[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_X);
+	stepsAcc[1]		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Y);
+	stepsAcc[2]		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Z);
+
+	motorInv[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_X);
+	motorInv[1]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Y);
+	motorInv[2]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Z);
+
+	endStInv[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_X);
+	endStInv[1]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Y);
+	endStInv[2]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Z);
+
+	timeOut[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
+	timeOut[1]		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
+	timeOut[2]		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
+}
