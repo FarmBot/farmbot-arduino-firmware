@@ -14,13 +14,20 @@ StepperControl * StepperControl::getInstance() {
 const int MOVEMENT_INTERRUPT_SPEED = 100; // Interrupt cycle in micro seconds
 
 StepperControl::StepperControl() {
+
 	axisX = StepperControlAxis();
 	axisY = StepperControlAxis();
 	axisZ = StepperControlAxis();
 
+	axisX.label = 'X';
+	axisY.label = 'Y';
+	axisZ.label = 'Z';
+
 	axisX.loadPinNumbers(X_STEP_PIN, X_DIR_PIN, X_ENABLE_PIN, X_MIN_PIN, X_MAX_PIN);
 	axisY.loadPinNumbers(Y_STEP_PIN, Y_DIR_PIN, Y_ENABLE_PIN, Y_MIN_PIN, Y_MAX_PIN);
 	axisZ.loadPinNumbers(Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN, Z_MIN_PIN, Z_MAX_PIN);
+
+	loadMotorSettings();
 }
 
 /**
@@ -37,7 +44,6 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
  	unsigned long currentMillis         = 0;
 	unsigned long timeStart             = millis();
 
-
 	int incomingByte     = 0;
 	int error            = 0;
 
@@ -46,11 +52,6 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 	loadMotorSettings();
 
 	// if a speed is given in the command, use that instead of the config speed
-
-	long speedMax[3]        = {0,0,0};
-	speedMax[0] 		= xMaxSpd;
-	speedMax[1] 		= yMaxSpd;
-	speedMax[2] 		= zMaxSpd;
 
 	if (xMaxSpd > 0 && xMaxSpd < speedMax[0]) {
 		speedMax[0] = xMaxSpd;
@@ -63,7 +64,6 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 	if (zMaxSpd > 0 && zMaxSpd < speedMax[2]) {
 		speedMax[2] = zMaxSpd;
 	}
-
 
         axisX.setMaxSpeed(speedMax[0]);
         axisY.setMaxSpeed(speedMax[1]);
@@ -94,12 +94,13 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 
 	// Prepare for movement
 
-	//axisX.setDirection()
-	//axisY.setDirection()
-	//axisZ.setDirection()
-
 	storeEndStops();
 	reportEndStops();
+
+
+	axisX.setDirectionAxis();
+	axisY.setDirectionAxis();
+	axisZ.setDirectionAxis();
 
         enableMotors();
 
@@ -109,9 +110,13 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 	axisActive[1] = true;
 	axisActive[2] = true;
 
+	//axisActive[0] = false;
+	axisActive[1] = false;
+	axisActive[2] = false;
+
 	axisX.checkMovement();
-//	axisY.checkMovement();
-//	axisZ.checkMovement();
+	//axisY.checkMovement();
+	//axisZ.checkMovement();
 
 	//Timer1.start();
 
@@ -120,19 +125,19 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 
 		//delay(50);
 		delayMicroseconds(100);
-/*
-		Serial.print("R99 ");
-		Serial.print(" x axis active ");
-		Serial.print(axisActive[0]);
-		Serial.print(" y axis active ");
-		Serial.print(axisActive[1]);
-		Serial.print(" z axis active ");
-		Serial.print(axisActive[2]);
-		Serial.print("\n");
-*/
+
+//		Serial.print("R99 ");
+//		Serial.print(" x axis active ");
+//		Serial.print(axisActive[0]);
+//		Serial.print(" y axis active ");
+//		Serial.print(axisActive[1]);
+//		Serial.print(" z axis active ");
+//		Serial.print(axisActive[2]);
+//		Serial.print("\n");
+
 		axisX.checkTiming();
-		axisY.checkTiming();
-		axisZ.checkTiming();
+		//axisY.checkTiming();
+		//axisZ.checkTiming();
 
 		axisActive[0] = axisX.isAxisActive();
 		axisActive[1] = axisY.isAxisActive();
@@ -180,9 +185,9 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 
 	}
 
-	/**/Serial.print("R99 stopped\n");
+	Serial.print("R99 stopped\n");
 
-	Timer1.stop();
+	//Timer1.stop();
 	disableMotors();
 
 	currentPoint[0] = axisX.currentPoint();
@@ -615,4 +620,9 @@ void StepperControl::loadMotorSettings() {
 	timeOut[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
 	timeOut[1]		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
 	timeOut[2]		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
+
+	axisX.loadMotorSettings(speedMax[0], speedMin[0], stepsAcc[0], timeOut[0], homeIsUp[0], motorInv[0], endStInv[0], MOVEMENT_INTERRUPT_SPEED);
+	axisY.loadMotorSettings(speedMax[1], speedMin[1], stepsAcc[1], timeOut[1], homeIsUp[1], motorInv[1], endStInv[1], MOVEMENT_INTERRUPT_SPEED);
+	axisZ.loadMotorSettings(speedMax[2], speedMin[2], stepsAcc[2], timeOut[2], homeIsUp[2], motorInv[2], endStInv[2], MOVEMENT_INTERRUPT_SPEED);
+
 }

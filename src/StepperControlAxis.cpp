@@ -1,7 +1,5 @@
 #include "StepperControlAxis.h"
 
-//int test = 0;
-
 long interruptSpeed          = 100;
 
 StepperControlAxis::StepperControlAxis() {
@@ -13,6 +11,12 @@ StepperControlAxis::StepperControlAxis() {
         pinMin          = 0;
         pinMax          = 0;
 
+}
+
+void StepperControlAxis::test() {
+                Serial.print("R99 ");
+                Serial.print(label);
+                Serial.print("\n");
 }
 
 unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long currentPosition, long destinationPosition, long minSpeed, long maxSpeed, long stepsAccDec) {
@@ -102,6 +106,7 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
 }
 
 void StepperControlAxis::checkAxisDirection() {
+
 	if (coordHomeAxis){
 		// When home is active, the direction is fixed
 		movementUp     = motorHomeIsUp;
@@ -129,62 +134,16 @@ void StepperControlAxis::setDirectionAxis() {
 
 void StepperControlAxis::checkMovement() {
 
-	int i = 1;
-
-	//moveTicks[i]++;
 	checkAxisDirection();
 
-
-
-Serial.print("R99 check axis ");
-Serial.print(axisActive);
-Serial.print(" current point ");
-Serial.print(coordCurrentPoint);
-Serial.print(" destination point ");
-Serial.print(coordDestinationPoint);
-
-Serial.print(" home stop reached ");
-Serial.print(endStopAxisReached(false));
-Serial.print(" axis stop reached ");
-Serial.print(endStopAxisReached(true));
-Serial.print(" home axis ");
-Serial.print(coordHomeAxis);
-Serial.print(" movement to home ");
-Serial.print(movementToHome);
-Serial.print("\n");
-
-
-
-	//if ((!pointReached(currentPoint, destinationPoint) || home) && axisActive[i]) {
 	if (((coordCurrentPoint != coordDestinationPoint) || coordHomeAxis) && axisActive) {
-//Serial.print("R99 point not reached yet\n");
+
 		// home or destination not reached, keep moving
-/*
-		Serial.print("R99 calc axis speed");
-		Serial.print(" speed max ");
-		Serial.print(speedMax[i]);
-		Serial.print("\n");
-*/
 
 		// Get the axis speed, in steps per second
 		axisSpeed = calculateSpeed(	coordSourcePoint, coordCurrentPoint, coordDestinationPoint,
 				 		motorSpeedMin, motorSpeedMax, motorStepsAcc);
 
-//Serial.print("R99 axis speed ");
-//Serial.print(axisSpeed[i]);
-//Serial.print("\n");
-
-/*
-Serial.print("R99 check axis b  ");
-Serial.print(i);
-Serial.print(" home part true ");
-Serial.print(homeAxis[i] && !endStopAxisReached(i, false));
-Serial.print(" !homeAxis[i] ");
-Serial.print(!homeAxis[i]);
-Serial.print(" !endStopAxisReached(i, !movementToHome[i]) ");
-Serial.print(!endStopAxisReached(i, !movementToHome[i]));
-Serial.print("\n");
-*/
 		// If end stop reached, don't move anymore
 		if ((coordHomeAxis && !endStopAxisReached(false)) || (!coordHomeAxis &&  !endStopAxisReached(!movementToHome))) {
 
@@ -197,7 +156,6 @@ Serial.print("\n");
 				// This gives the number of interrupts (called ticks here) before the pulse needs to be set for the next step
 				stepOnTick  = moveTicks + (1000.0 * 1000.0 / interruptSpeed / axisSpeed / 2);
 				stepOffTick = moveTicks + (1000.0 * 1000.0 / interruptSpeed / axisSpeed    );
-
 			}
 		}
 		else {
@@ -213,8 +171,6 @@ Serial.print("\n");
 	if (endStopAxisReached(false)) {
 		coordCurrentPoint = 0;
 	}
-
-
 }
 
 void StepperControlAxis::checkTiming() {
@@ -225,12 +181,7 @@ void StepperControlAxis::checkTiming() {
 
 	if (axisActive) {
 		if (moveTicks >= stepOffTick) {
-/*
-Serial.print("R99 reset step ");
-Serial.print(" moveTicks ");
-Serial.print(moveTicks);
-Serial.print("\n");
-*/
+
 			// Negative flank for the steps
 			resetMotorStep();
 			checkMovement();
@@ -238,12 +189,7 @@ Serial.print("\n");
 		else {
 
 			if (moveTicks == stepOnTick) {
-/*
-Serial.print("R99 set step ");
-Serial.print(" moveTicks ");
-Serial.print(moveTicks);
-Serial.print("\n");
-*/
+
 				// Positive flank for the steps
 				setStepAxis();
 			}
@@ -351,26 +297,26 @@ void StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint
 }
 
 void StepperControlAxis::enableMotor() {
-	digitalWrite(pinEnable, HIGH);
+	digitalWrite(pinEnable, LOW);
 }
 
 void StepperControlAxis::disableMotor() {
-	digitalWrite(pinEnable, LOW);
+	digitalWrite(pinEnable, HIGH);
 }
 
 void StepperControlAxis::setDirectionUp() {
 	if (motorMotorInv) {
-		digitalWrite(pinDirection, HIGH);
-	} else {
 		digitalWrite(pinDirection, LOW);
+	} else {
+		digitalWrite(pinDirection, HIGH);
 	}
 }
 
 void StepperControlAxis::setDirectionDown() {
 	if (motorMotorInv) {
-		digitalWrite(pinDirection, LOW);
-	} else {
 		digitalWrite(pinDirection, HIGH);
+	} else {
+		digitalWrite(pinDirection, LOW);
 	}
 }
 
@@ -403,10 +349,12 @@ bool StepperControlAxis::endStopsReached() {
 }
 
 bool StepperControlAxis::endStopMin() {
+	//return ((digitalRead(pinMin) == motorEndStopInv) || (digitalRead(pinMax) == motorEndStopInv));
 	return digitalRead(pinMin);
 }
 
 bool StepperControlAxis::endStopMax() {
+	//return ((digitalRead(pinMin) == motorEndStopInv) || (digitalRead(pinMax) == motorEndStopInv));
         return digitalRead(pinMax);
 }
 

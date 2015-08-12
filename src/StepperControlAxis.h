@@ -46,6 +46,11 @@ public:
 	void setDirectionDown();
 	void setDirectionHome();
 	void setDirectionAway();
+	void setDirectionAxis();
+
+	void test();
+
+	char label;
 
 private:
 
@@ -89,7 +94,6 @@ private:
 	void step(long &currentPoint, unsigned long steps, long destinationPoint);
 	bool pointReached(long currentPoint, long destinationPoint);
 	unsigned int calculateSpeed(long sourcePosition, long currentPosition, long destinationPosition, long minSpeed, long maxSpeed, long stepsAccDec);
-	void setDirectionAxis();
 	unsigned long getLength(long l1, long l2);
 	void checkAxisDirection();
 

@@ -44,6 +44,7 @@ int G00Handler::execute(Command* command) {
 			command->getX(), command->getY(), command->getZ(),
 			command->getA(), command->getB(), command->getC(), 
 			false, false, false);
+
 	if (LOGGING) {
 		CurrentState::getInstance()->print();
 	}
