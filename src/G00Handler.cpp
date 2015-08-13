@@ -40,11 +40,11 @@ int G00Handler::execute(Command* command) {
 //	Serial.print("\n");
 
 
-	StepperControl::getInstance()->moveAbsoluteConstant(
+	StepperControl::getInstance()->moveToCoords(
 			command->getX(), command->getY(), command->getZ(),
-			//0,0,0,
 			command->getA(), command->getB(), command->getC(), 
 			false, false, false);
+
 	if (LOGGING) {
 		CurrentState::getInstance()->print();
 	}
