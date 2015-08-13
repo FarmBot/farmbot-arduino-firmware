@@ -110,42 +110,21 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 	axisActive[1] = true;
 	axisActive[2] = true;
 
-	//axisActive[0] = false;
-	axisActive[1] = false;
-	axisActive[2] = false;
 
 	axisX.checkMovement();
-	//axisY.checkMovement();
-	//axisZ.checkMovement();
+	axisY.checkMovement();
+	axisZ.checkMovement();
 
-	//Timer1.start();
+	Timer1.start();
 
 	// Let the interrupt handle all the movements
 	while (axisActive[0] || axisActive[1] || axisActive[2]) {
 
-		//delay(50);
-		delayMicroseconds(100);
-
-//		Serial.print("R99 ");
-//		Serial.print(" x axis active ");
-//		Serial.print(axisActive[0]);
-//		Serial.print(" y axis active ");
-//		Serial.print(axisActive[1]);
-//		Serial.print(" z axis active ");
-//		Serial.print(axisActive[2]);
-//		Serial.print("\n");
-
-		axisX.checkTiming();
-		//axisY.checkTiming();
-		//axisZ.checkTiming();
+		delay(1);
 
 		axisActive[0] = axisX.isAxisActive();
 		axisActive[1] = axisY.isAxisActive();
 		axisActive[2] = axisZ.isAxisActive();
-
-		//axisActive[0] = false;
-		axisActive[1] = false;
-		axisActive[2] = false;
 
 	        storeEndStops();
 
@@ -169,7 +148,7 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 	        }
 
 		if (error == 1) {
-			//Serial.print("R99 error\n");
+			Serial.print("R99 error\n");
 			Timer1.stop();
 			axisActive[0] = false;
 			axisActive[1] = false;
@@ -187,7 +166,7 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 
 	Serial.print("R99 stopped\n");
 
-	//Timer1.stop();
+	Timer1.stop();
 	disableMotors();
 
 	currentPoint[0] = axisX.currentPoint();
@@ -215,31 +194,20 @@ int StepperControl::calibrateAxis(int axis) {
 
 	loadMotorSettings();
 
-        //long timeOut[3] = {5000,5000,5000};
-
-	// Set the coordinate variables for homing, so the default functions can be used for settign direction
-
-        //long sourcePoint[3] 		= { 0, 0, 0 };
-        //long destinationPoint[3] 	= { 0, 0, 0 };
-
- 	unsigned long currentMillis         = 0;
-
-	unsigned long currentSteps          = 0;
-	unsigned long lastStepMillis        = 0;
-
-	unsigned long timeStart             = millis();
+	//unsigned long timeStart             = millis();
 
         bool movementDone    = false;
 
 	int  paramValueInt   = 0;
 	int  stepsCount	     = 0;
-	int  incomingByte     = 0;
-	int  error            = 0;
+	int  incomingByte    = 0;
+	int  error           = 0;
 
 
 	bool invertEndStops = false;
 	int parEndInv;
 	int parNbrStp;
+
 	// Prepare for movement
 
 	storeEndStops();
@@ -249,20 +217,23 @@ int StepperControl::calibrateAxis(int axis) {
 	// Select the right axis
 	StepperControlAxis calibAxis;
 	switch (axis) {
+		case 0:
+			calibAxis      = axisX;
+			parEndInv      = MOVEMENT_INVERT_ENDPOINTS_X;
+			parNbrStp      = MOVEMENT_AXIS_NR_STEPS_X;
+			invertEndStops = endStInv[0];
+			break;
 		case 1:
-			calibAxis = axisX;
-			parEndInv = MOVEMENT_INVERT_ENDPOINTS_X;
-			parNbrStp = MOVEMENT_AXIS_NR_STEPS_X;
+			calibAxis      = axisY;
+			parEndInv      = MOVEMENT_INVERT_ENDPOINTS_Y;;
+			parNbrStp      = MOVEMENT_AXIS_NR_STEPS_Y;
+			invertEndStops = endStInv[0];
 			break;
 		case 2:
-			calibAxis = axisY;
-			parEndInv = MOVEMENT_INVERT_ENDPOINTS_Y;;
-			parNbrStp = MOVEMENT_AXIS_NR_STEPS_Y;
-			break;
-		case 3:
-			calibAxis = axisZ;
-			parEndInv = MOVEMENT_INVERT_ENDPOINTS_Z;
-			parNbrStp = MOVEMENT_AXIS_NR_STEPS_Z;
+			calibAxis      = axisZ;
+			parEndInv      = MOVEMENT_INVERT_ENDPOINTS_Z;
+			parNbrStp      = MOVEMENT_AXIS_NR_STEPS_Z;
+			invertEndStops = endStInv[0];
 			break;
 		default:
 			Serial.print("R99 Calibration error: invalid axis selected\n");
@@ -277,19 +248,18 @@ int StepperControl::calibrateAxis(int axis) {
 		return 1;
 	}
 
-/*
-Serial.print("R99");
-Serial.print(" ");
-Serial.print("calibration start");
-Serial.print("\n");
-*/
-
+	Serial.print("R99");
+	Serial.print(" axis ");
+	Serial.print(calibAxis.label);
+	Serial.print(" calibration start");
+	Serial.print("\n");
 
 	// Move towards home
 
         calibAxis.enableMotor();
 	calibAxis.setDirectionHome();
 
+	stepsCount = 0;
 	movementDone = false;
 	while (!movementDone && error == 0) {
 
@@ -305,29 +275,19 @@ Serial.print("\n");
 		// Move until the end stop for home position is reached
 		if ((!calibAxis.endStopMin() && !calibAxis.endStopMax()) && !movementDone) {
 
-			if ((millis() >= timeStart && millis() - timeStart > timeOut[axis] * 1000) || (millis() < timeStart && millis() > timeOut[axis] * 1000)) {
-				movementDone = true;
-				error        = 1;
-			} else {
+			calibAxis.setMotorStep();
 
-				// Only do a step every x milliseconds (x is calculated above)
-				if (currentMillis - lastStepMillis >= MOVEMENT_SPEED_BASE_TIME / speedMin[axis]) {
-					calibAxis.setMotorStep();
-					lastStepMillis = currentMillis;
-				}
-       	                }
+			delayMicroseconds(1000000 / speedMin[axis] /2);
 
-			delayMicroseconds(MOVEMENT_DELAY);
-
-			currentMillis++;
-	                if (currentMillis % 10000 == 0)
+			stepsCount++;
+	                if (stepsCount % (speedMin[axis] * 3) == 0)
 	                {
 				// Periodically send message still active
 	                        Serial.print("R04\n");
 	                }
 
 			calibAxis.resetMotorStep();
-			delayMicroseconds(MOVEMENT_DELAY);
+			delayMicroseconds(1000000 / speedMin[axis] /2);
 
 		} else {
 			movementDone = true;
@@ -340,21 +300,11 @@ Serial.print("\n");
 		}
 	}
 
-/*
-Serial.print("R99");
-Serial.print(" ");
-Serial.print("calibration halfway");
-Serial.print(" ");
-Serial.print("end stop invert");
-Serial.print(" ");
-Serial.print(invertEndStops);
-Serial.print(" ");
-Serial.print("error");
-Serial.print(" ");
-Serial.print(error);
-Serial.print("\n");
-*/
-
+	Serial.print("R99");
+	Serial.print(" axis ");
+	Serial.print(calibAxis.label);
+	Serial.print(" at first end stop");
+	Serial.print("\n");
 
 	// Report back the end stop setting
 
@@ -379,13 +329,11 @@ Serial.print("\n");
 
         storeEndStops();
 	reportEndStops();
-	//reportPosition();
 
 	// Move into the other direction now, and measure the number of steps
 
 	stepsCount = 0;
 	movementDone = false;
-	//setDirectionAxis(dirPin[0], 0, 1, homeAxis[axis], homeIsUp[axis], motorInv[axis]);
 	calibAxis.setDirectionAway();
 
 	while (!movementDone && error == 0) {
@@ -399,27 +347,15 @@ Serial.print("\n");
                         }
                 }
 
-
 		// Move until the end stop at the other side of the axis is reached
 		if (((!invertEndStops && !calibAxis.endStopMax()) || (invertEndStops && !calibAxis.endStopMin())) && !movementDone) {
 
-			if (millis() - timeStart > timeOut[axis] * MOVEMENT_SPEED_BASE_TIME) {
-				movementDone = true;
-				error        = 1;
-			} else {
+			calibAxis.setMotorStep();
+			stepsCount++;
 
-				// Only do a step every x milliseconds (x is calculated above)
-				if (currentMillis - lastStepMillis >= MOVEMENT_SPEED_BASE_TIME / speedMin[axis]) {
-					calibAxis.setMotorStep();
-					stepsCount++;
-					lastStepMillis = currentMillis;
-				}
-       	                }
+			delayMicroseconds(1000000 / speedMin[axis] /2);
 
-			delayMicroseconds(MOVEMENT_DELAY);
-
-			currentMillis++;
-	                if (currentMillis % 10000 == 0)
+	                if (stepsCount % (speedMin[axis] * 3) == 0)
         	        {
 				// Periodically send message still active
 	                        Serial.print("R04\n");
@@ -427,7 +363,7 @@ Serial.print("\n");
 
 
 			calibAxis.resetMotorStep();
-			delayMicroseconds(MOVEMENT_DELAY);
+			delayMicroseconds(1000000 / speedMin[axis] /2);
 
 		} else {
 			movementDone = true;
@@ -435,24 +371,11 @@ Serial.print("\n");
 	}
 
 
-
-
-/*
-Serial.print("R99");
-Serial.print(" ");
-Serial.print("calibration done");
-Serial.print(" ");
-Serial.print("nr steps");
-Serial.print(" ");
-Serial.print(stepsCount);
-Serial.print(" ");
-Serial.print("error");
-Serial.print(" ");
-Serial.print(error);
-Serial.print("\n");
-*/
-
-
+	Serial.print("R99");
+	Serial.print(" axis ");
+	Serial.print(calibAxis.label);
+	Serial.print(" at second end stop");
+	Serial.print("\n");
 
 	// Report back the end stop setting
 
@@ -467,7 +390,7 @@ Serial.print("\n");
 		Serial.print("\n");
 	}
 
-	calibAxis.enableMotor();
+	calibAxis.disableMotor();
 
         storeEndStops();
 	reportEndStops();
@@ -493,15 +416,6 @@ Serial.print("\n");
 
 // Handle movement by checking each axis
 void StepperControl::handleMovementInterrupt(void){
-//Serial.print("R99 interrupt\n");
-
-//Serial.print("R99 interrupt data ");
-//Serial.print(" destination point ");
-//Serial.print(destinationPoint[0]);
-//Serial.print("  ");
-//Serial.print("test ");
-//Serial.print(test);
-//Serial.print("\n");
 
         axisX.checkTiming();
         axisY.checkTiming();
