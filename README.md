@@ -24,8 +24,11 @@ sudo make install
 
 Command line flash tool use
 ==========================
-From the farmbot-arduino-controller directory,
+To flash the firmware onto the device, run this:
+
 ```
+git clone https://github.com/FarmBot/farmbot-arduino-firmware.git
+cd farmbot-arduino-firmware
 ino build
 ino upload
 ```
