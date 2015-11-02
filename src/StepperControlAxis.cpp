@@ -11,6 +11,7 @@ StepperControlAxis::StepperControlAxis() {
         pinMin          = 0;
         pinMax          = 0;
 
+	axisActive	= false;
 }
 
 void StepperControlAxis::test() {
@@ -175,7 +176,7 @@ void StepperControlAxis::checkMovement() {
 
 void StepperControlAxis::checkTiming() {
 
-	int i;
+	//int i;
 
 	moveTicks++;
 

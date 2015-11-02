@@ -15,6 +15,8 @@ const int MOVEMENT_INTERRUPT_SPEED = 100; // Interrupt cycle in micro seconds
 
 StepperControl::StepperControl() {
 
+	// Create the axis controllers
+
 	axisX = StepperControlAxis();
 	axisY = StepperControlAxis();
 	axisZ = StepperControlAxis();
@@ -28,6 +30,32 @@ StepperControl::StepperControl() {
 	axisZ.loadPinNumbers(Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN, Z_MIN_PIN, Z_MAX_PIN);
 
 	loadMotorSettings();
+
+	// Create the encoder controller
+
+	encoderX = StepperControlEncoder();
+	encoderY = StepperControlEncoder();
+	encoderZ = StepperControlEncoder();
+
+	encoderX.loadPinNumbers(X_ENCDR_A, X_ENCDR_B);
+	encoderY.loadPinNumbers(Y_ENCDR_A, Y_ENCDR_B);
+	encoderZ.loadPinNumbers(Z_ENCDR_A, Z_ENCDR_B);
+
+	Timer1.start();
+
+}
+
+void StepperControl::test() {
+	// read changes in encoder
+	//encoderX.readEncoder();
+	//encoderY.readEncoder();
+	//encoderZ.readEncoder();
+}
+
+void StepperControl::test2() {
+	encoderX.test();
+	//encoderY.test();
+	//encoderZ.test();
 }
 
 /**
@@ -115,7 +143,7 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 	axisY.checkMovement();
 	axisZ.checkMovement();
 
-	Timer1.start();
+	//Timer1.start();
 
 	// Let the interrupt handle all the movements
 	while (axisActive[0] || axisActive[1] || axisActive[2]) {
@@ -417,6 +445,10 @@ int StepperControl::calibrateAxis(int axis) {
 // Handle movement by checking each axis
 void StepperControl::handleMovementInterrupt(void){
 
+	encoderX.readEncoder();
+	//encoderY.readEncoder();
+	//encoderZ.readEncoder();
+
         axisX.checkTiming();
         axisY.checkTiming();
         axisZ.checkTiming();
@@ -438,7 +470,7 @@ void StepperControl::initInterrupt() {
         //Timer1.attachInterrupt(StepperControl::getInstance()->handleMovementInterrupt);
         Timer1.attachInterrupt(handleMovementInterruptTest);
         Timer1.initialize(MOVEMENT_INTERRUPT_SPEED);
-        Timer1.stop();
+        //Timer1.stop();
 }
 
 

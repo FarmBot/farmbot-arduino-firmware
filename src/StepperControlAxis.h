@@ -12,6 +12,7 @@
 #include "CurrentState.h"
 #include "ParameterList.h"
 #include "pins.h"
+#include "StepperControlEncoder.h"
 #include "Config.h"
 #include <stdio.h>
 #include <stdlib.h>

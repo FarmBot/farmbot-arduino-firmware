@@ -38,10 +38,17 @@ public:
 	void enableMotors();
 	void disableMotors();
 
+	void test();
+	void test2();
+
 private:
 	StepperControlAxis axisX;
 	StepperControlAxis axisY;
 	StepperControlAxis axisZ;
+
+	StepperControlEncoder encoderX;
+	StepperControlEncoder encoderY;
+	StepperControlEncoder encoderZ;
 
 	bool axisActive[3];
 
