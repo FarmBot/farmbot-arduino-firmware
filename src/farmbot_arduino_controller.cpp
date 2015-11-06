@@ -76,7 +76,7 @@ void loop() {
 	delay(10);
 
 	// Test
-	/**/StepperControl::getInstance()->test();
+	/**///StepperControl::getInstance()->test();
 
 	currentTime = millis();
 	if (currentTime < lastAction) {
@@ -85,17 +85,10 @@ void loop() {
 	}
 	else {
 
-		/**///if ((currentTime - lastAction) > 5000) {
-		if ((currentTime - lastAction) > 500) {
+		if ((currentTime - lastAction) > 5000) {
 			// After an idle time, send the idle message
 			Serial.print("R00\r\n");
 			lastAction = millis();
-
-
-			// Test 2
-			/**/StepperControl::getInstance()->test2();
-
-
 		}
 	}
 }

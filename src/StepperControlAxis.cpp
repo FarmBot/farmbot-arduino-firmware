@@ -1,7 +1,5 @@
 #include "StepperControlAxis.h"
 
-long interruptSpeed          = 100;
-
 StepperControlAxis::StepperControlAxis() {
 	lastCalcLog	= 0;
 
@@ -64,8 +62,8 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
 		}
 	}
 
-/*
-	if (millis() - lastCalcLog > 1000) {
+
+	if (debugPrint /* && (millis() - lastCalcLog > 1000)*/) {
 
 		lastCalcLog = millis();
 
@@ -100,7 +98,7 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
 
 		Serial.print("\n");
 	}
-*/
+
 
 	// Return the calculated speed, in steps per second
 	return newSpeed;
@@ -155,8 +153,8 @@ void StepperControlAxis::checkMovement() {
 
 				// Take the requested speed (steps / second) and divide by the interrupt speed (interrupts per seconde)
 				// This gives the number of interrupts (called ticks here) before the pulse needs to be set for the next step
-				stepOnTick  = moveTicks + (1000.0 * 1000.0 / interruptSpeed / axisSpeed / 2);
-				stepOffTick = moveTicks + (1000.0 * 1000.0 / interruptSpeed / axisSpeed    );
+				stepOnTick  = moveTicks + (1000.0 * 1000.0 / motorInterruptSpeed / axisSpeed / 2);
+				stepOffTick = moveTicks + (1000.0 * 1000.0 / motorInterruptSpeed / axisSpeed    );
 			}
 		}
 		else {
@@ -178,9 +176,10 @@ void StepperControlAxis::checkTiming() {
 
 	//int i;
 
-	moveTicks++;
-
 	if (axisActive) {
+
+		moveTicks++;
+
 		if (moveTicks >= stepOffTick) {
 
 			// Negative flank for the steps
@@ -381,4 +380,8 @@ long StepperControlAxis::currentPoint() {
 
 void StepperControlAxis::setMaxSpeed(long speed) {
 	motorSpeedMax = speed;
+}
+
+void StepperControlAxis::activateDebugPrint() {
+	debugPrint = true;
 }

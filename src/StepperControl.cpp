@@ -11,7 +11,7 @@ StepperControl * StepperControl::getInstance() {
 }
 ;
 
-const int MOVEMENT_INTERRUPT_SPEED = 100; // Interrupt cycle in micro seconds
+//const int MOVEMENT_INTERRUPT_SPEED = 100; // Interrupt cycle in micro seconds
 
 StepperControl::StepperControl() {
 
@@ -50,9 +50,11 @@ void StepperControl::test() {
 	//encoderX.readEncoder();
 	//encoderY.readEncoder();
 	//encoderZ.readEncoder();
+	reportPosition();
 }
 
 void StepperControl::test2() {
+	CurrentState::getInstance()->printPosition();
 	encoderX.test();
 	//encoderY.test();
 	//encoderZ.test();
@@ -144,11 +146,23 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 	axisZ.checkMovement();
 
 	//Timer1.start();
+	/**///axisX.activateDebugPrint();
 
 	// Let the interrupt handle all the movements
 	while (axisActive[0] || axisActive[1] || axisActive[2]) {
 
 		delay(1);
+
+		/**/
+       		encoderX.readEncoder();
+
+        	axisX.checkTiming();
+        	axisY.checkTiming();
+        	axisZ.checkTiming();
+
+       		encoderX.readEncoder();
+
+		//encoderX.test();
 
 		axisActive[0] = axisX.isAxisActive();
 		axisActive[1] = axisY.isAxisActive();
@@ -194,7 +208,7 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 
 	Serial.print("R99 stopped\n");
 
-	Timer1.stop();
+	//Timer1.stop();
 	disableMotors();
 
 	currentPoint[0] = axisX.currentPoint();
@@ -445,13 +459,13 @@ int StepperControl::calibrateAxis(int axis) {
 // Handle movement by checking each axis
 void StepperControl::handleMovementInterrupt(void){
 
-	encoderX.readEncoder();
+	//encoderX.readEncoder();
 	//encoderY.readEncoder();
 	//encoderZ.readEncoder();
-
-        axisX.checkTiming();
-        axisY.checkTiming();
-        axisZ.checkTiming();
+/**/
+        //axisX.checkTiming();
+        //axisY.checkTiming();
+        //axisZ.checkTiming();
 }
 
 bool interruptBusy = false;
@@ -517,6 +531,7 @@ void StepperControl::reportEndStops() {
 
 void StepperControl::reportPosition(){
 	CurrentState::getInstance()->printPosition();
+	test2();
 }
 
 void StepperControl::storeEndStops() {

@@ -49,6 +49,8 @@ public:
 	void setDirectionAway();
 	void setDirectionAxis();
 
+
+	void activateDebugPrint();
 	void test();
 
 	char label;
@@ -56,6 +58,7 @@ public:
 private:
 
 	int lastCalcLog = 0;
+	bool debugPrint = false;
 
 	// pin settings
 	int pinStep;

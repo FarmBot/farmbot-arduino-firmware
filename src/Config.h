@@ -22,6 +22,7 @@ const int LOGGING = 0;
 //const bool AXIS_HOME_UP_Y = false;
 //const bool AXIS_HOME_UP_Z = true;
 
+const int MOVEMENT_INTERRUPT_SPEED = 100; // Interrupt cycle in micro seconds
 
 const unsigned int MOVEMENT_SPEED_BASE_TIME      = 2000;
 const unsigned int MOVEMENT_DELAY                = 500;

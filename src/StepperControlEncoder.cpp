@@ -10,16 +10,16 @@ StepperControlEncoder::StepperControlEncoder() {
 }
 
 void StepperControlEncoder::test() {
-                Serial.print("R99 ");
+                Serial.print("R88 ");
                 Serial.print("position ");
                 Serial.print(position);
                 Serial.print(" channel A ");
                 Serial.print(prvValChannelA);
-                Serial.print(" -> "); 
+                Serial.print(" -> ");
                 Serial.print(curValChannelA);
                 Serial.print(" channel B ");
                 Serial.print(prvValChannelB);
-                Serial.print(" -> "); 
+                Serial.print(" -> ");
                 Serial.print(curValChannelB);
                 Serial.print("\n");
 }
@@ -62,17 +62,25 @@ void StepperControlEncoder::readEncoder() {
 	shiftChannels();
 	readChannels();
 
+	int delta = 0;
+
 	// and check for a position change
 	// no fancy code, just a few simple compares. sorry
-	if (prvValChannelA == true  && curValChannelA == true  && prvValChannelB == false && prvValChannelB == true ) {position++;}
-	if (prvValChannelA == true  && curValChannelA == false && prvValChannelB == true  && prvValChannelB == true ) {position++;}
-	if (prvValChannelA == false && curValChannelA == false && prvValChannelB == true  && prvValChannelB == false) {position++;}
-	if (prvValChannelA == false && curValChannelA == true  && prvValChannelB == false && prvValChannelB == false) {position++;}
+	if (prvValChannelA == true  && curValChannelA == true  && prvValChannelB == false && curValChannelB == true ) {delta++;}
+	if (prvValChannelA == true  && curValChannelA == false && prvValChannelB == true  && curValChannelB == true ) {delta++;}
+	if (prvValChannelA == false && curValChannelA == false && prvValChannelB == true  && curValChannelB == false) {delta++;}
+	if (prvValChannelA == false && curValChannelA == true  && prvValChannelB == false && curValChannelB == false) {delta++;}
 
-	if (prvValChannelA == false && curValChannelA == false && prvValChannelB == false && prvValChannelB == true ) {position--;}
-	if (prvValChannelA == false && curValChannelA == true  && prvValChannelB == true  && prvValChannelB == true ) {position--;}
-	if (prvValChannelA == true  && curValChannelA == true  && prvValChannelB == true  && prvValChannelB == false) {position--;}
-	if (prvValChannelA == true  && curValChannelA == false && prvValChannelB == false && prvValChannelB == false) {position--;}
+	if (prvValChannelA == false && curValChannelA == false && prvValChannelB == false && curValChannelB == true ) {delta--;}
+	if (prvValChannelA == false && curValChannelA == true  && prvValChannelB == true  && curValChannelB == true ) {delta--;}
+	if (prvValChannelA == true  && curValChannelA == true  && prvValChannelB == true  && curValChannelB == false) {delta--;}
+	if (prvValChannelA == true  && curValChannelA == false && prvValChannelB == false && curValChannelB == false) {delta--;}
+
+	position += delta;
+
+	if (delta != 0) {
+		test();
+	}
 
 }
 
