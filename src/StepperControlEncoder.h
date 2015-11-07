@@ -45,7 +45,7 @@ private:
 	bool curValChannelB;
 
 	// encoder
-	int position;
+	long position;
 
 };
 

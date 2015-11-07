@@ -156,6 +156,14 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 		/**/
        		encoderX.readEncoder();
 
+		currentPoint[0] = encoderX.currentPosition();
+		currentPoint[1] = encoderY.currentPosition();
+		currentPoint[2] = encoderZ.currentPosition();
+
+		axisX.setCurrentPosition(currentPoint[0]);
+		axisY.setCurrentPosition(currentPoint[1]);
+		axisZ.setCurrentPosition(currentPoint[2]);
+
         	axisX.checkTiming();
         	axisY.checkTiming();
         	axisZ.checkTiming();
@@ -211,9 +219,9 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 	//Timer1.stop();
 	disableMotors();
 
-	currentPoint[0] = axisX.currentPoint();
-	currentPoint[1] = axisY.currentPoint();
-	currentPoint[2] = axisZ.currentPoint();
+	currentPoint[0] = axisX.currentPosition();
+	currentPoint[1] = axisY.currentPosition();
+	currentPoint[2] = axisZ.currentPosition();
 
 	CurrentState::getInstance()->setX(currentPoint[0]);
 	CurrentState::getInstance()->setY(currentPoint[1]);
@@ -222,6 +230,8 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
         storeEndStops();
 	reportEndStops();
 	reportPosition();
+
+	/**/encoderX.test();
 
 	return error;
 }

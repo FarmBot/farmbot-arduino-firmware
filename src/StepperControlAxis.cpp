@@ -10,11 +10,17 @@ StepperControlAxis::StepperControlAxis() {
         pinMax          = 0;
 
 	axisActive	= false;
+
+	consMissedSteps = 0;
+
+	motorConsMissedStepsMax = 10;
 }
 
 void StepperControlAxis::test() {
-                Serial.print("R99 ");
-                Serial.print(label);
+                Serial.print("R99");
+                Serial.print(" cons steps missed ");
+                //Serial.print(label);
+                Serial.print(consMissedSteps);
                 Serial.print("\n");
 }
 
@@ -63,19 +69,11 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
 	}
 
 
-	if (debugPrint /* && (millis() - lastCalcLog > 1000)*/) {
+	if (debugPrint && (millis() - lastCalcLog > 1000)) {
 
 		lastCalcLog = millis();
 
 		Serial.print("R99");
-
-	//	Serial.print(" a ");
-	//	Serial.print(endPos);
-	//	Serial.print(" b ");
-	//	Serial.print((endPos - stepsAccDec));
-	//	Serial.print(" c ");
-	//	Serial.print(curPos < (endPos - stepsAccDec));
-
 
 		Serial.print(" sta ");
 		Serial.print(staPos);
@@ -143,8 +141,8 @@ void StepperControlAxis::checkMovement() {
 		axisSpeed = calculateSpeed(	coordSourcePoint, coordCurrentPoint, coordDestinationPoint,
 				 		motorSpeedMin, motorSpeedMax, motorStepsAcc);
 
-		// If end stop reached, don't move anymore
-		if ((coordHomeAxis && !endStopAxisReached(false)) || (!coordHomeAxis &&  !endStopAxisReached(!movementToHome))) {
+		// If end stop reached or the encoder doesn't move anymore, don't move anymore
+		if ((consMissedSteps <= motorConsMissedStepsMax) && ((coordHomeAxis && !endStopAxisReached(false)) || (!coordHomeAxis &&  !endStopAxisReached(!movementToHome)))) {
 
 			// Set the moments when the step is set to true and false
 
@@ -183,6 +181,7 @@ void StepperControlAxis::checkTiming() {
 		if (moveTicks >= stepOffTick) {
 
 			// Negative flank for the steps
+			verifyStepAxis();
 			resetMotorStep();
 			checkMovement();
 		}
@@ -195,6 +194,15 @@ void StepperControlAxis::checkTiming() {
 			}
 		}
 	}
+}
+
+void StepperControlAxis::verifyStepAxis() {
+	if (coordCurrentPoint != coordEncoderPoint) {
+		consMissedSteps++;
+	} else {
+		consMissedSteps = 0;
+	}
+	coordCurrentPoint = coordEncoderPoint;
 }
 
 void StepperControlAxis::setStepAxis() {
@@ -374,8 +382,16 @@ bool StepperControlAxis::pointReached(long currentPoint, long destinationPoint) 
 	return (destinationPoint == currentPoint);
 }
 
-long StepperControlAxis::currentPoint() {
+long StepperControlAxis::currentPosition() {
 	return coordCurrentPoint;
+}
+
+void StepperControlAxis::setCurrentPosition(long newPos) {
+	coordCurrentPoint = newPos;
+}
+
+void StepperControlAxis::setEncoderPosition(long newPos) {
+	coordEncoderPoint = newPos;
 }
 
 void StepperControlAxis::setMaxSpeed(long speed) {
