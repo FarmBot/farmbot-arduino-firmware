@@ -67,6 +67,10 @@ private:
         bool motorInv[3];
         bool endStInv[3];
         long timeOut[3];
+
+        int motorConsMissedStepsMax[3];
+        int motorConsMissedSteps[3];
+
 };
 
 #endif /* STEPPERCONTROL_H_ */

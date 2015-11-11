@@ -34,6 +34,8 @@ public:
 	void checkTiming();
 
 	bool isAxisActive();
+	void deactivateAxis();
+
 	bool endStopMin();
 	bool endStopMax();
 	bool endStopsReached();
@@ -41,7 +43,6 @@ public:
 
 	long currentPosition();
 	void setCurrentPosition(long newPos);
-	void setEncoderPosition(long newPos);
 
 	void setMotorStep();
 	void resetMotorStep();
@@ -51,6 +52,9 @@ public:
 	void setDirectionHome();
 	void setDirectionAway();
 	void setDirectionAxis();
+
+	bool isStepDone();
+	void resetStepDone();
 
 	void activateDebugPrint();
 	void test();
@@ -78,14 +82,12 @@ private:
 	bool motorMotorInv;		// invert motot direction
 	bool motorEndStopInv;		// invert input (true/false) of end stops
 	long motorInterruptSpeed;	// period of interrupt in micro seconds
-	int motorConsMissedStepsMax;	// the number of consecutive missed steps before the axis is seen as stuck
 
 	// coordinates
 	long coordSourcePoint;		// all coordinated in steps
 	long coordCurrentPoint;
 	long coordDestinationPoint;
 	bool coordHomeAxis;		// homing command
-	long coordEncoderPoint;
 
 	// movement handling
 	unsigned long movementLength;
@@ -97,10 +99,9 @@ private:
 	bool axisActive;
 	bool movementUp;
 	bool movementToHome;
-	int consMissedSteps;
+	bool movementStepDone;
 
 	void setStepAxis();
-	void verifyStepAxis();
 	void step(long &currentPoint, unsigned long steps, long destinationPoint);
 	bool pointReached(long currentPoint, long destinationPoint);
 	unsigned int calculateSpeed(long sourcePosition, long currentPosition, long destinationPosition, long minSpeed, long maxSpeed, long stepsAccDec);

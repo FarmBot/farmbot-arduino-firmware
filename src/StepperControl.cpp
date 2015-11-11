@@ -15,6 +15,15 @@ StepperControl * StepperControl::getInstance() {
 
 StepperControl::StepperControl() {
 
+	// Initialize some variables
+	motorConsMissedStepsMax[0] = 50;
+	motorConsMissedStepsMax[1] = 50;
+	motorConsMissedStepsMax[2] = 50;
+
+	motorConsMissedSteps[0] = 0;
+	motorConsMissedSteps[1] = 0;
+	motorConsMissedSteps[2] = 0;
+
 	// Create the axis controllers
 
 	axisX = StepperControlAxis();
@@ -81,6 +90,10 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 
 	loadMotorSettings();
 
+	// load current encoder coordinates
+	axisX.setCurrentPosition(encoderX.currentPosition());
+
+
 	// if a speed is given in the command, use that instead of the config speed
 
 	if (xMaxSpd > 0 && xMaxSpd < speedMax[0]) {
@@ -116,6 +129,10 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
         destinationPoint[1] 	= yDest;
         destinationPoint[2] 	= zDest;
 
+	motorConsMissedSteps[0] = 0;
+	motorConsMissedSteps[1] = 0;
+	motorConsMissedSteps[2] = 0;
+
 	// Load coordinates into motor control
 
 	axisX.loadCoordinates(currentPoint[0],destinationPoint[0],xHome);
@@ -126,7 +143,6 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 
 	storeEndStops();
 	reportEndStops();
-
 
 	axisX.setDirectionAxis();
 	axisY.setDirectionAxis();
@@ -140,7 +156,6 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 	axisActive[1] = true;
 	axisActive[2] = true;
 
-
 	axisX.checkMovement();
 	axisY.checkMovement();
 	axisZ.checkMovement();
@@ -151,30 +166,94 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 	// Let the interrupt handle all the movements
 	while (axisActive[0] || axisActive[1] || axisActive[2]) {
 
-		delay(1);
+		//delay(1);
+		delayMicroseconds(100);
 
 		/**/
-       		encoderX.readEncoder();
+       		//long entX= encoderX.readEncoder();
 
-		currentPoint[0] = encoderX.currentPosition();
-		currentPoint[1] = encoderY.currentPosition();
-		currentPoint[2] = encoderZ.currentPosition();
-
-		axisX.setCurrentPosition(currentPoint[0]);
-		axisY.setCurrentPosition(currentPoint[1]);
-		axisZ.setCurrentPosition(currentPoint[2]);
+		//encoderX.currentPosition();
+		//encoderY.currentPosition();
+		//encoderZ.currentPosition();
 
         	axisX.checkTiming();
         	axisY.checkTiming();
         	axisZ.checkTiming();
 
-       		encoderX.readEncoder();
+		// If a step is taken, check to see if the encoder still matcjes the nr of steps
+		if (axisX.isStepDone()) {
+
+				//Serial.print("R99");
+				//Serial.print(" encoder pos ");
+				//Serial.print(encoderX.currentPosition());
+				//Serial.print(" axis pos ");
+				//Serial.print(axisX.currentPosition());
+				//Serial.print("\n");
+
+				Serial.print("R99");
+				Serial.print(" missed step ");
+				Serial.print(motorConsMissedSteps[0]);
+				Serial.print(" encoder pos ");
+				Serial.print(encoderX.currentPosition());
+				Serial.print(" axis pos ");
+				Serial.print(axisX.currentPosition());
+				Serial.print("\n");
+
+
+			if (axisX.currentPosition() != encoderX.currentPosition()) {
+				//motorConsMissedSteps[0]++;
+				//motorConsMissedSteps[0]++;
+				motorConsMissedSteps[0]+=3;
+
+
+				Serial.print("R99");
+				Serial.print(" missed step ");
+				//Serial.print(motorConsMissedSteps[0]);
+				//Serial.print(" encoder pos ");
+				//Serial.print(encoderX.currentPosition());
+				//Serial.print(" axis pos ");
+				//Serial.print(axisX.currentPosition());
+				Serial.print("\n");
+
+
+				axisX.setCurrentPosition(encoderX.currentPosition());
+			} else {
+				if (motorConsMissedSteps[0] > 0) {
+					motorConsMissedSteps[0]--;
+				}
+			}
+			axisX.resetStepDone();
+
+
+			if (motorConsMissedSteps[0] > motorConsMissedStepsMax[0]) {
+				axisX.deactivateAxis();
+				Serial.print("R99");
+				Serial.print(" deactivate motor ");
+				Serial.print("\n");
+			}
+		}
+
+		if (axisX.endStopAxisReached(false)) {
+			axisX.setCurrentPosition(0);
+			encoderX.setPosition(0);
+		}
+
+
+       		//encoderX.readEncoder();
 
 		//encoderX.test();
 
 		axisActive[0] = axisX.isAxisActive();
 		axisActive[1] = axisY.isAxisActive();
 		axisActive[2] = axisZ.isAxisActive();
+
+		currentPoint[0] = axisX.currentPosition();
+		currentPoint[1] = axisY.currentPosition();
+		currentPoint[2] = axisZ.currentPosition();
+
+		CurrentState::getInstance()->setX(currentPoint[0]);
+		CurrentState::getInstance()->setY(currentPoint[1]);
+		CurrentState::getInstance()->setZ(currentPoint[2]);
 
 	        storeEndStops();
 
@@ -199,7 +278,7 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 
 		if (error == 1) {
 			Serial.print("R99 error\n");
-			Timer1.stop();
+			//Timer1.stop();
 			axisActive[0] = false;
 			axisActive[1] = false;
 			axisActive[2] = false;
@@ -207,9 +286,21 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 
 		// Periodically send message still active
 		currentMillis++;
-		if (currentMillis % 2500 == 0)
+		//if (currentMillis % 2500 == 0)
+		if (currentMillis % 750 == 0)
 		{
 			Serial.print("R04\n");
+			reportPosition();
+
+			//Serial.print("R99");
+			//Serial.print(" missed step nr ");
+			//Serial.print(motorConsMissedSteps[0]);
+			//Serial.print(" encoder pos ");
+			//Serial.print(encoderX.currentPosition());
+			//Serial.print(" axis pos ");
+			//Serial.print(axisX.currentPosition());
+			//Serial.print("\n");
+
 		}
 
 	}
@@ -231,7 +322,7 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 	reportEndStops();
 	reportPosition();
 
-	/**/encoderX.test();
+	/**///encoderX.test();
 
 	return error;
 }
@@ -469,7 +560,7 @@ int StepperControl::calibrateAxis(int axis) {
 // Handle movement by checking each axis
 void StepperControl::handleMovementInterrupt(void){
 
-	//encoderX.readEncoder();
+	encoderX.readEncoder();
 	//encoderY.readEncoder();
 	//encoderZ.readEncoder();
 /**/
@@ -541,7 +632,6 @@ void StepperControl::reportEndStops() {
 
 void StepperControl::reportPosition(){
 	CurrentState::getInstance()->printPosition();
-	test2();
 }
 
 void StepperControl::storeEndStops() {

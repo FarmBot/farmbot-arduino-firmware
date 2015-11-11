@@ -78,9 +78,9 @@ void StepperControlEncoder::readEncoder() {
 
 	position += delta;
 
-	if (delta != 0) {
-		test();
-	}
+	//if (delta != 0) {
+	//	test();
+	//}
 
 }
 
