@@ -50,6 +50,8 @@ private:
 	StepperControlEncoder encoderY;
 	StepperControlEncoder encoderZ;
 
+	void checkAxisVsEncoder(StepperControlAxis* axis, StepperControlEncoder* encoder, int* missedSteps);
+
 	bool axisActive[3];
 
 	void loadMotorSettings();

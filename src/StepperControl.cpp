@@ -338,7 +338,6 @@ int StepperControl::calibrateAxis(int axis) {
 	loadMotorSettings();
 
 	//unsigned long timeStart             = millis();
-	StepperControlEncoder	calibEncoder;
 
         bool movementDone    = false;
 
@@ -360,29 +359,30 @@ int StepperControl::calibrateAxis(int axis) {
 	storeEndStops();
 	reportEndStops();
 
-
 	// Select the right axis
-	StepperControlAxis calibAxis;
+	StepperControlAxis* 	calibAxis;
+	StepperControlEncoder*	calibEncoder;
+
 	switch (axis) {
 		case 0:
-			calibAxis      = axisX;
-			calibEncoder   = encoderX;
+			calibAxis      = &axisX;
+			calibEncoder   = &encoderX;
 			parEndInv      = MOVEMENT_INVERT_ENDPOINTS_X;
 			parNbrStp      = MOVEMENT_AXIS_NR_STEPS_X;
 			invertEndStops = endStInv[0];
 			missedStepsMax = motorConsMissedStepsMax[0];
 			break;
 		case 1:
-			calibAxis      = axisY;
-			calibEncoder   = encoderY;
+			calibAxis      = &axisY;
+			calibEncoder   = &encoderY;
 			parEndInv      = MOVEMENT_INVERT_ENDPOINTS_Y;;
 			parNbrStp      = MOVEMENT_AXIS_NR_STEPS_Y;
 			invertEndStops = endStInv[1];
 			missedStepsMax = motorConsMissedStepsMax[1];
 			break;
 		case 2:
-			calibAxis      = axisZ;
-			calibEncoder   = encoderZ;
+			calibAxis      = &axisZ;
+			calibEncoder   = &encoderZ;
 			parEndInv      = MOVEMENT_INVERT_ENDPOINTS_Z;
 			parNbrStp      = MOVEMENT_AXIS_NR_STEPS_Z;
 			invertEndStops = endStInv[2];
@@ -396,21 +396,24 @@ int StepperControl::calibrateAxis(int axis) {
 
 	// Preliminary checks
 
-	if (calibAxis.endStopMin() || calibAxis.endStopMax()) {
+	if (calibAxis->endStopMin() || calibAxis->endStopMax()) {
 		Serial.print("R99 Calibration error: end stop active before start\n");
 		return 1;
 	}
 
 	Serial.print("R99");
 	Serial.print(" axis ");
-	Serial.print(calibAxis.label);
+	Serial.print(calibAxis->label);
 	Serial.print(" calibration start");
 	Serial.print("\n");
 
 	// Move towards home
 
-        calibAxis.enableMotor();
-	calibAxis.setDirectionHome();
+        calibAxis->enableMotor();
+	calibAxis->setDirectionHome();
+
+/**/	//calibEncoder = encoderX;
+
 
 	stepsCount = 0;
 	movementDone = false;
@@ -424,11 +427,11 @@ int StepperControl::calibrateAxis(int axis) {
 				error = 1;
                         }
                 }
-
+//calibEncoder = encoderX;
 		// Move until the end stop for home position is reached, either by end stop or motot skipping
-		if ((!calibAxis.endStopMin() && !calibAxis.endStopMax()) && !movementDone && (missedSteps < missedStepsMax)) {
+		if ((!calibAxis->endStopMin() && !calibAxis->endStopMax()) && !movementDone && (missedSteps < missedStepsMax)) {
 
-			calibAxis.setMotorStep();
+			calibAxis->setMotorStep();
 
 			delayMicroseconds(1000000 / speedMin[axis] /2);
 
@@ -438,25 +441,38 @@ int StepperControl::calibrateAxis(int axis) {
 				// Periodically send message still active
 	                        Serial.print("R04\n");
 	                }
+				calibEncoder->test();
+				encoderX.test();
 /**/
+				Serial.print("R99");
+				Serial.print(" missed steps ");
+				Serial.print(missedSteps);
+				Serial.print(" max steps ");
+				Serial.print(missedStepsMax);
+				Serial.print(" cur pos mtr ");
+				Serial.print(calibAxis->currentPosition());
+				Serial.print(" cur pos enc ");
+				Serial.print(calibEncoder->currentPosition());
+				Serial.print("\n");
+
 			// Check the encoder for missed steps
-			if (calibAxis.currentPosition() != calibEncoder.currentPosition()) {
+			if (calibAxis->currentPosition() != calibEncoder->currentPosition()) {
 				missedSteps += 3;
 			} else {
 				if (missedSteps > 0) {
 					missedSteps--;
 				}
-				calibAxis.setCurrentPosition(calibEncoder.currentPosition());
+				calibAxis->setCurrentPosition(calibEncoder->currentPosition());
 			}
 
-			calibAxis.resetMotorStep();
+			calibAxis->resetMotorStep();
 			delayMicroseconds(1000000 / speedMin[axis] /2);
 
 		} else {
 			movementDone = true;
 
 			// If end stop for home is active, set the position to zero
-			if (calibAxis.endStopMax())
+			if (calibAxis->endStopMax())
 			{
 				invertEndStops = true;
 			}
@@ -465,7 +481,7 @@ int StepperControl::calibrateAxis(int axis) {
 
 	Serial.print("R99");
 	Serial.print(" axis ");
-	Serial.print(calibAxis.label);
+	Serial.print(calibAxis->label);
 	Serial.print(" at first end stop");
 	Serial.print("\n");
 
@@ -498,7 +514,7 @@ int StepperControl::calibrateAxis(int axis) {
 	stepsCount = 0;
 	movementDone = false;
 	missedSteps = 0;
-	calibAxis.setDirectionAway();
+	calibAxis->setDirectionAway();
 
 	while (!movementDone && error == 0) {
 
@@ -512,9 +528,9 @@ int StepperControl::calibrateAxis(int axis) {
                 }
 
 		// Move until the end stop at the other side of the axis is reached
-		if (((!invertEndStops && !calibAxis.endStopMax()) || (invertEndStops && !calibAxis.endStopMin())) && !movementDone  && (missedSteps < missedStepsMax)) {
+		if (((!invertEndStops && !calibAxis->endStopMax()) || (invertEndStops && !calibAxis->endStopMin())) && !movementDone  && (missedSteps < missedStepsMax)) {
 
-			calibAxis.setMotorStep();
+			calibAxis->setMotorStep();
 			stepsCount++;
 
 			delayMicroseconds(1000000 / speedMin[axis] /2);
@@ -527,16 +543,16 @@ int StepperControl::calibrateAxis(int axis) {
 
 /**/
                         // Check the encoder for missed steps
-                        if (calibAxis.currentPosition() != calibEncoder.currentPosition()) {
+                        if (calibAxis->currentPosition() != calibEncoder->currentPosition()) {
                                 missedSteps += 3;
                         } else {
                                 if (missedSteps > 0) {
                                         missedSteps--;
                                 }
-                                calibAxis.setCurrentPosition(calibEncoder.currentPosition());
+                                calibAxis->setCurrentPosition(calibEncoder->currentPosition());
                         }
 
-			calibAxis.resetMotorStep();
+			calibAxis->resetMotorStep();
 			delayMicroseconds(1000000 / speedMin[axis] /2);
 
 		} else {
@@ -547,7 +563,7 @@ int StepperControl::calibrateAxis(int axis) {
 
 	Serial.print("R99");
 	Serial.print(" axis ");
-	Serial.print(calibAxis.label);
+	Serial.print(calibAxis->label);
 	Serial.print(" at second end stop");
 	Serial.print("\n");
 
@@ -564,7 +580,7 @@ int StepperControl::calibrateAxis(int axis) {
 		Serial.print("\n");
 	}
 
-	calibAxis.disableMotor();
+	calibAxis->disableMotor();
 
         storeEndStops();
 	reportEndStops();
@@ -598,6 +614,23 @@ void StepperControl::handleMovementInterrupt(void){
         //axisX.checkTiming();
         //axisY.checkTiming();
         //axisZ.checkTiming();
+
+	checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0]);
+	//checkAxisVsEncoder(&axisX, &encoderX);
+	//checkAxisVsEncoder(&axisX, &encoderX);
+}
+
+// Check encoder to verify the motor is at the right position
+void StepperControl::checkAxisVsEncoder(StepperControlAxis* axis, StepperControlEncoder* encoder, int* missedSteps) {
+
+	if (axis->currentPosition() != encoder->currentPosition()) {
+        	missedSteps += 3;
+        } else {
+        	if (missedSteps > 0) {
+                	missedSteps--;
+                }
+                axis->setCurrentPosition(encoder->currentPosition());
+        }
 }
 
 bool interruptBusy = false;

@@ -10,6 +10,11 @@ StepperControlAxis::StepperControlAxis() {
         pinMax          = 0;
 
 	axisActive	= false;
+
+	coordSourcePoint	= 0;
+        coordCurrentPoint	= 0;
+        coordDestinationPoint	= 0;
+        coordHomeAxis		= 0;
 }
 
 void StepperControlAxis::test() {
