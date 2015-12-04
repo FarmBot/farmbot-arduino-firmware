@@ -202,31 +202,12 @@ void StepperControlAxis::checkTiming() {
 
 				// Positive flank for the steps
 				setStepAxis();
-				movementStepDone = true;
 			}
 		}
 	}
 }
 
 void StepperControlAxis::setStepAxis() {
-
-//	if (coordHomeAxis && coordCurrentPoint == 0) {
-
-		// Keep moving toward end stop even when position is zero
-		// but end stop is not yet active
-//		if (motorHomeIsUp) {
-//			coordCurrentPoint = -1;
-//		} else {
-//			coordCurrentPoint =  1;
-//		}
-//	}
-
-//	if (coordCurrentPoint < coordDestinationPoint) {
-//		coordCurrentPoint++;
-//	} else if (coordCurrentPoint > coordDestinationPoint) {
-//		coordCurrentPoint--;
-//	}
-
 
 	if (movementUp) {
 		coordCurrentPoint++;
@@ -237,11 +218,7 @@ void StepperControlAxis::setStepAxis() {
 	// set a step on the motors
 	setMotorStep();
 
-	// if the home end stop is reached, set the current position
-	//if (endStopAxisReached(false))
-	//{
-	//	coordCurrentPoint = 0;
-	//}
+	movementStepDone = true;
 }
 
 bool StepperControlAxis::endStopAxisReached(bool movement_forward) {
