@@ -50,7 +50,7 @@ private:
 	StepperControlEncoder encoderY;
 	StepperControlEncoder encoderZ;
 
-	void checkAxisVsEncoder(StepperControlAxis* axis, StepperControlEncoder* encoder, int &missedSteps);
+	void checkAxisVsEncoder(StepperControlAxis* axis, StepperControlEncoder* encoder, float* missedSteps, long* lastPosition);
 
 	bool axisActive[3];
 
@@ -71,7 +71,8 @@ private:
         long timeOut[3];
 
         int motorConsMissedStepsMax[3];
-        int motorConsMissedSteps[3];
+        float motorConsMissedSteps[3];
+        long motorLastPosition[3];
 
 };
 

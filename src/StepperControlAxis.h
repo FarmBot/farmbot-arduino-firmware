@@ -44,6 +44,7 @@ public:
 	long currentPosition();
 	void setCurrentPosition(long newPos);
 
+	void setStepAxis();
 	void setMotorStep();
 	void resetMotorStep();
 
@@ -52,6 +53,12 @@ public:
 	void setDirectionHome();
 	void setDirectionAway();
 	void setDirectionAxis();
+
+	void setMovementUp();
+	void setMovementDown();
+
+	bool movingToHome();
+	bool movingUp();
 
 	bool isStepDone();
 	void resetStepDone();
@@ -101,7 +108,6 @@ private:
 	bool movementToHome;
 	bool movementStepDone;
 
-	void setStepAxis();
 	void step(long &currentPoint, unsigned long steps, long destinationPoint);
 	bool pointReached(long currentPoint, long destinationPoint);
 	unsigned int calculateSpeed(long sourcePosition, long currentPosition, long destinationPosition, long minSpeed, long maxSpeed, long stepsAccDec);

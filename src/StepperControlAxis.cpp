@@ -15,6 +15,9 @@ StepperControlAxis::StepperControlAxis() {
         coordCurrentPoint	= 0;
         coordDestinationPoint	= 0;
         coordHomeAxis		= 0;
+
+	movementUp		= false;
+	movementToHome		= false;
 }
 
 void StepperControlAxis::test() {
@@ -217,8 +220,6 @@ void StepperControlAxis::setStepAxis() {
 
 	// set a step on the motors
 	setMotorStep();
-
-	movementStepDone = true;
 }
 
 bool StepperControlAxis::endStopAxisReached(bool movement_forward) {
@@ -315,19 +316,31 @@ void StepperControlAxis::setDirectionDown() {
 	}
 }
 
+void StepperControlAxis::setMovementUp() {
+	movementUp = true;
+}
+
+void StepperControlAxis::setMovementDown() {
+	movementUp = false;
+}
+
 void StepperControlAxis::setDirectionHome() {
 	if (motorHomeIsUp) {
 		setDirectionUp();
+		setMovementUp();
 	} else {
 		setDirectionDown();
+		setMovementDown();
 	}
 }
 
 void StepperControlAxis::setDirectionAway() {
 	if (motorHomeIsUp) {
 		setDirectionDown();
+		setMovementDown();
 	} else {
 		setDirectionUp();
+		setMovementUp();
 	}
 }
 
@@ -366,6 +379,7 @@ void StepperControlAxis::setMotorStep() {
 }
 
 void StepperControlAxis::resetMotorStep() {
+	movementStepDone = true;
 	digitalWrite(pinStep, LOW);
 }
 
@@ -397,3 +411,10 @@ void StepperControlAxis::resetStepDone() {
 	movementStepDone = false;
 }
 
+bool StepperControlAxis::movingToHome() {
+	return movementToHome;
+}
+
+bool StepperControlAxis::movingUp() {
+	return movementUp;
+}
