@@ -55,6 +55,8 @@ private:
 	bool axisActive[3];
 
 	void loadMotorSettings();
+	void loadEncoderSettings();
+
         void reportPosition();
         void storeEndStops();
         void reportEndStops();
@@ -70,9 +72,12 @@ private:
         bool endStInv[3];
         long timeOut[3];
 
-        int motorConsMissedStepsMax[3];
         float motorConsMissedSteps[3];
         long motorLastPosition[3];
+
+        int motorConsMissedStepsMax[3];
+        float motorConsMissedStepsDecay[3];
+        bool motorConsEncoderEnabled[3];
 
 };
 

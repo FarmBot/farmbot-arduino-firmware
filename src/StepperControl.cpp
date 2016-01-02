@@ -15,10 +15,10 @@ StepperControl * StepperControl::getInstance() {
 
 StepperControl::StepperControl() {
 
-	// Initialize some variables
-	motorConsMissedStepsMax[0] = 50;
-	motorConsMissedStepsMax[1] = 50;
-	motorConsMissedStepsMax[2] = 50;
+	// Initialize some variables for testing
+	//motorConsMissedStepsMax[0] = 50;
+	//motorConsMissedStepsMax[1] = 50;
+	//motorConsMissedStepsMax[2] = 50;
 
 	motorConsMissedSteps[0] = 0;
 	motorConsMissedSteps[1] = 0;
@@ -39,7 +39,7 @@ StepperControl::StepperControl() {
 	axisZ.loadPinNumbers(Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN, Z_MIN_PIN, Z_MAX_PIN);
 
 	loadMotorSettings();
-
+	loadEncoderSettings();
 	// Create the encoder controller
 
 	encoderX = StepperControlEncoder();
@@ -86,10 +86,10 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 	int incomingByte     = 0;
 	int error            = 0;
 
-	// load motor settings
+	// load motor and encoder settings
 
 	loadMotorSettings();
-
+	loadEncoderSettings();
 	// load current encoder coordinates
 	//axisX.setCurrentPosition(encoderX.currentPosition());
 
@@ -325,9 +325,10 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 
 int StepperControl::calibrateAxis(int axis) {
 
-	// Load motor settings
+	// Load motor and encoder settings
 
 	loadMotorSettings();
+	loadEncoderSettings();
 
 	//unsigned long timeStart             = millis();
 
@@ -803,6 +804,41 @@ void StepperControl::loadMotorSettings() {
 	axisY.loadMotorSettings(speedMax[1], speedMin[1], stepsAcc[1], timeOut[1], homeIsUp[1], motorInv[1], endStInv[1], MOVEMENT_INTERRUPT_SPEED);
 	axisZ.loadMotorSettings(speedMax[2], speedMin[2], stepsAcc[2], timeOut[2], homeIsUp[2], motorInv[2], endStInv[2], MOVEMENT_INTERRUPT_SPEED);
 
+}
+
+void StepperControl::loadEncoderSettings() {
+
+	// Load encoder settings
+
+        motorConsMissedStepsMax[0]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_X);
+        motorConsMissedStepsMax[1]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_Y);
+        motorConsMissedStepsMax[2]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_Z);
+
+	motorConsMissedStepsDecay[0]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_X) / 10;
+	motorConsMissedStepsDecay[1]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_Y) / 10;
+	motorConsMissedStepsDecay[2]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_Z) / 10;
+
+	motorConsMissedStepsDecay[0] = min(max(motorConsMissedStepsDecay[0],1),10);
+	motorConsMissedStepsDecay[1] = min(max(motorConsMissedStepsDecay[1],1),10);
+	motorConsMissedStepsDecay[2] = min(max(motorConsMissedStepsDecay[2],1),10);
+
+	if (ParameterList::getInstance()->getValue(ENCODER_ENABLED_X) == 1) {
+		motorConsEncoderEnabled[0]	= true;
+	} else {
+		motorConsEncoderEnabled[0]	= false;
+	}
+
+	if (ParameterList::getInstance()->getValue(ENCODER_ENABLED_Y) == 1) {
+		motorConsEncoderEnabled[1]	= true;
+	} else {
+		motorConsEncoderEnabled[1]	= false;
+	}
+
+	if (ParameterList::getInstance()->getValue(ENCODER_ENABLED_Z) == 1) {
+		motorConsEncoderEnabled[2]	= true;
+	} else {
+		motorConsEncoderEnabled[2]	= false;
+	}
 }
 
 // Start the interrupt used for moviing
