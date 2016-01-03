@@ -71,7 +71,7 @@ const long ENCODER_MISSED_STEPS_MAX_X_DEFAULT	= 10;
 const long ENCODER_MISSED_STEPS_MAX_Y_DEFAULT	= 10;
 const long ENCODER_MISSED_STEPS_MAX_Z_DEFAULT	= 10;
 
-// How much a good step is substracted from the missed step total (0-10)
+// How much a good step is substracted from the missed step total (1-10)
 const long ENCODER_MISSED_STEPS_DECAY_X_DEFAULT = 1;
 const long ENCODER_MISSED_STEPS_DECAY_Y_DEFAULT = 1;
 const long ENCODER_MISSED_STEPS_DECAY_Z_DEFAULT = 1;

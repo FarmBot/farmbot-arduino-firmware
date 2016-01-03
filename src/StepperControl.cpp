@@ -345,8 +345,10 @@ int StepperControl::calibrateAxis(int axis) {
 	int parNbrStp;
 
         float * missedSteps;
-        int * missedStepsMax;
-	long * lastPosition;
+        int   * missedStepsMax;
+	long  * lastPosition;
+	float * encoderStepDecay;
+	bool  * encoderEnabled;
 
 	// Prepare for movement
 
@@ -359,34 +361,40 @@ int StepperControl::calibrateAxis(int axis) {
 
 	switch (axis) {
 		case 0:
-			calibAxis      = &axisX;
-			calibEncoder   = &encoderX;
-			parEndInv      = MOVEMENT_INVERT_ENDPOINTS_X;
-			parNbrStp      = MOVEMENT_AXIS_NR_STEPS_X;
-			invertEndStops = endStInv[0];
-			missedSteps    = &motorConsMissedSteps[0];
-			missedStepsMax = &motorConsMissedStepsMax[0];
-			lastPosition   = &motorLastPosition[0];
+			calibAxis        = &axisX;
+			calibEncoder     = &encoderX;
+			parEndInv        = MOVEMENT_INVERT_ENDPOINTS_X;
+			parNbrStp        = MOVEMENT_AXIS_NR_STEPS_X;
+			invertEndStops   = endStInv[0];
+			missedSteps      = &motorConsMissedSteps[0];
+			missedStepsMax   = &motorConsMissedStepsMax[0];
+			lastPosition     = &motorLastPosition[0];
+			encoderStepDecay = &motorConsMissedStepsDecay[0];
+			encoderEnabled   = &motorConsEncoderEnabled[0];
 			break;
 		case 1:
-			calibAxis      = &axisY;
-			calibEncoder   = &encoderY;
-			parEndInv      = MOVEMENT_INVERT_ENDPOINTS_Y;;
-			parNbrStp      = MOVEMENT_AXIS_NR_STEPS_Y;
-			invertEndStops = endStInv[1];
-			missedSteps    = &motorConsMissedSteps[1];
-			missedStepsMax = &motorConsMissedStepsMax[1];
-			lastPosition   = &motorLastPosition[0];
+			calibAxis        = &axisY;
+			calibEncoder     = &encoderY;
+			parEndInv        = MOVEMENT_INVERT_ENDPOINTS_Y;;
+			parNbrStp        = MOVEMENT_AXIS_NR_STEPS_Y;
+			invertEndStops   = endStInv[1];
+			missedSteps      = &motorConsMissedSteps[1];
+			missedStepsMax   = &motorConsMissedStepsMax[1];
+			lastPosition     = &motorLastPosition[1];
+			encoderStepDecay = &motorConsMissedStepsDecay[1];
+			encoderEnabled   = &motorConsEncoderEnabled[1];
 			break;
 		case 2:
-			calibAxis      = &axisZ;
-			calibEncoder   = &encoderZ;
-			parEndInv      = MOVEMENT_INVERT_ENDPOINTS_Z;
-			parNbrStp      = MOVEMENT_AXIS_NR_STEPS_Z;
-			invertEndStops = endStInv[2];
-			missedSteps    = &motorConsMissedSteps[2];
-			missedStepsMax = &motorConsMissedStepsMax[2];
-			lastPosition   = &motorLastPosition[0];
+			calibAxis        = &axisZ;
+			calibEncoder     = &encoderZ;
+			parEndInv        = MOVEMENT_INVERT_ENDPOINTS_Z;
+			parNbrStp        = MOVEMENT_AXIS_NR_STEPS_Z;
+			invertEndStops   = endStInv[2];
+			missedSteps      = &motorConsMissedSteps[2];
+			missedStepsMax   = &motorConsMissedStepsMax[2];
+			lastPosition     = &motorLastPosition[2];
+			encoderStepDecay = &motorConsMissedStepsDecay[2];
+			encoderEnabled   = &motorConsEncoderEnabled[2];
 			break;
 		default:
 			Serial.print("R99 Calibration error: invalid axis selected\n");
@@ -423,8 +431,7 @@ int StepperControl::calibrateAxis(int axis) {
 
 	while (!movementDone && error == 0) {
 
-		checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0]);
-
+		checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
 
                 // Check if there is an emergency stop command
                 if (Serial.available() > 0) {
@@ -539,17 +546,6 @@ int StepperControl::calibrateAxis(int axis) {
                 // Check if there is an emergency stop command
                 if (Serial.available() > 0) {
                         incomingByte = Serial.read();
-
-
-
-
-
-
-
-
-
-
-
                         if (incomingByte == 69 || incomingByte == 101) {
 				Serial.print("R99 emergency stop\n");
                                 movementDone = true;
@@ -569,7 +565,7 @@ int StepperControl::calibrateAxis(int axis) {
 			stepsCount++;
 
 			/**///checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0]);
-			checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0]);
+			checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
 
 
 			delayMicroseconds(1000000 / speedMin[axis] /2);
@@ -671,17 +667,17 @@ void StepperControl::handleMovementInterrupt(void){
 int debugPrintCount = 0;
 
 // Check encoder to verify the motor is at the right position
-void StepperControl::checkAxisVsEncoder(StepperControlAxis* axis, StepperControlEncoder* encoder, float* missedSteps, long* lastPosition) {
+void StepperControl::checkAxisVsEncoder(StepperControlAxis* axis, StepperControlEncoder* encoder, float* missedSteps, long* lastPosition, float* encoderStepDecay, bool* encoderEnabled) {
 
 	// If a step is done
 	//if (axis->isStepDone() && axis->currentPosition() % 3 == 0) {
-	if (axis->isStepDone()) {
+	if (encoderEnabled && axis->isStepDone()) {
 
 		bool stepMissed = false;
 
 		debugPrintCount++;
 
-/*
+
 		if (debugPrintCount % 50 == 0)
 		{
 			Serial.print("R99");
@@ -701,13 +697,17 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis* axis, StepperControl
 			Serial.print(encoderX.currentPosition());
 			Serial.print(" axis X pos ");
 			Serial.print(axisX.currentPosition());
+			Serial.print(" decay ");
+			Serial.print(*encoderStepDecay);
+			Serial.print(" enabled ");
+			Serial.print(*encoderEnabled);
 			Serial.print("\n");
 		}
-*/
+
 
 		// Decrease amount of missed steps if there are no missed step
 	        if (*missedSteps > 0) {
-	               	(*missedSteps)-=0.1;
+	               	(*missedSteps)-= (*encoderStepDecay);
 		}
 
 		// Check if the encoder goes in the wrong direction or nothing moved
@@ -818,9 +818,9 @@ void StepperControl::loadEncoderSettings() {
 	motorConsMissedStepsDecay[1]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_Y) / 10;
 	motorConsMissedStepsDecay[2]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_Z) / 10;
 
-	motorConsMissedStepsDecay[0] = min(max(motorConsMissedStepsDecay[0],1),10);
-	motorConsMissedStepsDecay[1] = min(max(motorConsMissedStepsDecay[1],1),10);
-	motorConsMissedStepsDecay[2] = min(max(motorConsMissedStepsDecay[2],1),10);
+	motorConsMissedStepsDecay[0] 	= min(max(motorConsMissedStepsDecay[0],0.1),1);
+	motorConsMissedStepsDecay[1] 	= min(max(motorConsMissedStepsDecay[1],0.1),1);
+	motorConsMissedStepsDecay[2] 	= min(max(motorConsMissedStepsDecay[2],0.1),1);
 
 	if (ParameterList::getInstance()->getValue(ENCODER_ENABLED_X) == 1) {
 		motorConsEncoderEnabled[0]	= true;

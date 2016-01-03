@@ -50,7 +50,7 @@ private:
 	StepperControlEncoder encoderY;
 	StepperControlEncoder encoderZ;
 
-	void checkAxisVsEncoder(StepperControlAxis* axis, StepperControlEncoder* encoder, float* missedSteps, long* lastPosition);
+	void checkAxisVsEncoder(StepperControlAxis* axis, StepperControlEncoder* encoder, float* missedSteps, long* lastPosition, float* encoderStepDecay, bool* encoderEnabled);
 
 	bool axisActive[3];
 
