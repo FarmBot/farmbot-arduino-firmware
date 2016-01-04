@@ -71,15 +71,15 @@ const long ENCODER_MISSED_STEPS_MAX_X_DEFAULT	= 10;
 const long ENCODER_MISSED_STEPS_MAX_Y_DEFAULT	= 10;
 const long ENCODER_MISSED_STEPS_MAX_Z_DEFAULT	= 10;
 
-// How much a good step is substracted from the missed step total (1-10)
-const long ENCODER_MISSED_STEPS_DECAY_X_DEFAULT = 1;
-const long ENCODER_MISSED_STEPS_DECAY_Y_DEFAULT = 1;
-const long ENCODER_MISSED_STEPS_DECAY_Z_DEFAULT = 1;
+// How much a good step is substracted from the missed step total (1-99)
+const long ENCODER_MISSED_STEPS_DECAY_X_DEFAULT = 10;
+const long ENCODER_MISSED_STEPS_DECAY_Y_DEFAULT = 10;
+const long ENCODER_MISSED_STEPS_DECAY_Z_DEFAULT = 10;
 
 
 const long STATUS_GENERAL_DEFAULT               = 0;
 
 
-const String SOFTWARE_VERSION = "GENESIS V.01.04";
+const String SOFTWARE_VERSION = "GENESIS V.01.05";
 
 #endif /* CONFIG_H_ */

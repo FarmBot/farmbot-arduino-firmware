@@ -112,10 +112,11 @@ bool ParameterList::validParam(int id) {
 int ParameterList::writeValue(int id, long value) {
 
 	if (validParam(id)) {
+Serial.print("R99 param accepted \n");
 			paramValues[id] = value;
 	}
 
-/*
+
 	Serial.print("R99");
 	Serial.print(" ");
 	Serial.print("writeValue");
@@ -128,7 +129,7 @@ int ParameterList::writeValue(int id, long value) {
 	Serial.print(" ");
 	Serial.print(value);
 	Serial.print("\n");
-*/
+
 
 	return 0;
 }
@@ -154,16 +155,16 @@ int ParameterList::readValue(int id) {
 
 long ParameterList::getValue(int id) {
 
-/*
+
 	Serial.print("R99");
 	Serial.print(" ");
 	Serial.print("getValue");
 	Serial.print(" id ");
 	Serial.print(id);
-	Serial.print(" value");
+	Serial.print(" value ");
 	Serial.print(paramValues[id]);
 	Serial.print("\n");
-*/
+
 
 	return  paramValues[id];
 }

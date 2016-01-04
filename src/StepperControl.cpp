@@ -671,7 +671,7 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis* axis, StepperControl
 
 	// If a step is done
 	//if (axis->isStepDone() && axis->currentPosition() % 3 == 0) {
-	if (encoderEnabled && axis->isStepDone()) {
+	if (*encoderEnabled && axis->isStepDone()) {
 
 		bool stepMissed = false;
 
@@ -814,19 +814,27 @@ void StepperControl::loadEncoderSettings() {
         motorConsMissedStepsMax[1]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_Y);
         motorConsMissedStepsMax[2]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_Z);
 
-	motorConsMissedStepsDecay[0]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_X) / 10;
-	motorConsMissedStepsDecay[1]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_Y) / 10;
-	motorConsMissedStepsDecay[2]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_Z) / 10;
+	motorConsMissedStepsDecay[0]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_X);
+	motorConsMissedStepsDecay[1]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_Y);
+	motorConsMissedStepsDecay[2]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_Z);
 
-	motorConsMissedStepsDecay[0] 	= min(max(motorConsMissedStepsDecay[0],0.1),1);
-	motorConsMissedStepsDecay[1] 	= min(max(motorConsMissedStepsDecay[1],0.1),1);
-	motorConsMissedStepsDecay[2] 	= min(max(motorConsMissedStepsDecay[2],0.1),1);
+	motorConsMissedStepsDecay[0] = motorConsMissedStepsDecay[0] / 100;
+	motorConsMissedStepsDecay[1] = motorConsMissedStepsDecay[1] / 100;
+	motorConsMissedStepsDecay[2] = motorConsMissedStepsDecay[2] / 100;
+
+	motorConsMissedStepsDecay[0] 	= min(max(motorConsMissedStepsDecay[0],0.01),99);
+	motorConsMissedStepsDecay[1] 	= min(max(motorConsMissedStepsDecay[1],0.01),99);
+	motorConsMissedStepsDecay[2] 	= min(max(motorConsMissedStepsDecay[2],0.01),99);
 
 	if (ParameterList::getInstance()->getValue(ENCODER_ENABLED_X) == 1) {
 		motorConsEncoderEnabled[0]	= true;
 	} else {
 		motorConsEncoderEnabled[0]	= false;
 	}
+
+Serial.print("R99 encoder enabled x: ");
+Serial.print(motorConsEncoderEnabled[0]);
+Serial.print("\n");
 
 	if (ParameterList::getInstance()->getValue(ENCODER_ENABLED_Y) == 1) {
 		motorConsEncoderEnabled[1]	= true;
