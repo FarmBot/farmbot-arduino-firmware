@@ -179,26 +179,52 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
         	axisZ.checkTiming();
 
 		//checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0]);
+		checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
 
 		if (motorConsMissedSteps[0] > motorConsMissedStepsMax[0]) {
 			axisX.deactivateAxis();
 			Serial.print("R99");
 			Serial.print(" deactivate motor X due to missed steps");
 			Serial.print("\n");
+
+			if (axisX.movingToHome()) {
+				encoderX.setPosition(0);
+				axisX.setCurrentPosition(0);
+				Serial.print("R99");
+				Serial.print(" home position X axis detected with encoder");
+				Serial.print("\n");
+			}
+
 		}
 
 		if (motorConsMissedSteps[1] > motorConsMissedStepsMax[1]) {
-			axisX.deactivateAxis();
+			axisY.deactivateAxis();
 			Serial.print("R99");
 			Serial.print(" deactivate motor Y due to missed steps");
 			Serial.print("\n");
+
+			if (axisY.movingToHome()) {
+				encoderY.setPosition(0);
+				axisY.setCurrentPosition(0);
+				Serial.print("R99");
+				Serial.print(" home position Y axis detected with encoder");
+				Serial.print("\n");
+			}
 		}
 
 		if (motorConsMissedSteps[2] > motorConsMissedStepsMax[2]) {
-			axisX.deactivateAxis();
+			axisZ.deactivateAxis();
 			Serial.print("R99");
 			Serial.print(" deactivate motor Z due to missed steps");
 			Serial.print("\n");
+
+			if (axisZ.movingToHome()) {
+				encoderZ.setPosition(0);
+				axisZ.setCurrentPosition(0);
+				Serial.print("R99");
+				Serial.print(" home position Z axis detected with encoder");
+				Serial.print("\n");
+			}
 		}
 
 		if (axisX.endStopAxisReached(false)) {
@@ -265,12 +291,12 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 		// Periodically send message still active
 		currentMillis++;
 		//if (currentMillis % 2500 == 0)
-		//if (currentMillis % 750 == 0)
-		if (1 == 1) 
+		if (currentMillis % 750 == 0)
+		//if (1 == 1) 
 		{
 			Serial.print("R04\n");
 			reportPosition();
-
+				/*
 				Serial.print("R99");
 				Serial.print(" encoder pos ");
 				Serial.print(encoderX.currentPosition());
@@ -286,6 +312,7 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 				Serial.print(" axis pos ");
 				Serial.print(axisX.currentPosition());
 				Serial.print("\n");
+				*/
 
 			//Serial.print("R99");
 			//Serial.print(" missed step nr ");
@@ -675,9 +702,8 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis* axis, StepperControl
 
 		bool stepMissed = false;
 
+		/*
 		debugPrintCount++;
-
-
 		if (debugPrintCount % 50 == 0)
 		{
 			Serial.print("R99");
@@ -703,7 +729,7 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis* axis, StepperControl
 			Serial.print(*encoderEnabled);
 			Serial.print("\n");
 		}
-
+		*/
 
 		// Decrease amount of missed steps if there are no missed step
 	        if (*missedSteps > 0) {
@@ -831,10 +857,6 @@ void StepperControl::loadEncoderSettings() {
 	} else {
 		motorConsEncoderEnabled[0]	= false;
 	}
-
-Serial.print("R99 encoder enabled x: ");
-Serial.print(motorConsEncoderEnabled[0]);
-Serial.print("\n");
 
 	if (ParameterList::getInstance()->getValue(ENCODER_ENABLED_Y) == 1) {
 		motorConsEncoderEnabled[1]	= true;

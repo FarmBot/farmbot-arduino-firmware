@@ -30,9 +30,9 @@ const unsigned int MOVEMENT_DELAY                = 500;
 const long PARAM_VERSION_DEFAULT                = 0;
 const long PARAM_TEST_DEFAULT                   = 0;
 
-const long MOVEMENT_TIMEOUT_X_DEFAULT           = 5;
-const long MOVEMENT_TIMEOUT_Y_DEFAULT           = 30;
-const long MOVEMENT_TIMEOUT_Z_DEFAULT           = 30;
+const long MOVEMENT_TIMEOUT_X_DEFAULT           = 120;
+const long MOVEMENT_TIMEOUT_Y_DEFAULT           = 120;
+const long MOVEMENT_TIMEOUT_Z_DEFAULT           = 120;
 
 const long MOVEMENT_INVERT_ENDPOINTS_X_DEFAULT  = 0;
 const long MOVEMENT_INVERT_ENDPOINTS_Y_DEFAULT  = 0;

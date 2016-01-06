@@ -155,7 +155,7 @@ int ParameterList::readValue(int id) {
 
 long ParameterList::getValue(int id) {
 
-
+	/*
 	Serial.print("R99");
 	Serial.print(" ");
 	Serial.print("getValue");
@@ -164,7 +164,7 @@ long ParameterList::getValue(int id) {
 	Serial.print(" value ");
 	Serial.print(paramValues[id]);
 	Serial.print("\n");
-
+	*/
 
 	return  paramValues[id];
 }
