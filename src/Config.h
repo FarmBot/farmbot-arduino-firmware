@@ -62,9 +62,9 @@ const long MOVEMENT_MAX_SPD_Y_DEFAULT           = 4000;
 const long MOVEMENT_MAX_SPD_Z_DEFAULT           = 4000;
 
 // Use encoder (0 or 1)
-const long ENCODER_ENABLED_X_DEFAULT		= 1;
-const long ENCODER_ENABLED_Y_DEFAULT		= 1;
-const long ENCODER_ENABLED_Z_DEFAULT		= 1;
+const long ENCODER_ENABLED_X_DEFAULT		= 0;
+const long ENCODER_ENABLED_Y_DEFAULT		= 0;
+const long ENCODER_ENABLED_Z_DEFAULT		= 0;
 
 // Number of stes missed before motor is seen as not moving
 const long ENCODER_MISSED_STEPS_MAX_X_DEFAULT	= 10;
