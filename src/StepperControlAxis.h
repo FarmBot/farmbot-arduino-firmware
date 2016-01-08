@@ -12,6 +12,7 @@
 #include "CurrentState.h"
 #include "ParameterList.h"
 #include "pins.h"
+#include "StepperControlEncoder.h"
 #include "Config.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,12 +34,17 @@ public:
 	void checkTiming();
 
 	bool isAxisActive();
+	void deactivateAxis();
+
 	bool endStopMin();
 	bool endStopMax();
 	bool endStopsReached();
 	bool endStopAxisReached(bool movement_forward);
-	long currentPoint();
 
+	long currentPosition();
+	void setCurrentPosition(long newPos);
+
+	void setStepAxis();
 	void setMotorStep();
 	void resetMotorStep();
 
@@ -48,6 +54,16 @@ public:
 	void setDirectionAway();
 	void setDirectionAxis();
 
+	void setMovementUp();
+	void setMovementDown();
+
+	bool movingToHome();
+	bool movingUp();
+
+	bool isStepDone();
+	void resetStepDone();
+
+	void activateDebugPrint();
 	void test();
 
 	char label;
@@ -55,6 +71,7 @@ public:
 private:
 
 	int lastCalcLog = 0;
+	bool debugPrint = false;
 
 	// pin settings
 	int pinStep;
@@ -89,8 +106,8 @@ private:
 	bool axisActive;
 	bool movementUp;
 	bool movementToHome;
+	bool movementStepDone;
 
-	void setStepAxis();
 	void step(long &currentPoint, unsigned long steps, long destinationPoint);
 	bool pointReached(long currentPoint, long destinationPoint);
 	unsigned int calculateSpeed(long sourcePosition, long currentPosition, long destinationPosition, long minSpeed, long maxSpeed, long stepsAccDec);

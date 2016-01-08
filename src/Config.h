@@ -22,6 +22,7 @@ const int LOGGING = 0;
 //const bool AXIS_HOME_UP_Y = false;
 //const bool AXIS_HOME_UP_Z = true;
 
+const int MOVEMENT_INTERRUPT_SPEED = 100; // Interrupt cycle in micro seconds
 
 const unsigned int MOVEMENT_SPEED_BASE_TIME      = 2000;
 const unsigned int MOVEMENT_DELAY                = 500;
@@ -29,9 +30,9 @@ const unsigned int MOVEMENT_DELAY                = 500;
 const long PARAM_VERSION_DEFAULT                = 0;
 const long PARAM_TEST_DEFAULT                   = 0;
 
-const long MOVEMENT_TIMEOUT_X_DEFAULT           = 30;
-const long MOVEMENT_TIMEOUT_Y_DEFAULT           = 30;
-const long MOVEMENT_TIMEOUT_Z_DEFAULT           = 30;
+const long MOVEMENT_TIMEOUT_X_DEFAULT           = 120;
+const long MOVEMENT_TIMEOUT_Y_DEFAULT           = 120;
+const long MOVEMENT_TIMEOUT_Z_DEFAULT           = 120;
 
 const long MOVEMENT_INVERT_ENDPOINTS_X_DEFAULT  = 0;
 const long MOVEMENT_INVERT_ENDPOINTS_Y_DEFAULT  = 0;
@@ -60,9 +61,25 @@ const long MOVEMENT_MAX_SPD_X_DEFAULT           = 1500;
 const long MOVEMENT_MAX_SPD_Y_DEFAULT           = 1500;
 const long MOVEMENT_MAX_SPD_Z_DEFAULT           = 1500;
 
+// Use encoder (0 or 1)
+const long ENCODER_ENABLED_X_DEFAULT		= 0;
+const long ENCODER_ENABLED_Y_DEFAULT		= 0;
+const long ENCODER_ENABLED_Z_DEFAULT		= 0;
+
+// Number of stes missed before motor is seen as not moving
+const long ENCODER_MISSED_STEPS_MAX_X_DEFAULT	= 10;
+const long ENCODER_MISSED_STEPS_MAX_Y_DEFAULT	= 10;
+const long ENCODER_MISSED_STEPS_MAX_Z_DEFAULT	= 10;
+
+// How much a good step is substracted from the missed step total (1-99)
+const long ENCODER_MISSED_STEPS_DECAY_X_DEFAULT = 10;
+const long ENCODER_MISSED_STEPS_DECAY_Y_DEFAULT = 10;
+const long ENCODER_MISSED_STEPS_DECAY_Z_DEFAULT = 10;
+
+
 const long STATUS_GENERAL_DEFAULT               = 0;
 
 
-const String SOFTWARE_VERSION = "GENESIS V.01.04";
+const String SOFTWARE_VERSION = "GENESIS V.01.05";
 
 #endif /* CONFIG_H_ */

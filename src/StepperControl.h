@@ -12,6 +12,7 @@
 #include "CurrentState.h"
 #include "ParameterList.h"
 #include "StepperControlAxis.h"
+#include "StepperControlEncoder.h"
 #include "pins.h"
 #include "Config.h"
 #include <stdio.h>
@@ -37,14 +38,25 @@ public:
 	void enableMotors();
 	void disableMotors();
 
+	void test();
+	void test2();
+
 private:
 	StepperControlAxis axisX;
 	StepperControlAxis axisY;
 	StepperControlAxis axisZ;
 
+	StepperControlEncoder encoderX;
+	StepperControlEncoder encoderY;
+	StepperControlEncoder encoderZ;
+
+	void checkAxisVsEncoder(StepperControlAxis* axis, StepperControlEncoder* encoder, float* missedSteps, long* lastPosition, float* encoderStepDecay, bool* encoderEnabled);
+
 	bool axisActive[3];
 
 	void loadMotorSettings();
+	void loadEncoderSettings();
+
         void reportPosition();
         void storeEndStops();
         void reportEndStops();
@@ -59,6 +71,14 @@ private:
         bool motorInv[3];
         bool endStInv[3];
         long timeOut[3];
+
+        float motorConsMissedSteps[3];
+        long motorLastPosition[3];
+
+        int motorConsMissedStepsMax[3];
+        float motorConsMissedStepsDecay[3];
+        bool motorConsEncoderEnabled[3];
+
 };
 
 #endif /* STEPPERCONTROL_H_ */

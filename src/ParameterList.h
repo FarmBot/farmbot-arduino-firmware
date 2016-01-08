@@ -13,6 +13,8 @@ enum ParamListEnum
 	PARAM_VERSION 			= 0,
 	PARAM_TEST 			= 1,
 
+	// stepper motor settings
+
 	MOVEMENT_TIMEOUT_X		= 11,
 	MOVEMENT_TIMEOUT_Y		= 12,
 	MOVEMENT_TIMEOUT_Z		= 13,
@@ -41,9 +43,23 @@ enum ParamListEnum
 	MOVEMENT_MAX_SPD_Y		= 72,
 	MOVEMENT_MAX_SPD_Z		= 73,
 
-	MOVEMENT_AXIS_NR_STEPS_X	= 801,
-	MOVEMENT_AXIS_NR_STEPS_Y	= 802,
-	MOVEMENT_AXIS_NR_STEPS_Z	= 803
+	// encoder settings
+	ENCODER_ENABLED_X		= 101,
+	ENCODER_ENABLED_Y		= 102,
+	ENCODER_ENABLED_Z		= 103,
+
+	ENCODER_MISSED_STEPS_MAX_X	= 111,
+	ENCODER_MISSED_STEPS_MAX_Y	= 112,
+	ENCODER_MISSED_STEPS_MAX_Z	= 113,
+
+	ENCODER_MISSED_STEPS_DECAY_X	= 121,
+	ENCODER_MISSED_STEPS_DECAY_Y	= 122,
+	ENCODER_MISSED_STEPS_DECAY_Z	= 123,
+
+	// not used in software at this time
+	MOVEMENT_AXIS_NR_STEPS_X	= 141,
+	MOVEMENT_AXIS_NR_STEPS_Y	= 142,
+	MOVEMENT_AXIS_NR_STEPS_Z	= 143
 
 };
 
@@ -58,6 +74,7 @@ public:
 	int writeValue(int id, long value);
 	int readValue(int id);
 	long getValue(int id);
+	bool validParam(int id);
 private:
 	ParameterList();
         ParameterList(ParameterList const&);

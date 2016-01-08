@@ -47,6 +47,7 @@ void setup() {
 
 	ServoControl::getInstance()->attach();
 	StepperControl::getInstance()->initInterrupt();
+	//StepperControl::getInstance()->startTimer();
 
 	lastAction = millis();
 
@@ -74,6 +75,9 @@ void loop() {
 	}
 	delay(10);
 
+	// Test
+	/**///StepperControl::getInstance()->test();
+
 	currentTime = millis();
 	if (currentTime < lastAction) {
 		// If the device timer overruns, reset the idle counter
@@ -87,5 +91,4 @@ void loop() {
 			lastAction = millis();
 		}
 	}
-
 }

@@ -1,7 +1,5 @@
 #include "StepperControlAxis.h"
 
-long interruptSpeed          = 100;
-
 StepperControlAxis::StepperControlAxis() {
 	lastCalcLog	= 0;
 
@@ -11,11 +9,26 @@ StepperControlAxis::StepperControlAxis() {
         pinMin          = 0;
         pinMax          = 0;
 
+	axisActive	= false;
+
+	coordSourcePoint	= 0;
+        coordCurrentPoint	= 0;
+        coordDestinationPoint	= 0;
+        coordHomeAxis		= 0;
+
+	movementUp		= false;
+	movementToHome		= false;
 }
 
 void StepperControlAxis::test() {
-                Serial.print("R99 ");
-                Serial.print(label);
+                Serial.print("R99");
+		Serial.print(" cur loc = ");
+		Serial.print(coordCurrentPoint);
+		//Serial.print(" enc loc = ");
+		//Serial.print(coordEncoderPoint);
+                //Serial.print(" cons steps missed = ");
+                //Serial.print(label);
+                //Serial.print(consMissedSteps);
                 Serial.print("\n");
 }
 
@@ -63,20 +76,12 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
 		}
 	}
 
-/*
-	if (millis() - lastCalcLog > 1000) {
+
+	if (debugPrint && (millis() - lastCalcLog > 1000)) {
 
 		lastCalcLog = millis();
 
 		Serial.print("R99");
-
-	//	Serial.print(" a ");
-	//	Serial.print(endPos);
-	//	Serial.print(" b ");
-	//	Serial.print((endPos - stepsAccDec));
-	//	Serial.print(" c ");
-	//	Serial.print(curPos < (endPos - stepsAccDec));
-
 
 		Serial.print(" sta ");
 		Serial.print(staPos);
@@ -99,7 +104,7 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
 
 		Serial.print("\n");
 	}
-*/
+
 
 	// Return the calculated speed, in steps per second
 	return newSpeed;
@@ -136,26 +141,33 @@ void StepperControlAxis::checkMovement() {
 
 	checkAxisDirection();
 
-	if (((coordCurrentPoint != coordDestinationPoint) || coordHomeAxis) && axisActive) {
+	// Handle movement if destination is not already reached or surpassed
+	if (
+		(
+			(coordDestinationPoint > coordSourcePoint && coordCurrentPoint < coordDestinationPoint) ||
+			(coordDestinationPoint < coordSourcePoint && coordCurrentPoint > coordDestinationPoint) ||
+			coordHomeAxis
+		)
+		&& axisActive
+	   ) {
 
 		// home or destination not reached, keep moving
 
-		// Get the axis speed, in steps per second
-		axisSpeed = calculateSpeed(	coordSourcePoint, coordCurrentPoint, coordDestinationPoint,
-				 		motorSpeedMin, motorSpeedMax, motorStepsAcc);
-
-		// If end stop reached, don't move anymore
+		// If end stop reached or the encoder doesn't move anymore, stop moving motor, otherwise set the timing for the next step
 		if ((coordHomeAxis && !endStopAxisReached(false)) || (!coordHomeAxis &&  !endStopAxisReached(!movementToHome))) {
 
-			// Set the moments when the step is set to true and false
+			// Get the axis speed, in steps per second
+			axisSpeed = calculateSpeed(	coordSourcePoint, coordCurrentPoint, coordDestinationPoint,
+					 		motorSpeedMin, motorSpeedMax, motorStepsAcc);
 
+			// Set the moments when the step is set to true and false
 			if (axisSpeed > 0)
 			{
 
 				// Take the requested speed (steps / second) and divide by the interrupt speed (interrupts per seconde)
 				// This gives the number of interrupts (called ticks here) before the pulse needs to be set for the next step
-				stepOnTick  = moveTicks + (1000.0 * 1000.0 / interruptSpeed / axisSpeed / 2);
-				stepOffTick = moveTicks + (1000.0 * 1000.0 / interruptSpeed / axisSpeed    );
+				stepOnTick  = moveTicks + (1000.0 * 1000.0 / motorInterruptSpeed / axisSpeed / 2);
+				stepOffTick = moveTicks + (1000.0 * 1000.0 / motorInterruptSpeed / axisSpeed    );
 			}
 		}
 		else {
@@ -175,11 +187,12 @@ void StepperControlAxis::checkMovement() {
 
 void StepperControlAxis::checkTiming() {
 
-	int i;
-
-	moveTicks++;
+	//int i;
 
 	if (axisActive) {
+
+		moveTicks++;
+
 		if (moveTicks >= stepOffTick) {
 
 			// Negative flank for the steps
@@ -199,31 +212,14 @@ void StepperControlAxis::checkTiming() {
 
 void StepperControlAxis::setStepAxis() {
 
-	if (coordHomeAxis && coordCurrentPoint == 0) {
-
-		// Keep moving toward end stop even when position is zero
-		// but end stop is not yet active
-		if (motorHomeIsUp) {
-			coordCurrentPoint = -1;
-		} else {
-			coordCurrentPoint =  1;
-		}
-	}
-
-	if (coordCurrentPoint < coordDestinationPoint) {
+	if (movementUp) {
 		coordCurrentPoint++;
-	} else if (coordCurrentPoint > coordDestinationPoint) {
+	} else {
 		coordCurrentPoint--;
 	}
 
 	// set a step on the motors
 	setMotorStep();
-
-	// if the home end stop is reached, set the current position
-	if (endStopAxisReached(false))
-	{
-		coordCurrentPoint = 0;
-	}
 }
 
 bool StepperControlAxis::endStopAxisReached(bool movement_forward) {
@@ -320,19 +316,31 @@ void StepperControlAxis::setDirectionDown() {
 	}
 }
 
+void StepperControlAxis::setMovementUp() {
+	movementUp = true;
+}
+
+void StepperControlAxis::setMovementDown() {
+	movementUp = false;
+}
+
 void StepperControlAxis::setDirectionHome() {
 	if (motorHomeIsUp) {
 		setDirectionUp();
+		setMovementUp();
 	} else {
 		setDirectionDown();
+		setMovementDown();
 	}
 }
 
 void StepperControlAxis::setDirectionAway() {
 	if (motorHomeIsUp) {
 		setDirectionDown();
+		setMovementDown();
 	} else {
 		setDirectionUp();
+		setMovementUp();
 	}
 }
 
@@ -362,11 +370,16 @@ bool StepperControlAxis::isAxisActive() {
 	return axisActive;
 }
 
+void StepperControlAxis::deactivateAxis() {
+	axisActive = false;
+}
+
 void StepperControlAxis::setMotorStep() {
 	digitalWrite(pinStep, HIGH);
 }
 
 void StepperControlAxis::resetMotorStep() {
+	movementStepDone = true;
 	digitalWrite(pinStep, LOW);
 }
 
@@ -374,10 +387,34 @@ bool StepperControlAxis::pointReached(long currentPoint, long destinationPoint) 
 	return (destinationPoint == currentPoint);
 }
 
-long StepperControlAxis::currentPoint() {
+long StepperControlAxis::currentPosition() {
 	return coordCurrentPoint;
+}
+
+void StepperControlAxis::setCurrentPosition(long newPos) {
+	coordCurrentPoint = newPos;
 }
 
 void StepperControlAxis::setMaxSpeed(long speed) {
 	motorSpeedMax = speed;
+}
+
+void StepperControlAxis::activateDebugPrint() {
+	debugPrint = true;
+}
+
+bool StepperControlAxis::isStepDone() {
+	return movementStepDone;
+}
+
+void StepperControlAxis::resetStepDone() {
+	movementStepDone = false;
+}
+
+bool StepperControlAxis::movingToHome() {
+	return movementToHome;
+}
+
+bool StepperControlAxis::movingUp() {
+	return movementUp;
 }
