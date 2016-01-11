@@ -71,10 +71,20 @@ class ParameterList {
         ParamListEnum paramListEnum;
 public:
         static ParameterList* getInstance();
-	int writeValue(int id, long value);
+	int writeValue(int id, int value);
 	int readValue(int id);
-	long getValue(int id);
+	int getValue(int id);
+
 	bool validParam(int id);
+	void loadDefaultValue(int id);
+
+	int readAllValues();
+	int readAllValuesFromEeprom();
+	int writeAllValuesToEeprom();
+	int setAllValuesToDefault();
+
+	int readValueEeprom(int id);
+	int writeValueEeprom(int id, int value);
 private:
 	ParameterList();
         ParameterList(ParameterList const&);

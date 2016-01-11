@@ -27,7 +27,7 @@ const int MOVEMENT_INTERRUPT_SPEED = 100; // Interrupt cycle in micro seconds
 const unsigned int MOVEMENT_SPEED_BASE_TIME      = 2000;
 const unsigned int MOVEMENT_DELAY                = 500;
 
-const long PARAM_VERSION_DEFAULT                = 0;
+const long PARAM_VERSION_DEFAULT                = -1;
 const long PARAM_TEST_DEFAULT                   = 0;
 
 const long MOVEMENT_TIMEOUT_X_DEFAULT           = 120;

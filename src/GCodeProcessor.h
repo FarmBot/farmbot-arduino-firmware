@@ -23,6 +23,7 @@
 #include "F15Handler.h"
 #include "F16Handler.h"
 
+#include "F20Handler.h"
 #include "F21Handler.h"
 #include "F22Handler.h"
 
