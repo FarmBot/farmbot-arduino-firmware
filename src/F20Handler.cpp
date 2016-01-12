@@ -23,7 +23,7 @@ F20Handler::F20Handler() {
 
 int F20Handler::execute(Command* command) {
 
-	//ParameterList::getInstance()-readAllValues();
+	ParameterList::getInstance()->readAllValues();
 
 	return 1;
 }
