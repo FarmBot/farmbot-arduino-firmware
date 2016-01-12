@@ -12,7 +12,8 @@ ParameterList * ParameterList::getInstance() {
 }
 
 ParameterList::ParameterList() {
-
+	// at the first boot, load default parameters and set the parameter version
+	// so during subsequent boots the values are just loaded from eeprom 
 	int paramVersion = readValueEeprom(0);
 	if (paramVersion == 0) {
 		setAllValuesToDefault();
@@ -22,47 +23,29 @@ ParameterList::ParameterList() {
 	}
 }
 
-bool ParameterList::validParam(int id) {
+// ===== Interfce functions for the raspberry pi =====
 
-	// Check if the id is a valid one
-	switch(id)
-	{
-		case PARAM_VERSION:
-		case MOVEMENT_TIMEOUT_X:
-		case MOVEMENT_TIMEOUT_Y:
-		case MOVEMENT_TIMEOUT_Z:
-		case MOVEMENT_INVERT_ENDPOINTS_X:
-		case MOVEMENT_INVERT_ENDPOINTS_Y:
-		case MOVEMENT_INVERT_ENDPOINTS_Z:
-		case MOVEMENT_INVERT_MOTOR_X:
-		case MOVEMENT_INVERT_MOTOR_Y:
-		case MOVEMENT_INVERT_MOTOR_Z:
-		case MOVEMENT_STEPS_ACC_DEC_X:
-		case MOVEMENT_STEPS_ACC_DEC_Y:
-		case MOVEMENT_STEPS_ACC_DEC_Z:
-		case MOVEMENT_HOME_UP_X:
-		case MOVEMENT_HOME_UP_Y:
-		case MOVEMENT_HOME_UP_Z:
-		case MOVEMENT_MIN_SPD_X:
-		case MOVEMENT_MIN_SPD_Y:
-		case MOVEMENT_MIN_SPD_Z:
-		case MOVEMENT_MAX_SPD_X:
-		case MOVEMENT_MAX_SPD_Y:
-		case MOVEMENT_MAX_SPD_Z:
-		case ENCODER_ENABLED_X:
-		case ENCODER_ENABLED_Y:
-		case ENCODER_ENABLED_Z:
-		case ENCODER_MISSED_STEPS_MAX_X:
-		case ENCODER_MISSED_STEPS_MAX_Y:
-		case ENCODER_MISSED_STEPS_MAX_Z:
-		case ENCODER_MISSED_STEPS_DECAY_X:
-		case ENCODER_MISSED_STEPS_DECAY_Y:
-		case ENCODER_MISSED_STEPS_DECAY_Z:
-			return true;
-		default:
-			return false;
+int ParameterList::readValue(int id) {
+
+	// Check if the value is an existing parameter
+	if (validParam(id)) {
+		// Retrieve the value from memory
+		int value =  paramValues[id];
+
+		// Send to the raspberrt pi
+		Serial.print("R21");
+		Serial.print(" ");
+		Serial.print("P");
+		Serial.print(id);
+		Serial.print(" ");
+		Serial.print("V");
+		Serial.print(value);
+		Serial.print("\n");
+	} else  {
+		Serial.print("R99 Error: invalid parameter id\n");
 	}
 
+	return 0;
 }
 
 int ParameterList::writeValue(int id, int value) {
@@ -90,53 +73,30 @@ int ParameterList::writeValue(int id, int value) {
 	Serial.print(value);
 	Serial.print("\n");
 
-
 	return 0;
 }
 
-int ParameterList::readValue(int id) {
+int ParameterList::readAllValues() {
 
-	// Check if the value is an existing parameter
-	if (validParam(id)) {
-		// Retrieve the value from memory
-		int value =  paramValues[id];
-
-		// Send to the raspberrt pi
-		Serial.print("R21");
-		Serial.print(" ");
-		Serial.print("P");
-		Serial.print(id);
-		Serial.print(" ");
-		Serial.print("V");
-		Serial.print(value);
-		Serial.print("\n");
-	} else  {
-		Serial.print("R99 Error: invalid parameter id\n");
+	// Make a dump of all values
+	// Check if it's a valid value to keep the junk out of the list
+	for (int i; i < 150; i++)
+	{
+		if (validParam(i)) {
+			readValue(i);
+		}
 	}
-
-	return 0;
 }
-
 
 int ParameterList::getValue(int id) {
-
-	/*
-	Serial.print("R99");
-	Serial.print(" ");
-	Serial.print("getValue");
-	Serial.print(" id ");
-		Serial.print(id);
-	Serial.print(" value ");
-	Serial.print(paramValues[id]);
-	Serial.print("\n");
-	*/
-
 	return  paramValues[id];
 }
 
+// ===== eeprom handling ====
+
 int ParameterList::readValueEeprom(int id) {
 
-	// Assume all values are ints
+	// Assume all values are ints and calculate address for that
 	int address = id * 2;
 
 	//Read the 2 bytes from the eeprom memory.
@@ -149,7 +109,7 @@ int ParameterList::readValueEeprom(int id) {
 
 int ParameterList::writeValueEeprom(int id, int value) {
 
-	// Assume all values are ints
+	// Assume all values are ints and calculate address for that
 	int address = id * 2;
 
 	//Decomposition from a int to 2 bytes by using bitshift.
@@ -164,35 +124,37 @@ int ParameterList::writeValueEeprom(int id, int value) {
 	return 0;
 }
 
+int ParameterList::readAllValuesFromEeprom() {
+	// Write all existing values to eeprom
+	for (int i; i < 150; i++)
+	{
+		if (validParam(i)) {
+			paramValues[i] = readValueEeprom(i);
+
+		}
+	}
+}
+
+int ParameterList::writeAllValuesToEeprom() {
+	// Write all existing values to eeprom
+	for (int i; i < 150; i++)
+	{
+		if (validParam(i)) {
+			writeValueEeprom(i,paramValues[i]);
+		}
+	}
+}
+
+// ==== parameter valdation and defaults
+
 int ParameterList::setAllValuesToDefault() {
-
-	Serial.print("R99 Setting all to default\n");
-
 	// Copy default values to the memory values
 	for (int i; i < 150; i++)
 	{
-
-		//paramValues[i] = 
 		if (validParam(i)) {
 			loadDefaultValue(i);
 		}
-
-		/*
-		if (validParam(i)) {
-			Serial.print("R99");
-			Serial.print(" ");
-			Serial.print("get default value");
-			Serial.print(" id ");
-			Serial.print(i);
-			Serial.print(" value ");
-			Serial.print(paramValues[i]);
-			Serial.print("\n");
-		}
-		*/
 	}
-
-	Serial.print("R99 Setting all to default done\n");
-
 }
 
 void ParameterList::loadDefaultValue(int id) {
@@ -244,68 +206,47 @@ void ParameterList::loadDefaultValue(int id) {
 
 		default : paramValues[id] = 0; break;
 	}
-/*
-	if (validParam(id)) {
-
-		Serial.print("R99");
-		Serial.print(" ");
-		Serial.print("get default value");
-		Serial.print(" id ");
-		Serial.print(id);
-		Serial.print(" value ");
-		Serial.print(value);
-		Serial.print("\n");
-	}
-*/
-	//return 0;
 }
 
+bool ParameterList::validParam(int id) {
 
-int ParameterList::readAllValues() {
-
-
-	//Serial.print("R99 A \n");
-
-	//setAllValuesToDefault();
-
-	//Serial.print("R99 AA \n");
-
-	//writeAllValuesToEeprom();
-	//readAllValuesFromEeprom();
-
-	//Serial.print("R99 B \n");
-
-	// Make a dump of all values
-	// Check if it's a valid value to keep the junk out of the list
-	for (int i; i < 150; i++)
+	// Check if the id is a valid one
+	switch(id)
 	{
-		if (validParam(i)) {
-			readValue(i);
-		}
+		case PARAM_VERSION:
+		case MOVEMENT_TIMEOUT_X:
+		case MOVEMENT_TIMEOUT_Y:
+		case MOVEMENT_TIMEOUT_Z:
+		case MOVEMENT_INVERT_ENDPOINTS_X:
+		case MOVEMENT_INVERT_ENDPOINTS_Y:
+		case MOVEMENT_INVERT_ENDPOINTS_Z:
+		case MOVEMENT_INVERT_MOTOR_X:
+		case MOVEMENT_INVERT_MOTOR_Y:
+		case MOVEMENT_INVERT_MOTOR_Z:
+		case MOVEMENT_STEPS_ACC_DEC_X:
+		case MOVEMENT_STEPS_ACC_DEC_Y:
+		case MOVEMENT_STEPS_ACC_DEC_Z:
+		case MOVEMENT_HOME_UP_X:
+		case MOVEMENT_HOME_UP_Y:
+		case MOVEMENT_HOME_UP_Z:
+		case MOVEMENT_MIN_SPD_X:
+		case MOVEMENT_MIN_SPD_Y:
+		case MOVEMENT_MIN_SPD_Z:
+		case MOVEMENT_MAX_SPD_X:
+		case MOVEMENT_MAX_SPD_Y:
+		case MOVEMENT_MAX_SPD_Z:
+		case ENCODER_ENABLED_X:
+		case ENCODER_ENABLED_Y:
+		case ENCODER_ENABLED_Z:
+		case ENCODER_MISSED_STEPS_MAX_X:
+		case ENCODER_MISSED_STEPS_MAX_Y:
+		case ENCODER_MISSED_STEPS_MAX_Z:
+		case ENCODER_MISSED_STEPS_DECAY_X:
+		case ENCODER_MISSED_STEPS_DECAY_Y:
+		case ENCODER_MISSED_STEPS_DECAY_Z:
+			return true;
+		default:
+			return false;
 	}
-
-	//Serial.print("R99 C \n");
 }
-
-int ParameterList::readAllValuesFromEeprom() {
-	// Write all existing values to eeprom
-	for (int i; i < 150; i++)
-	{
-		if (validParam(i)) {
-			paramValues[i] = readValueEeprom(i);
-
-		}
-	}
-}
-
-int ParameterList::writeAllValuesToEeprom() {
-	// Write all existing values to eeprom
-	for (int i; i < 150; i++)
-	{
-		if (validParam(i)) {
-			writeValueEeprom(i,paramValues[i]);
-		}
-	}
-}
-
 
