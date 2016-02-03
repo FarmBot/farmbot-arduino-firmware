@@ -51,8 +51,10 @@ private:
 	StepperControlEncoder encoderZ;
 
 	void checkAxisVsEncoder(StepperControlAxis* axis, StepperControlEncoder* encoder, float* missedSteps, long* lastPosition, float* encoderStepDecay, bool* encoderEnabled);
+	void checkAxisSubStatus(StepperControlAxis* axis, int* axisSubStatus);
 
 	bool axisActive[3];
+	int axisSubStep[3];
 
 	void loadMotorSettings();
 	void loadEncoderSettings();

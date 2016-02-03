@@ -35,6 +35,11 @@ public:
 
 	bool isAxisActive();
 	void deactivateAxis();
+	bool isAccelerating();
+	bool isDecelerating();
+	bool isCruising();
+	bool isCrawling();
+	bool isMotorActive();
 
 	bool endStopMin();
 	bool endStopMax();
@@ -107,6 +112,11 @@ private:
 	bool movementUp;
 	bool movementToHome;
 	bool movementStepDone;
+	bool movementAccelerating;
+	bool movementDecelerating;
+	bool movementCruising;
+	bool movementCrawling;
+	bool movementMotorActive;
 
 	void step(long &currentPoint, unsigned long steps, long destinationPoint);
 	bool pointReached(long currentPoint, long destinationPoint);

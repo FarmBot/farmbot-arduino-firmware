@@ -296,7 +296,8 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 		if (currentMillis % 750 == 0)
 		//if (1 == 1) 
 		{
-			Serial.print("R04\n");
+			Serial.print(COMM_REPORT_CMD_BUSY);
+			Serial.print("\n");
 			reportPosition();
 				/*
 				Serial.print("R99");
@@ -488,7 +489,8 @@ int StepperControl::calibrateAxis(int axis) {
 	                if (stepsCount % (speedMin[axis] * 3) == 0)
 	                {
 				// Periodically send message still active
-	                        Serial.print("R04\n");
+	                        Serial.print(COMM_REPORT_CMD_BUSY);
+	                        Serial.print("\n");
 	                }
 
 	                if (stepsCount % (speedMin[axis] / 6) == 0 /*|| *missedSteps > 3*/)
@@ -604,7 +606,8 @@ int StepperControl::calibrateAxis(int axis) {
 	                if (stepsCount % (speedMin[axis] * 3) == 0)
         	        {
 				// Periodically send message still active
-	                        Serial.print("R04\n");
+	                        Serial.print(COMM_REPORT_CMD_BUSY);
+	                        Serial.print("\n");
 	                }
 			/*
 	                if (stepsCount % (speedMin[axis] / 6) == 0)
@@ -684,6 +687,28 @@ int StepperControl::calibrateAxis(int axis) {
 	return error;
 }
 
+
+void checkAxisSubStatus(StepperControlAxis* axis, int* axisSubStatus) {
+	int newStatus = 0;
+
+	if (axis->isAccelerating()) {
+		newStatus = COMM_REPORT_MOVE_STATUS_ACCELERATING;
+	}
+
+	if (axis->isCruising()) {
+		newStatus = COMM_REPORT_MOVE_STATUS_CRUISING;
+	}
+
+	if (axis->isDecelerating()) {
+		newStatus = COMM_REPORT_MOVE_STATUS_DECELERATING;
+	}
+
+	if (axis->isCrawling()) {
+		newStatus = COMM_REPORT_MOVE_STATUS_CRAWLING;
+	}
+
+
+}
 
 // Handle movement by checking each axis
 void StepperControl::handleMovementInterrupt(void){
