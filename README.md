@@ -90,6 +90,7 @@ F        |13    |          |Home Z axis
 F        |14    |          |Calibrate X axis
 F        |15    |          |Calibrate Y axis
 F        |16    |          |Calibrate Z axis
+F        |20    |          |List all parameters and value
 F        |21    |P         |Read parameter
 F        |22    |P V       |Write parameter
 F        |23    |P V       |Update parameter (during calibration)
@@ -114,6 +115,8 @@ R        |01    |          |Current command started
 R        |02    |          |Current command finished succesfully
 R        |03    |          |Current command finished with error
 R        |04    |          |Current command running
+R        |05    |          |Report motor/axis state
+R        |06    |          |Report calibation state during execution
 R        |21    |P V       |Report parameter value
 R        |31    |P V       |Report status value
 R        |41    |P V       |Report pin value
@@ -122,6 +125,31 @@ R        |82    |X Y Z     |Report current position
 R        |83    |C         |Report software version
 R        |99    |C         |Debug message
 
+Axis states (R05)
+-----------------
+
+The state is reported for each axis individually, using the prefix X, Y or Z
+
+Value |Description
+------|------------
+0     |Idle
+1     |Starting motor
+2     |Accelerating
+3     |Cruising
+4     |Decelerating
+5     |Stopping motor
+6     |Crawling
+
+Calibration states (R06)
+------------------------
+
+The status for calibration is also reported for the axis that is calibrating
+
+Value |Description
+------|------------
+0     |Idle
+1     |Moving to home
+2     |Moving to end
 
 Parameters for commands
 -----------------------
