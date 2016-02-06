@@ -34,12 +34,12 @@ int GCodeProcessor::execute(Command* command) {
 		Serial.println("This is false: handler == NULL");
 		return -1;
 	}
-	Serial.println("R01");
+	Serial.println(COMM_REPORT_CMD_START);
 	int execution = handler->execute(command);
 	if(execution == 0) {
-		Serial.println("R02");
+		Serial.println(COMM_REPORT_CMD_DONE);
 	} else {
-		Serial.println("R03");
+		Serial.println(COMM_REPORT_CMD_ERROR);
 	}
 	return execution;
 };

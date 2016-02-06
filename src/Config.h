@@ -22,6 +22,29 @@ const int LOGGING = 0;
 //const bool AXIS_HOME_UP_Y = false;
 //const bool AXIS_HOME_UP_Z = true;
 
+const String COMM_REPORT_CMD_START    = "R01";
+const String COMM_REPORT_CMD_DONE     = "R02";
+const String COMM_REPORT_CMD_ERROR    = "R03";
+const String COMM_REPORT_CMD_BUSY     = "R04";
+const String COMM_REPORT_CMD_STATUS   = "R05";
+const String COMM_REPORT_CALIB_STATUS = "R06";
+const String COMM_REPORT_COMMENT      = "R99";
+
+const int COMM_REPORT_MOVE_STATUS_IDLE         = 0;
+const int COMM_REPORT_MOVE_STATUS_START_MOTOR  = 1;
+const int COMM_REPORT_MOVE_STATUS_ACCELERATING = 2;
+const int COMM_REPORT_MOVE_STATUS_CRUISING     = 3;
+const int COMM_REPORT_MOVE_STATUS_DECELERATING = 4;
+const int COMM_REPORT_MOVE_STATUS_STOP_MOTOR   = 5;
+const int COMM_REPORT_MOVE_STATUS_CRAWLING     = 6;
+const int COMM_REPORT_MOVE_STATUS_ERROR        = -1;
+
+const int COMM_REPORT_CALIBRATE_STATUS_IDLE    = 0;
+const int COMM_REPORT_CALIBRATE_STATUS_TO_HOME = 1;
+const int COMM_REPORT_CALIBRATE_STATUS_TO_END  = 2;
+const int COMM_REPORT_CALIBRATE_STATUS_ERROR   = -1;
+
+
 const int MOVEMENT_INTERRUPT_SPEED = 100; // Interrupt cycle in micro seconds
 
 const unsigned int MOVEMENT_SPEED_BASE_TIME      = 2000;
