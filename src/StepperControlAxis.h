@@ -40,6 +40,7 @@ public:
 	bool isCruising();
 	bool isCrawling();
 	bool isMotorActive();
+	bool isMoving();
 
 	bool endStopMin();
 	bool endStopMax();
@@ -72,6 +73,7 @@ public:
 	void test();
 
 	char label;
+	bool movementStarted;
 
 private:
 
@@ -108,6 +110,7 @@ private:
 	unsigned long stepOnTick;
 	unsigned long stepOffTick;
 	unsigned long axisSpeed;
+
 	bool axisActive;
 	bool movementUp;
 	bool movementToHome;
@@ -117,6 +120,7 @@ private:
 	bool movementCruising;
 	bool movementCrawling;
 	bool movementMotorActive;
+	bool movementMoving;
 
 	void step(long &currentPoint, unsigned long steps, long destinationPoint);
 	bool pointReached(long currentPoint, long destinationPoint);

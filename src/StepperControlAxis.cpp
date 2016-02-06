@@ -23,6 +23,7 @@ StepperControlAxis::StepperControlAxis() {
         movementCruising	= false;
         movementCrawling	= false;
         movementMotorActive	= false;
+	movementMoving		= false;
 }
 
 void StepperControlAxis::test() {
@@ -51,6 +52,7 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
 	movementDecelerating = false;
 	movementCruising     = false;
 	movementCrawling     = false;
+	movementMoving       = false;
 
 	if (abs(sourcePosition) < abs(destinationPosition)) {
 		staPos = abs(sourcePosition);
@@ -64,30 +66,35 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
 
 	// Set the minimum speed if the position would be out of bounds
 	if (curPos < staPos || curPos > endPos) {
-		newSpeed = minSpeed;
+		newSpeed         = minSpeed;
 		movementCrawling = true;
+		movementMoving   = true;
 	} else {
 		if (curPos >= staPos && curPos <= halfway) {
 			// accelerating
 			if (curPos > (staPos + stepsAccDec)) {
 				// now beyond the accelleration point to go full speed
-				newSpeed = maxSpeed + 1;
+				newSpeed         = maxSpeed + 1;
 				movementCruising = true;
+				movementMoving   = true;
 			} else {
 				// speeding up, increase speed linear within the first period
-				newSpeed = (1.0 * (curPos - staPos) / stepsAccDec * (maxSpeed - minSpeed)) + minSpeed;
+				newSpeed             = (1.0 * (curPos - staPos) / stepsAccDec * (maxSpeed - minSpeed)) + minSpeed;
 				movementAccelerating = true;
+				movementMoving       = true;
 			}
 		} else {
 			// decelerating
 			if (curPos < (endPos - stepsAccDec)) {
 				// still before the deceleration point so keep going at full speed
-				newSpeed = maxSpeed + 2;
+				newSpeed         = maxSpeed + 2;
 				movementCruising = true;
+				movementMoving   = true;
 			} else {
 				// speeding up, increase speed linear within the first period
-				newSpeed = (1.0 * (endPos - curPos) / stepsAccDec * (maxSpeed - minSpeed)) + minSpeed;
+				newSpeed             = (1.0 * (endPos - curPos) / stepsAccDec * (maxSpeed - minSpeed)) + minSpeed;
 				movementDecelerating = true;
+				movementMoving       = true;
 			}
 		}
 	}
@@ -443,6 +450,10 @@ bool StepperControlAxis::isAccelerating() {
 
 bool StepperControlAxis::isDecelerating() {
 	return movementDecelerating;
+}
+
+bool StepperControlAxis::isCruising() {
+	return movementCruising;
 }
 
 bool StepperControlAxis::isCrawling() {

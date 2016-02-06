@@ -62,6 +62,8 @@ private:
         void reportPosition();
         void storeEndStops();
         void reportEndStops();
+	void reportStatus(StepperControlAxis* axis, int axisSubStatus);
+	void reportCalib(StepperControlAxis* axis, int calibStatus);
 
 	unsigned long getMaxLength(unsigned long lengths[3]);
 	bool endStopsReached();

@@ -11,6 +11,53 @@ StepperControl * StepperControl::getInstance() {
 }
 ;
 
+void StepperControl::reportStatus(StepperControlAxis* axis, int axisStatus) {
+		Serial.print(COMM_REPORT_CMD_STATUS);
+		Serial.print(" ");
+		Serial.print(axis->label);
+		Serial.print(axisStatus);
+		Serial.print("\n");
+}
+
+void StepperControl::reportCalib(StepperControlAxis* axis, int calibStatus) {
+		Serial.print(COMM_REPORT_CALIB_STATUS);
+		Serial.print(" ");
+		Serial.print(axis->label);
+		Serial.print(calibStatus);
+		Serial.print("\n");
+}
+
+void StepperControl::checkAxisSubStatus(StepperControlAxis* axis, int* axisSubStatus) {
+	int  newStatus = 0;
+	bool statusChanged = false;
+
+	if (axis->isAccelerating()) {
+		newStatus = COMM_REPORT_MOVE_STATUS_ACCELERATING;
+	}
+
+	if (axis->isCruising()) {
+		newStatus = COMM_REPORT_MOVE_STATUS_CRUISING;
+	}
+
+	if (axis->isDecelerating()) {
+		newStatus = COMM_REPORT_MOVE_STATUS_DECELERATING;
+	}
+
+	if (axis->isCrawling()) {
+		newStatus = COMM_REPORT_MOVE_STATUS_CRAWLING;
+	}
+
+	// if the status changes, send out a status report
+	if (*axisSubStatus != newStatus && newStatus > 0) {
+		statusChanged = true;
+	}
+	*axisSubStatus = newStatus;
+
+	if (statusChanged) {
+		reportStatus(&axisX, *axisSubStatus);
+	}
+}
+
 //const int MOVEMENT_INTERRUPT_SPEED = 100; // Interrupt cycle in micro seconds
 
 StepperControl::StepperControl() {
@@ -37,6 +84,10 @@ StepperControl::StepperControl() {
 	axisX.loadPinNumbers(X_STEP_PIN, X_DIR_PIN, X_ENABLE_PIN, X_MIN_PIN, X_MAX_PIN);
 	axisY.loadPinNumbers(Y_STEP_PIN, Y_DIR_PIN, Y_ENABLE_PIN, Y_MIN_PIN, Y_MAX_PIN);
 	axisZ.loadPinNumbers(Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN, Z_MIN_PIN, Z_MAX_PIN);
+
+	axisSubStep[0] = COMM_REPORT_MOVE_STATUS_IDLE;
+	axisSubStep[1] = COMM_REPORT_MOVE_STATUS_IDLE;
+	axisSubStep[2] = COMM_REPORT_MOVE_STATUS_IDLE;
 
 	loadMotorSettings();
 	loadEncoderSettings();
@@ -145,12 +196,26 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 
 	// Prepare for movement
 
+	axisX.movementStarted = false;
+	axisY.movementStarted = false;
+	axisZ.movementStarted = false;
+
 	storeEndStops();
 	reportEndStops();
 
 	axisX.setDirectionAxis();
 	axisY.setDirectionAxis();
 	axisZ.setDirectionAxis();
+
+	// Enable motors
+
+	axisSubStep[0] = COMM_REPORT_MOVE_STATUS_START_MOTOR;
+	axisSubStep[1] = COMM_REPORT_MOVE_STATUS_START_MOTOR;
+	axisSubStep[2] = COMM_REPORT_MOVE_STATUS_START_MOTOR;
+
+	reportStatus(&axisX, axisSubStep[0]);
+	reportStatus(&axisY, axisSubStep[1]);
+	reportStatus(&axisZ, axisSubStep[2]);
 
         enableMotors();
 
@@ -166,6 +231,10 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 
 	// Let the interrupt handle all the movements
 	while (axisActive[0] || axisActive[1] || axisActive[2]) {
+
+		checkAxisSubStatus(&axisX, &axisSubStep[0]);
+		checkAxisSubStatus(&axisY, &axisSubStep[1]);
+		checkAxisSubStatus(&axisZ, &axisSubStep[2]);
 
 		delay(1);
 		//delayMicroseconds(100);
@@ -332,7 +401,19 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 
 	Serial.print("R99 stopped\n");
 
+	// Stop motors
+
+	axisSubStep[0] = COMM_REPORT_MOVE_STATUS_STOP_MOTOR;
+	axisSubStep[1] = COMM_REPORT_MOVE_STATUS_STOP_MOTOR;
+	axisSubStep[2] = COMM_REPORT_MOVE_STATUS_STOP_MOTOR;
+
+	reportStatus(&axisX, axisSubStep[0]);
+	reportStatus(&axisY, axisSubStep[1]);
+	reportStatus(&axisZ, axisSubStep[2]);
+
 	disableMotors();
+
+	// Report end statuses
 
 	currentPoint[0] = axisX.currentPosition();
 	currentPoint[1] = axisY.currentPosition();
@@ -345,6 +426,20 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
         storeEndStops();
 	reportEndStops();
 	reportPosition();
+
+	// Report axis idle
+
+	axisSubStep[0] = COMM_REPORT_MOVE_STATUS_IDLE;
+	axisSubStep[1] = COMM_REPORT_MOVE_STATUS_IDLE;
+	axisSubStep[2] = COMM_REPORT_MOVE_STATUS_IDLE;
+
+	reportStatus(&axisX, axisSubStep[0]);
+	reportStatus(&axisY, axisSubStep[1]);
+	reportStatus(&axisZ, axisSubStep[2]);
+
+	disableMotors();
+
+	// Return error
 
 	return error;
 }
@@ -379,6 +474,7 @@ int StepperControl::calibrateAxis(int axis) {
 	long  * lastPosition;
 	float * encoderStepDecay;
 	bool  * encoderEnabled;
+	int   * axisStatus;
 
 	// Prepare for movement
 
@@ -401,6 +497,7 @@ int StepperControl::calibrateAxis(int axis) {
 			lastPosition     = &motorLastPosition[0];
 			encoderStepDecay = &motorConsMissedStepsDecay[0];
 			encoderEnabled   = &motorConsEncoderEnabled[0];
+			axisStatus       = &axisSubStep[0];
 			break;
 		case 1:
 			calibAxis        = &axisY;
@@ -413,6 +510,7 @@ int StepperControl::calibrateAxis(int axis) {
 			lastPosition     = &motorLastPosition[1];
 			encoderStepDecay = &motorConsMissedStepsDecay[1];
 			encoderEnabled   = &motorConsEncoderEnabled[1];
+			axisStatus       = &axisSubStep[1];
 			break;
 		case 2:
 			calibAxis        = &axisZ;
@@ -425,6 +523,7 @@ int StepperControl::calibrateAxis(int axis) {
 			lastPosition     = &motorLastPosition[2];
 			encoderStepDecay = &motorConsMissedStepsDecay[2];
 			encoderEnabled   = &motorConsEncoderEnabled[2];
+			axisStatus       = &axisSubStep[2];
 			break;
 		default:
 			Serial.print("R99 Calibration error: invalid axis selected\n");
@@ -445,8 +544,10 @@ int StepperControl::calibrateAxis(int axis) {
 	Serial.print(" move to start for calibration");
 	Serial.print("\n");
 
-	// Move towards home
+	*axisStatus = COMM_REPORT_MOVE_STATUS_START_MOTOR;
+	reportStatus(&axisX, axisSubStep[0]);
 
+	// Move towards home
         calibAxis->enableMotor();
 	calibAxis->setDirectionHome();
         calibAxis->setCurrentPosition(calibEncoder->currentPosition());
@@ -458,6 +559,11 @@ int StepperControl::calibrateAxis(int axis) {
 	motorConsMissedSteps[0] = 0;
 	motorConsMissedSteps[1] = 0;
 	motorConsMissedSteps[2] = 0;
+
+        *axisStatus = COMM_REPORT_MOVE_STATUS_CRAWLING;
+        reportStatus(&axisX, axisSubStep[0]);
+
+	reportCalib(&axisX, COMM_REPORT_CALIBRATE_STATUS_TO_HOME);
 
 	while (!movementDone && error == 0) {
 
@@ -523,6 +629,8 @@ int StepperControl::calibrateAxis(int axis) {
 			}
 		}
 	}
+
+	reportCalib(&axisX, COMM_REPORT_CALIBRATE_STATUS_TO_END);
 
 	Serial.print("R99");
 	Serial.print(" axis ");
@@ -664,6 +772,9 @@ int StepperControl::calibrateAxis(int axis) {
 		Serial.print("\n");
 	}
 
+        *axisStatus = COMM_REPORT_MOVE_STATUS_STOP_MOTOR;
+        reportStatus(&axisX, axisSubStep[0]);
+
 	calibAxis->disableMotor();
 
         storeEndStops();
@@ -684,31 +795,15 @@ int StepperControl::calibrateAxis(int axis) {
 
 	reportPosition();
 
+
+        *axisStatus = COMM_REPORT_MOVE_STATUS_IDLE;
+        reportStatus(&axisX, axisSubStep[0]);
+
+	reportCalib(&axisX, COMM_REPORT_CALIBRATE_STATUS_IDLE);
+
 	return error;
 }
 
-
-void checkAxisSubStatus(StepperControlAxis* axis, int* axisSubStatus) {
-	int newStatus = 0;
-
-	if (axis->isAccelerating()) {
-		newStatus = COMM_REPORT_MOVE_STATUS_ACCELERATING;
-	}
-
-	if (axis->isCruising()) {
-		newStatus = COMM_REPORT_MOVE_STATUS_CRUISING;
-	}
-
-	if (axis->isDecelerating()) {
-		newStatus = COMM_REPORT_MOVE_STATUS_DECELERATING;
-	}
-
-	if (axis->isCrawling()) {
-		newStatus = COMM_REPORT_MOVE_STATUS_CRAWLING;
-	}
-
-
-}
 
 // Handle movement by checking each axis
 void StepperControl::handleMovementInterrupt(void){
@@ -897,6 +992,7 @@ unsigned long StepperControl::getMaxLength(unsigned long lengths[3]) {
 }
 
 void StepperControl::enableMotors() {
+
 	axisX.enableMotor();
 	axisY.enableMotor();
 	axisZ.enableMotor();
@@ -932,4 +1028,3 @@ void StepperControl::reportPosition(){
 void StepperControl::storeEndStops() {
 	CurrentState::getInstance()->storeEndStops();
 }
-

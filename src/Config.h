@@ -22,12 +22,13 @@ const int LOGGING = 0;
 //const bool AXIS_HOME_UP_Y = false;
 //const bool AXIS_HOME_UP_Z = true;
 
-const String COMM_REPORT_CMD_START  = "R01";
-const String COMM_REPORT_CMD_DONE   = "R02";
-const String COMM_REPORT_CMD_ERROR  = "R03";
-const String COMM_REPORT_CMD_BUSY   = "R04";
-const String COMM_REPORT_CMD_STATUS = "R05";
-const String COMM_REPORT_COMMENT    = "R99";
+const String COMM_REPORT_CMD_START    = "R01";
+const String COMM_REPORT_CMD_DONE     = "R02";
+const String COMM_REPORT_CMD_ERROR    = "R03";
+const String COMM_REPORT_CMD_BUSY     = "R04";
+const String COMM_REPORT_CMD_STATUS   = "R05";
+const String COMM_REPORT_CALIB_STATUS = "R06";
+const String COMM_REPORT_COMMENT      = "R99";
 
 const int COMM_REPORT_MOVE_STATUS_IDLE         = 0;
 const int COMM_REPORT_MOVE_STATUS_START_MOTOR  = 1;
