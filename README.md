@@ -221,3 +221,14 @@ MOVEMENT_AXIS_NR_STEPS_X     |141
 MOVEMENT_AXIS_NR_STEPS_Y     |142
 MOVEMENT_AXIS_NR_STEPS_Z     |143
 
+Pins not used by RAMPS board
+----------------------------
+
+Pin |Function
+----|------------
+16  |Encoder X channel A
+17  |Encoder X channel B
+23  |Encoder Y channel A
+25  |Encoder Y channel B
+27  |Encoder Z channel A
+29  |Encoder Z channel B
