@@ -7,6 +7,8 @@
 #define X_MAX_PIN           2
 #define X_ENCDR_A          16
 #define X_ENCDR_B          17
+#define X_ENCDR_A_Q        31
+#define X_ENCDR_B_Q        33
 
 #define Y_STEP_PIN         60
 #define Y_DIR_PIN          61
@@ -15,6 +17,8 @@
 #define Y_MAX_PIN          15
 #define Y_ENCDR_A          23
 #define Y_ENCDR_B          25
+#define Y_ENCDR_A_Q        35
+#define Y_ENCDR_B_Q        37
 
 #define Z_STEP_PIN         46
 #define Z_DIR_PIN          48
@@ -23,6 +27,8 @@
 #define Z_MAX_PIN          19
 #define Z_ENCDR_A          27
 #define Z_ENCDR_B          29
+#define Z_ENCDR_A_Q        39
+#define Z_ENCDR_B_Q        41
 
 #define E_STEP_PIN         26
 #define E_DIR_PIN          28
