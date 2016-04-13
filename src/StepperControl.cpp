@@ -1,5 +1,4 @@
 #include "StepperControl.h"
-#include "TimerOne.h"
 
 static StepperControl* instance;
 
@@ -100,8 +99,6 @@ StepperControl::StepperControl() {
 	encoderX.loadPinNumbers(X_ENCDR_A, X_ENCDR_B);
 	encoderY.loadPinNumbers(Y_ENCDR_A, Y_ENCDR_B);
 	encoderZ.loadPinNumbers(Z_ENCDR_A, Z_ENCDR_B);
-
-	Timer1.start();
 
 }
 
@@ -887,16 +884,6 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis* axis, StepperControl
 	}
 }
 
-bool interruptBusy = false;
-void handleMovementInterruptTest(void) {
-	if (interruptBusy == false) {
-		interruptBusy = true;
-		StepperControl::getInstance()->handleMovementInterrupt();
-		//blinkLed();
-		interruptBusy = false;
-	}
-}
-
 void StepperControl::loadMotorSettings() {
 
 	// Load settings
@@ -972,13 +959,6 @@ void StepperControl::loadEncoderSettings() {
 	} else {
 		motorConsEncoderEnabled[2]	= false;
 	}
-}
-
-// Start the interrupt used for moviing
-// Interrupt management code library written by Paul Stoffregen
-void StepperControl::initInterrupt() {
-        Timer1.attachInterrupt(handleMovementInterruptTest);
-        Timer1.initialize(MOVEMENT_INTERRUPT_SPEED);
 }
 
 unsigned long StepperControl::getMaxLength(unsigned long lengths[3]) {

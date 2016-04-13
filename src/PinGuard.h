@@ -19,7 +19,7 @@ class PinGuard {
 public:
         static PinGuard* getInstance();
 
-	//void checkPins(int pinNr);
+	void checkPins();
 
 private:
 

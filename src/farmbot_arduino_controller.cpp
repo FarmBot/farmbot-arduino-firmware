@@ -4,6 +4,8 @@
 #include "Config.h"
 #include "StepperControl.h"
 #include "ServoControl.h"
+#include "PinGuard.h"
+#include "TimerOne.h"
 
 static char commandEndChar = 0x0A;
 static GCodeProcessor* gCodeProcessor = new GCodeProcessor();
@@ -11,8 +13,35 @@ static GCodeProcessor* gCodeProcessor = new GCodeProcessor();
 unsigned long lastAction;
 unsigned long currentTime;
 
+// Interrupt handling for:
+//   - movement
+//   - encoders
+//   - pin guard
+//
+bool interruptBusy = false;
+int interruptSecondTimer = 0;
+void interrupt(void) {
+	interruptSecondTimer++;
+
+        if (interruptBusy == false) {
+
+                interruptBusy = true;
+                StepperControl::getInstance()->handleMovementInterrupt();
+                //blinkLed();
+
+		if (interruptSecondTimer >= 1000000 / MOVEMENT_INTERRUPT_SPEED) {
+			PinGuard::getInstance()->checkPins();
+		}
+
+                interruptBusy = false;
+        }
+}
+
+
 //The setup function is called once at startup of the sketch
 void setup() {
+
+	// Setup pin input/output settings
 	pinMode(X_STEP_PIN  , OUTPUT);
 	pinMode(X_DIR_PIN   , OUTPUT);
 	pinMode(X_ENABLE_PIN, OUTPUT);
@@ -46,17 +75,21 @@ void setup() {
 	Serial.begin(115200);
 
 	ServoControl::getInstance()->attach();
-	StepperControl::getInstance()->initInterrupt();
-	//StepperControl::getInstance()->startTimer();
+	//StepperControl::getInstance()->initInterrupt();
 
+	// Start the interrupt used for moviing
+	// Interrupt management code library written by Paul Stoffregen
+	// The default time 100 micro seconds
+        Timer1.attachInterrupt(interrupt);
+        Timer1.initialize(MOVEMENT_INTERRUPT_SPEED);
+	Timer1.start();
+
+	// Initialize the inactivity check
 	lastAction = millis();
-
 }
 
 // The loop function is called in an endless loop
 void loop() {
-
-
 
 	if (Serial.available()) {
 
@@ -94,3 +127,4 @@ void loop() {
 		}
 	}
 }
+

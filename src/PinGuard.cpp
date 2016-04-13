@@ -14,6 +14,11 @@ PinGuard * PinGuard::getInstance() {
 PinGuard::PinGuard() {
 }
 
+void PinGuard::checkPins() {
+}
+
+
+
 /*
 int PinControl::setMode(int pinNr, int mode) {
 	pinMode(pinNr   , mode );
