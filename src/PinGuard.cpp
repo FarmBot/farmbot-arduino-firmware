@@ -12,66 +12,57 @@ PinGuard * PinGuard::getInstance() {
 ;
 
 PinGuard::PinGuard() {
+
+	pinGuardPin[0] = PinGuardPin();
+	pinGuardPin[1] = PinGuardPin();
+	pinGuardPin[2] = PinGuardPin();
+	pinGuardPin[3] = PinGuardPin();
+	pinGuardPin[4] = PinGuardPin();
+
+}
+
+void PinGuard::loadConfig() {
+
+	int  newPinNr;
+	bool newActiveState;
+	int  newTimeOut;
+
+	newPinNr       =  ParameterList::getInstance()->getValue(PIN_GUARD_1_PIN_NR);
+	newActiveState = (ParameterList::getInstance()->getValue(PIN_GUARD_1_ACTIVE_STATE)== 1);
+	newTimeOut     =  ParameterList::getInstance()->getValue(PIN_GUARD_1_TIME_OUT);
+
+	pinGuardPin[0].loadPinConfig(newPinNr, newActiveState, newTimeOut);
+
+	newPinNr       =  ParameterList::getInstance()->getValue(PIN_GUARD_2_PIN_NR);
+	newActiveState = (ParameterList::getInstance()->getValue(PIN_GUARD_2_ACTIVE_STATE)== 1);
+	newTimeOut     =  ParameterList::getInstance()->getValue(PIN_GUARD_2_TIME_OUT);
+
+	pinGuardPin[1].loadPinConfig(newPinNr, newActiveState, newTimeOut);
+
+	newPinNr       =  ParameterList::getInstance()->getValue(PIN_GUARD_3_PIN_NR);
+	newActiveState = (ParameterList::getInstance()->getValue(PIN_GUARD_3_ACTIVE_STATE)== 1);
+	newTimeOut     =  ParameterList::getInstance()->getValue(PIN_GUARD_3_TIME_OUT);
+
+	pinGuardPin[2].loadPinConfig(newPinNr, newActiveState, newTimeOut);
+
+	newPinNr       =  ParameterList::getInstance()->getValue(PIN_GUARD_4_PIN_NR);
+	newActiveState = (ParameterList::getInstance()->getValue(PIN_GUARD_4_ACTIVE_STATE)== 1);
+	newTimeOut     =  ParameterList::getInstance()->getValue(PIN_GUARD_4_TIME_OUT);
+
+	pinGuardPin[3].loadPinConfig(newPinNr, newActiveState, newTimeOut);
+
+	newPinNr       =  ParameterList::getInstance()->getValue(PIN_GUARD_5_PIN_NR);
+	newActiveState = (ParameterList::getInstance()->getValue(PIN_GUARD_5_ACTIVE_STATE)== 1);
+	newTimeOut     =  ParameterList::getInstance()->getValue(PIN_GUARD_5_TIME_OUT);
+
+	pinGuardPin[4].loadPinConfig(newPinNr, newActiveState, newTimeOut);
 }
 
 void PinGuard::checkPins() {
+	pinGuardPin[0].processTick();
+	pinGuardPin[1].processTick();
+	pinGuardPin[2].processTick();
+	pinGuardPin[3].processTick();
+	pinGuardPin[4].processTick();
+
 }
-
-
-
-/*
-int PinControl::setMode(int pinNr, int mode) {
-	pinMode(pinNr   , mode );
-	return 0;
-}
-
-int PinControl::writeValue(int pinNr, int value, int mode) {
-	if (mode == 0) {
-		digitalWrite(pinNr, value);
-		return 0;
-	}
-	if (mode == 1) {
-		analogWrite(pinNr, value);
-		return 0;
-	}
-	return 1;
-}
-
-int PinControl::readValue(int pinNr, int mode) {
-
-	int value = 0;
-
-	if (mode == 0) {
-		if (digitalRead(pinNr) == 0){
-			value = 1;
-		}
-	}
-	if (mode == 1) {
-		value = analogRead(pinNr);
-	}
-
-	if (mode == 0 || mode == 1) {
-
-		Serial.print("R41");
-		Serial.print(" ");
-		Serial.print("P");
-		Serial.print(pinNr);
-		Serial.print(" ");
-		Serial.print("V");
-		Serial.print(value);
-		Serial.print("\n");
-
-		return 0;
-	}
-	else {
-		return 1;
-	}
-}
-
-int  PinControl::writePulse(int pinNr, int valueOne, int valueTwo, long time, int mode) {
-	writeValue( pinNr, valueOne, mode);
-	delay(time);
-	writeValue( pinNr, valueTwo, mode);
-	return 0;
-}
-*/

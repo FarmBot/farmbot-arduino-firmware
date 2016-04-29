@@ -14,20 +14,26 @@
 #include "Config.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "PinGuardPin.h"
+#include "ParameterList.h"
 
 class PinGuard {
 public:
         static PinGuard* getInstance();
 
+	void loadConfig();
 	void checkPins();
 
 private:
 
 
-	long pinTimeOut[100];
-	long pinCurrentTime[100];
+	//long pinTimeOut[100];
+	//long pinCurrentTime[100];
 	//void checkPin;
 	//bool pinSafeState[100];
+
+	PinGuardPin pinGuardPin[5];
+	//PinGuardPin test;
 
         PinGuard();
         PinGuard(PinGuard const&);

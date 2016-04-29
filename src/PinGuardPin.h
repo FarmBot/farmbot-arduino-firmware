@@ -17,22 +17,21 @@
 
 class PinGuardPin {
 public:
-	int setMode(int pinNr, int mode);
-	int writeValue(int pinNr, int value, int mode);
-	int readValue(int pinNr, int mode);
-	int writePulse(int pinNr, int valueOne, int valueTwo, long time, int mode);
+
+        PinGuardPin();
 
 	void processTick();
 	void loadPinConfig(int newPinNr, bool newActiveState, int newTimeOut);
 private:
-        PinGuardPin();
         //PinControlPin(PinControlPin const&);
         ///void operator=(PinControlPin const&);
+
 	int pinNr;
 	long timeOut;
 	long timeOutCount;
 	bool activeState;
 	bool currentStatePin;
+
 };
 
 #endif /* PINGUARDPIN_H_ */
