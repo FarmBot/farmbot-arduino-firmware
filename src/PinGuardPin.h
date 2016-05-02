@@ -14,6 +14,7 @@
 #include "Config.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "ParameterList.h"
 
 class PinGuardPin {
 public:
@@ -21,7 +22,7 @@ public:
         PinGuardPin();
 
 	void processTick();
-	void loadPinConfig(int newPinNr, bool newActiveState, int newTimeOut);
+	void loadPinConfig(int pinNrParamNr, int activeStateParamNr, int timeOutParamNr);
 private:
         //PinControlPin(PinControlPin const&);
         ///void operator=(PinControlPin const&);

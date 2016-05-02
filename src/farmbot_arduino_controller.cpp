@@ -13,6 +13,12 @@ static GCodeProcessor* gCodeProcessor = new GCodeProcessor();
 unsigned long lastAction;
 unsigned long currentTime;
 
+bool blink = false;
+void blinkLed() {
+	blink = !blink;
+	digitalWrite(LED_PIN,blink);
+}
+
 // Interrupt handling for:
 //   - movement
 //   - encoders
@@ -27,7 +33,8 @@ void interrupt(void) {
 
                 interruptBusy = true;
                 StepperControl::getInstance()->handleMovementInterrupt();
-                //blinkLed();
+                //
+		blinkLed();
 
 		if (interruptSecondTimer >= 1000000 / MOVEMENT_INTERRUPT_SPEED) {
 			PinGuard::getInstance()->checkPins();
@@ -76,6 +83,9 @@ void setup() {
 
 	ServoControl::getInstance()->attach();
 	//StepperControl::getInstance()->initInterrupt();
+
+	// Get the settings for the pin guard
+	PinGuard::getInstance()->loadConfig();
 
 	// Start the interrupt used for moviing
 	// Interrupt management code library written by Paul Stoffregen

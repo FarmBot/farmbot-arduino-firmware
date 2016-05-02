@@ -6,10 +6,12 @@ PinGuardPin::PinGuardPin() {
 }
 
 // Set the initial settings for what pin to check
-void PinGuardPin::loadPinConfig(int newPinNr, bool newActiveState, int newTimeOut) {
-	pinNr		= newPinNr;
-	activeState	= newActiveState;
-	timeOut		= newTimeOut;
+void PinGuardPin::loadPinConfig(int pinNrParamNr, int activeStateParamNr, int timeOutParamNr) {
+
+        pinNr       =  ParameterList::getInstance()->getValue(pinNrParamNr);
+        activeState = (ParameterList::getInstance()->getValue(activeStateParamNr)== 1);
+        timeOut     =  ParameterList::getInstance()->getValue(timeOutParamNr);
+
 	timeOutCount	= 0;
 }
 
