@@ -33,11 +33,12 @@ void interrupt(void) {
 
                 interruptBusy = true;
                 StepperControl::getInstance()->handleMovementInterrupt();
-                //
-		blinkLed();
 
+                // Check the actions triggered once per second
 		if (interruptSecondTimer >= 1000000 / MOVEMENT_INTERRUPT_SPEED) {
+			interruptSecondTimer = 0;
 			PinGuard::getInstance()->checkPins();
+			//blinkLed();
 		}
 
                 interruptBusy = false;
@@ -81,8 +82,11 @@ void setup() {
 
 	Serial.begin(115200);
 
+	// Start the motor handling
 	ServoControl::getInstance()->attach();
-	//StepperControl::getInstance()->initInterrupt();
+
+	// Dump all values to the serial interface
+	ParameterList::getInstance()->readAllValues();
 
 	// Get the settings for the pin guard
 	PinGuard::getInstance()->loadConfig();

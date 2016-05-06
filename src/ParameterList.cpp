@@ -78,6 +78,12 @@ int ParameterList::writeValue(int id, int value) {
 
 int ParameterList::readAllValues() {
 
+
+	Serial.print("R99");
+	Serial.print(" ");
+	Serial.print("reading all values");
+	Serial.print("\n");
+
 	// Make a dump of all values
 	// Check if it's a valid value to keep the junk out of the list
 	for (int i; i < PARAM_NR_OF_PARAMS; i++)
@@ -265,6 +271,21 @@ bool ParameterList::validParam(int id) {
 		case ENCODER_MISSED_STEPS_DECAY_X:
 		case ENCODER_MISSED_STEPS_DECAY_Y:
 		case ENCODER_MISSED_STEPS_DECAY_Z:
+                case PIN_GUARD_1_PIN_NR:
+                case PIN_GUARD_1_TIME_OUT: 
+                case PIN_GUARD_1_ACTIVE_STATE:
+                case PIN_GUARD_2_PIN_NR:
+                case PIN_GUARD_2_TIME_OUT:
+                case PIN_GUARD_2_ACTIVE_STATE:
+                case PIN_GUARD_3_PIN_NR:
+                case PIN_GUARD_3_TIME_OUT:
+                case PIN_GUARD_3_ACTIVE_STATE:
+                case PIN_GUARD_4_PIN_NR:
+                case PIN_GUARD_4_TIME_OUT:
+                case PIN_GUARD_4_ACTIVE_STATE:
+                case PIN_GUARD_5_PIN_NR:
+                case PIN_GUARD_5_TIME_OUT:
+                case PIN_GUARD_5_ACTIVE_STATE:
 			return true;
 		default:
 			return false;

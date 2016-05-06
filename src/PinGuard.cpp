@@ -18,6 +18,7 @@ PinGuard::PinGuard() {
 	pinGuardPin[2] = PinGuardPin();
 	pinGuardPin[3] = PinGuardPin();
 	pinGuardPin[4] = PinGuardPin();
+	loadConfig();
 
 }
 

@@ -6,7 +6,7 @@
 
 
 //#define NULL 0
-const int PARAM_NR_OF_PARAMS= 0;
+const int PARAM_NR_OF_PARAMS = 300;
 
 
 enum ParamListEnum
