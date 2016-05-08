@@ -3,6 +3,7 @@
 
 #include "Arduino.h"
 #include "Config.h"
+#include "PinGuard.h"
 
 
 //#define NULL 0
@@ -108,6 +109,9 @@ public:
 
 	int readValueEeprom(int id);
 	int writeValueEeprom(int id, int value);
+
+	void sendConfigToModules();
+
 private:
 	ParameterList();
         ParameterList(ParameterList const&);

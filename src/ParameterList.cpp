@@ -73,7 +73,17 @@ int ParameterList::writeValue(int id, int value) {
 	Serial.print(value);
 	Serial.print("\n");
 
+	// If any value is written,
+	// trigger the loading of the new configuration in all other modules
+	sendConfigToModules();
+
 	return 0;
+}
+
+
+void ParameterList::sendConfigToModules() {
+	// Trigger other modules to load the new values
+	PinGuard::getInstance()->loadConfig();
 }
 
 int ParameterList::readAllValues() {

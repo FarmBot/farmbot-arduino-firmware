@@ -13,6 +13,7 @@ static GCodeProcessor* gCodeProcessor = new GCodeProcessor();
 unsigned long lastAction;
 unsigned long currentTime;
 
+// Blink led routine used for testing
 bool blink = false;
 void blinkLed() {
 	blink = !blink;
