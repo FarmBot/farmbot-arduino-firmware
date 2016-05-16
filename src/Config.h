@@ -99,6 +99,27 @@ const long ENCODER_MISSED_STEPS_DECAY_X_DEFAULT = 10;
 const long ENCODER_MISSED_STEPS_DECAY_Y_DEFAULT = 10;
 const long ENCODER_MISSED_STEPS_DECAY_Z_DEFAULT = 10;
 
+// pin guard default settings
+const long PIN_GUARD_1_PIN_NR_DEFAULT           = 0;
+const long PIN_GUARD_1_TIME_OUT_DEFAULT         = 60;
+const long PIN_GUARD_1_ACTIVE_STATE_DEFAULT     = 1;
+
+const long PIN_GUARD_2_PIN_NR_DEFAULT           = 0;
+const long PIN_GUARD_2_TIME_OUT_DEFAULT         = 60;
+const long PIN_GUARD_2_ACTIVE_STATE_DEFAULT     = 1;
+
+const long PIN_GUARD_3_PIN_NR_DEFAULT           = 0;
+const long PIN_GUARD_3_TIME_OUT_DEFAULT         = 60;
+const long PIN_GUARD_3_ACTIVE_STATE_DEFAULT     = 1;
+
+const long PIN_GUARD_4_PIN_NR_DEFAULT           = 0;
+const long PIN_GUARD_4_TIME_OUT_DEFAULT         = 60;
+const long PIN_GUARD_4_ACTIVE_STATE_DEFAULT     = 1;
+
+const long PIN_GUARD_5_PIN_NR_DEFAULT           = 0;
+const long PIN_GUARD_5_TIME_OUT_DEFAULT         = 60;
+const long PIN_GUARD_5_ACTIVE_STATE_DEFAULT     = 1;
+
 
 const long STATUS_GENERAL_DEFAULT               = 0;
 

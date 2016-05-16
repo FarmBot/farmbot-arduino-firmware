@@ -36,7 +36,7 @@ int PinControl::readValue(int pinNr, int mode) {
 	int value = 0;
 
 	if (mode == 0) {
-		if (digitalRead(pinNr) == 0){
+		if (digitalRead(pinNr) == 1){
 			value = 1;
 		}
 	}

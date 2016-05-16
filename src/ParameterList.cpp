@@ -2,7 +2,7 @@
 #include <EEPROM.h>
 
 static ParameterList* instanceParam;
-int paramValues[150];
+int paramValues[PARAM_NR_OF_PARAMS];
 
 ParameterList * ParameterList::getInstance() {
         if (!instanceParam) {
@@ -73,14 +73,30 @@ int ParameterList::writeValue(int id, int value) {
 	Serial.print(value);
 	Serial.print("\n");
 
+	// If any value is written,
+	// trigger the loading of the new configuration in all other modules
+	sendConfigToModules();
+
 	return 0;
+}
+
+
+void ParameterList::sendConfigToModules() {
+	// Trigger other modules to load the new values
+	PinGuard::getInstance()->loadConfig();
 }
 
 int ParameterList::readAllValues() {
 
+
+	Serial.print("R99");
+	Serial.print(" ");
+	Serial.print("reading all values");
+	Serial.print("\n");
+
 	// Make a dump of all values
 	// Check if it's a valid value to keep the junk out of the list
-	for (int i; i < 150; i++)
+	for (int i; i < PARAM_NR_OF_PARAMS; i++)
 	{
 		if (validParam(i)) {
 			readValue(i);
@@ -126,7 +142,7 @@ int ParameterList::writeValueEeprom(int id, int value) {
 
 int ParameterList::readAllValuesFromEeprom() {
 	// Write all existing values to eeprom
-	for (int i; i < 150; i++)
+	for (int i; i < PARAM_NR_OF_PARAMS; i++)
 	{
 		if (validParam(i)) {
 			paramValues[i] = readValueEeprom(i);
@@ -149,7 +165,7 @@ int ParameterList::writeAllValuesToEeprom() {
 
 int ParameterList::setAllValuesToDefault() {
 	// Copy default values to the memory values
-	for (int i; i < 150; i++)
+	for (int i; i < PARAM_NR_OF_PARAMS; i++)
 	{
 		if (validParam(i)) {
 			loadDefaultValue(i);
@@ -204,6 +220,27 @@ void ParameterList::loadDefaultValue(int id) {
 	        case ENCODER_MISSED_STEPS_DECAY_Y : paramValues[id] = ENCODER_MISSED_STEPS_DECAY_Y_DEFAULT; break;
 	        case ENCODER_MISSED_STEPS_DECAY_Z : paramValues[id] = ENCODER_MISSED_STEPS_DECAY_Z_DEFAULT; break;
 
+
+		case PIN_GUARD_1_PIN_NR           : paramValues[id] = PIN_GUARD_1_PIN_NR_DEFAULT; break;
+		case PIN_GUARD_1_TIME_OUT         : paramValues[id] = PIN_GUARD_1_TIME_OUT_DEFAULT; break;
+		case PIN_GUARD_1_ACTIVE_STATE     : paramValues[id] = PIN_GUARD_1_ACTIVE_STATE_DEFAULT; break;
+
+		case PIN_GUARD_2_PIN_NR           : paramValues[id] = PIN_GUARD_2_PIN_NR_DEFAULT; break;
+		case PIN_GUARD_2_TIME_OUT         : paramValues[id] = PIN_GUARD_2_TIME_OUT_DEFAULT; break;
+		case PIN_GUARD_2_ACTIVE_STATE     : paramValues[id] = PIN_GUARD_2_ACTIVE_STATE_DEFAULT; break;
+
+		case PIN_GUARD_3_PIN_NR           : paramValues[id] = PIN_GUARD_3_PIN_NR_DEFAULT; break;
+		case PIN_GUARD_3_TIME_OUT         : paramValues[id] = PIN_GUARD_3_TIME_OUT_DEFAULT; break;
+		case PIN_GUARD_3_ACTIVE_STATE     : paramValues[id] = PIN_GUARD_3_ACTIVE_STATE_DEFAULT; break;
+
+		case PIN_GUARD_4_PIN_NR           : paramValues[id] = PIN_GUARD_4_PIN_NR_DEFAULT; break;
+		case PIN_GUARD_4_TIME_OUT         : paramValues[id] = PIN_GUARD_4_TIME_OUT_DEFAULT; break;
+		case PIN_GUARD_4_ACTIVE_STATE     : paramValues[id] = PIN_GUARD_4_ACTIVE_STATE_DEFAULT; break;
+
+		case PIN_GUARD_5_PIN_NR           : paramValues[id] = PIN_GUARD_5_PIN_NR_DEFAULT; break;
+		case PIN_GUARD_5_TIME_OUT         : paramValues[id] = PIN_GUARD_5_TIME_OUT_DEFAULT; break;
+		case PIN_GUARD_5_ACTIVE_STATE     : paramValues[id] = PIN_GUARD_5_ACTIVE_STATE_DEFAULT; break;
+
 		default : paramValues[id] = 0; break;
 	}
 }
@@ -244,6 +281,21 @@ bool ParameterList::validParam(int id) {
 		case ENCODER_MISSED_STEPS_DECAY_X:
 		case ENCODER_MISSED_STEPS_DECAY_Y:
 		case ENCODER_MISSED_STEPS_DECAY_Z:
+                case PIN_GUARD_1_PIN_NR:
+                case PIN_GUARD_1_TIME_OUT: 
+                case PIN_GUARD_1_ACTIVE_STATE:
+                case PIN_GUARD_2_PIN_NR:
+                case PIN_GUARD_2_TIME_OUT:
+                case PIN_GUARD_2_ACTIVE_STATE:
+                case PIN_GUARD_3_PIN_NR:
+                case PIN_GUARD_3_TIME_OUT:
+                case PIN_GUARD_3_ACTIVE_STATE:
+                case PIN_GUARD_4_PIN_NR:
+                case PIN_GUARD_4_TIME_OUT:
+                case PIN_GUARD_4_ACTIVE_STATE:
+                case PIN_GUARD_5_PIN_NR:
+                case PIN_GUARD_5_TIME_OUT:
+                case PIN_GUARD_5_ACTIVE_STATE:
 			return true;
 		default:
 			return false;

@@ -3,9 +3,11 @@
 
 #include "Arduino.h"
 #include "Config.h"
+#include "PinGuard.h"
 
 
 //#define NULL 0
+const int PARAM_NR_OF_PARAMS = 300;
 
 
 enum ParamListEnum
@@ -59,7 +61,29 @@ enum ParamListEnum
 	// not used in software at this time
 	MOVEMENT_AXIS_NR_STEPS_X	= 141,
 	MOVEMENT_AXIS_NR_STEPS_Y	= 142,
-	MOVEMENT_AXIS_NR_STEPS_Z	= 143
+	MOVEMENT_AXIS_NR_STEPS_Z	= 143,
+
+
+	// pin guard settings
+	PIN_GUARD_1_PIN_NR		= 201,
+	PIN_GUARD_1_TIME_OUT		= 202,
+	PIN_GUARD_1_ACTIVE_STATE	= 203,
+
+	PIN_GUARD_2_PIN_NR		= 205,
+	PIN_GUARD_2_TIME_OUT		= 206,
+	PIN_GUARD_2_ACTIVE_STATE	= 207,
+
+	PIN_GUARD_3_PIN_NR		= 211,
+	PIN_GUARD_3_TIME_OUT		= 212,
+	PIN_GUARD_3_ACTIVE_STATE	= 213,
+
+	PIN_GUARD_4_PIN_NR		= 215,
+	PIN_GUARD_4_TIME_OUT		= 216,
+	PIN_GUARD_4_ACTIVE_STATE	= 217,
+
+	PIN_GUARD_5_PIN_NR		= 221,
+	PIN_GUARD_5_TIME_OUT		= 222,
+	PIN_GUARD_5_ACTIVE_STATE	= 223
 
 };
 
@@ -85,6 +109,9 @@ public:
 
 	int readValueEeprom(int id);
 	int writeValueEeprom(int id, int value);
+
+	void sendConfigToModules();
+
 private:
 	ParameterList();
         ParameterList(ParameterList const&);
