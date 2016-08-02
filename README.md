@@ -24,10 +24,24 @@ sudo make install
 
 Command line flash tool use
 ==========================
+**NOTE:** We tag releases when they are stable. The latest version (on master) is not guaranteed to be stable.
+
+See [releases](https://github.com/FarmBot/farmbot-arduino-firmware/releases) to find a stable release.
+
+**OPTION A:** For less stable "edge" version:
+
+```
+git clone  https://github.com/FarmBot/farmbot-arduino-firmware
+```
+
+**OPTION B:** For stable release 1.0:
+
+```
+git clone -b 'alpha-1.0' --single-branch  https://github.com/FarmBot/farmbot-arduino-firmware
+```
 To flash the firmware onto the device, run this:
 
 ```
-git clone https://github.com/FarmBot/farmbot-arduino-firmware.git
 cd farmbot-arduino-firmware
 ino build
 ino upload
