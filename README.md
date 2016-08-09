@@ -10,7 +10,7 @@ Command line flash tool installation
 ==========================
 
 ```
-sudo apt-get install gcc-avr avr-libc avrdude python-configobj python-jinja2 python-serial
+sudo apt-get install arduino gcc-avr avr-libc avrdude python-configobj python-jinja2 python-serial
 mkdir tmp
 cd tmp
 git clone https://github.com/miracle2k/python-glob2
@@ -113,7 +113,7 @@ F        |32    |P V       |Write status
 F        |41    |P V M     |Set a value V on an arduino pin in mode M (digital=0/analog=1)
 F        |42    |P M       |Read a value from an arduino pin P in mode M (digital=0/analog=1)
 F        |43    |P M       |Set the I/O mode M (input=0/output=1) of a pin P in arduino 
-F        |44    |P V W T M |Set the value V on an arduino pin P, wait for time T in miliseconds, set value W on the arduino pin P in mode M (digital=0/analog=1)
+F        |44    |P V W T M |Set the value V on an arduino pin P, wait for time T in milliseconds, set value W on the arduino pin P in mode M (digital=0/analog=1)
 F        |51    |E P V     |Set a value on the tool mount with I2C (not implemented)
 F        |52    |E P       |Read value from the tool mount with I2C (not implemented)
 F        |61    |P V       |Set the servo on the pin P (only pin 4 and 5) to the requested angle V
@@ -126,11 +126,11 @@ E        |      |          |Emergency stop
          |      |          |
 R        |      |          |Report messages
 R        |01    |          |Current command started
-R        |02    |          |Current command finished succesfully
+R        |02    |          |Current command finished successfully
 R        |03    |          |Current command finished with error
 R        |04    |          |Current command running
 R        |05    |          |Report motor/axis state
-R        |06    |          |Report calibation state during execution
+R        |06    |          |Report calibration state during execution
 R        |21    |P V       |Report parameter value
 R        |31    |P V       |Report status value
 R        |41    |P V       |Report pin value
@@ -174,7 +174,7 @@ X         |X movement             |steps
 Y         |Y movement             |steps
 Z         |Z movement	          |steps
 S         |Speed                  |steps/second
-Q         |Quanity                |counter ticks
+Q         |Quantity               |counter ticks
 T         |Time                   |seconds
 C         |Comment                |text
 P         |Parameter/pin number   |#
@@ -192,7 +192,7 @@ YB        |End stop 2 on y axis   |0/1
 ZA        |End stop 1 on z axis   |0/1
 ZB        |End stop 2 on z axis   |0/1
 
-Arduino paramter numbers
+Arduino parameter numbers
 ------------------------
 
 Parameter name               |Parameter id
