@@ -289,15 +289,3 @@ PIN_GUARD_4_ACTIVE_STATE     |217
 PIN_GUARD_5_PIN_NR           |221
 PIN_GUARD_5_TIME_OUT         |222
 PIN_GUARD_5_ACTIVE_STATE     |223
-	
-Pins not used by RAMPS board
-----------------------------
-
-Pin |Function
-----|------------
-16  |Encoder X channel A
-17  |Encoder X channel B
-23  |Encoder Y channel A
-25  |Encoder Y channel B
-27  |Encoder Z channel A
-29  |Encoder Z channel B
