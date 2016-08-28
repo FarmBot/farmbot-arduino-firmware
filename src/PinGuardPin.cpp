@@ -1,5 +1,6 @@
 
 #include "PinGuardPin.h"
+#include "ParameterList.h"
 
 PinGuardPin::PinGuardPin() {
 	pinNr = 0;
