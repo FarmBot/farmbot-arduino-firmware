@@ -100,6 +100,7 @@ StepperControl::StepperControl() {
 	encoderY.loadPinNumbers(Y_ENCDR_A, Y_ENCDR_B);
 	encoderZ.loadPinNumbers(Z_ENCDR_A, Z_ENCDR_B);
 
+	motorEnabled = false;
 }
 
 void StepperControl::test() {
@@ -973,6 +974,8 @@ unsigned long StepperControl::getMaxLength(unsigned long lengths[3]) {
 
 void StepperControl::enableMotors() {
 
+	motorEnabled = true;
+
 	axisX.enableMotor();
 	axisY.enableMotor();
 	axisZ.enableMotor();
@@ -980,10 +983,17 @@ void StepperControl::enableMotors() {
 }
 
 void StepperControl::disableMotors() {
+
+	motorEnabled = false;
+
 	axisX.disableMotor();
 	axisY.disableMotor();
 	axisZ.disableMotor();
 	delay(100);
+}
+
+bool StepperControl::isMotorEnabled() {
+	return motorEnabled;
 }
 
 bool StepperControl::endStopsReached() {
