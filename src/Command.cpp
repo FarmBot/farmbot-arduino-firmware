@@ -41,7 +41,7 @@ Command::Command(String commandString) {
 	}
 	while (charPointer != NULL) {
 		getParameter(charPointer);
-		charPointer = strtok(NULL, " \n\r");
+		charPointer = strtok(NULL, " \r\n");
 	}
 }
 
@@ -189,7 +189,7 @@ void Command::print() {
 	Serial.print(element);
 	Serial.print(", M: ");
 	Serial.print(mode);
-	Serial.print("\n");
+	Serial.print("\r\n");
 }
 
 CommandCodeEnum Command::getCodeEnum() {
@@ -243,4 +243,3 @@ long Command::getE() {
 long Command::getM() {
 	return mode;
 }
-

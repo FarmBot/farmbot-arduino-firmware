@@ -25,7 +25,7 @@ F12Handler::F12Handler() {
 int F12Handler::execute(Command* command) {
 
         if (LOGGING) {
-                Serial.print("R99 HOME Y\n");
+                Serial.print("R99 HOME Y\r\n");
         }
 
         StepperControl::getInstance()->moveToCoords(0,0,0, 0,0,0, false, true, false);

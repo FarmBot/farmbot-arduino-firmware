@@ -40,9 +40,9 @@ int ParameterList::readValue(int id) {
 		Serial.print(" ");
 		Serial.print("V");
 		Serial.print(value);
-		Serial.print("\n");
+		Serial.print("\r\n");
 	} else  {
-		Serial.print("R99 Error: invalid parameter id\n");
+		Serial.print("R99 Error: invalid parameter id\r\n");
 	}
 
 	return 0;
@@ -56,7 +56,7 @@ int ParameterList::writeValue(int id, int value) {
 		paramValues[id] = value;
 		writeValueEeprom(id, value);
 	} else  {
-		Serial.print("R99 Error: invalid parameter id\n");
+		Serial.print("R99 Error: invalid parameter id\r\n");
 	}
 
 	// Debugging output
@@ -71,7 +71,7 @@ int ParameterList::writeValue(int id, int value) {
 	Serial.print("V");
 	Serial.print(" ");
 	Serial.print(value);
-	Serial.print("\n");
+	Serial.print("\r\n");
 
 	// If any value is written,
 	// trigger the loading of the new configuration in all other modules
@@ -92,7 +92,7 @@ int ParameterList::readAllValues() {
 	Serial.print("R99");
 	Serial.print(" ");
 	Serial.print("reading all values");
-	Serial.print("\n");
+	Serial.print("\r\n");
 
 	// Make a dump of all values
 	// Check if it's a valid value to keep the junk out of the list

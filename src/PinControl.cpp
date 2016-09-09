@@ -53,7 +53,7 @@ int PinControl::readValue(int pinNr, int mode) {
 		Serial.print(" ");
 		Serial.print("V");
 		Serial.print(value);
-		Serial.print("\n");
+		Serial.print("\r\n");
 
 		return 0;
 	}

@@ -15,7 +15,7 @@ void StepperControl::reportStatus(StepperControlAxis* axis, int axisStatus) {
 		Serial.print(" ");
 		Serial.print(axis->label);
 		Serial.print(axisStatus);
-		Serial.print("\n");
+		Serial.print("\r\n");
 }
 
 void StepperControl::reportCalib(StepperControlAxis* axis, int calibStatus) {
@@ -23,7 +23,7 @@ void StepperControl::reportCalib(StepperControlAxis* axis, int calibStatus) {
 		Serial.print(" ");
 		Serial.print(axis->label);
 		Serial.print(calibStatus);
-		Serial.print("\n");
+		Serial.print("\r\n");
 }
 
 void StepperControl::checkAxisSubStatus(StepperControlAxis* axis, int* axisSubStatus) {
@@ -252,14 +252,14 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 			axisX.deactivateAxis();
 			Serial.print("R99");
 			Serial.print(" deactivate motor X due to missed steps");
-			Serial.print("\n");
+			Serial.print("\r\n");
 
 			if (axisX.movingToHome()) {
 				encoderX.setPosition(0);
 				axisX.setCurrentPosition(0);
 				Serial.print("R99");
 				Serial.print(" home position X axis detected with encoder");
-				Serial.print("\n");
+				Serial.print("\r\n");
 			}
 
 		}
@@ -268,14 +268,14 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 			axisY.deactivateAxis();
 			Serial.print("R99");
 			Serial.print(" deactivate motor Y due to missed steps");
-			Serial.print("\n");
+			Serial.print("\r\n");
 
 			if (axisY.movingToHome()) {
 				encoderY.setPosition(0);
 				axisY.setCurrentPosition(0);
 				Serial.print("R99");
 				Serial.print(" home position Y axis detected with encoder");
-				Serial.print("\n");
+				Serial.print("\r\n");
 			}
 		}
 
@@ -283,14 +283,14 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 			axisZ.deactivateAxis();
 			Serial.print("R99");
 			Serial.print(" deactivate motor Z due to missed steps");
-			Serial.print("\n");
+			Serial.print("\r\n");
 
 			if (axisZ.movingToHome()) {
 				encoderZ.setPosition(0);
 				axisZ.setCurrentPosition(0);
 				Serial.print("R99");
 				Serial.print(" home position Z axis detected with encoder");
-				Serial.print("\n");
+				Serial.print("\r\n");
 			}
 		}
 
@@ -326,21 +326,21 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 
 		// Check timeouts
 		if (axisActive[0] == true && ((millis() >= timeStart && millis() - timeStart > timeOut[0] * 1000) || (millis() < timeStart && millis() > timeOut[0] * 1000))) {
-			Serial.print("R99 timeout X axis\n");
+			Serial.print("R99 timeout X axis\r\n");
 			error = 1;
 		}
 		if (axisActive[1] == true && ((millis() >= timeStart && millis() - timeStart > timeOut[0] * 1000) || (millis() < timeStart && millis() > timeOut[0] * 1000))) {
-			Serial.print("R99 timeout Y axis\n");
+			Serial.print("R99 timeout Y axis\r\n");
 			error = 1;
 		}
 		if (axisActive[2] == true && ((millis() >= timeStart && millis() - timeStart > timeOut[0] * 1000) || (millis() < timeStart && millis() > timeOut[0] * 1000))) {
-			Serial.print("R99 timeout Z axis\n");
+			Serial.print("R99 timeout Z axis\r\n");
 			error = 1;
 		}
 
 		// Check if there is an emergency stop command
 		if (Serial.available() > 0) {
-			Serial.print("R99 emergency stop\n");
+			Serial.print("R99 emergency stop\r\n");
                 	incomingByte = Serial.read();
 			if (incomingByte == 69 || incomingByte == 101) {
 				error = 1;
@@ -348,7 +348,7 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 	        }
 
 		if (error == 1) {
-			Serial.print("R99 error\n");
+			Serial.print("R99 error\r\n");
 
 			axisActive[0] = false;
 			axisActive[1] = false;
@@ -363,7 +363,7 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 		//if (1 == 1) 
 		{
 			Serial.print(COMM_REPORT_CMD_BUSY);
-			Serial.print("\n");
+			Serial.print("\r\n");
 			reportPosition();
 				/*
 				Serial.print("R99");
@@ -371,7 +371,7 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 				Serial.print(encoderX.currentPosition());
 				Serial.print(" axis pos ");
 				Serial.print(axisX.currentPosition());
-				Serial.print("\n");
+				Serial.print("\r\n");
 
 				Serial.print("R99");
 				Serial.print(" missed step ");
@@ -380,7 +380,7 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 				Serial.print(encoderX.currentPosition());
 				Serial.print(" axis pos ");
 				Serial.print(axisX.currentPosition());
-				Serial.print("\n");
+				Serial.print("\r\n");
 				*/
 
 			//Serial.print("R99");
@@ -390,13 +390,13 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 			//Serial.print(encoderX.currentPosition());
 			//Serial.print(" axis pos ");
 			//Serial.print(axisX.currentPosition());
-			//Serial.print("\n");
+			//Serial.print("\r\n");
 
 		}
 
 	}
 
-	Serial.print("R99 stopped\n");
+	Serial.print("R99 stopped\r\n");
 
 	// Stop motors
 
@@ -523,7 +523,7 @@ int StepperControl::calibrateAxis(int axis) {
 			axisStatus       = &axisSubStep[2];
 			break;
 		default:
-			Serial.print("R99 Calibration error: invalid axis selected\n");
+			Serial.print("R99 Calibration error: invalid axis selected\r\n");
 			return 1;
 	}
 
@@ -531,7 +531,7 @@ int StepperControl::calibrateAxis(int axis) {
 	// Preliminary checks
 
 	if (calibAxis->endStopMin() || calibAxis->endStopMax()) {
-		Serial.print("R99 Calibration error: end stop active before start\n");
+		Serial.print("R99 Calibration error: end stop active before start\r\n");
 		return 1;
 	}
 
@@ -539,7 +539,7 @@ int StepperControl::calibrateAxis(int axis) {
 	Serial.print(" axis ");
 	Serial.print(calibAxis->label);
 	Serial.print(" move to start for calibration");
-	Serial.print("\n");
+	Serial.print("\r\n");
 
 	*axisStatus = COMM_REPORT_MOVE_STATUS_START_MOTOR;
 	reportStatus(&axisX, axisSubStep[0]);
@@ -570,7 +570,7 @@ int StepperControl::calibrateAxis(int axis) {
                 if (Serial.available() > 0) {
                         incomingByte = Serial.read();
                         if (incomingByte == 69 || incomingByte == 101) {
-				Serial.print("R99 emergency stop\n");
+				Serial.print("R99 emergency stop\r\n");
                                 movementDone = true;
 				error = 1;
                         }
@@ -593,7 +593,7 @@ int StepperControl::calibrateAxis(int axis) {
 	                {
 				// Periodically send message still active
 	                        Serial.print(COMM_REPORT_CMD_BUSY);
-	                        Serial.print("\n");
+	                        Serial.print("\r\n");
 	                }
 
 	                if (stepsCount % (speedMin[axis] / 6) == 0 /*|| *missedSteps > 3*/)
@@ -609,7 +609,7 @@ int StepperControl::calibrateAxis(int axis) {
 				Serial.print(calibAxis->currentPosition());
 				Serial.print(" cur pos enc ");
 				Serial.print(calibEncoder->currentPosition());
-				Serial.print("\n");
+				Serial.print("\r\n");
 			}
 
 			calibAxis->resetMotorStep();
@@ -617,7 +617,7 @@ int StepperControl::calibrateAxis(int axis) {
 
 		} else {
 			movementDone = true;
-			Serial.print("R99 movement done\n");
+			Serial.print("R99 movement done\r\n");
 
 			// If end stop for home is active, set the position to zero
 			if (calibAxis->endStopMax())
@@ -633,7 +633,7 @@ int StepperControl::calibrateAxis(int axis) {
 	Serial.print(" axis ");
 	Serial.print(calibAxis->label);
 	Serial.print(" at starting point");
-	Serial.print("\n");
+	Serial.print("\r\n");
 
 	// Report back the end stop setting
 
@@ -651,7 +651,7 @@ int StepperControl::calibrateAxis(int axis) {
 		Serial.print(" ");
 		Serial.print("V");
 		Serial.print(paramValueInt);
-		Serial.print("\n");
+		Serial.print("\r\n");
 	}
 
 	// Store the status of the system
@@ -665,7 +665,7 @@ int StepperControl::calibrateAxis(int axis) {
 	Serial.print(" axis ");
 	Serial.print(calibAxis->label);
 	Serial.print(" calibrating length");
-	Serial.print("\n");
+	Serial.print("\r\n");
 
 	stepsCount   = 0;
 	movementDone = false;
@@ -686,7 +686,7 @@ int StepperControl::calibrateAxis(int axis) {
                 if (Serial.available() > 0) {
                         incomingByte = Serial.read();
                         if (incomingByte == 69 || incomingByte == 101) {
-				Serial.print("R99 emergency stop\n");
+				Serial.print("R99 emergency stop\r\n");
                                 movementDone = true;
 				error = 1;
                         }
@@ -712,7 +712,7 @@ int StepperControl::calibrateAxis(int axis) {
         	        {
 				// Periodically send message still active
 	                        Serial.print(COMM_REPORT_CMD_BUSY);
-	                        Serial.print("\n");
+	                        Serial.print("\r\n");
 	                }
 			/*
 	                if (stepsCount % (speedMin[axis] / 6) == 0)
@@ -728,7 +728,7 @@ int StepperControl::calibrateAxis(int axis) {
 				Serial.print(calibAxis->currentPosition());
 				Serial.print(" cur pos enc ");
 				Serial.print(calibEncoder->currentPosition());
-				Serial.print("\n");
+				Serial.print("\r\n");
 			}
 			*/
 
@@ -736,7 +736,7 @@ int StepperControl::calibrateAxis(int axis) {
 			delayMicroseconds(100000 / speedMin[axis] /2);
 
 		} else {
-			Serial.print("R99 movement done\n");
+			Serial.print("R99 movement done\r\n");
 			movementDone = true;
 		}
 	}
@@ -746,7 +746,7 @@ int StepperControl::calibrateAxis(int axis) {
 	Serial.print(" axis ");
 	Serial.print(calibAxis->label);
 	Serial.print(" at end point");
-	Serial.print("\n");
+	Serial.print("\r\n");
 
 	encoderEndPoint = calibEncoder->currentPosition();
 
@@ -766,7 +766,7 @@ int StepperControl::calibrateAxis(int axis) {
 		Serial.print(" ");
 		Serial.print("V");
 		Serial.print(stepsCount);
-		Serial.print("\n");
+		Serial.print("\r\n");
 	}
 
         *axisStatus = COMM_REPORT_MOVE_STATUS_STOP_MOTOR;
@@ -855,7 +855,7 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis* axis, StepperControl
 			Serial.print(*encoderStepDecay);
 			Serial.print(" enabled ");
 			Serial.print(*encoderEnabled);
-			Serial.print("\n");
+			Serial.print("\r\n");
 		}
 		*/
 

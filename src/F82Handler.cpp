@@ -26,7 +26,7 @@ F82Handler::F82Handler() {
 int F82Handler::execute(Command* command) {
 
         if (LOGGING) {
-                Serial.print("R99 Report current position\n");
+                Serial.print("R99 Report current position\r\n");
         }
 
         CurrentState::getInstance()->printPosition();
