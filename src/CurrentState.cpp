@@ -78,7 +78,7 @@ void CurrentState::printPosition() {
 	Serial.print(y);
 	Serial.print(" Z");
 	Serial.print(z);
-	Serial.print("\n");
+	Serial.print("\r\n");
 }
 
 void CurrentState::printBool(bool value)
@@ -107,7 +107,7 @@ void CurrentState::printEndStops() {
 	printBool(endStopState[2][0]);
 	Serial.print(" ZB");
 	printBool(endStopState[2][1]);
-	Serial.print("\n");
+	Serial.print("\r\n");
 }
 
 void CurrentState::print() {

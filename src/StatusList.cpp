@@ -34,7 +34,7 @@ int StatusList::readValue(int id) {
 	Serial.print(" ");
 	Serial.print("V");
 	Serial.print(value);
-	Serial.print("\n");
+	Serial.print("\r\n");
 
 
 	return 0;
@@ -51,7 +51,7 @@ long StatusList::getValue(int id) {
 	Serial.print(id);
 	Serial.print(" value");
 	Serial.print(paramValues[id]);
-	Serial.print("\n");
+	Serial.print("\r\n");
 */
 
 	return  statusValues[id];

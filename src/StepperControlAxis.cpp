@@ -35,7 +35,7 @@ void StepperControlAxis::test() {
                 //Serial.print(" cons steps missed = ");
                 //Serial.print(label);
                 //Serial.print(consMissedSteps);
-                Serial.print("\n");
+                Serial.print("\r\n");
 }
 
 unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long currentPosition, long destinationPosition, long minSpeed, long maxSpeed, long stepsAccDec) {
@@ -125,7 +125,7 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
 		Serial.print(" ");
 		Serial.print(newSpeed);
 
-		Serial.print("\n");
+		Serial.print("\r\n");
 	}
 
 
