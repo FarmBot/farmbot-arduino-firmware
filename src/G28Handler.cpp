@@ -23,7 +23,7 @@ G28Handler::G28Handler() {
 
 int G28Handler::execute(Command* command) {
 
-Serial.print("home\r\n");
+//Serial.print("home\r\n");
 
 	StepperControl::getInstance()->moveToCoords(0,0,0, 0,0,0, false, false, true);
 	StepperControl::getInstance()->moveToCoords(0,0,0, 0,0,0, true,  true,  false);

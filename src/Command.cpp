@@ -9,6 +9,7 @@ const char parameterValue2Code= 'W';
 const char elementCode        = 'E';
 const char timeCode           = 'T';
 const char modeCode           = 'M';
+const char msgQueueCode       = 'Q';
 
 double axisValue[3] 		= { 0.0, 0.0, 0.0 };
 long   axisSpeedValue[3] 	= { 0, 0, 0 };
@@ -19,6 +20,7 @@ long   parameterValue2          = 0;
 long   element                  = 0;
 long   time                     = 0;
 long   mode                     = 0;
+long   msgQueue                 = 0;
 
 CommandCodeEnum commandCodeEnum = CODE_UNDEFINED;
 
@@ -161,6 +163,8 @@ void Command::getParameter(char* charPointer) {
 		time              =  atof(charPointer + 1 );
 	} else if (charPointer[0] == modeCode             ){
 		mode              =  atof(charPointer + 1 );
+	} else if (charPointer[0] == msgQueueCode         ){
+		msgQueue          =  atof(charPointer + 1 );
 	}
 
 }
@@ -189,6 +193,8 @@ void Command::print() {
 	Serial.print(element);
 	Serial.print(", M: ");
 	Serial.print(mode);
+	Serial.print(", Q: ");
+	Serial.print(msgQueue);
 	Serial.print("\r\n");
 }
 
@@ -242,4 +248,8 @@ long Command::getE() {
 
 long Command::getM() {
 	return mode;
+}
+
+long Command::getQ() {
+	return msgQueue;
 }

@@ -23,6 +23,8 @@ void GCodeProcessor::printCommandLog(Command* command) {
 }
 
 int GCodeProcessor::execute(Command* command) {
+	long Q = command->getQ();
+
 	if(command == NULL || command->getCodeEnum() == CODE_UNDEFINED) {
 		if(LOGGING) {
 			printCommandLog(command);
@@ -35,11 +37,22 @@ int GCodeProcessor::execute(Command* command) {
 		return -1;
 	}
 	Serial.println(COMM_REPORT_CMD_START);
+	Serial.print(" Q");
+	Serial.print(Q);
+	Serial.print("\n\r");
+
 	int execution = handler->execute(command);
 	if(execution == 0) {
 		Serial.println(COMM_REPORT_CMD_DONE);
+		Serial.print(" Q");
+		Serial.print(Q);
+		Serial.print("\n\r");
 	} else {
 		Serial.println(COMM_REPORT_CMD_ERROR);
+		Serial.print(" Q");
+		Serial.print(Q);
+		Serial.print("\n\r");
+
 	}
 	return execution;
 };

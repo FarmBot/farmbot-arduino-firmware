@@ -55,6 +55,7 @@ public:
 	long getT();
 	long getE();
 	long getM();
+	long getQ();
 
 private:
 	CommandCodeEnum getGCodeEnum(char* code);
