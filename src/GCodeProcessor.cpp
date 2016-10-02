@@ -7,6 +7,7 @@
  */
 
 #include "GCodeProcessor.h"
+#include "CurrentState.h"
 
 GCodeProcessor::GCodeProcessor() {
 
@@ -24,6 +25,8 @@ void GCodeProcessor::printCommandLog(Command* command) {
 
 int GCodeProcessor::execute(Command* command) {
 	long Q = command->getQ();
+	//Q = 99;
+	CurrentState::getInstance()->setQ(Q);
 
 	if(command == NULL || command->getCodeEnum() == CODE_UNDEFINED) {
 		if(LOGGING) {
@@ -33,27 +36,31 @@ int GCodeProcessor::execute(Command* command) {
 	}
 	GCodeHandler* handler = getGCodeHandler(command->getCodeEnum());
 	if(handler == NULL) {
-		Serial.println("This is false: handler == NULL");
+		Serial.println("R99 This is false: handler == NULL");
 		return -1;
 	}
-	Serial.println(COMM_REPORT_CMD_START);
-	Serial.print(" Q");
-	Serial.print(Q);
-	Serial.print("\n\r");
+	Serial.print(COMM_REPORT_CMD_START);
+	CurrentState::getInstance()->printQAndNewLine();
+	//Serial.print(" Q");
+	//Serial.print(Q);
+	//Serial.print("\n\r");
 
 	int execution = handler->execute(command);
 	if(execution == 0) {
-		Serial.println(COMM_REPORT_CMD_DONE);
-		Serial.print(" Q");
-		Serial.print(Q);
-		Serial.print("\n\r");
+		Serial.print(COMM_REPORT_CMD_DONE);
+		CurrentState::getInstance()->printQAndNewLine();
+		//Serial.print(" Q");
+		//Serial.print(Q);
+		//Serial.print("\n\r");
 	} else {
-		Serial.println(COMM_REPORT_CMD_ERROR);
-		Serial.print(" Q");
-		Serial.print(Q);
-		Serial.print("\n\r");
-
+		Serial.print(COMM_REPORT_CMD_ERROR);
+		CurrentState::getInstance()->printQAndNewLine();
+		//Serial.print(" Q");
+		//Serial.print(Q);
+		//Serial.print("\n\r");
 	}
+
+	CurrentState::getInstance()->resetQ();
 	return execution;
 };
 

@@ -13,6 +13,7 @@ long y = 0;
 long z = 0;
 unsigned int speed = 0;
 bool endStopState[3][2];
+long Q = 0;
 
 CurrentState * CurrentState::getInstance() {
 	if (!instance) {
@@ -26,6 +27,7 @@ CurrentState::CurrentState() {
 	y = 0;
 	z = 0;
 	speed = 0;
+	Q = 0;
 }
 
 long CurrentState::getX() {
@@ -78,7 +80,8 @@ void CurrentState::printPosition() {
 	Serial.print(y);
 	Serial.print(" Z");
 	Serial.print(z);
-	Serial.print("\r\n");
+//	Serial.print("\r\n");
+	printQAndNewLine();
 }
 
 void CurrentState::printBool(bool value)
@@ -86,8 +89,8 @@ void CurrentState::printBool(bool value)
 	if (value)
 	{
 		Serial.print("1");
-	} 
-	else 
+	}
+	else
 	{
 		Serial.print("0");
 	}
@@ -107,7 +110,8 @@ void CurrentState::printEndStops() {
 	printBool(endStopState[2][0]);
 	Serial.print(" ZB");
 	printBool(endStopState[2][1]);
-	Serial.print("\r\n");
+	//Serial.print("\r\n");
+	printQAndNewLine();
 }
 
 void CurrentState::print() {
@@ -115,4 +119,16 @@ void CurrentState::print() {
 	printEndStops();
 }
 
+void CurrentState::setQ(int q) {
+	Q = q;
+}
 
+void CurrentState::resetQ() {
+	Q = 0;
+}
+
+void CurrentState::printQAndNewLine() {
+        Serial.print(" Q");
+        Serial.print(Q);
+        Serial.print("\r\n");
+}

@@ -14,6 +14,7 @@
 #include "Config.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "CurrentState.h"
 
 class PinControl {
 public:

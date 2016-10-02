@@ -31,7 +31,8 @@ int F83Handler::execute(Command* command) {
 
 	Serial.print("R83 ");
 	Serial.print(SOFTWARE_VERSION);
-	Serial.print("\r\n");
+	//Serial.print("\r\n");
+	CurrentState::getInstance()->printQAndNewLine();
 
         return 0;
 }

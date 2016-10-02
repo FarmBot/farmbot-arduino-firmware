@@ -15,7 +15,8 @@ void StepperControl::reportStatus(StepperControlAxis* axis, int axisStatus) {
 		Serial.print(" ");
 		Serial.print(axis->label);
 		Serial.print(axisStatus);
-		Serial.print("\r\n");
+		//Serial.print("\r\n");
+		CurrentState::getInstance()->printQAndNewLine();
 }
 
 void StepperControl::reportCalib(StepperControlAxis* axis, int calibStatus) {
@@ -23,7 +24,8 @@ void StepperControl::reportCalib(StepperControlAxis* axis, int calibStatus) {
 		Serial.print(" ");
 		Serial.print(axis->label);
 		Serial.print(calibStatus);
-		Serial.print("\r\n");
+		//Serial.print("\r\n");
+		CurrentState::getInstance()->printQAndNewLine();
 }
 
 void StepperControl::checkAxisSubStatus(StepperControlAxis* axis, int* axisSubStatus) {
@@ -62,6 +64,7 @@ void StepperControl::checkAxisSubStatus(StepperControlAxis* axis, int* axisSubSt
 StepperControl::StepperControl() {
 
 	// Initialize some variables for testing
+
 	//motorConsMissedStepsMax[0] = 50;
 	//motorConsMissedStepsMax[1] = 50;
 	//motorConsMissedStepsMax[2] = 50;
@@ -126,7 +129,8 @@ void StepperControl::test2() {
  */
 int StepperControl::moveToCoords(		long xDest, long yDest, long zDest, 
 						unsigned int xMaxSpd, unsigned int yMaxSpd, unsigned int zMaxSpd,
-                				bool xHome, bool yHome, bool zHome) {
+                				bool xHome, bool yHome, bool zHome
+				) {
 
  	unsigned long currentMillis         = 0;
 	unsigned long timeStart             = millis();
@@ -363,7 +367,8 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 		//if (1 == 1) 
 		{
 			Serial.print(COMM_REPORT_CMD_BUSY);
-			Serial.print("\r\n");
+			//Serial.print("\r\n");
+			CurrentState::getInstance()->printQAndNewLine();
 			reportPosition();
 				/*
 				Serial.print("R99");
@@ -593,7 +598,8 @@ int StepperControl::calibrateAxis(int axis) {
 	                {
 				// Periodically send message still active
 	                        Serial.print(COMM_REPORT_CMD_BUSY);
-	                        Serial.print("\r\n");
+	                        //Serial.print("\r\n");
+				CurrentState::getInstance()->printQAndNewLine();
 	                }
 
 	                if (stepsCount % (speedMin[axis] / 6) == 0 /*|| *missedSteps > 3*/)
@@ -712,7 +718,8 @@ int StepperControl::calibrateAxis(int axis) {
         	        {
 				// Periodically send message still active
 	                        Serial.print(COMM_REPORT_CMD_BUSY);
-	                        Serial.print("\r\n");
+	                        //Serial.print("\r\n");
+				CurrentState::getInstance()->printQAndNewLine();
 	                }
 			/*
 	                if (stepsCount % (speedMin[axis] / 6) == 0)

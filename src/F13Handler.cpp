@@ -29,6 +29,7 @@ int F13Handler::execute(Command* command) {
         }
 
         StepperControl::getInstance()->moveToCoords(0,0,0, 0,0,0, false, false, true);
+
         if (LOGGING) {
                 CurrentState::getInstance()->print();
         }

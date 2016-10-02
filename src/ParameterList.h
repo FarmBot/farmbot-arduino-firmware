@@ -4,7 +4,7 @@
 #include "Arduino.h"
 #include "Config.h"
 #include "PinGuard.h"
-
+#include "CurrentState.h"
 
 //#define NULL 0
 const int PARAM_NR_OF_PARAMS = 300;

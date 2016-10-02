@@ -23,7 +23,7 @@ ParameterList::ParameterList() {
 	}
 }
 
-// ===== Interfce functions for the raspberry pi =====
+// ===== Interface functions for the raspberry pi =====
 
 int ParameterList::readValue(int id) {
 
@@ -40,7 +40,9 @@ int ParameterList::readValue(int id) {
 		Serial.print(" ");
 		Serial.print("V");
 		Serial.print(value);
-		Serial.print("\r\n");
+		//Serial.print("\r\n");
+		CurrentState::getInstance()->printQAndNewLine();
+
 	} else  {
 		Serial.print("R99 Error: invalid parameter id\r\n");
 	}
@@ -71,7 +73,8 @@ int ParameterList::writeValue(int id, int value) {
 	Serial.print("V");
 	Serial.print(" ");
 	Serial.print(value);
-	Serial.print("\r\n");
+	//Serial.print("\r\n");
+	CurrentState::getInstance()->printQAndNewLine();
 
 	// If any value is written,
 	// trigger the loading of the new configuration in all other modules

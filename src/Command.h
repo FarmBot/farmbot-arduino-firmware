@@ -57,6 +57,7 @@ public:
 	long getM();
 	long getQ();
 
+	void printQAndNewLine();
 private:
 	CommandCodeEnum getGCodeEnum(char* code);
 	void getParameter(char* charPointer);

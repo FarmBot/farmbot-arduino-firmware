@@ -34,7 +34,8 @@ int StatusList::readValue(int id) {
 	Serial.print(" ");
 	Serial.print("V");
 	Serial.print(value);
-	Serial.print("\r\n");
+	//Serial.print("\r\n");
+	CurrentState::getInstance()->printQAndNewLine();
 
 
 	return 0;

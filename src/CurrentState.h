@@ -26,10 +26,16 @@ public:
 	void printEndStops();
 	void print();
 	void printBool(bool);
+
+	void setQ(int q);
+	void resetQ();
+	void printQAndNewLine();
+
 private:
 	CurrentState();
 	CurrentState(CurrentState const&);
 	void operator=(CurrentState const&);
+
 };
 
 #endif /* CURRENTSTATE_H_ */

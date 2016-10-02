@@ -135,7 +135,9 @@ void loop() {
 
 		if ((currentTime - lastAction) > 5000) {
 			// After an idle time, send the idle message
-			Serial.print("R00\r\r\n");
+			Serial.print("R00");
+			CurrentState::getInstance()->printQAndNewLine();
+
 			CurrentState::getInstance()->printPosition();
 			CurrentState::getInstance()->printEndStops();
 			lastAction = millis();
