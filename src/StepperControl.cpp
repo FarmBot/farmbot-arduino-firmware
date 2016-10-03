@@ -69,6 +69,8 @@ StepperControl::StepperControl() {
 	//motorConsMissedStepsMax[1] = 50;
 	//motorConsMissedStepsMax[2] = 50;
 
+	motorMotorsEnabled = false;
+
 	motorConsMissedSteps[0] = 0;
 	motorConsMissedSteps[1] = 0;
 	motorConsMissedSteps[2] = 0;
@@ -413,7 +415,7 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 	reportStatus(&axisY, axisSubStep[1]);
 	reportStatus(&axisZ, axisSubStep[2]);
 
-	disableMotors();
+	//disableMotors();
 
 	// Report end statuses
 
@@ -979,7 +981,7 @@ unsigned long StepperControl::getMaxLength(unsigned long lengths[3]) {
 }
 
 void StepperControl::enableMotors() {
-
+	motorMotorsEnabled = true;
 	axisX.enableMotor();
 	axisY.enableMotor();
 	axisZ.enableMotor();
@@ -987,10 +989,15 @@ void StepperControl::enableMotors() {
 }
 
 void StepperControl::disableMotors() {
+	motorMotorsEnabled = false;
 	axisX.disableMotor();
 	axisY.disableMotor();
 	axisZ.disableMotor();
 	delay(100);
+}
+
+bool StepperControl::motorsEnabled() {
+	return motorMotorsEnabled;
 }
 
 bool StepperControl::endStopsReached() {

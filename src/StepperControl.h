@@ -39,6 +39,7 @@ public:
 	void initInterrupt();
 	void enableMotors();
 	void disableMotors();
+	bool motorsEnabled();
 
 	void test();
 	void test2();
@@ -85,6 +86,7 @@ private:
         float motorConsMissedStepsDecay[3];
         bool motorConsEncoderEnabled[3];
 
+	bool motorMotorsEnabled;
 };
 
 #endif /* STEPPERCONTROL_H_ */
