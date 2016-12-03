@@ -24,6 +24,9 @@ G00Handler::G00Handler() {
 int G00Handler::execute(Command* command) {
 
 
+	Serial.print("G00 was here\r\n");
+
+
 //	Serial.print("R99");
 //	Serial.print(" X ");
 //	Serial.print(command->getX());
@@ -43,7 +46,7 @@ int G00Handler::execute(Command* command) {
 	StepperControl::getInstance()->moveToCoords
 		(
 			command->getX(), command->getY(), command->getZ(),
-			command->getA(), command->getB(), command->getC(), 
+			command->getA(), command->getB(), command->getC(),
 			false, false, false
 		);
 

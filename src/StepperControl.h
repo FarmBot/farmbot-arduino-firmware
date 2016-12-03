@@ -76,6 +76,8 @@ private:
         long speedMin[3];
         long stepsAcc[3];
         bool motorInv[3];
+        bool motor2Inv[3];
+        bool motor2Enbl[3];
         bool endStInv[3];
         long timeOut[3];
 

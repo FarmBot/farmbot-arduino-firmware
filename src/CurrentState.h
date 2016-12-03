@@ -27,7 +27,7 @@ public:
 	void print();
 	void printBool(bool);
 
-	void setQ(int q);
+	void setQ(long);
 	void resetQ();
 	void printQAndNewLine();
 

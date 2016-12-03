@@ -24,16 +24,34 @@ long   msgQueue                 = 0;
 
 CommandCodeEnum commandCodeEnum = CODE_UNDEFINED;
 
-Command::Command(String commandString) {
+//Command::Command(String commandString) {
+Command::Command(char * commandChar) {
+	//temp = String(commandString);
+	//temp = String(commandChar);
+	//temp = String(commadString);
 
-	commandString = commandString + " ";
+	String temp = String(commandChar);
+	Serial.print("Command: ");
+	Serial.print(temp);
+	Serial.print("\r\n");
 
-	char charBuf[commandString.length()];
-	commandString.toCharArray(charBuf, commandString.length());
+	//commandString = commandString + " ";
+	//char charBuf[commandString.length()];
+	//commandString.toCharArray(charBuf, commandString.length());
+
+	char * charBuf = commandChar;
+
+
 	char* charPointer;
 	bool invalidCommand = false;
 
 	charPointer = strtok(charBuf, " ");
+
+	//String par1(charPointer);
+	//temp = String(charPointer);
+	//Serial.print("R99 char ");
+	//Serial.print(temp);
+	//Serial.print("\r\n");
 
 	if (charPointer[0] == 'G' || charPointer[0] == 'F') {
 		commandCodeEnum = getGCodeEnum(charPointer);
@@ -41,10 +59,26 @@ Command::Command(String commandString) {
 		invalidCommand = true;
 		return;
 	}
+
 	while (charPointer != NULL) {
 		getParameter(charPointer);
-		charPointer = strtok(NULL, " \r\n");
+
+		charPointer = strtok(NULL, " \n\r");
+
+		//String temp = String(charPointer);
+		//Serial.print("Command: ");
+		//Serial.print(temp);
+		//Serial.print("\r\n");
+
+		//String par2(charPointer);
+		//Serial.print("R99 x ");
+		//Serial.print(par2);
+		//Serial.print("\r\n");
+		//Serial.print("x");
 	}
+		//Serial.print("R99 einde parameters ");
+		//Serial.print("\r\n");
+
 }
 
 CommandCodeEnum Command::getGCodeEnum(char* code) {
@@ -134,39 +168,67 @@ double minusNotAllowed(double value) {
 }
 
 void Command::getParameter(char* charPointer) {
-	if (charPointer[0]        == axisCodes[0]         ){
+
+	//msgQueue          =  24;
+
+	if (charPointer[0]      == axisCodes[0]         ){
 		axisValue[0]      =  atof(charPointer + 1 );
-	} else if (charPointer[0] == axisCodes[1]         ){
-		axisValue[1]      =  atof(charPointer + 1 );
-	} else if (charPointer[0] == axisCodes[2]         ){
-		axisValue[2]      =  atof(charPointer + 1 );
-
-	} else if (charPointer[0] == axisSpeedCodes[0]    ){
-		axisSpeedValue[0] =  atof(charPointer + 1 );
-	} else if (charPointer[0] == axisSpeedCodes[1]    ){
-		axisSpeedValue[1] =  atof(charPointer + 1 );
-	} else if (charPointer[0] == axisSpeedCodes[2]    ){
-		axisSpeedValue[2] =  atof(charPointer + 1 );
-
-	} else if (charPointer[0] == speedCode            ){
-		speedValue        =  atof(charPointer + 1 );
-	} else if (charPointer[0] == parameterIdCode      ){
-		parameterId       =  atof(charPointer + 1 );
-	} else if (charPointer[0] == parameterValueCode   ){
-		parameterValue    =  atof(charPointer + 1 );
-
-	} else if (charPointer[0] == parameterValue2Code  ){
-		parameterValue2   =  atof(charPointer + 1 );
-	} else if (charPointer[0] == elementCode          ){
-		element           =  atof(charPointer + 1 );
-	} else if (charPointer[0] == timeCode             ){
-		time              =  atof(charPointer + 1 );
-	} else if (charPointer[0] == modeCode             ){
-		mode              =  atof(charPointer + 1 );
-	} else if (charPointer[0] == msgQueueCode         ){
-		msgQueue          =  atof(charPointer + 1 );
+		//msgQueue	= 77;
 	}
 
+	if (charPointer[0] 	== axisCodes[1]         ){
+		axisValue[1]      =  atof(charPointer + 1 );
+	}
+
+	if (charPointer[0] 	== axisCodes[2]         ){
+		axisValue[2]      =  atof(charPointer + 1 );
+	}
+
+	if (charPointer[0] 	== axisSpeedCodes[0]    ){
+		axisSpeedValue[0] =  atof(charPointer + 1 );
+	}
+
+	if (charPointer[0] 	== axisSpeedCodes[1]    ){
+		axisSpeedValue[1] =  atof(charPointer + 1 );
+	}
+
+	if (charPointer[0] 	== axisSpeedCodes[2]    ){
+		axisSpeedValue[2] =  atof(charPointer + 1 );
+	}
+
+	if (charPointer[0] 	== speedCode            ){
+		speedValue      =  atof(charPointer + 1 );
+	}
+
+	if (charPointer[0] 	== parameterIdCode      ){
+		parameterId     =  atof(charPointer + 1 );
+	}
+
+	if (charPointer[0] 	== parameterValueCode   ){
+		parameterValue  =  atof(charPointer + 1 );
+
+	}
+
+	if (charPointer[0] 	== parameterValue2Code  ){
+		parameterValue2 =  atof(charPointer + 1 );
+	}
+
+	if (charPointer[0] == elementCode          ){
+		element    =  atof(charPointer + 1 );
+	}
+
+	if (charPointer[0] == timeCode             ){
+		time       =  atof(charPointer + 1 );
+	}
+
+	if (charPointer[0] == modeCode             ){
+		mode       =  atof(charPointer + 1 );
+	}
+
+	if (charPointer[0] == msgQueueCode         ){
+		msgQueue   =  atof(charPointer + 1 );
+		//msgQueue   =  5;
+	}
 }
 
 void Command::print() {
@@ -251,5 +313,6 @@ long Command::getM() {
 }
 
 long Command::getQ() {
+	//msgQueue = 9876;
 	return msgQueue;
 }

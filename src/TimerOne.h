@@ -23,7 +23,7 @@
 #include "WProgram.h"
 #endif
 
-#include "config/known_16bit_timers.h"
+#include "known_16bit_timers.h"
 
 #define TIMER1_RESOLUTION 65536UL  // Timer1 is 16 bit
 

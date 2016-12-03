@@ -274,7 +274,7 @@ bool StepperControlAxis::endStopAxisReached(bool movement_forward) {
 	return 0;
 }
 
-void StepperControlAxis::StepperControlAxis::loadPinNumbers(int step, int dir, int enable, int min, int max) {
+void StepperControlAxis::StepperControlAxis::loadPinNumbers(int step, int dir, int enable, int min, int max,int step2, int dir2, int enable2) {
         pinStep		= step;
         pinDirection	= dir;
         pinEnable	= enable;
@@ -283,7 +283,8 @@ void StepperControlAxis::StepperControlAxis::loadPinNumbers(int step, int dir, i
 }
 
 
-void StepperControlAxis::loadMotorSettings(long speedMax, long speedMin, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, bool endStInv, long interruptSpeed) {
+void StepperControlAxis::loadMotorSettings(long speedMax, long speedMin, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, bool endStInv, long interruptSpeed, bool motor2Enbl,bool motor2Inv) {
+
         motorSpeedMax		= speedMax;
         motorSpeedMin		= speedMin;
         motorStepsAcc		= stepsAcc;
@@ -292,6 +293,8 @@ void StepperControlAxis::loadMotorSettings(long speedMax, long speedMin, long st
         motorMotorInv		= motorInv;
         motorEndStopInv		= endStInv;
 	motorInterruptSpeed 	= interruptSpeed;
+	motorMotor2Enl		= motor2Enbl;
+	motorMotor2Inv		= motor2Inv;
 }
 
 void StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint, bool home) {

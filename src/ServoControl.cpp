@@ -1,6 +1,6 @@
 #include "ServoControl.h"
-#include "Servo.h"
 #include "TimerOne.h"
+#include <Servo.h>
 
 /*
 Servo pin layout

@@ -119,7 +119,7 @@ void CurrentState::print() {
 	printEndStops();
 }
 
-void CurrentState::setQ(int q) {
+void CurrentState::setQ(long q) {
 	Q = q;
 }
 

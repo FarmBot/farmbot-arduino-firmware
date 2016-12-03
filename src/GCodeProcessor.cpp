@@ -17,35 +17,75 @@ GCodeProcessor::~GCodeProcessor() {
 }
 
 void GCodeProcessor::printCommandLog(Command* command) {
-	Serial.print("command == NULL:");
-	Serial.println(command == NULL);
-	Serial.println("command->getCodeEnum() == CODE_UNDEFINED:");
-	Serial.println(command->getCodeEnum() == CODE_UNDEFINED);
+	Serial.print("command == NULL: ");
+	//Serial.print(command == NULL);
+	Serial.println("\r\n");
+	//Serial.print("command->getCodeEnum() == CODE_UNDEFINED: ");
+	//Serial.print(command->getCodeEnum() == CODE_UNDEFINED);
+	//Serial.println("\r\n");
 }
 
 int GCodeProcessor::execute(Command* command) {
+
+	int execution = 0;
+
+
 	long Q = command->getQ();
-	//Q = 99;
+	//Q = 77;
 	CurrentState::getInstance()->setQ(Q);
 
-	if(command == NULL || command->getCodeEnum() == CODE_UNDEFINED) {
+Serial.print("exec cmd Q: ");
+Serial.print(Q);
+Serial.print("\r\n");
+
+
+//Serial.print("start execute command\r\n");
+
+
+	if(command == NULL) {
 		if(LOGGING) {
 			printCommandLog(command);
 		}
 		return -1;
 	}
-	GCodeHandler* handler = getGCodeHandler(command->getCodeEnum());
-	if(handler == NULL) {
-		Serial.println("R99 This is false: handler == NULL");
+
+Serial.print("c2\r\n");
+
+	if(command->getCodeEnum() == CODE_UNDEFINED) {
+		if(LOGGING) {
+			printCommandLog(command);
+		}
 		return -1;
 	}
+
+Serial.print("c3: ");
+Serial.print(command->getCodeEnum());
+Serial.print("\r\n");
+
+//	GCodeHandler* handler = getGCodeHandler(command->getCodeEnum());
+
+
+
+	GCodeHandler* handler = getGCodeHandler(command->getCodeEnum());
+
+	if(handler == NULL) {
+		Serial.println("R99 handler == NULL\r\n");
+		return -1;
+	}
+
 	Serial.print(COMM_REPORT_CMD_START);
 	CurrentState::getInstance()->printQAndNewLine();
-	//Serial.print(" Q");
-	//Serial.print(Q);
-	//Serial.print("\n\r");
 
-	int execution = handler->execute(command);
+
+//Serial.print(" Q");
+//Serial.print(Q);
+//Serial.print("\r\n");
+
+//Serial.print("EXECUTION DISABLED");
+CurrentState::getInstance()->printQAndNewLine();
+
+
+	execution = handler->execute(command);
 	if(execution == 0) {
 		Serial.print(COMM_REPORT_CMD_DONE);
 		CurrentState::getInstance()->printQAndNewLine();
@@ -65,6 +105,59 @@ int GCodeProcessor::execute(Command* command) {
 };
 
 GCodeHandler* GCodeProcessor::getGCodeHandler(CommandCodeEnum codeEnum) {
+
+/*
+	switch(codeEnum) {
+	case G00:
+		Serial.print("G00 detected\r\n");
+		return G00Handler::getInstance();
+	case G28:
+		return G28Handler::getInstance();
+	}
+*/
+
+
+	GCodeHandler* handler = NULL;
+/*
+		Serial.print("code Enum A");
+		Serial.print(" - ");
+		Serial.print(codeEnum);
+		Serial.print("\r\n");
+*/
+
+
+	if (codeEnum == G00) {handler = G00Handler::getInstance();}
+
+	if (codeEnum == G28) {handler = G28Handler::getInstance();}
+
+	if (codeEnum == F11) {handler = F11Handler::getInstance();}
+	if (codeEnum == F12) {handler = F12Handler::getInstance();}
+	if (codeEnum == F13) {handler = F13Handler::getInstance();}
+
+	if (codeEnum == F14) {handler = F14Handler::getInstance();}
+	if (codeEnum == F15) {handler = F15Handler::getInstance();}
+	if (codeEnum == F16) {handler = F16Handler::getInstance();}
+
+	if (codeEnum == F20) {handler = F20Handler::getInstance();}
+	if (codeEnum == F21) {handler = F21Handler::getInstance();}
+	if (codeEnum == F22) {handler = F22Handler::getInstance();}
+
+//	if (codeEnum == F31) {handler = F31Handler::getInstance();}
+//	if (codeEnum == F32) {handler = F32Handler::getInstance();}
+
+	if (codeEnum == F41) {handler = F41Handler::getInstance();}
+	if (codeEnum == F42) {handler = F42Handler::getInstance();}
+	if (codeEnum == F43) {handler = F43Handler::getInstance();}
+	if (codeEnum == F44) {handler = F44Handler::getInstance();}
+
+//	if (codeEnum == F61) {handler = F61Handler::getInstance();}
+
+	if (codeEnum == F81) {handler = F81Handler::getInstance();}
+	if (codeEnum == F82) {handler = F82Handler::getInstance();}
+	if (codeEnum == F83) {handler = F83Handler::getInstance();}
+
+
+/*
 	switch(codeEnum) {
 	case G00:
 		return G00Handler::getInstance();
@@ -97,7 +190,6 @@ GCodeHandler* GCodeProcessor::getGCodeHandler(CommandCodeEnum codeEnum) {
 	case F32:
 		return F32Handler::getInstance();
 
-
 	case F41:
 		return F41Handler::getInstance();
 	case F42:
@@ -116,8 +208,24 @@ GCodeHandler* GCodeProcessor::getGCodeHandler(CommandCodeEnum codeEnum) {
 		return F82Handler::getInstance();
 	case F83:
 		return F83Handler::getInstance();
+
 	}
-	return NULL;
+*/
+
+
+		Serial.print("code Enum C");
+		Serial.print(" - ");
+		Serial.print(codeEnum);
+		Serial.print("\r\n");
+
+
+//		return G00Handler::getInstance();
+
+//		return NULL;
+
+
+//	return NULL;
+	return handler;
 }
 
 

@@ -85,9 +85,9 @@ StepperControl::StepperControl() {
 	axisY.label = 'Y';
 	axisZ.label = 'Z';
 
-	axisX.loadPinNumbers(X_STEP_PIN, X_DIR_PIN, X_ENABLE_PIN, X_MIN_PIN, X_MAX_PIN);
-	axisY.loadPinNumbers(Y_STEP_PIN, Y_DIR_PIN, Y_ENABLE_PIN, Y_MIN_PIN, Y_MAX_PIN);
-	axisZ.loadPinNumbers(Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN, Z_MIN_PIN, Z_MAX_PIN);
+	axisX.loadPinNumbers(X_STEP_PIN, X_DIR_PIN, X_ENABLE_PIN, X_MIN_PIN, X_MAX_PIN, 0, 0, 0);
+	axisY.loadPinNumbers(Y_STEP_PIN, Y_DIR_PIN, Y_ENABLE_PIN, Y_MIN_PIN, Y_MAX_PIN, 0, 0, 0);
+	axisZ.loadPinNumbers(Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN, Z_MIN_PIN, Z_MAX_PIN, 0, 0, 0);
 
 	axisSubStep[0] = COMM_REPORT_MOVE_STATUS_IDLE;
 	axisSubStep[1] = COMM_REPORT_MOVE_STATUS_IDLE;
@@ -415,7 +415,7 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 	reportStatus(&axisY, axisSubStep[1]);
 	reportStatus(&axisZ, axisSubStep[2]);
 
-	//disableMotors();
+	disableMotors();
 
 	// Report end statuses
 
@@ -925,9 +925,17 @@ void StepperControl::loadMotorSettings() {
 	timeOut[1]		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
 	timeOut[2]		= ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
 
-	axisX.loadMotorSettings(speedMax[0], speedMin[0], stepsAcc[0], timeOut[0], homeIsUp[0], motorInv[0], endStInv[0], MOVEMENT_INTERRUPT_SPEED);
-	axisY.loadMotorSettings(speedMax[1], speedMin[1], stepsAcc[1], timeOut[1], homeIsUp[1], motorInv[1], endStInv[1], MOVEMENT_INTERRUPT_SPEED);
-	axisZ.loadMotorSettings(speedMax[2], speedMin[2], stepsAcc[2], timeOut[2], homeIsUp[2], motorInv[2], endStInv[2], MOVEMENT_INTERRUPT_SPEED);
+	motor2Inv[0]		= false;
+	motor2Inv[1]		= false;
+	motor2Inv[2]		= false;
+
+	motor2Enbl[0]		= false;
+	motor2Enbl[1]		= false;
+	motor2Enbl[2]		= false;
+
+	axisX.loadMotorSettings(speedMax[0], speedMin[0], stepsAcc[0], timeOut[0], homeIsUp[0], motorInv[0], endStInv[0], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[0], motor2Inv[0]);
+	axisY.loadMotorSettings(speedMax[1], speedMin[1], stepsAcc[1], timeOut[1], homeIsUp[1], motorInv[1], endStInv[1], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[1], motor2Inv[1]);
+	axisZ.loadMotorSettings(speedMax[2], speedMin[2], stepsAcc[2], timeOut[2], homeIsUp[2], motorInv[2], endStInv[2], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[2], motor2Inv[2]);
 
 }
 
