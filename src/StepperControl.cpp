@@ -85,7 +85,8 @@ StepperControl::StepperControl() {
 	axisY.label = 'Y';
 	axisZ.label = 'Z';
 
-	axisX.loadPinNumbers(X_STEP_PIN, X_DIR_PIN, X_ENABLE_PIN, X_MIN_PIN, X_MAX_PIN, 0, 0, 0);
+	axisX.loadPinNumbers(X1_STEP_PIN, X1_DIR_PIN, X1_ENABLE_PIN, X_MIN_PIN, X_MAX_PIN,
+                         X2_STEP_PIN, X2_DIR_PIN, X2_ENABLE_PIN);
 	axisY.loadPinNumbers(Y_STEP_PIN, Y_DIR_PIN, Y_ENABLE_PIN, Y_MIN_PIN, Y_MAX_PIN, 0, 0, 0);
 	axisZ.loadPinNumbers(Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN, Z_MIN_PIN, Z_MAX_PIN, 0, 0, 0);
 
