@@ -276,8 +276,11 @@ bool StepperControlAxis::endStopAxisReached(bool movement_forward) {
 
 void StepperControlAxis::StepperControlAxis::loadPinNumbers(int step, int dir, int enable, int min, int max,int step2, int dir2, int enable2) {
         pinStep		= step;
-        pinDirection	= dir;
+        pinDirection= dir;
         pinEnable	= enable;
+        pinStep2    = step2;
+        pinDirection2 = dir2;
+        pinEnable2  = enable2;
         pinMin		= min;
         pinMax		= max;
 }
@@ -320,27 +323,33 @@ void StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint
 
 void StepperControlAxis::enableMotor() {
 	digitalWrite(pinEnable, LOW);
-        movementMotorActive = true;
+    if ( pinEnable2 != 0 ) digitalWrite(pinEnable2, LOW);
+    movementMotorActive = true;
 }
 
 void StepperControlAxis::disableMotor() {
 	digitalWrite(pinEnable, HIGH);
-        movementMotorActive = false;
+    if ( pinEnable2 != 0 ) digitalWrite(pinEnable2, HIGH);
+    movementMotorActive = false;
 }
 
 void StepperControlAxis::setDirectionUp() {
 	if (motorMotorInv) {
 		digitalWrite(pinDirection, LOW);
+        if (pinDirection2 != 0 ) digitalWrite(pinDirection2, LOW);
 	} else {
 		digitalWrite(pinDirection, HIGH);
+        if (pinDirection2 != 0 ) digitalWrite(pinDirection2, HIGH);
 	}
 }
 
 void StepperControlAxis::setDirectionDown() {
 	if (motorMotorInv) {
 		digitalWrite(pinDirection, HIGH);
+        if (pinDirection2 != 0 ) digitalWrite(pinDirection2, HIGH);
 	} else {
 		digitalWrite(pinDirection, LOW);
+        if (pinDirection2 != 0 ) digitalWrite(pinDirection2, LOW);
 	}
 }
 
@@ -404,11 +413,13 @@ void StepperControlAxis::deactivateAxis() {
 
 void StepperControlAxis::setMotorStep() {
 	digitalWrite(pinStep, HIGH);
+    if ( pinStep2 != 0 ) digitalWrite(pinStep2, HIGH);
 }
 
 void StepperControlAxis::resetMotorStep() {
 	movementStepDone = true;
 	digitalWrite(pinStep, LOW);
+    if ( pinStep2 != 0 ) digitalWrite(pinStep2, LOW);
 }
 
 bool StepperControlAxis::pointReached(long currentPoint, long destinationPoint) {
