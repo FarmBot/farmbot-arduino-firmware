@@ -43,7 +43,7 @@ long CurrentState::getZ() {
 }
 
 long* CurrentState::getPoint() {
-	long currentPoint[3] = {x, y, z};
+	static long currentPoint[3] = {x, y, z};
 	return currentPoint;
 }
 
