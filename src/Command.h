@@ -34,7 +34,7 @@ enum CommandCodeEnum
   F83 = 183
 };
 
-#define NULL 0
+//#define NULL 0
 
 class Command {
 	CommandCodeEnum codeEnum;
