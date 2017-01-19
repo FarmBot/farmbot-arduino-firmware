@@ -86,9 +86,9 @@ private:
 	int pinEnable;
 
 	// pin settings primary motor
-	int pinStep2;
-	int pinDirection2;
-	int pinEnable2;
+	int pin2Step;
+	int pin2Direction;
+	int pin2Enable;
 
 	// pin settings primary motor
 	int pinMin;

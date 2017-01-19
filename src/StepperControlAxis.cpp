@@ -6,6 +6,11 @@ StepperControlAxis::StepperControlAxis() {
         pinStep         = 0;
         pinDirection    = 0;
         pinEnable       = 0;
+
+        pin2Step         = 0;
+        pin2Direction    = 0;
+        pin2Enable       = 0;
+
         pinMin          = 0;
         pinMax          = 0;
 
@@ -278,6 +283,11 @@ void StepperControlAxis::StepperControlAxis::loadPinNumbers(int step, int dir, i
         pinStep		= step;
         pinDirection	= dir;
         pinEnable	= enable;
+
+        pin2Step	= step2;
+        pin2Direction	= dir2;
+        pin2Enable	= enable2;
+
         pinMin		= min;
         pinMax		= max;
 }
@@ -320,16 +330,28 @@ void StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint
 
 void StepperControlAxis::enableMotor() {
 	digitalWrite(pinEnable, LOW);
+	if (motorMotor2Enl) {
+		digitalWrite(pin2Enable, LOW);
+	}
         movementMotorActive = true;
 }
 
 void StepperControlAxis::disableMotor() {
 	digitalWrite(pinEnable, HIGH);
+	if (motorMotor2Enl) {
+		digitalWrite(pin2Enable, HIGH);
+	}
         movementMotorActive = false;
 }
 
 void StepperControlAxis::setDirectionUp() {
 	if (motorMotorInv) {
+		digitalWrite(pinDirection, LOW);
+	} else {
+		digitalWrite(pinDirection, HIGH);
+	}
+
+	if (motorMotor2Enl && motorMotor2Inv) {
 		digitalWrite(pinDirection, LOW);
 	} else {
 		digitalWrite(pinDirection, HIGH);
@@ -341,6 +363,12 @@ void StepperControlAxis::setDirectionDown() {
 		digitalWrite(pinDirection, HIGH);
 	} else {
 		digitalWrite(pinDirection, LOW);
+	}
+
+	if (motorMotor2Enl && motorMotor2Inv) {
+		digitalWrite(pin2Direction, HIGH);
+	} else {
+		digitalWrite(pin2Direction, LOW);
 	}
 }
 
@@ -404,11 +432,17 @@ void StepperControlAxis::deactivateAxis() {
 
 void StepperControlAxis::setMotorStep() {
 	digitalWrite(pinStep, HIGH);
+	if (pin2Enable) {
+		digitalWrite(pin2Step, HIGH);
+	}
 }
 
 void StepperControlAxis::resetMotorStep() {
 	movementStepDone = true;
 	digitalWrite(pinStep, LOW);
+	if (pin2Enable) {
+		digitalWrite(pin2Step, LOW);
+	}
 }
 
 bool StepperControlAxis::pointReached(long currentPoint, long destinationPoint) {

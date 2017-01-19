@@ -34,9 +34,9 @@ int GCodeProcessor::execute(Command* command) {
 	//Q = 77;
 	CurrentState::getInstance()->setQ(Q);
 
-Serial.print("exec cmd Q: ");
-Serial.print(Q);
-Serial.print("\r\n");
+//Serial.print("exec cmd Q: ");
+//Serial.print(Q);
+//Serial.print("\r\n");
 
 
 //Serial.print("start execute command\r\n");
@@ -49,7 +49,7 @@ Serial.print("\r\n");
 		return -1;
 	}
 
-Serial.print("c2\r\n");
+//Serial.print("c2\r\n");
 
 	if(command->getCodeEnum() == CODE_UNDEFINED) {
 		if(LOGGING) {
@@ -58,9 +58,9 @@ Serial.print("c2\r\n");
 		return -1;
 	}
 
-Serial.print("c3: ");
-Serial.print(command->getCodeEnum());
-Serial.print("\r\n");
+//Serial.print("c3: ");
+//Serial.print(command->getCodeEnum());
+//Serial.print("\r\n");
 
 //	GCodeHandler* handler = getGCodeHandler(command->getCodeEnum());
 
@@ -82,7 +82,7 @@ Serial.print("\r\n");
 //Serial.print("\r\n");
 
 //Serial.print("EXECUTION DISABLED");
-CurrentState::getInstance()->printQAndNewLine();
+//CurrentState::getInstance()->printQAndNewLine();
 
 
 	execution = handler->execute(command);
@@ -213,10 +213,10 @@ GCodeHandler* GCodeProcessor::getGCodeHandler(CommandCodeEnum codeEnum) {
 */
 
 
-		Serial.print("code Enum C");
-		Serial.print(" - ");
-		Serial.print(codeEnum);
-		Serial.print("\r\n");
+//		Serial.print("code Enum C");
+//		Serial.print(" - ");
+//		Serial.print(codeEnum);
+//		Serial.print("\r\n");
 
 
 //		return G00Handler::getInstance();

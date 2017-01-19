@@ -24,7 +24,7 @@ G00Handler::G00Handler() {
 int G00Handler::execute(Command* command) {
 
 
-	Serial.print("G00 was here\r\n");
+//	Serial.print("G00 was here\r\n");
 
 
 //	Serial.print("R99");

@@ -61,6 +61,7 @@ private:
 
 	void loadMotorSettings();
 	void loadEncoderSettings();
+	bool intToBool(int value);
 
         void reportPosition();
         void storeEndStops();
