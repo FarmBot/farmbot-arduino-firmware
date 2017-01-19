@@ -23,8 +23,8 @@ public:
 
 	StepperControlAxis();
 
-	void loadPinNumbers(int step, int dir, int enable, int min, int max);
-	void loadMotorSettings(	long speedMax, long speedMin, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, bool endStInv, long interruptSpeed);
+	void loadPinNumbers(int step, int dir, int enable, int min, int max, int step2, int dir2, int enable2);
+	void loadMotorSettings(	long speedMax, long speedMin, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, bool endStInv, long interruptSpeed, bool motor2Enbl, bool motor2Inv);
 	void loadCoordinates(long sourcePoint, long destinationPoint, bool home);
 	void setMaxSpeed(long speed);
 
@@ -80,10 +80,17 @@ private:
 	int lastCalcLog = 0;
 	bool debugPrint = false;
 
-	// pin settings
+	// pin settings primary motor
 	int pinStep;
 	int pinDirection;
 	int pinEnable;
+
+	// pin settings primary motor
+	int pin2Step;
+	int pin2Direction;
+	int pin2Enable;
+
+	// pin settings primary motor
 	int pinMin;
 	int pinMax;
 
@@ -93,7 +100,9 @@ private:
 	long motorStepsAcc;		// number of steps used for acceleration
 	long motorTimeOut;		// timeout in seconds
 	bool motorHomeIsUp;		// direction to move when reached 0 on axis but no end stop detected while homing
-	bool motorMotorInv;		// invert motot direction
+	bool motorMotorInv;		// invert motor direction
+	bool motorMotor2Enl;		// enable secondary motor
+	bool motorMotor2Inv;		// invert secondary motor direction
 	bool motorEndStopInv;		// invert input (true/false) of end stops
 	long motorInterruptSpeed;	// period of interrupt in micro seconds
 

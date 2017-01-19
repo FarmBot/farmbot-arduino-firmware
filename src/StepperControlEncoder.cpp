@@ -21,7 +21,7 @@ void StepperControlEncoder::test() {
                 Serial.print(prvValChannelB);
                 Serial.print(" -> ");
                 Serial.print(curValChannelB);
-                Serial.print("\n");
+                Serial.print("\r\n");
 }
 
 void StepperControlEncoder::loadPinNumbers(int channelA, int channelB) {

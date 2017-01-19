@@ -1,6 +1,6 @@
 #include "ServoControl.h"
-#include "Servo.h"
 #include "TimerOne.h"
+#include <Servo.h>
 
 /*
 Servo pin layout
@@ -42,7 +42,7 @@ int ServoControl::setAngle(int pin, int angle) {
 	Serial.print(" ");
 	Serial.print(angle);
 	Serial.print(" ");
-	Serial.print("\n");
+	Serial.print("\r\n");
 */
 
 	switch(pin) {

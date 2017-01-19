@@ -25,7 +25,7 @@ F15Handler::F15Handler() {
 int F15Handler::execute(Command* command) {
 
         if (LOGGING) {
-                Serial.print("R99 HOME Z\n");
+                Serial.print("R99 HOME Z\r\n");
         }
 
 	StepperControl::getInstance()->calibrateAxis(1);
@@ -36,5 +36,3 @@ int F15Handler::execute(Command* command) {
 
         return 0;
 }
-
-

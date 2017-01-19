@@ -27,7 +27,7 @@ int F14Handler::execute(Command* command) {
 	int ret = 0;
 
         if (LOGGING) {
-                Serial.print("R99 CALIBRATE X\n");
+                Serial.print("R99 CALIBRATE X\r\n");
         }
 
         ret = StepperControl::getInstance()->calibrateAxis(0);

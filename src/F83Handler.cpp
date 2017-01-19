@@ -26,12 +26,13 @@ F83Handler::F83Handler() {
 int F83Handler::execute(Command* command) {
 
         if (LOGGING) {
-                Serial.print("R99 Report server version\n");
+                Serial.print("R99 Report server version\r\n");
         }
 
 	Serial.print("R83 ");
 	Serial.print(SOFTWARE_VERSION);
-	Serial.print("\n");
+	//Serial.print("\r\n");
+	CurrentState::getInstance()->printQAndNewLine();
 
         return 0;
 }

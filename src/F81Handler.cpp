@@ -25,10 +25,10 @@ F81Handler::F81Handler() {
 
 int F81Handler::execute(Command* command) {
 
-Serial.print("home\n");
+Serial.print("home\r\n");
 
         if (LOGGING) {
-                Serial.print("R99 Report end stops\n");
+                Serial.print("R99 Report end stops\r\n");
         }
 
 	// Report back the end stops

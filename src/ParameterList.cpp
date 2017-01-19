@@ -15,7 +15,7 @@ ParameterList::ParameterList() {
 	// at the first boot, load default parameters and set the parameter version
 	// so during subsequent boots the values are just loaded from eeprom 
 	int paramVersion = readValueEeprom(0);
-	if (paramVersion == 0) {
+	if (paramVersion <= 0) {
 		setAllValuesToDefault();
 		writeAllValuesToEeprom();
 	} else {
@@ -23,7 +23,7 @@ ParameterList::ParameterList() {
 	}
 }
 
-// ===== Interfce functions for the raspberry pi =====
+// ===== Interface functions for the raspberry pi =====
 
 int ParameterList::readValue(int id) {
 
@@ -40,9 +40,11 @@ int ParameterList::readValue(int id) {
 		Serial.print(" ");
 		Serial.print("V");
 		Serial.print(value);
-		Serial.print("\n");
+		//Serial.print("\r\n");
+		CurrentState::getInstance()->printQAndNewLine();
+
 	} else  {
-		Serial.print("R99 Error: invalid parameter id\n");
+		Serial.print("R99 Error: invalid parameter id\r\n");
 	}
 
 	return 0;
@@ -56,7 +58,7 @@ int ParameterList::writeValue(int id, int value) {
 		paramValues[id] = value;
 		writeValueEeprom(id, value);
 	} else  {
-		Serial.print("R99 Error: invalid parameter id\n");
+		Serial.print("R99 Error: invalid parameter id\r\n");
 	}
 
 	// Debugging output
@@ -71,7 +73,8 @@ int ParameterList::writeValue(int id, int value) {
 	Serial.print("V");
 	Serial.print(" ");
 	Serial.print(value);
-	Serial.print("\n");
+	//Serial.print("\r\n");
+	CurrentState::getInstance()->printQAndNewLine();
 
 	// If any value is written,
 	// trigger the loading of the new configuration in all other modules
@@ -89,15 +92,9 @@ void ParameterList::sendConfigToModules() {
 int ParameterList::readAllValues() {
 
 
-	Serial.print("R99");
-	Serial.print(" ");
-	Serial.print("reading all values");
-	Serial.print("\n");
-
 	// Make a dump of all values
 	// Check if it's a valid value to keep the junk out of the list
-	for (int i; i < PARAM_NR_OF_PARAMS; i++)
-	{
+	for (int i=0; i < PARAM_NR_OF_PARAMS; i++) {
 		if (validParam(i)) {
 			readValue(i);
 		}
@@ -142,7 +139,7 @@ int ParameterList::writeValueEeprom(int id, int value) {
 
 int ParameterList::readAllValuesFromEeprom() {
 	// Write all existing values to eeprom
-	for (int i; i < PARAM_NR_OF_PARAMS; i++)
+	for (int i=0; i < PARAM_NR_OF_PARAMS; i++)
 	{
 		if (validParam(i)) {
 			paramValues[i] = readValueEeprom(i);
@@ -153,7 +150,7 @@ int ParameterList::readAllValuesFromEeprom() {
 
 int ParameterList::writeAllValuesToEeprom() {
 	// Write all existing values to eeprom
-	for (int i; i < 150; i++)
+	for (int i=0; i < 150; i++)
 	{
 		if (validParam(i)) {
 			writeValueEeprom(i,paramValues[i]);
@@ -165,7 +162,7 @@ int ParameterList::writeAllValuesToEeprom() {
 
 int ParameterList::setAllValuesToDefault() {
 	// Copy default values to the memory values
-	for (int i; i < PARAM_NR_OF_PARAMS; i++)
+	for (int i=0; i < PARAM_NR_OF_PARAMS; i++)
 	{
 		if (validParam(i)) {
 			loadDefaultValue(i);
@@ -177,71 +174,74 @@ void ParameterList::loadDefaultValue(int id) {
 
 	switch(id)
 	{
-		case PARAM_VERSION                : paramValues[id] = PARAM_VERSION_DEFAULT; break;
-		case PARAM_TEST                   : paramValues[id] = PARAM_TEST_DEFAULT; break;
+		case PARAM_VERSION                	: paramValues[id] = PARAM_VERSION_DEFAULT; break;
+		case PARAM_TEST                   	: paramValues[id] = PARAM_TEST_DEFAULT; break;
 
-        	case MOVEMENT_TIMEOUT_X           : paramValues[id] = MOVEMENT_TIMEOUT_X_DEFAULT; break;
-        	case MOVEMENT_TIMEOUT_Y           : paramValues[id] = MOVEMENT_TIMEOUT_Y_DEFAULT; break;
-	        case MOVEMENT_TIMEOUT_Z           : paramValues[id] = MOVEMENT_TIMEOUT_Z_DEFAULT; break;
+        	case MOVEMENT_TIMEOUT_X           	: paramValues[id] = MOVEMENT_TIMEOUT_X_DEFAULT; break;
+        	case MOVEMENT_TIMEOUT_Y           	: paramValues[id] = MOVEMENT_TIMEOUT_Y_DEFAULT; break;
+	        case MOVEMENT_TIMEOUT_Z           	: paramValues[id] = MOVEMENT_TIMEOUT_Z_DEFAULT; break;
 
-	        case MOVEMENT_INVERT_ENDPOINTS_X  : paramValues[id] = MOVEMENT_INVERT_ENDPOINTS_X_DEFAULT; break;
-	        case MOVEMENT_INVERT_ENDPOINTS_Y  : paramValues[id] = MOVEMENT_INVERT_ENDPOINTS_Y_DEFAULT; break;
-	        case MOVEMENT_INVERT_ENDPOINTS_Z  : paramValues[id] = MOVEMENT_INVERT_ENDPOINTS_Z_DEFAULT; break;
+	        case MOVEMENT_INVERT_ENDPOINTS_X  	: paramValues[id] = MOVEMENT_INVERT_ENDPOINTS_X_DEFAULT; break;
+	        case MOVEMENT_INVERT_ENDPOINTS_Y  	: paramValues[id] = MOVEMENT_INVERT_ENDPOINTS_Y_DEFAULT; break;
+	        case MOVEMENT_INVERT_ENDPOINTS_Z  	: paramValues[id] = MOVEMENT_INVERT_ENDPOINTS_Z_DEFAULT; break;
 
-	        case MOVEMENT_INVERT_MOTOR_X      : paramValues[id] = MOVEMENT_INVERT_MOTOR_X_DEFAULT; break;
-	        case MOVEMENT_INVERT_MOTOR_Y      : paramValues[id] = MOVEMENT_INVERT_MOTOR_Y_DEFAULT; break;
-	        case MOVEMENT_INVERT_MOTOR_Z      : paramValues[id] = MOVEMENT_INVERT_MOTOR_Z_DEFAULT; break;
+	        case MOVEMENT_INVERT_MOTOR_X      	: paramValues[id] = MOVEMENT_INVERT_MOTOR_X_DEFAULT; break;
+	        case MOVEMENT_INVERT_MOTOR_Y      	: paramValues[id] = MOVEMENT_INVERT_MOTOR_Y_DEFAULT; break;
+	        case MOVEMENT_INVERT_MOTOR_Z      	: paramValues[id] = MOVEMENT_INVERT_MOTOR_Z_DEFAULT; break;
 
-	        case MOVEMENT_STEPS_ACC_DEC_X     : paramValues[id] = MOVEMENT_STEPS_ACC_DEC_X_DEFAULT; break;
-	        case MOVEMENT_STEPS_ACC_DEC_Y     : paramValues[id] = MOVEMENT_STEPS_ACC_DEC_Y_DEFAULT; break;
-	        case MOVEMENT_STEPS_ACC_DEC_Z     : paramValues[id] = MOVEMENT_STEPS_ACC_DEC_Z_DEFAULT; break;
+	        case MOVEMENT_SECONDARY_MOTOR_X      	: paramValues[id] = MOVEMENT_SECONDARY_MOTOR_X_DEFAULT; break;
+	        case MOVEMENT_SECONDARY_MOTOR_INVERT_X  : paramValues[id] = MOVEMENT_SECONDARY_MOTOR_INVERT_X_DEFAULT; break;
 
-	        case MOVEMENT_HOME_UP_X           : paramValues[id] = MOVEMENT_HOME_UP_X_DEFAULT; break;
-	        case MOVEMENT_HOME_UP_Y           : paramValues[id] = MOVEMENT_HOME_UP_Y_DEFAULT; break;
-	        case MOVEMENT_HOME_UP_Z           : paramValues[id] = MOVEMENT_HOME_UP_Z_DEFAULT; break;
+	        case MOVEMENT_STEPS_ACC_DEC_X     	: paramValues[id] = MOVEMENT_STEPS_ACC_DEC_X_DEFAULT; break;
+	        case MOVEMENT_STEPS_ACC_DEC_Y     	: paramValues[id] = MOVEMENT_STEPS_ACC_DEC_Y_DEFAULT; break;
+	        case MOVEMENT_STEPS_ACC_DEC_Z     	: paramValues[id] = MOVEMENT_STEPS_ACC_DEC_Z_DEFAULT; break;
 
-	        case MOVEMENT_MIN_SPD_X           : paramValues[id] = MOVEMENT_MIN_SPD_X_DEFAULT; break;
-	        case MOVEMENT_MIN_SPD_Y           : paramValues[id] = MOVEMENT_MIN_SPD_Y_DEFAULT; break;
-	        case MOVEMENT_MIN_SPD_Z           : paramValues[id] = MOVEMENT_MIN_SPD_Z_DEFAULT; break;
+	        case MOVEMENT_HOME_UP_X           	: paramValues[id] = MOVEMENT_HOME_UP_X_DEFAULT; break;
+	        case MOVEMENT_HOME_UP_Y           	: paramValues[id] = MOVEMENT_HOME_UP_Y_DEFAULT; break;
+	        case MOVEMENT_HOME_UP_Z          	: paramValues[id] = MOVEMENT_HOME_UP_Z_DEFAULT; break;
 
-	        case MOVEMENT_MAX_SPD_X           : paramValues[id] = MOVEMENT_MAX_SPD_X_DEFAULT; break;
-	        case MOVEMENT_MAX_SPD_Y           : paramValues[id] = MOVEMENT_MAX_SPD_Y_DEFAULT; break;
-	        case MOVEMENT_MAX_SPD_Z           : paramValues[id] = MOVEMENT_MAX_SPD_Z_DEFAULT; break;
+	        case MOVEMENT_MIN_SPD_X           	: paramValues[id] = MOVEMENT_MIN_SPD_X_DEFAULT; break;
+	        case MOVEMENT_MIN_SPD_Y           	: paramValues[id] = MOVEMENT_MIN_SPD_Y_DEFAULT; break;
+	        case MOVEMENT_MIN_SPD_Z           	: paramValues[id] = MOVEMENT_MIN_SPD_Z_DEFAULT; break;
 
-	        case ENCODER_ENABLED_X            : paramValues[id] = ENCODER_ENABLED_X_DEFAULT; break;
-	        case ENCODER_ENABLED_Y            : paramValues[id] = ENCODER_ENABLED_Y_DEFAULT; break;
-	        case ENCODER_ENABLED_Z            : paramValues[id] = ENCODER_ENABLED_Z_DEFAULT; break;
+	        case MOVEMENT_MAX_SPD_X           	: paramValues[id] = MOVEMENT_MAX_SPD_X_DEFAULT; break;
+	        case MOVEMENT_MAX_SPD_Y           	: paramValues[id] = MOVEMENT_MAX_SPD_Y_DEFAULT; break;
+	        case MOVEMENT_MAX_SPD_Z           	: paramValues[id] = MOVEMENT_MAX_SPD_Z_DEFAULT; break;
 
-	        case ENCODER_MISSED_STEPS_MAX_X   : paramValues[id] = ENCODER_MISSED_STEPS_MAX_X_DEFAULT; break;
-	        case ENCODER_MISSED_STEPS_MAX_Y   : paramValues[id] = ENCODER_MISSED_STEPS_MAX_Y_DEFAULT; break;
-	        case ENCODER_MISSED_STEPS_MAX_Z   : paramValues[id] = ENCODER_MISSED_STEPS_MAX_Z_DEFAULT; break;
+	        case ENCODER_ENABLED_X            	: paramValues[id] = ENCODER_ENABLED_X_DEFAULT; break;
+	        case ENCODER_ENABLED_Y            	: paramValues[id] = ENCODER_ENABLED_Y_DEFAULT; break;
+	        case ENCODER_ENABLED_Z            	: paramValues[id] = ENCODER_ENABLED_Z_DEFAULT; break;
 
-	        case ENCODER_MISSED_STEPS_DECAY_X : paramValues[id] = ENCODER_MISSED_STEPS_DECAY_X_DEFAULT; break;
-	        case ENCODER_MISSED_STEPS_DECAY_Y : paramValues[id] = ENCODER_MISSED_STEPS_DECAY_Y_DEFAULT; break;
-	        case ENCODER_MISSED_STEPS_DECAY_Z : paramValues[id] = ENCODER_MISSED_STEPS_DECAY_Z_DEFAULT; break;
+	        case ENCODER_MISSED_STEPS_MAX_X   	: paramValues[id] = ENCODER_MISSED_STEPS_MAX_X_DEFAULT; break;
+	        case ENCODER_MISSED_STEPS_MAX_Y   	: paramValues[id] = ENCODER_MISSED_STEPS_MAX_Y_DEFAULT; break;
+	        case ENCODER_MISSED_STEPS_MAX_Z   	: paramValues[id] = ENCODER_MISSED_STEPS_MAX_Z_DEFAULT; break;
+
+	        case ENCODER_MISSED_STEPS_DECAY_X 	: paramValues[id] = ENCODER_MISSED_STEPS_DECAY_X_DEFAULT; break;
+	        case ENCODER_MISSED_STEPS_DECAY_Y 	: paramValues[id] = ENCODER_MISSED_STEPS_DECAY_Y_DEFAULT; break;
+	        case ENCODER_MISSED_STEPS_DECAY_Z 	: paramValues[id] = ENCODER_MISSED_STEPS_DECAY_Z_DEFAULT; break;
 
 
-		case PIN_GUARD_1_PIN_NR           : paramValues[id] = PIN_GUARD_1_PIN_NR_DEFAULT; break;
-		case PIN_GUARD_1_TIME_OUT         : paramValues[id] = PIN_GUARD_1_TIME_OUT_DEFAULT; break;
-		case PIN_GUARD_1_ACTIVE_STATE     : paramValues[id] = PIN_GUARD_1_ACTIVE_STATE_DEFAULT; break;
+		case PIN_GUARD_1_PIN_NR           	: paramValues[id] = PIN_GUARD_1_PIN_NR_DEFAULT; break;
+		case PIN_GUARD_1_TIME_OUT         	: paramValues[id] = PIN_GUARD_1_TIME_OUT_DEFAULT; break;
+		case PIN_GUARD_1_ACTIVE_STATE     	: paramValues[id] = PIN_GUARD_1_ACTIVE_STATE_DEFAULT; break;
 
-		case PIN_GUARD_2_PIN_NR           : paramValues[id] = PIN_GUARD_2_PIN_NR_DEFAULT; break;
-		case PIN_GUARD_2_TIME_OUT         : paramValues[id] = PIN_GUARD_2_TIME_OUT_DEFAULT; break;
-		case PIN_GUARD_2_ACTIVE_STATE     : paramValues[id] = PIN_GUARD_2_ACTIVE_STATE_DEFAULT; break;
+		case PIN_GUARD_2_PIN_NR           	: paramValues[id] = PIN_GUARD_2_PIN_NR_DEFAULT; break;
+		case PIN_GUARD_2_TIME_OUT         	: paramValues[id] = PIN_GUARD_2_TIME_OUT_DEFAULT; break;
+		case PIN_GUARD_2_ACTIVE_STATE     	: paramValues[id] = PIN_GUARD_2_ACTIVE_STATE_DEFAULT; break;
 
-		case PIN_GUARD_3_PIN_NR           : paramValues[id] = PIN_GUARD_3_PIN_NR_DEFAULT; break;
-		case PIN_GUARD_3_TIME_OUT         : paramValues[id] = PIN_GUARD_3_TIME_OUT_DEFAULT; break;
-		case PIN_GUARD_3_ACTIVE_STATE     : paramValues[id] = PIN_GUARD_3_ACTIVE_STATE_DEFAULT; break;
+		case PIN_GUARD_3_PIN_NR           	: paramValues[id] = PIN_GUARD_3_PIN_NR_DEFAULT; break;
+		case PIN_GUARD_3_TIME_OUT         	: paramValues[id] = PIN_GUARD_3_TIME_OUT_DEFAULT; break;
+		case PIN_GUARD_3_ACTIVE_STATE     	: paramValues[id] = PIN_GUARD_3_ACTIVE_STATE_DEFAULT; break;
 
-		case PIN_GUARD_4_PIN_NR           : paramValues[id] = PIN_GUARD_4_PIN_NR_DEFAULT; break;
-		case PIN_GUARD_4_TIME_OUT         : paramValues[id] = PIN_GUARD_4_TIME_OUT_DEFAULT; break;
-		case PIN_GUARD_4_ACTIVE_STATE     : paramValues[id] = PIN_GUARD_4_ACTIVE_STATE_DEFAULT; break;
+		case PIN_GUARD_4_PIN_NR           	: paramValues[id] = PIN_GUARD_4_PIN_NR_DEFAULT; break;
+		case PIN_GUARD_4_TIME_OUT         	: paramValues[id] = PIN_GUARD_4_TIME_OUT_DEFAULT; break;
+		case PIN_GUARD_4_ACTIVE_STATE     	: paramValues[id] = PIN_GUARD_4_ACTIVE_STATE_DEFAULT; break;
 
-		case PIN_GUARD_5_PIN_NR           : paramValues[id] = PIN_GUARD_5_PIN_NR_DEFAULT; break;
-		case PIN_GUARD_5_TIME_OUT         : paramValues[id] = PIN_GUARD_5_TIME_OUT_DEFAULT; break;
-		case PIN_GUARD_5_ACTIVE_STATE     : paramValues[id] = PIN_GUARD_5_ACTIVE_STATE_DEFAULT; break;
+		case PIN_GUARD_5_PIN_NR           	: paramValues[id] = PIN_GUARD_5_PIN_NR_DEFAULT; break;
+		case PIN_GUARD_5_TIME_OUT         	: paramValues[id] = PIN_GUARD_5_TIME_OUT_DEFAULT; break;
+		case PIN_GUARD_5_ACTIVE_STATE     	: paramValues[id] = PIN_GUARD_5_ACTIVE_STATE_DEFAULT; break;
 
-		default : paramValues[id] = 0; break;
+		default 				: paramValues[id] = 0; break;
 	}
 }
 
@@ -282,7 +282,7 @@ bool ParameterList::validParam(int id) {
 		case ENCODER_MISSED_STEPS_DECAY_Y:
 		case ENCODER_MISSED_STEPS_DECAY_Z:
                 case PIN_GUARD_1_PIN_NR:
-                case PIN_GUARD_1_TIME_OUT: 
+                case PIN_GUARD_1_TIME_OUT:
                 case PIN_GUARD_1_ACTIVE_STATE:
                 case PIN_GUARD_2_PIN_NR:
                 case PIN_GUARD_2_TIME_OUT:

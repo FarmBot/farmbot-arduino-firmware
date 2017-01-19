@@ -17,6 +17,7 @@
 #include "Config.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "Command.h"
 
 class StepperControl {
 public:
@@ -30,14 +31,15 @@ public:
 	//			unsigned int maxAccelerationStepsPerSecond);
 	int moveToCoords(	long xDest, long yDest, long zDest, 
 				 unsigned int xMaxSpd, unsigned int yMaxSpd, unsigned int zMaxSpd,
-				 bool homeX, bool homeY, bool homeZ);
+				 bool homeX, bool homeY, bool homeZ
+			);
 
 	void handleMovementInterrupt();
 	int calibrateAxis(int axis);
 	void initInterrupt();
 	void enableMotors();
 	void disableMotors();
-	bool isMotorEnabled();
+	bool motorsEnabled();
 
 	void test();
 	void test2();
@@ -59,6 +61,7 @@ private:
 
 	void loadMotorSettings();
 	void loadEncoderSettings();
+	bool intToBool(int value);
 
         void reportPosition();
         void storeEndStops();
@@ -74,6 +77,8 @@ private:
         long speedMin[3];
         long stepsAcc[3];
         bool motorInv[3];
+        bool motor2Inv[3];
+        bool motor2Enbl[3];
         bool endStInv[3];
         long timeOut[3];
 
@@ -84,7 +89,7 @@ private:
         float motorConsMissedStepsDecay[3];
         bool motorConsEncoderEnabled[3];
 
-	bool motorEnabled;
+	bool motorMotorsEnabled;
 };
 
 #endif /* STEPPERCONTROL_H_ */

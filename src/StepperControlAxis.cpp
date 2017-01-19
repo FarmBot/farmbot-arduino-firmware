@@ -6,6 +6,11 @@ StepperControlAxis::StepperControlAxis() {
         pinStep         = 0;
         pinDirection    = 0;
         pinEnable       = 0;
+
+        pin2Step         = 0;
+        pin2Direction    = 0;
+        pin2Enable       = 0;
+
         pinMin          = 0;
         pinMax          = 0;
 
@@ -35,7 +40,7 @@ void StepperControlAxis::test() {
                 //Serial.print(" cons steps missed = ");
                 //Serial.print(label);
                 //Serial.print(consMissedSteps);
-                Serial.print("\n");
+                Serial.print("\r\n");
 }
 
 unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long currentPosition, long destinationPosition, long minSpeed, long maxSpeed, long stepsAccDec) {
@@ -125,7 +130,7 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
 		Serial.print(" ");
 		Serial.print(newSpeed);
 
-		Serial.print("\n");
+		Serial.print("\r\n");
 	}
 
 
@@ -274,16 +279,22 @@ bool StepperControlAxis::endStopAxisReached(bool movement_forward) {
 	return 0;
 }
 
-void StepperControlAxis::StepperControlAxis::loadPinNumbers(int step, int dir, int enable, int min, int max) {
+void StepperControlAxis::StepperControlAxis::loadPinNumbers(int step, int dir, int enable, int min, int max,int step2, int dir2, int enable2) {
         pinStep		= step;
         pinDirection	= dir;
         pinEnable	= enable;
+
+        pin2Step	= step2;
+        pin2Direction	= dir2;
+        pin2Enable	= enable2;
+
         pinMin		= min;
         pinMax		= max;
 }
 
 
-void StepperControlAxis::loadMotorSettings(long speedMax, long speedMin, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, bool endStInv, long interruptSpeed) {
+void StepperControlAxis::loadMotorSettings(long speedMax, long speedMin, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, bool endStInv, long interruptSpeed, bool motor2Enbl,bool motor2Inv) {
+
         motorSpeedMax		= speedMax;
         motorSpeedMin		= speedMin;
         motorStepsAcc		= stepsAcc;
@@ -292,6 +303,8 @@ void StepperControlAxis::loadMotorSettings(long speedMax, long speedMin, long st
         motorMotorInv		= motorInv;
         motorEndStopInv		= endStInv;
 	motorInterruptSpeed 	= interruptSpeed;
+	motorMotor2Enl		= motor2Enbl;
+	motorMotor2Inv		= motor2Inv;
 }
 
 void StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint, bool home) {
@@ -317,16 +330,28 @@ void StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint
 
 void StepperControlAxis::enableMotor() {
 	digitalWrite(pinEnable, LOW);
+	if (motorMotor2Enl) {
+		digitalWrite(pin2Enable, LOW);
+	}
         movementMotorActive = true;
 }
 
 void StepperControlAxis::disableMotor() {
 	digitalWrite(pinEnable, HIGH);
+	if (motorMotor2Enl) {
+		digitalWrite(pin2Enable, HIGH);
+	}
         movementMotorActive = false;
 }
 
 void StepperControlAxis::setDirectionUp() {
 	if (motorMotorInv) {
+		digitalWrite(pinDirection, LOW);
+	} else {
+		digitalWrite(pinDirection, HIGH);
+	}
+
+	if (motorMotor2Enl && motorMotor2Inv) {
 		digitalWrite(pinDirection, LOW);
 	} else {
 		digitalWrite(pinDirection, HIGH);
@@ -338,6 +363,12 @@ void StepperControlAxis::setDirectionDown() {
 		digitalWrite(pinDirection, HIGH);
 	} else {
 		digitalWrite(pinDirection, LOW);
+	}
+
+	if (motorMotor2Enl && motorMotor2Inv) {
+		digitalWrite(pin2Direction, HIGH);
+	} else {
+		digitalWrite(pin2Direction, LOW);
 	}
 }
 
@@ -401,11 +432,17 @@ void StepperControlAxis::deactivateAxis() {
 
 void StepperControlAxis::setMotorStep() {
 	digitalWrite(pinStep, HIGH);
+	if (pin2Enable) {
+		digitalWrite(pin2Step, HIGH);
+	}
 }
 
 void StepperControlAxis::resetMotorStep() {
 	movementStepDone = true;
 	digitalWrite(pinStep, LOW);
+	if (pin2Enable) {
+		digitalWrite(pin2Step, LOW);
+	}
 }
 
 bool StepperControlAxis::pointReached(long currentPoint, long destinationPoint) {

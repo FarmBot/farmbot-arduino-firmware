@@ -39,7 +39,7 @@ Serial.print(" ");
 Serial.print(command->getV());
 Serial.print(" ");
 
-Serial.print("\n");
+Serial.print("\r\n");
 */
 
 	ParameterList::getInstance()->writeValue(command->getP(), command->getV());

@@ -3,7 +3,7 @@
 
 #include "Arduino.h"
 #include "Config.h"
-
+#include "CurrentState.h"
 
 //#define NULL 0
 

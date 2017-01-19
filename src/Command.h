@@ -39,7 +39,8 @@ enum CommandCodeEnum
 class Command {
 	CommandCodeEnum codeEnum;
 public:
-	Command(String);
+//	Command(String);
+	Command(char * commandChar);
 	void print();
 	CommandCodeEnum getCodeEnum();
 	double getX();
@@ -55,7 +56,9 @@ public:
 	long getT();
 	long getE();
 	long getM();
+	long getQ();
 
+	void printQAndNewLine();
 private:
 	CommandCodeEnum getGCodeEnum(char* code);
 	void getParameter(char* charPointer);

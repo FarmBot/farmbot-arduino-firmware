@@ -25,7 +25,7 @@ F16Handler::F16Handler() {
 int F16Handler::execute(Command* command) {
 
         if (LOGGING) {
-                Serial.print("R99 HOME Z\n");
+                Serial.print("R99 HOME Z\r\n");
         }
 
 	StepperControl::getInstance()->calibrateAxis(2);

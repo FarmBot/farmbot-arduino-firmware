@@ -3,7 +3,7 @@
 #include "pins.h"
 #include "Config.h"
 #include "StepperControl.h"
-#include "ServoControl.h"
+//#include "ServoControl.h"
 #include "PinGuard.h"
 #include "TimerOne.h"
 
@@ -12,6 +12,11 @@ static GCodeProcessor* gCodeProcessor = new GCodeProcessor();
 
 unsigned long lastAction;
 unsigned long currentTime;
+
+String commandString = "";
+char incomingChar = 0;
+char incomingCommandArray[INCOMING_CMD_BUF_SIZE];
+int incomingCommandPointer = 0;
 
 // Blink led routine used for testing
 bool blink = false;
@@ -83,8 +88,14 @@ void setup() {
 
 	Serial.begin(115200);
 
+	delay(100);
+
+//ParameterList::getInstance()->setAllValuesToDefault();
+//ParameterList::getInstance()->writeAllValuesToEeprom();
+//ParameterList::getInstance()->readAllValuesFromEeprom();
+
 	// Start the motor handling
-	ServoControl::getInstance()->attach();
+	//ServoControl::getInstance()->attach();
 
 	// Dump all values to the serial interface
 	ParameterList::getInstance()->readAllValues();
@@ -95,8 +106,8 @@ void setup() {
 	// Start the interrupt used for moviing
 	// Interrupt management code library written by Paul Stoffregen
 	// The default time 100 micro seconds
-        Timer1.attachInterrupt(interrupt);
-        Timer1.initialize(MOVEMENT_INTERRUPT_SPEED);
+	Timer1.attachInterrupt(interrupt);
+	Timer1.initialize(MOVEMENT_INTERRUPT_SPEED);
 	Timer1.start();
 
 	// Initialize the inactivity check
@@ -108,23 +119,75 @@ void loop() {
 
 	if (Serial.available()) {
 
-		String commandString = Serial.readStringUntil(commandEndChar);
-		if (commandString && commandString.length() > 0) {
+		// Save current time stamp for timeout actions
+		lastAction = millis();
 
-			lastAction = millis();
+		// Get the input and start processing on receiving 'new line'
+		incomingChar = Serial.read();
+		incomingCommandArray[incomingCommandPointer] = incomingChar;
+		incomingCommandPointer++;
 
-			Command* command = new Command(commandString);
-			if(LOGGING) {
-				command->print();
+		// If the string is getting to long, cap it off with a new line and let it process anyway
+		if (incomingCommandPointer >= INCOMING_CMD_BUF_SIZE - 1) {
+			incomingChar = '\n';
+			incomingCommandArray[incomingCommandPointer] = incomingChar;
+			incomingCommandPointer++;
+		}
+
+		if (incomingChar == '\n' || incomingCommandPointer >= INCOMING_CMD_BUF_SIZE) {
+
+			//commandString += incomingChar;
+			//String commandString = Serial.readStringUntil(commandEndChar);
+		        //char commandChar[currentCommand.length()];
+	        	//currentCommand.toCharArray(commandChar, currentCommand.length());
+
+		        char commandChar[incomingCommandPointer + 1];
+			for (int i = 0; i < incomingCommandPointer -1; i++) {
+				commandChar[i] = incomingCommandArray[i];
 			}
-			gCodeProcessor->execute(command);
-			free(command);
+			commandChar[incomingCommandPointer] = 0;
+
+		        commandString.toCharArray(commandChar, commandString.length());
+
+			String currentCommand = String(commandString);
+
+			//if (commandString && commandString.length() > 0) {
+			if (incomingCommandPointer > 1) {
+
+
+				// Copy the command to another string object.
+				// because there are issues with passing the
+				// string to the command object
+
+//				Serial.print("\r\n");
+//				Serial.print("-");
+//				Serial.print(commandChar);
+//				Serial.print("-");
+//				Serial.print("\r\n");
+
+				// Create a command and let it execute
+				//Command* command = new Command(commandString);
+				Command* command = new Command(commandChar);
+
+				if(LOGGING) {
+					command->print();
+				}
+
+command->print();
+
+				gCodeProcessor->execute(command);
+
+				free(command);
+			}
+
+			incomingCommandPointer = 0;
 		}
 	}
-	delay(10);
+
+	//delay(10);
 
 	// Test
-	/**///StepperControl::getInstance()->test();
+	//StepperControl::getInstance()->test();
 
 	currentTime = millis();
 	if (currentTime < lastAction) {
@@ -135,9 +198,17 @@ void loop() {
 
 		if ((currentTime - lastAction) > 5000) {
 			// After an idle time, send the idle message
-			Serial.print("R00\r\n");
+			Serial.print("R00");
+			CurrentState::getInstance()->printQAndNewLine();
+
 			CurrentState::getInstance()->printPosition();
 			CurrentState::getInstance()->printEndStops();
+
+			//ParameterList::getInstance()->readAllValues();
+
+
+			StepperControl::getInstance()->test();
+
 			lastAction = millis();
 		}
 	}
