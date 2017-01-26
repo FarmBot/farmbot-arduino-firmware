@@ -105,7 +105,7 @@ StepperControl::StepperControl() {
 	encoderY.loadPinNumbers(Y_ENCDR_A, Y_ENCDR_B);
 	encoderZ.loadPinNumbers(Z_ENCDR_A, Z_ENCDR_B);
 
-	motorEnabled = false;
+	motorMotorsEnabled = false;
 }
 
 void StepperControl::test() {
