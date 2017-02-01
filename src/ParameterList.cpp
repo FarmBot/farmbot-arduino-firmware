@@ -61,6 +61,8 @@ int ParameterList::writeValue(int id, int value) {
 		Serial.print("R99 Error: invalid parameter id\r\n");
 	}
 
+
+/*
 	// Debugging output
 	Serial.print("R99");
 	Serial.print(" ");
@@ -75,6 +77,7 @@ int ParameterList::writeValue(int id, int value) {
 	Serial.print(value);
 	//Serial.print("\r\n");
 	CurrentState::getInstance()->printQAndNewLine();
+*/
 
 	// If any value is written,
 	// trigger the loading of the new configuration in all other modules
@@ -260,6 +263,8 @@ bool ParameterList::validParam(int id) {
 		case MOVEMENT_INVERT_MOTOR_X:
 		case MOVEMENT_INVERT_MOTOR_Y:
 		case MOVEMENT_INVERT_MOTOR_Z:
+	        case MOVEMENT_SECONDARY_MOTOR_X:
+	        case MOVEMENT_SECONDARY_MOTOR_INVERT_X:
 		case MOVEMENT_STEPS_ACC_DEC_X:
 		case MOVEMENT_STEPS_ACC_DEC_Y:
 		case MOVEMENT_STEPS_ACC_DEC_Z:

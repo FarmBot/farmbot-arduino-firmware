@@ -151,19 +151,12 @@ void loop() {
 
 			String currentCommand = String(commandString);
 
-			//if (commandString && commandString.length() > 0) {
 			if (incomingCommandPointer > 1) {
 
 
 				// Copy the command to another string object.
 				// because there are issues with passing the
 				// string to the command object
-
-//				Serial.print("\r\n");
-//				Serial.print("-");
-//				Serial.print(commandChar);
-//				Serial.print("-");
-//				Serial.print("\r\n");
 
 				// Create a command and let it execute
 				//Command* command = new Command(commandString);
@@ -172,8 +165,6 @@ void loop() {
 				if(LOGGING) {
 					command->print();
 				}
-
-command->print();
 
 				gCodeProcessor->execute(command);
 
@@ -184,13 +175,11 @@ command->print();
 		}
 	}
 
-	//delay(10);
-
-	// Test
 	//StepperControl::getInstance()->test();
 
 	currentTime = millis();
 	if (currentTime < lastAction) {
+
 		// If the device timer overruns, reset the idle counter
 		lastAction = millis();
 	}

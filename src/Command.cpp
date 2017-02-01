@@ -24,34 +24,13 @@ long   msgQueue                 = 0;
 
 CommandCodeEnum commandCodeEnum = CODE_UNDEFINED;
 
-//Command::Command(String commandString) {
 Command::Command(char * commandChar) {
-	//temp = String(commandString);
-	//temp = String(commandChar);
-	//temp = String(commadString);
-
-	String temp = String(commandChar);
-	Serial.print("Command: ");
-	Serial.print(temp);
-	Serial.print("\r\n");
-
-	//commandString = commandString + " ";
-	//char charBuf[commandString.length()];
-	//commandString.toCharArray(charBuf, commandString.length());
 
 	char * charBuf = commandChar;
-
-
 	char* charPointer;
 	bool invalidCommand = false;
 
 	charPointer = strtok(charBuf, " ");
-
-	//String par1(charPointer);
-	//temp = String(charPointer);
-	//Serial.print("R99 char ");
-	//Serial.print(temp);
-	//Serial.print("\r\n");
 
 	if (charPointer[0] == 'G' || charPointer[0] == 'F') {
 		commandCodeEnum = getGCodeEnum(charPointer);
@@ -65,20 +44,7 @@ Command::Command(char * commandChar) {
 
 		charPointer = strtok(NULL, " \n\r");
 
-		//String temp = String(charPointer);
-		//Serial.print("Command: ");
-		//Serial.print(temp);
-		//Serial.print("\r\n");
-
-		//String par2(charPointer);
-		//Serial.print("R99 x ");
-		//Serial.print(par2);
-		//Serial.print("\r\n");
-		//Serial.print("x");
 	}
-		//Serial.print("R99 einde parameters ");
-		//Serial.print("\r\n");
-
 }
 
 CommandCodeEnum Command::getGCodeEnum(char* code) {
