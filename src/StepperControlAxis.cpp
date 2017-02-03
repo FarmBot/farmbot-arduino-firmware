@@ -352,9 +352,9 @@ void StepperControlAxis::setDirectionUp() {
 	}
 
 	if (motorMotor2Enl && motorMotor2Inv) {
-		digitalWrite(pinDirection, LOW);
+		digitalWrite(pin2Direction, LOW);
 	} else {
-		digitalWrite(pinDirection, HIGH);
+		digitalWrite(pin2Direction, HIGH);
 	}
 }
 
