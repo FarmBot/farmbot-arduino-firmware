@@ -59,6 +59,9 @@ void setup() {
 	pinMode(X_STEP_PIN  , OUTPUT);
 	pinMode(X_DIR_PIN   , OUTPUT);
 	pinMode(X_ENABLE_PIN, OUTPUT);
+	pinMode(E_STEP_PIN  , OUTPUT);
+	pinMode(E_DIR_PIN   , OUTPUT);
+	pinMode(E_ENABLE_PIN, OUTPUT);
 	pinMode(X_MIN_PIN   , INPUT_PULLUP );
 	pinMode(X_MAX_PIN   , INPUT_PULLUP );
 
@@ -83,6 +86,7 @@ void setup() {
 	//pinMode(SERVO_1_PIN , OUTPUT);
 
 	digitalWrite(X_ENABLE_PIN, HIGH);
+	digitalWrite(E_ENABLE_PIN, HIGH);
 	digitalWrite(Y_ENABLE_PIN, HIGH);
 	digitalWrite(Z_ENABLE_PIN, HIGH);
 
