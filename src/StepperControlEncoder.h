@@ -22,7 +22,7 @@ public:
 
 	StepperControlEncoder();
 
-	void loadPinNumbers(int channelA, int channelB);
+	void loadPinNumbers(int channelA, int channelB, int channelA2, int channelB2);
 
 	void setPosition(long newPosition);
 	long currentPosition();
@@ -36,13 +36,22 @@ private:
 
 	// pin settings
 	int pinChannelA;
+	int pinChannelA2;
 	int pinChannelB;
+	int pinChannelB2;
 
 	// channels
 	bool prvValChannelA;
 	bool prvValChannelB;
 	bool curValChannelA;
 	bool curValChannelB;
+
+	int curAnlgValChannelA1;
+	int curAnlgValChannelA2;
+	int curAnlgValChannelB1;
+	int curAnlgValChannelB2;
+
+
 
 	// encoder
 	long position;

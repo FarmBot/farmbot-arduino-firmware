@@ -101,9 +101,9 @@ StepperControl::StepperControl() {
 	encoderY = StepperControlEncoder();
 	encoderZ = StepperControlEncoder();
 
-	encoderX.loadPinNumbers(X_ENCDR_A, X_ENCDR_B);
-	encoderY.loadPinNumbers(Y_ENCDR_A, Y_ENCDR_B);
-	encoderZ.loadPinNumbers(Z_ENCDR_A, Z_ENCDR_B);
+	encoderX.loadPinNumbers(X_ENCDR_A, X_ENCDR_B, X_ENCDR_A_Q, X_ENCDR_B_Q);
+	encoderY.loadPinNumbers(Y_ENCDR_A, Y_ENCDR_B, Y_ENCDR_A_Q, Y_ENCDR_B_Q);
+	encoderZ.loadPinNumbers(Z_ENCDR_A, Z_ENCDR_B, Z_ENCDR_A_Q, Z_ENCDR_B_Q);
 
 	motorMotorsEnabled = false;
 }

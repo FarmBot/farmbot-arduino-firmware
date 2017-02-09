@@ -82,6 +82,22 @@ void setup() {
 	pinMode(FAN_PIN     , OUTPUT);
 	pinMode(LED_PIN     , OUTPUT);
 
+	pinMode(X_ENCDR_A   , INPUT_PULLUP );
+	pinMode(X_ENCDR_A_Q , INPUT_PULLUP );
+	pinMode(X_ENCDR_B   , INPUT_PULLUP );
+	pinMode(X_ENCDR_B_Q , INPUT_PULLUP );
+
+	pinMode(Y_ENCDR_A   , INPUT_PULLUP );
+	pinMode(Y_ENCDR_A_Q , INPUT_PULLUP );
+	pinMode(Y_ENCDR_B   , INPUT_PULLUP );
+	pinMode(Y_ENCDR_B_Q , INPUT_PULLUP );
+
+	pinMode(Z_ENCDR_A   , INPUT_PULLUP );
+	pinMode(Z_ENCDR_A_Q , INPUT_PULLUP );
+	pinMode(Z_ENCDR_B   , INPUT_PULLUP );
+	pinMode(Z_ENCDR_B_Q , INPUT_PULLUP );
+
+
 	//pinMode(SERVO_0_PIN , OUTPUT);
 	//pinMode(SERVO_1_PIN , OUTPUT);
 
