@@ -195,6 +195,7 @@ void loop() {
 			CurrentState::getInstance()->printQAndNewLine();
 
 			CurrentState::getInstance()->printPosition();
+			CurrentState::getInstance()->storeEndStops();
 			CurrentState::getInstance()->printEndStops();
 
 			//ParameterList::getInstance()->readAllValues();
