@@ -276,6 +276,7 @@ bool StepperControlAxis::endStopAxisReached(bool movement_forward) {
 	if((!movement_forward && min_endstop) || (movement_forward && max_endstop)) {
 		return 1;
 	}
+
 	return 0;
 }
 
@@ -293,7 +294,9 @@ void StepperControlAxis::StepperControlAxis::loadPinNumbers(int step, int dir, i
 }
 
 
-void StepperControlAxis::loadMotorSettings(long speedMax, long speedMin, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, bool endStInv, long interruptSpeed, bool motor2Enbl,bool motor2Inv) {
+void StepperControlAxis::loadMotorSettings( 
+	long speedMax, long speedMin, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, 
+	bool endStInv, long interruptSpeed, bool motor2Enbl,bool motor2Inv, bool endStEnbl) {
 
         motorSpeedMax		= speedMax;
         motorSpeedMin		= speedMin;
@@ -302,6 +305,7 @@ void StepperControlAxis::loadMotorSettings(long speedMax, long speedMin, long st
         motorHomeIsUp		= homeIsUp;
         motorMotorInv		= motorInv;
         motorEndStopInv		= endStInv;
+        motorEndStopEnbl	= endStEnbl;
 	motorInterruptSpeed 	= interruptSpeed;
 	motorMotor2Enl		= motor2Enbl;
 	motorMotor2Inv		= motor2Inv;
@@ -409,17 +413,17 @@ unsigned long StepperControlAxis::getLength(long l1, long l2) {
 }
 
 bool StepperControlAxis::endStopsReached() {
-	return ((digitalRead(pinMin) == motorEndStopInv) || (digitalRead(pinMax) == motorEndStopInv));
+	return ((digitalRead(pinMin) == motorEndStopInv) || (digitalRead(pinMax) == motorEndStopInv)) && motorEndStopEnbl;
 }
 
 bool StepperControlAxis::endStopMin() {
 	//return ((digitalRead(pinMin) == motorEndStopInv) || (digitalRead(pinMax) == motorEndStopInv));
-	return digitalRead(pinMin);
+	return digitalRead(pinMin) && motorEndStopEnbl;
 }
 
 bool StepperControlAxis::endStopMax() {
 	//return ((digitalRead(pinMin) == motorEndStopInv) || (digitalRead(pinMax) == motorEndStopInv));
-        return digitalRead(pinMax);
+        return digitalRead(pinMax) && motorEndStopEnbl;
 }
 
 bool StepperControlAxis::isAxisActive() {

@@ -188,6 +188,10 @@ void ParameterList::loadDefaultValue(int id) {
 	        case MOVEMENT_INVERT_ENDPOINTS_Y  	: paramValues[id] = MOVEMENT_INVERT_ENDPOINTS_Y_DEFAULT; break;
 	        case MOVEMENT_INVERT_ENDPOINTS_Z  	: paramValues[id] = MOVEMENT_INVERT_ENDPOINTS_Z_DEFAULT; break;
 
+                case MOVEMENT_ENABLE_ENDPOINTS_X        : paramValues[id] = MOVEMENT_ENABLE_ENDPOINTS_X_DEFAULT; break;
+                case MOVEMENT_ENABLE_ENDPOINTS_Y        : paramValues[id] = MOVEMENT_ENABLE_ENDPOINTS_Y_DEFAULT; break;
+                case MOVEMENT_ENABLE_ENDPOINTS_Z        : paramValues[id] = MOVEMENT_ENABLE_ENDPOINTS_Z_DEFAULT; break;
+
 	        case MOVEMENT_INVERT_MOTOR_X      	: paramValues[id] = MOVEMENT_INVERT_MOTOR_X_DEFAULT; break;
 	        case MOVEMENT_INVERT_MOTOR_Y      	: paramValues[id] = MOVEMENT_INVERT_MOTOR_Y_DEFAULT; break;
 	        case MOVEMENT_INVERT_MOTOR_Z      	: paramValues[id] = MOVEMENT_INVERT_MOTOR_Z_DEFAULT; break;
@@ -257,6 +261,9 @@ bool ParameterList::validParam(int id) {
 		case MOVEMENT_TIMEOUT_X:
 		case MOVEMENT_TIMEOUT_Y:
 		case MOVEMENT_TIMEOUT_Z:
+                case MOVEMENT_ENABLE_ENDPOINTS_X:
+                case MOVEMENT_ENABLE_ENDPOINTS_Y:
+                case MOVEMENT_ENABLE_ENDPOINTS_Z:
 		case MOVEMENT_INVERT_ENDPOINTS_X:
 		case MOVEMENT_INVERT_ENDPOINTS_Y:
 		case MOVEMENT_INVERT_ENDPOINTS_Z:

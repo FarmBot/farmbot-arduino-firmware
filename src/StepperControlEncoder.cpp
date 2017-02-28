@@ -24,7 +24,7 @@ void StepperControlEncoder::test() {
                 Serial.print("\r\n");
 }
 
-void StepperControlEncoder::loadPinNumbers(int channelA, int channelB, int channelA2, int channelB2) {
+void StepperControlEncoder::loadPinNumbers(int channelA, int channelB) {
 	pinChannelA = channelA;
 	pinChannelB = channelB;
 
@@ -85,32 +85,8 @@ void StepperControlEncoder::readEncoder() {
 }
 
 void StepperControlEncoder::readChannels() {
-
-	curAnlgValChannelA1 = analogRead(pinChannelA);
-	curAnlgValChannelA2 = analogRead(pinChannelA2);
-	curAnlgValChannelB1 = analogRead(pinChannelB);
-	curAnlgValChannelB2 = analogRead(pinChannelB2);
-
-	if (abs(curAnlgValChannelA1 - curAnlgValChannelA2) > 555) {
-		curValChannelA = true;
-	}
-
-	if (abs(curAnlgValChannelA1 - curAnlgValChannelA2) < 165) {
-		curValChannelA = false;
-	}
-
-	if (abs(curAnlgValChannelB1 - curAnlgValChannelB2) > 555) {
-		curValChannelB = true;
-	}
-
-	if (abs(curAnlgValChannelB1 - curAnlgValChannelB2) < 165) {
-		curValChannelB = false;
-	}
-
-
-	//curValChannelA = digitalRead(pinChannelA);
-	//curValChannelB = digitalRead(pinChannelB);
-
+	curValChannelA = digitalRead(pinChannelA);
+	curValChannelB = digitalRead(pinChannelB);
 }
 
 void StepperControlEncoder::shiftChannels() {

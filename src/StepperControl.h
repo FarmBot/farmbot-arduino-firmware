@@ -80,6 +80,7 @@ private:
         bool motor2Inv[3];
         bool motor2Enbl[3];
         bool endStInv[3];
+        bool endStEnbl[3];
         long timeOut[3];
 
         float motorConsMissedSteps[3];
