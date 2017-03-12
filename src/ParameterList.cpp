@@ -142,11 +142,15 @@ int ParameterList::writeValueEeprom(int id, int value) {
 
 int ParameterList::readAllValuesFromEeprom() {
 	// Write all existing values to eeprom
-	for (int i=0; i < PARAM_NR_OF_PARAMS; i++)
-	{
+	for (int i=0; i < PARAM_NR_OF_PARAMS; i++) {
 		if (validParam(i)) {
 			paramValues[i] = readValueEeprom(i);
-
+			if (paramValues[i] == -1) {
+				// When parameters are still on default,
+				// load a good value and save it
+				loadDefaultValue(i);
+				writeValueEeprom(i,paramValues[i]);
+			}
 		}
 	}
 }
