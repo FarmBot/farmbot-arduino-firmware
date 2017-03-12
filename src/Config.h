@@ -133,6 +133,6 @@ const long PIN_GUARD_5_ACTIVE_STATE_DEFAULT     	= 1;
 const long STATUS_GENERAL_DEFAULT               	= 0;
 
 
-const String SOFTWARE_VERSION = "GENESIS V.01.06.EXPERIMENTAL";
+const String SOFTWARE_VERSION = "GENESIS V.01.07.EXPERIMENTAL";
 
 #endif /* CONFIG_H_ */
