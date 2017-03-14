@@ -50,7 +50,7 @@ const int COMM_REPORT_CALIBRATE_STATUS_ERROR   		= -1;
 const int MOVEMENT_INTERRUPT_SPEED = 100; // Interrupt cycle in micro seconds
 
 const unsigned int MOVEMENT_SPEED_BASE_TIME      	= 2000;
-const unsigned int MOVEMENT_DELAY                	= 500;
+const unsigned int MOVEMENT_DELAY                	= 250;
 
 const long PARAM_VERSION_DEFAULT                	= 1;
 const long PARAM_TEST_DEFAULT                   	= 0;
@@ -89,9 +89,9 @@ const long MOVEMENT_MIN_SPD_Y_DEFAULT           	= 50;
 const long MOVEMENT_MIN_SPD_Z_DEFAULT           	= 50;
 
 // Maxumum speed in steps per second
-const long MOVEMENT_MAX_SPD_X_DEFAULT           	= 1500;
-const long MOVEMENT_MAX_SPD_Y_DEFAULT           	= 1500;
-const long MOVEMENT_MAX_SPD_Z_DEFAULT           	= 1500;
+const long MOVEMENT_MAX_SPD_X_DEFAULT           	= 800;
+const long MOVEMENT_MAX_SPD_Y_DEFAULT           	= 800;
+const long MOVEMENT_MAX_SPD_Z_DEFAULT           	= 800;
 
 // Use encoder (0 or 1)
 const long ENCODER_ENABLED_X_DEFAULT			= 0;
