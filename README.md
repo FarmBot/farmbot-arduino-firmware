@@ -1,6 +1,6 @@
 farmbot-arduino-controller
 ==========================
-This software is responsible for receiving G-Codes from the Raspberry Pi, execute them and report back the results.
+This software is responsible for receiving G-Codes from the Raspberry Pi, executing them, and reporting back the results.
 
 Technicals
 ==========================
@@ -50,9 +50,9 @@ ino upload
 Software overview
 =================
 
-All files are in /src
+All files are in `/src`
 
-Farmbot_arduino_controller contains the setup() and main(). This the main sequence:
+Farmbot_arduino_controller contains the setup() and main(). This is the main sequence:
 
 ```
      +--------------------------+
@@ -119,18 +119,16 @@ LED_PIN          |  13  | on board LED
 FAN_PIN          |   9  | RAMPS board fan pin
 HEATER_0_PIN     |  10  | RAMPS board heating pin 0
 HEATER_1_PIN     |   8  | RAMPS board heating pin 1
-SERVO_0_PIN	 |   4  | Servo motor 0 signal pin
-SERVO_1_PIN	 |   5  | Servo motor 1 signal pin
+SERVO_0_PIN	  |   4  | Servo motor 0 signal pin
+SERVO_1_PIN	  |   5  | Servo motor 1 signal pin
 
 G-Codes
 -------
 
+### Codes sent to the arduino
 
 Code type|Number|Parameters|Function
 ---------|------|----------|--------
-         |      |          |
-         |      |          |Codes send to the arduino
-         |      |          |
 G        |      |          |G-Code, the codes working the same as a 3D printer
 G        |00    |X Y Z S   |Move to location at given speed for axis (don't have to be a straight line), in absolute coordinates
 G        |01    |X Y Z S   |Move to location on a straight line
@@ -161,9 +159,11 @@ F        |81    |          |Report end stop
 F        |82    |          |Report current position
 F        |83    |          |Report software version
 E        |      |          |Emergency stop
-         |      |          |
-         |      |          |Codes received from the arduino
-         |      |          |
+
+### Codes received from the arduino
+
+Code type|Number|Parameters|Function
+---------|------|----------|--------
 R        |      |          |Report messages
 R        |01    |          |Current command started
 R        |02    |          |Current command finished successfully
@@ -212,7 +212,7 @@ Parameters|Description            |Unit of Measurement
 ----------|-----------------------|-------------------
 X         |X movement             |steps
 Y         |Y movement             |steps
-Z         |Z movement	          |steps
+Z         |Z movement	         |steps
 S         |Speed                  |steps/second
 Q         |Quantity               |counter ticks
 T         |Time                   |seconds
@@ -224,7 +224,6 @@ L         |Number                 |#
 E         |Element (in tool mount)|#
 M         |Mode (set pin mode)    |0 = output / 1 = input
 M         |Mode (read/write)      |0 = digital / 1 = analog
-          |                       |
 XA        |End stop 1 on x axis   |0/1
 XB        |End stop 2 on x axis   |0/1
 YA        |End stop 1 on y axis   |0/1
@@ -251,7 +250,7 @@ MOVEMENT_INVERT_MOTOR_X      |31
 MOVEMENT_INVERT_MOTOR_Y      |32
 MOVEMENT_INVERT_MOTOR_Z      |33
 MOVEMENT_SECONDARY_MOTOR_X   |36
-MOVEMENT_SECONDARY_MOTOR_INVERT_X|37
+MOVEMENT_SECONDARY_MOTOR_INVERT_X |37
 MOVEMENT_STEPS_ACC_DEC_X     |41
 MOVEMENT_STEPS_ACC_DEC_Y     |42
 MOVEMENT_STEPS_ACC_DEC_Z     |43
