@@ -12,18 +12,6 @@ const int LOGGING = 0;
 
 const int INCOMING_CMD_BUF_SIZE = 50;
 
-//const unsigned long STEPS_FOR_ACC_DEC = 20;
-//const unsigned int MAX_ACCELERATION_STEPS_PER_SECOND = 2;
-
-//const unsigned int MOVEMENT_STEPS_ACC_DEC        = 100;
-//const unsigned int MOVEMENT_MAX_STEPS_PER_SECOND = 1000;
-//const unsigned int MOVEMENT_HOME_SPEED_S_P_S     = 200;
-//const unsigned int MOVEMENT_TIMEOUT              = 30;
-//const unsigned int INVERT_ENDSTOPS = 1;
-//const bool AXIS_HOME_UP_X = false;
-//const bool AXIS_HOME_UP_Y = false;
-//const bool AXIS_HOME_UP_Z = true;
-
 const String COMM_REPORT_CMD_START    			= "R01";
 const String COMM_REPORT_CMD_DONE     			= "R02";
 const String COMM_REPORT_CMD_ERROR    			= "R03";
@@ -97,6 +85,18 @@ const long MOVEMENT_MAX_SPD_Z_DEFAULT           	= 800;
 const long ENCODER_ENABLED_X_DEFAULT			= 0;
 const long ENCODER_ENABLED_Y_DEFAULT			= 0;
 const long ENCODER_ENABLED_Z_DEFAULT			= 0;
+
+// Type of enocder.
+// 0 = non-differential encoder, channel A,B
+// 1 = differenttial encoder, channel A, A*, B, B*
+const long ENCODER_TYPE_X_DEFAULT                      	= 0;
+const long ENCODER_TYPE_Y_DEFAULT                     	= 0;
+const long ENCODER_TYPE_Z_DEFAULT                      	= 0;
+
+// Position = encoder position * scaling / 100
+const long ENCODER_SCALING_X_DEFAULT                   	= 100;
+const long ENCODER_SCALING_Y_DEFAULT                   	= 100;
+const long ENCODER_SCALING_Z_DEFAULT                 	= 100;
 
 // Number of stes missed before motor is seen as not moving
 const long ENCODER_MISSED_STEPS_MAX_X_DEFAULT		= 10;

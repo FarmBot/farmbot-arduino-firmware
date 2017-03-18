@@ -41,6 +41,8 @@ public:
 	void disableMotors();
 	bool motorsEnabled();
 
+	void storePosition();
+
 	void test();
 	void test2();
 
@@ -89,6 +91,8 @@ private:
         int motorConsMissedStepsMax[3];
         float motorConsMissedStepsDecay[3];
         bool motorConsEncoderEnabled[3];
+        bool motorConsEncoderType[3];
+        bool motorConsEncoderScaling[3];
 
 	bool motorMotorsEnabled;
 };

@@ -223,14 +223,21 @@ void ParameterList::loadDefaultValue(int id) {
 	        case ENCODER_ENABLED_Y            	: paramValues[id] = ENCODER_ENABLED_Y_DEFAULT; break;
 	        case ENCODER_ENABLED_Z            	: paramValues[id] = ENCODER_ENABLED_Z_DEFAULT; break;
 
+	        case ENCODER_TYPE_X            		: paramValues[id] = ENCODER_TYPE_X_DEFAULT; break;
+	        case ENCODER_TYPE_Y     	       	: paramValues[id] = ENCODER_TYPE_Y_DEFAULT; break;
+	        case ENCODER_TYPE_Z 	           	: paramValues[id] = ENCODER_TYPE_Z_DEFAULT; break;
+
 	        case ENCODER_MISSED_STEPS_MAX_X   	: paramValues[id] = ENCODER_MISSED_STEPS_MAX_X_DEFAULT; break;
 	        case ENCODER_MISSED_STEPS_MAX_Y   	: paramValues[id] = ENCODER_MISSED_STEPS_MAX_Y_DEFAULT; break;
 	        case ENCODER_MISSED_STEPS_MAX_Z   	: paramValues[id] = ENCODER_MISSED_STEPS_MAX_Z_DEFAULT; break;
 
+	        case ENCODER_SCALING_X         		: paramValues[id] = ENCODER_SCALING_X_DEFAULT; break;
+	        case ENCODER_SCALING_Y     	       	: paramValues[id] = ENCODER_SCALING_Y_DEFAULT; break;
+	        case ENCODER_SCALING_Z 	           	: paramValues[id] = ENCODER_SCALING_Z_DEFAULT; break;
+
 	        case ENCODER_MISSED_STEPS_DECAY_X 	: paramValues[id] = ENCODER_MISSED_STEPS_DECAY_X_DEFAULT; break;
 	        case ENCODER_MISSED_STEPS_DECAY_Y 	: paramValues[id] = ENCODER_MISSED_STEPS_DECAY_Y_DEFAULT; break;
 	        case ENCODER_MISSED_STEPS_DECAY_Z 	: paramValues[id] = ENCODER_MISSED_STEPS_DECAY_Z_DEFAULT; break;
-
 
 		case PIN_GUARD_1_PIN_NR           	: paramValues[id] = PIN_GUARD_1_PIN_NR_DEFAULT; break;
 		case PIN_GUARD_1_TIME_OUT         	: paramValues[id] = PIN_GUARD_1_TIME_OUT_DEFAULT; break;

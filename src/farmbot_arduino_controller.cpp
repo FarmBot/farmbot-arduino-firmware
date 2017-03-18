@@ -94,10 +94,6 @@ void setup() {
 
 	delay(100);
 
-//ParameterList::getInstance()->setAllValuesToDefault();
-//ParameterList::getInstance()->writeAllValuesToEeprom();
-//ParameterList::getInstance()->readAllValuesFromEeprom();
-
 	// Start the motor handling
 	//ServoControl::getInstance()->attach();
 
@@ -194,7 +190,9 @@ void loop() {
 			Serial.print("R00");
 			CurrentState::getInstance()->printQAndNewLine();
 
+			StepperControl::getInstance()->storePosition();
 			CurrentState::getInstance()->printPosition();
+
 			CurrentState::getInstance()->storeEndStops();
 			CurrentState::getInstance()->printEndStops();
 

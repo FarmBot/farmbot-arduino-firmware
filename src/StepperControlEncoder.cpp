@@ -7,6 +7,9 @@ StepperControlEncoder::StepperControlEncoder() {
         pinChannelB     = 0;
 
         position        = 0;
+	encoderType	= 0; // default type
+	scalingFactor	= 100;
+
 }
 
 void StepperControlEncoder::test() {
@@ -24,12 +27,19 @@ void StepperControlEncoder::test() {
                 Serial.print("\r\n");
 }
 
-void StepperControlEncoder::loadPinNumbers(int channelA, int channelB) {
-	pinChannelA = channelA;
-	pinChannelB = channelB;
+void StepperControlEncoder::loadPinNumbers(int channelA, int channelB, int channelAQ, int channelBQ) {
+	pinChannelA  = channelA;
+	pinChannelB  = channelB;
+	pinChannelAQ = channelAQ;
+	pinChannelBQ = channelBQ;
 
 	readChannels();
 	shiftChannels();
+}
+
+void StepperControlEncoder::loadSettings(int encType, int scaling) {
+	encoderType = encType;
+	scalingFactor = scaling;
 }
 
 void StepperControlEncoder::setPosition(long newPosition) {
@@ -78,15 +88,32 @@ void StepperControlEncoder::readEncoder() {
 
 	position += delta;
 
-	//if (delta != 0) {
-	//	test();
-	//}
-
 }
 
 void StepperControlEncoder::readChannels() {
-	curValChannelA = digitalRead(pinChannelA);
-	curValChannelB = digitalRead(pinChannelB);
+
+	readChannelA	= digitalRead(pinChannelA);
+        readChannelAQ	= digitalRead(pinChannelB);
+        readChannelB	= digitalRead(pinChannelA);
+        readChannelBQ	= digitalRead(pinChannelB);
+
+	if (encoderType == 1) {
+		// differential encoder
+		if (readChannelA ^ readChannelAQ) {
+			curValChannelA = readChannelA;
+		}
+		if (readChannelB ^ readChannelBQ) {
+			curValChannelB = readChannelB;
+		}
+	}
+	if (encoderType == 0) {
+		// non-differential incremental encoder
+		curValChannelA = readChannelA;
+		curValChannelB = readChannelB;
+	}
+
+//	curValChannelA = digitalRead(pinChannelA);
+//	curValChannelB = digitalRead(pinChannelB);
 }
 
 void StepperControlEncoder::shiftChannels() {
