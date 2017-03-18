@@ -47,7 +47,11 @@ void StepperControlEncoder::setPosition(long newPosition) {
 }
 
 long StepperControlEncoder::currentPosition() {
-	return position;
+	if (scalingFactor == 100 || scalingFactor == 0) {
+		return position;
+	} else {
+		return position * scalingFactor / 100;
+	}
 }
 
 /* Check the encoder channels for movement accoridng to thisspecification
