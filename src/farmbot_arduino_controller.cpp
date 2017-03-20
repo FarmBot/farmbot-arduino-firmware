@@ -106,6 +106,7 @@ void setup() {
 	// Start the interrupt used for moviing
 	// Interrupt management code library written by Paul Stoffregen
 	// The default time 100 micro seconds
+
 	Timer1.attachInterrupt(interrupt);
 	Timer1.initialize(MOVEMENT_INTERRUPT_SPEED);
 	Timer1.start();

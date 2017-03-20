@@ -10,9 +10,19 @@ StepperControlEncoder::StepperControlEncoder() {
 	encoderType	= 0; // default type
 	scalingFactor	= 100;
 
+	curValChannelA	= false;
+	curValChannelA	= false;
+	prvValChannelA	= false;
+	prvValChannelA	= false;
+
+	readChannelA	= false;
+        readChannelAQ	= false;
+        readChannelB	= false;
+        readChannelBQ	= false;
 }
 
 void StepperControlEncoder::test() {
+/*
                 Serial.print("R88 ");
                 Serial.print("position ");
                 Serial.print(position);
@@ -25,6 +35,7 @@ void StepperControlEncoder::test() {
                 Serial.print(" -> ");
                 Serial.print(curValChannelB);
                 Serial.print("\r\n");
+*/
 }
 
 void StepperControlEncoder::loadPinNumbers(int channelA, int channelB, int channelAQ, int channelBQ) {
@@ -47,11 +58,13 @@ void StepperControlEncoder::setPosition(long newPosition) {
 }
 
 long StepperControlEncoder::currentPosition() {
-	if (scalingFactor == 100 || scalingFactor == 0) {
+
+	if (scalingFactor == 100 || scalingFactor <= 0) {
 		return position;
 	} else {
 		return position * scalingFactor / 100;
 	}
+
 }
 
 /* Check the encoder channels for movement accoridng to thisspecification
@@ -97,24 +110,27 @@ void StepperControlEncoder::readEncoder() {
 void StepperControlEncoder::readChannels() {
 
 	readChannelA	= digitalRead(pinChannelA);
-        readChannelAQ	= digitalRead(pinChannelB);
-        readChannelB	= digitalRead(pinChannelA);
-        readChannelBQ	= digitalRead(pinChannelB);
+        readChannelAQ	= digitalRead(pinChannelAQ);
+        readChannelB	= digitalRead(pinChannelB);
+        readChannelBQ	= digitalRead(pinChannelBQ);
 
 	if (encoderType == 1) {
 		// differential encoder
-		if (readChannelA ^ readChannelAQ) {
+		if ((readChannelA ^ readChannelAQ) && (readChannelB ^ readChannelBQ)) {
 			curValChannelA = readChannelA;
-		}
-		if (readChannelB ^ readChannelBQ) {
 			curValChannelB = readChannelB;
 		}
 	}
-	if (encoderType == 0) {
+	else {
+		// encoderType <= 0
 		// non-differential incremental encoder
 		curValChannelA = readChannelA;
 		curValChannelB = readChannelB;
 	}
+
+
+//	curValChannelA = readChannelA;
+//	curValChannelB = readChannelB;
 
 //	curValChannelA = digitalRead(pinChannelA);
 //	curValChannelB = digitalRead(pinChannelB);
