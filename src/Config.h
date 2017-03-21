@@ -35,7 +35,7 @@ const int COMM_REPORT_CALIBRATE_STATUS_TO_END  		= 2;
 const int COMM_REPORT_CALIBRATE_STATUS_ERROR   		= -1;
 
 
-const int MOVEMENT_INTERRUPT_SPEED = 120; // Interrupt cycle in micro seconds
+const int MOVEMENT_INTERRUPT_SPEED = 200; // Interrupt cycle in micro seconds
 
 const unsigned int MOVEMENT_SPEED_BASE_TIME      	= 2000;
 const unsigned int MOVEMENT_DELAY                	= 250;

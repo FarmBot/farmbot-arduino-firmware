@@ -101,6 +101,10 @@ StepperControl::StepperControl() {
 	encoderY.loadPinNumbers(Y_ENCDR_A, Y_ENCDR_B, Y_ENCDR_A_Q, Y_ENCDR_B_Q);
 	encoderZ.loadPinNumbers(Z_ENCDR_A, Z_ENCDR_B, Z_ENCDR_A_Q, Z_ENCDR_B_Q);
 
+	encoderX.loadSettings( motorConsEncoderType[0], motorConsEncoderScaling[0]);
+	encoderY.loadSettings( motorConsEncoderType[1], motorConsEncoderScaling[1]);
+	encoderZ.loadSettings( motorConsEncoderType[2], motorConsEncoderScaling[2]);
+
 	motorMotorsEnabled = false;
 }
 
@@ -981,10 +985,6 @@ void StepperControl::loadEncoderSettings() {
 	} else {
 		motorConsEncoderEnabled[2]	= false;
 	}
-
-	encoderX.loadSettings( motorConsEncoderType[0], motorConsEncoderScaling[0]);
-	encoderY.loadSettings( motorConsEncoderType[1], motorConsEncoderScaling[1]);
-	encoderZ.loadSettings( motorConsEncoderType[2], motorConsEncoderScaling[2]);
 
 }
 

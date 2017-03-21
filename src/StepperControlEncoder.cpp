@@ -63,6 +63,7 @@ long StepperControlEncoder::currentPosition() {
 		return position;
 	} else {
 		return position * scalingFactor / 100;
+		return position;
 	}
 
 }
