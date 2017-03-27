@@ -6,6 +6,8 @@
 //#include "ServoControl.h"
 #include "PinGuard.h"
 #include "TimerOne.h"
+#include "MemoryFree.h"
+
 
 static char commandEndChar = 0x0A;
 static GCodeProcessor* gCodeProcessor = new GCodeProcessor();
@@ -188,7 +190,8 @@ void loop() {
 
 		if ((currentTime - lastAction) > 5000) {
 			// After an idle time, send the idle message
-			Serial.print("R00");
+
+			Serial.print(COMM_REPORT_CMD_IDLE);
 			CurrentState::getInstance()->printQAndNewLine();
 
 			StepperControl::getInstance()->storePosition();
@@ -197,10 +200,21 @@ void loop() {
 			CurrentState::getInstance()->storeEndStops();
 			CurrentState::getInstance()->printEndStops();
 
+			Serial.print(COMM_REPORT_COMMENT);
+			Serial.print(" MEM ");
+			Serial.print(freeMemory());
+			CurrentState::getInstance()->printQAndNewLine();
+
+			StepperControl::getInstance()->test();
+
 			//ParameterList::getInstance()->readAllValues();
 
 
-			StepperControl::getInstance()->test();
+			//StepperControl::getInstance()->test();
+
+//			if (ParameterList::getInstance()->getValue(PARAM_CONFIG_OK) != 1) {
+//				Serial.print(COMM_REPORT_NO_CONFIG);
+//			}
 
 			lastAction = millis();
 		}

@@ -109,6 +109,15 @@ StepperControl::StepperControl() {
 }
 
 void StepperControl::test() {
+
+	Serial.print("R99");
+	Serial.print(" mot x = ");
+	Serial.print(axisX.currentPosition());
+	Serial.print(" enc x = ");
+	Serial.print(encoderX.currentPosition());
+	Serial.print("\r\n");
+
+
 	// read changes in encoder
 	//encoderX.readEncoder();
 	//encoderY.readEncoder();
@@ -1039,17 +1048,18 @@ void StepperControl::storePosition(){
 	        CurrentState::getInstance()->setX(axisX.currentPosition());
 	}
 
-	if (motorConsEncoderEnabled[0]) {
+	if (motorConsEncoderEnabled[1]) {
 	        CurrentState::getInstance()->setY(encoderY.currentPosition());
 	} else {
         	CurrentState::getInstance()->setY(axisY.currentPosition());
 	}
 
-	if (motorConsEncoderEnabled[0]) {
+	if (motorConsEncoderEnabled[2]) {
 	        CurrentState::getInstance()->setZ(encoderZ.currentPosition());
 	} else {
         	CurrentState::getInstance()->setZ(axisZ.currentPosition());
 	}
+
 }
 
 void StepperControl::reportEndStops() {

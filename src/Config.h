@@ -12,12 +12,15 @@ const int LOGGING = 0;
 
 const int INCOMING_CMD_BUF_SIZE = 50;
 
+const String COMM_REPORT_CMD_IDLE    			= "R00";
 const String COMM_REPORT_CMD_START    			= "R01";
 const String COMM_REPORT_CMD_DONE     			= "R02";
 const String COMM_REPORT_CMD_ERROR    			= "R03";
 const String COMM_REPORT_CMD_BUSY     			= "R04";
 const String COMM_REPORT_CMD_STATUS   			= "R05";
 const String COMM_REPORT_CALIB_STATUS 			= "R06";
+
+//const String COMM_REPORT_NO_CONFIG     		 	= "R88";
 const String COMM_REPORT_COMMENT     		 	= "R99";
 
 const int COMM_REPORT_MOVE_STATUS_IDLE         		= 0;
@@ -42,6 +45,9 @@ const unsigned int MOVEMENT_DELAY                	= 250;
 
 const long PARAM_VERSION_DEFAULT                	= 1;
 const long PARAM_TEST_DEFAULT                   	= 0;
+
+const long PARAM_CONFIG_OK_DEFAULT                	= 0;
+const long PARAM_USE_EEPROM_DEFAULT               	= 1;
 
 const long MOVEMENT_TIMEOUT_X_DEFAULT           	= 120;
 const long MOVEMENT_TIMEOUT_Y_DEFAULT           	= 120;

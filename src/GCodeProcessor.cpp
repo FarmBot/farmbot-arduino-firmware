@@ -29,6 +29,11 @@ int GCodeProcessor::execute(Command* command) {
 	long Q = command->getQ();
 	CurrentState::getInstance()->setQ(Q);
 
+//	if (ParameterList::getInstance()->getValue(PARAM_CONFIG_OK) != 1) {
+//        	Serial.print(COMM_REPORT_NO_CONFIG);
+//		return -1;
+//        }
+
 	if(command == NULL) {
 		if(LOGGING) {
 			printCommandLog(command);

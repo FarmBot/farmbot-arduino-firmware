@@ -59,13 +59,12 @@ void StepperControlEncoder::setPosition(long newPosition) {
 
 long StepperControlEncoder::currentPosition() {
 
+//	return 0;
 	if (scalingFactor == 100 || scalingFactor <= 0) {
 		return position;
 	} else {
 		return position * scalingFactor / 100;
-		return position;
 	}
-
 }
 
 /* Check the encoder channels for movement accoridng to thisspecification
@@ -129,12 +128,12 @@ void StepperControlEncoder::readChannels() {
 		curValChannelB = readChannelB;
 	}
 
-
 //	curValChannelA = readChannelA;
 //	curValChannelB = readChannelB;
 
 //	curValChannelA = digitalRead(pinChannelA);
 //	curValChannelB = digitalRead(pinChannelB);
+
 }
 
 void StepperControlEncoder::shiftChannels() {

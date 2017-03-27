@@ -7,13 +7,15 @@
 #include "CurrentState.h"
 
 //#define NULL 0
-const int PARAM_NR_OF_PARAMS = 300;
+const int PARAM_NR_OF_PARAMS = 225;
 
 
 enum ParamListEnum
 {
 	PARAM_VERSION 				= 0,
 	PARAM_TEST 				= 1,
+	PARAM_CONFIG_OK				= 2,
+	PARAM_USE_EEPROM			= 3,
 
 	// stepper motor settings
 
