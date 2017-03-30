@@ -29,10 +29,21 @@ int GCodeProcessor::execute(Command* command) {
 	long Q = command->getQ();
 	CurrentState::getInstance()->setQ(Q);
 
-//	if (ParameterList::getInstance()->getValue(PARAM_CONFIG_OK) != 1) {
-//        	Serial.print(COMM_REPORT_NO_CONFIG);
-//		return -1;
-//        }
+	if (ParameterList::getInstance()->getValue(PARAM_CONFIG_OK) != 1) {
+		if (	command->getCodeEnum() == G00 || 
+			command->getCodeEnum() == G01 ||
+			command->getCodeEnum() == F11 ||
+			command->getCodeEnum() == F12 ||
+			command->getCodeEnum() == F13 ||
+			command->getCodeEnum() == F14 ||
+			command->getCodeEnum() == F15 ||
+			command->getCodeEnum() == F16 ) {
+
+        		Serial.print(COMM_REPORT_NO_CONFIG);
+			CurrentState::getInstance()->printQAndNewLine();
+			return -1;
+		}
+        }
 
 	if(command == NULL) {
 		if(LOGGING) {

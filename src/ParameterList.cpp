@@ -189,8 +189,8 @@ void ParameterList::loadDefaultValue(int id) {
 	{
 		case PARAM_VERSION                	: paramValues[id] = PARAM_VERSION_DEFAULT; break;
 		case PARAM_TEST                   	: paramValues[id] = PARAM_TEST_DEFAULT; break;
-//		case PARAM_CONFIG_OK                   	: paramValues[id] = PARAM_CONFIG_OK_DEFAULT; break;
-//		case PARAM_USE_EEPROM                  	: paramValues[id] = PARAM_USE_EEPROM; break;
+		case PARAM_CONFIG_OK                   	: paramValues[id] = PARAM_CONFIG_OK_DEFAULT; break;
+		case PARAM_USE_EEPROM                  	: paramValues[id] = PARAM_USE_EEPROM; break;
 
         	case MOVEMENT_TIMEOUT_X           	: paramValues[id] = MOVEMENT_TIMEOUT_X_DEFAULT; break;
         	case MOVEMENT_TIMEOUT_Y           	: paramValues[id] = MOVEMENT_TIMEOUT_Y_DEFAULT; break;
@@ -277,8 +277,8 @@ bool ParameterList::validParam(int id) {
 	switch(id)
 	{
 		case PARAM_VERSION:
-//		case PARAM_CONFIG_OK:
-//		case PARAM_USE_EEPROM:
+		case PARAM_CONFIG_OK:
+		case PARAM_USE_EEPROM:
 		case MOVEMENT_TIMEOUT_X:
 		case MOVEMENT_TIMEOUT_Y:
 		case MOVEMENT_TIMEOUT_Z:

@@ -12,6 +12,7 @@ const int LOGGING = 0;
 
 const int INCOMING_CMD_BUF_SIZE = 50;
 
+/*
 const String COMM_REPORT_CMD_IDLE    			= "R00";
 const String COMM_REPORT_CMD_START    			= "R01";
 const String COMM_REPORT_CMD_DONE     			= "R02";
@@ -19,9 +20,17 @@ const String COMM_REPORT_CMD_ERROR    			= "R03";
 const String COMM_REPORT_CMD_BUSY     			= "R04";
 const String COMM_REPORT_CMD_STATUS   			= "R05";
 const String COMM_REPORT_CALIB_STATUS 			= "R06";
+*/
 
-//const String COMM_REPORT_NO_CONFIG     		 	= "R88";
-const String COMM_REPORT_COMMENT     		 	= "R99";
+const char COMM_REPORT_CMD_IDLE[4]    			= {'R','0','0','\0'};
+const char COMM_REPORT_CMD_START[4]    			= {'R','0','1','\0'};
+const char COMM_REPORT_CMD_DONE[4]     			= {'R','0','2','\0'};
+const char COMM_REPORT_CMD_ERROR[4]    			= {'R','0','3','\0'};
+const char COMM_REPORT_CMD_BUSY[4]     			= {'R','0','4','\0'};
+const char COMM_REPORT_CMD_STATUS[4]   			= {'R','0','5','\0'};
+const char COMM_REPORT_CALIB_STATUS[4] 			= {'R','0','6','\0'};
+const char COMM_REPORT_NO_CONFIG[4]     		= {'R','8','8','\0'};
+const char COMM_REPORT_COMMENT[4]     		 	= {'R','9','9','\0'};
 
 const int COMM_REPORT_MOVE_STATUS_IDLE         		= 0;
 const int COMM_REPORT_MOVE_STATUS_START_MOTOR  		= 1;
@@ -139,6 +148,6 @@ const long PIN_GUARD_5_ACTIVE_STATE_DEFAULT     	= 1;
 const long STATUS_GENERAL_DEFAULT               	= 0;
 
 
-const String SOFTWARE_VERSION = "GENESIS V.01.06.EXPERIMENTAL";
+const char SOFTWARE_VERSION[30] = {'G','E','N','E','S','I','S',' ','V','.','0','1','.','0','7','.','E','X','P','E','R','I','M','E','N','T','A','L','\0'};
 
 #endif /* CONFIG_H_ */
