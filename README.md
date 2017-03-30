@@ -214,7 +214,7 @@ X         |X movement             |steps
 Y         |Y movement             |steps
 Z         |Z movement	         |steps
 S         |Speed                  |steps/second
-Q         |Quantity               |counter ticks
+Q         |Queue number           |#
 T         |Time                   |seconds
 C         |Comment                |text
 P         |Parameter/pin number   |#
@@ -236,7 +236,8 @@ Arduino parameter numbers
 
 Parameter name               |Parameter id
 -----------------------------|------------
-PARAM_VERSION                |0
+PARAM_CONFIG_OK              |2
+PARAM_USE_EEPROM             |3
 MOVEMENT_TIMEOUT_X           |11
 MOVEMENT_TIMEOUT_Y           |12
 MOVEMENT_TIMEOUT_Z           |13
@@ -293,3 +294,10 @@ PIN_GUARD_4_ACTIVE_STATE     |217
 PIN_GUARD_5_PIN_NR           |221
 PIN_GUARD_5_TIME_OUT         |222
 PIN_GUARD_5_ACTIVE_STATE     |223
+
+IMPORTANT
+=========
+
+Farmbot will NOT move until the configuration has been approved. To approve manually, send 'F22 P2 V1 Q0' (after the next PR)
+
+To move, use the command 'G00 X0 Y0 Z0 Q0' where you type in the coordinates just after X, Y and Z.
