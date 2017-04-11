@@ -264,9 +264,6 @@ MOVEMENT_MIN_SPD_Z           |63
 MOVEMENT_MAX_SPD_X           |71
 MOVEMENT_MAX_SPD_Y           |72
 MOVEMENT_MAX_SPD_Z           |73
-MOVEMENT_MAX_SPD_X           |71
-MOVEMENT_MAX_SPD_Y           |72
-MOVEMENT_MAX_SPD_Z           |73
 ENCODER_ENABLED_X            |101
 ENCODER_ENABLED_Y            |102
 ENCODER_ENABLED_Z            |103
