@@ -1020,7 +1020,7 @@ void StepperControl::disableMotors() {
 
   axisX.disableMotor();
 	axisY.disableMotor();
-	axisZ.disableMotor();
+	//axisZ.disableMotor();
 	delay(100);
 }
 
