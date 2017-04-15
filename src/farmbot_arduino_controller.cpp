@@ -3,7 +3,7 @@
 #include "pins.h"
 #include "Config.h"
 #include "StepperControl.h"
-//#include "ServoControl.h"
+#include "ServoControl.h"
 #include "PinGuard.h"
 #include "TimerOne.h"
 #include "MemoryFree.h"
@@ -14,6 +14,8 @@ static GCodeProcessor* gCodeProcessor = new GCodeProcessor();
 
 unsigned long lastAction;
 unsigned long currentTime;
+
+int lastParamChangeNr = 0;
 
 String commandString = "";
 char incomingChar = 0;
@@ -105,7 +107,7 @@ void setup() {
 	// Get the settings for the pin guard
 	PinGuard::getInstance()->loadConfig();
 
-	// Start the interrupt used for moviing
+	// Start the interrupt used for moving
 	// Interrupt management code library written by Paul Stoffregen
 	// The default time 100 micro seconds
 
@@ -179,6 +181,22 @@ void loop() {
 	}
 
 	//StepperControl::getInstance()->test();
+
+	// Check if parameters are changes, and if so load the new settings
+
+	if (lastParamChangeNr != ParameterList::getInstance()->paramChangeNumber()) {
+		lastParamChangeNr = ParameterList::getInstance()->paramChangeNumber();
+
+		Serial.print(COMM_REPORT_COMMENT);
+		Serial.print(" loading parameters ");
+		CurrentState::getInstance()->printQAndNewLine();
+
+		StepperControl::getInstance()->loadSettings();
+		PinGuard::getInstance()->loadConfig();
+	}
+
+
+	// Do periodic checks and feedback
 
 	currentTime = millis();
 	if (currentTime < lastAction) {

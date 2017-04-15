@@ -109,12 +109,18 @@ void StepperControlEncoder::readEncoder() {
 
 void StepperControlEncoder::readChannels() {
 
+	// read the new values from the coder
+
 	readChannelA	= digitalRead(pinChannelA);
         readChannelAQ	= digitalRead(pinChannelAQ);
         readChannelB	= digitalRead(pinChannelB);
         readChannelBQ	= digitalRead(pinChannelBQ);
 
+// Tim 2017-04-15 Experimental code disabled
+
+/*
 	if (encoderType == 1) {
+
 		// differential encoder
 		if ((readChannelA ^ readChannelAQ) && (readChannelB ^ readChannelBQ)) {
 			curValChannelA = readChannelA;
@@ -122,11 +128,13 @@ void StepperControlEncoder::readChannels() {
 		}
 	}
 	else {
+
 		// encoderType <= 0
 		// non-differential incremental encoder
 		curValChannelA = readChannelA;
 		curValChannelB = readChannelB;
 	}
+*/
 
 //	curValChannelA = readChannelA;
 //	curValChannelB = readChannelB;
@@ -137,6 +145,9 @@ void StepperControlEncoder::readChannels() {
 }
 
 void StepperControlEncoder::shiftChannels() {
+
+	// Save the current enoder status to later on compare with new values
+
 	prvValChannelA = curValChannelA;
 	prvValChannelB = curValChannelB;
 }

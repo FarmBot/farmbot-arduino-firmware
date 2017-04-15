@@ -35,11 +35,12 @@
 #include "F43Handler.h"
 #include "F44Handler.h"
 
-//#include "F61Handler.h"
+#include "F61Handler.h"
 
 #include "F81Handler.h"
 #include "F82Handler.h"
 #include "F83Handler.h"
+#include "F84Handler.h"
 
 class GCodeProcessor {
 public:

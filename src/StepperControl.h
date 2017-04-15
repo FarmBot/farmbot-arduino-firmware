@@ -42,6 +42,7 @@ public:
 	bool motorsEnabled();
 
 	void storePosition();
+	void loadSettings();
 
 	void test();
 	void test2();

@@ -16,6 +16,8 @@ ParameterList::ParameterList() {
 	// so during subsequent boots the values are just loaded from eeprom 
 	// unless the eeprom is disabled with a parameter
 
+	int paramChangeNr = 0;
+
 	int paramVersion = readValueEeprom(0);
 	if (paramVersion <= 0) {
 		setAllValuesToDefault();
@@ -57,6 +59,12 @@ int ParameterList::readValue(int id) {
 }
 
 int ParameterList::writeValue(int id, int value) {
+
+	if (paramChangeNr < 9999) {
+		paramChangeNr++;
+	} else {
+		paramChangeNr = 0;
+	}
 
 	// Check if the value is a valid parameter
 	if (validParam(id)) {
@@ -113,6 +121,11 @@ int ParameterList::readAllValues() {
 int ParameterList::getValue(int id) {
 	return  paramValues[id];
 }
+
+int ParameterList::paramChangeNumber() {
+	return paramChangeNr;
+}
+
 
 // ===== eeprom handling ====
 

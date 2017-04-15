@@ -81,6 +81,24 @@ StepperControl::StepperControl() {
 	axisY.label = 'Y';
 	axisZ.label = 'Z';
 
+	// Create the encoder controller
+
+	encoderX = StepperControlEncoder();
+	encoderY = StepperControlEncoder();
+	encoderZ = StepperControlEncoder();
+
+	// Load settings
+
+	loadSettings();
+
+
+	motorMotorsEnabled = false;
+}
+
+void StepperControl::loadSettings() {
+
+	// Load motor settings
+
 	axisX.loadPinNumbers(X_STEP_PIN, X_DIR_PIN, X_ENABLE_PIN, X_MIN_PIN, X_MAX_PIN, E_STEP_PIN, E_DIR_PIN, E_ENABLE_PIN);
 	axisY.loadPinNumbers(Y_STEP_PIN, Y_DIR_PIN, Y_ENABLE_PIN, Y_MIN_PIN, Y_MAX_PIN, 0, 0, 0);
 	axisZ.loadPinNumbers(Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN, Z_MIN_PIN, Z_MAX_PIN, 0, 0, 0);
@@ -90,12 +108,10 @@ StepperControl::StepperControl() {
 	axisSubStep[2] = COMM_REPORT_MOVE_STATUS_IDLE;
 
 	loadMotorSettings();
-	loadEncoderSettings();
-	// Create the encoder controller
 
-	encoderX = StepperControlEncoder();
-	encoderY = StepperControlEncoder();
-	encoderZ = StepperControlEncoder();
+	// Load encoder settings
+
+	loadEncoderSettings();
 
 	encoderX.loadPinNumbers(X_ENCDR_A, X_ENCDR_B, X_ENCDR_A_Q, X_ENCDR_B_Q);
 	encoderY.loadPinNumbers(Y_ENCDR_A, Y_ENCDR_B, Y_ENCDR_A_Q, Y_ENCDR_B_Q);
@@ -105,7 +121,6 @@ StepperControl::StepperControl() {
 	encoderY.loadSettings( motorConsEncoderType[1], motorConsEncoderScaling[1]);
 	encoderZ.loadSettings( motorConsEncoderType[2], motorConsEncoderScaling[2]);
 
-	motorMotorsEnabled = false;
 }
 
 void StepperControl::test() {
@@ -115,6 +130,13 @@ void StepperControl::test() {
 	Serial.print(axisX.currentPosition());
 	Serial.print(" enc x = ");
 	Serial.print(encoderX.currentPosition());
+	Serial.print("\r\n");
+
+	Serial.print("R99");
+	Serial.print(" mot y = ");
+	Serial.print(axisY.currentPosition());
+	Serial.print(" enc y = ");
+	Serial.print(encoderY.currentPosition());
 	Serial.print("\r\n");
 
 

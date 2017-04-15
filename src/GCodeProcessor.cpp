@@ -25,12 +25,17 @@ int GCodeProcessor::execute(Command* command) {
 
 	int execution = 0;
 
-
 	long Q = command->getQ();
 	CurrentState::getInstance()->setQ(Q);
 
+
+	// Do not execute the command when the config complete parameter is not
+	// set by the raspberry pi and it's asked to do a move command
+
+	// Tim 2017-04-15 Disable until the raspberry code is ready
+	/*
 	if (ParameterList::getInstance()->getValue(PARAM_CONFIG_OK) != 1) {
-		if (	command->getCodeEnum() == G00 || 
+		if (	command->getCodeEnum() == G00 ||
 			command->getCodeEnum() == G01 ||
 			command->getCodeEnum() == F11 ||
 			command->getCodeEnum() == F12 ||
@@ -44,6 +49,9 @@ int GCodeProcessor::execute(Command* command) {
 			return -1;
 		}
         }
+	*/
+
+	// Return error when no command or invalid command is found
 
 	if(command == NULL) {
 		if(LOGGING) {
@@ -59,12 +67,16 @@ int GCodeProcessor::execute(Command* command) {
 		return -1;
 	}
 
+	// Get the right handler for this command
+
 	GCodeHandler* handler = getGCodeHandler(command->getCodeEnum());
 
 	if(handler == NULL) {
 		Serial.println("R99 handler == NULL\r\n");
 		return -1;
 	}
+
+	// Execute te command, report start and end
 
 	Serial.print(COMM_REPORT_CMD_START);
 	CurrentState::getInstance()->printQAndNewLine();
@@ -85,6 +97,10 @@ int GCodeProcessor::execute(Command* command) {
 GCodeHandler* GCodeProcessor::getGCodeHandler(CommandCodeEnum codeEnum) {
 
 	GCodeHandler* handler = NULL;
+
+	// These are if statements so they can be disabled as test
+	// Usefull when running into memory issues again
+
 
 	if (codeEnum == G00) {handler = G00Handler::getInstance();}
 
@@ -110,67 +126,12 @@ GCodeHandler* GCodeProcessor::getGCodeHandler(CommandCodeEnum codeEnum) {
 	if (codeEnum == F43) {handler = F43Handler::getInstance();}
 	if (codeEnum == F44) {handler = F44Handler::getInstance();}
 
-//	if (codeEnum == F61) {handler = F61Handler::getInstance();}
+	if (codeEnum == F61) {handler = F61Handler::getInstance();}
 
 	if (codeEnum == F81) {handler = F81Handler::getInstance();}
 	if (codeEnum == F82) {handler = F82Handler::getInstance();}
 	if (codeEnum == F83) {handler = F83Handler::getInstance();}
-
-
-/*
-	switch(codeEnum) {
-	case G00:
-		return G00Handler::getInstance();
-	case G28:
-		return G28Handler::getInstance();
-
-	case F11:
-		return F11Handler::getInstance();
-	case F12:
-		return F12Handler::getInstance();
-	case F13:
-		return F13Handler::getInstance();
-
-	case F14:
-		return F14Handler::getInstance();
-	case F15:
-		return F15Handler::getInstance();
-	case F16:
-		return F16Handler::getInstance();
-
-	case F20:
-		return F20Handler::getInstance();
-	case F21:
-		return F21Handler::getInstance();
-	case F22:
-		return F22Handler::getInstance();
-
-	case F31:
-		return F31Handler::getInstance();
-	case F32:
-		return F32Handler::getInstance();
-
-	case F41:
-		return F41Handler::getInstance();
-	case F42:
-		return F42Handler::getInstance();
-	case F43:
-		return F43Handler::getInstance();
-	case F44:
-		return F44Handler::getInstance();
-
-	case F61:
-		return F61Handler::getInstance();
-
-	case F81:
-		return F81Handler::getInstance();
-	case F82:
-		return F82Handler::getInstance();
-	case F83:
-		return F83Handler::getInstance();
-
-	}
-*/
+	if (codeEnum == F84) {handler = F84Handler::getInstance();}
 
 
 	return handler;

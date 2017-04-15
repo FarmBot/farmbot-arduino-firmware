@@ -129,10 +129,15 @@ public:
 
 	void sendConfigToModules();
 
+	int paramChangeNumber();
+
 private:
 	ParameterList();
         ParameterList(ParameterList const&);
         void operator=(ParameterList const&);
+
+	int paramChangeNr;
+
 };
 
 
