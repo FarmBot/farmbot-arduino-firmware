@@ -23,3 +23,6 @@
 /spec.d
 /arduino
 /.build
+/.vs
+/src/Debug
+/src/__vm

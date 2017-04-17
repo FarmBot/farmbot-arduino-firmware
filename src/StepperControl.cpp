@@ -139,6 +139,12 @@ void StepperControl::test() {
 	Serial.print(encoderY.currentPosition());
 	Serial.print("\r\n");
 
+	Serial.print("R99");
+	Serial.print(" mot z = ");
+	Serial.print(axisZ.currentPosition());
+	Serial.print(" enc z = ");
+	Serial.print(encoderZ.currentPosition());
+	Serial.print("\r\n");
 
 	// read changes in encoder
 	//encoderX.readEncoder();
