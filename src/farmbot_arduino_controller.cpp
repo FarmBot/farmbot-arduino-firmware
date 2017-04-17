@@ -148,17 +148,10 @@ void loop() {
 	        	//currentCommand.toCharArray(commandChar, currentCommand.length());
 
 			char commandChar[incomingCommandPointer + 1];
-			//char commandChar[incomingCommandPointer + 4];
 			for (int i = 0; i < incomingCommandPointer -1; i++) {
 				commandChar[i] = incomingCommandArray[i];
 			}
 			commandChar[incomingCommandPointer] = 0;
-
-			//commandChar[incomingCommandPointer+1] = 0;
-			//commandChar[incomingCommandPointer+2] = 0;
-			//commandChar[incomingCommandPointer+3] = 0;
-			//commandString.toCharArray(commandChar, commandString.length());
-			//String currentCommand = String(commandString);
 
 			if (incomingCommandPointer > 1) {
 

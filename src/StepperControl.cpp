@@ -389,13 +389,13 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 		}
 
 		// Check if there is an emergency stop command
-		if (Serial.available() > 0) {
-			Serial.print("R99 emergency stop\r\n");
-                	incomingByte = Serial.read();
+		if (Serial.available() > 0) {			
+			incomingByte = Serial.read();
 			if (incomingByte == 69 || incomingByte == 101) {
+				Serial.print("R99 emergency stop\r\n");
 				error = 1;
 			}
-	        }
+		}
 
 		if (error == 1) {
 			Serial.print("R99 error\r\n");
@@ -471,7 +471,7 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 	CurrentState::getInstance()->setY(currentPoint[1]);
 	CurrentState::getInstance()->setZ(currentPoint[2]);
 
-        storeEndStops();
+	storeEndStops();
 	reportEndStops();
 	reportPosition();
 
@@ -517,8 +517,8 @@ int StepperControl::calibrateAxis(int axis) {
 	int parEndInv;
 	int parNbrStp;
 
-        float * missedSteps;
-        int   * missedStepsMax;
+	float * missedSteps;
+    int   * missedStepsMax;
 	long  * lastPosition;
 	float * encoderStepDecay;
 	bool  * encoderEnabled;
@@ -932,19 +932,19 @@ void StepperControl::loadMotorSettings() {
 	speedMax[1]		= ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Y);
 	speedMax[2]		= ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Z);
 
-	speedMin[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_X);
+	speedMin[0]		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_X);
 	speedMin[1]		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Y);
 	speedMin[2]		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Z);
 
-	stepsAcc[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_X);
+	stepsAcc[0]		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_X);
 	stepsAcc[1]		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Y);
 	stepsAcc[2]		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Z);
 
-	motorInv[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_X);
+	motorInv[0]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_X);
 	motorInv[1]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Y);
 	motorInv[2]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Z);
 
-	endStInv[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_X);
+	endStInv[0]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_X);
 	endStInv[1]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Y);
 	endStInv[2]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Z);
 
@@ -981,9 +981,9 @@ void StepperControl::loadEncoderSettings() {
 
 	// Load encoder settings
 
-        motorConsMissedStepsMax[0]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_X);
-        motorConsMissedStepsMax[1]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_Y);
-        motorConsMissedStepsMax[2]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_Z);
+	motorConsMissedStepsMax[0]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_X);
+	motorConsMissedStepsMax[1]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_Y);
+	motorConsMissedStepsMax[2]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_Z);
 
 	motorConsMissedStepsDecay[0]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_X);
 	motorConsMissedStepsDecay[1]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_Y);
