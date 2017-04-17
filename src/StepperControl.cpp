@@ -290,9 +290,9 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 		//encoderY.currentPosition();
 		//encoderZ.currentPosition();
 
-        	//axisX.checkTiming();
-        	//axisY.checkTiming();
-        	//axisZ.checkTiming();
+		//axisX.checkTiming();
+		//axisY.checkTiming();
+		//axisZ.checkTiming();
 
 		//checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
 		//checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
@@ -393,6 +393,9 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 			incomingByte = Serial.read();
 			if (incomingByte == 69 || incomingByte == 101) {
 				Serial.print("R99 emergency stop\r\n");
+				axisX.deactivateAxis();
+				axisY.deactivateAxis();
+				axisZ.deactivateAxis();
 				error = 1;
 			}
 		}
@@ -805,16 +808,16 @@ int StepperControl::calibrateAxis(int axis) {
 		Serial.print("\r\n");
 	}
 
-        *axisStatus = COMM_REPORT_MOVE_STATUS_STOP_MOTOR;
-        reportStatus(&axisX, axisSubStep[0]);
+	*axisStatus = COMM_REPORT_MOVE_STATUS_STOP_MOTOR;
+	reportStatus(&axisX, axisSubStep[0]);
 
 	calibAxis->disableMotor();
 
-        storeEndStops();
+	storeEndStops();
 	reportEndStops();
 
 
-        switch (axis) {
+	switch (axis) {
 		case 0:
 			CurrentState::getInstance()->setX(stepsCount);
 			break;
@@ -829,8 +832,8 @@ int StepperControl::calibrateAxis(int axis) {
 	reportPosition();
 
 
-        *axisStatus = COMM_REPORT_MOVE_STATUS_IDLE;
-        reportStatus(&axisX, axisSubStep[0]);
+	*axisStatus = COMM_REPORT_MOVE_STATUS_IDLE;
+	reportStatus(&axisX, axisSubStep[0]);
 
 	reportCalib(&axisX, COMM_REPORT_CALIBRATE_STATUS_IDLE);
 
@@ -845,9 +848,9 @@ void StepperControl::handleMovementInterrupt(void){
 	encoderY.readEncoder();
 	encoderZ.readEncoder();
 
-        axisX.checkTiming();
-        axisY.checkTiming();
-        axisZ.checkTiming();
+	axisX.checkTiming();
+	axisY.checkTiming();
+	axisZ.checkTiming();
 
 	checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
 	checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
