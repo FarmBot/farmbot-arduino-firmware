@@ -63,6 +63,18 @@ public:
 private:
 	CommandCodeEnum getGCodeEnum(char* code);
 	void getParameter(char* charPointer);
+
+	double axisValue[3] = { 0.0, 0.0, 0.0 };
+	long   axisSpeedValue[3] = { 0, 0, 0 };
+	double speedValue = 0.0;
+	long   parameterId = 0;
+	long   parameterValue = 0;
+	long   parameterValue2 = 0;
+	long   element = 0;
+	long   time = 0;
+	long   mode = 0;
+	long   msgQueue = 0;
+
 };
 
 #endif /* COMMAND_H_ */

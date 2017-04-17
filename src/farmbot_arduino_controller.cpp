@@ -14,6 +14,7 @@ static GCodeProcessor* gCodeProcessor = new GCodeProcessor();
 
 unsigned long lastAction;
 unsigned long currentTime;
+unsigned long cycleCounter = 0;
 
 int lastParamChangeNr = 0;
 
@@ -146,15 +147,18 @@ void loop() {
 		        //char commandChar[currentCommand.length()];
 	        	//currentCommand.toCharArray(commandChar, currentCommand.length());
 
-		        char commandChar[incomingCommandPointer + 1];
+			char commandChar[incomingCommandPointer + 1];
+			//char commandChar[incomingCommandPointer + 4];
 			for (int i = 0; i < incomingCommandPointer -1; i++) {
 				commandChar[i] = incomingCommandArray[i];
 			}
 			commandChar[incomingCommandPointer] = 0;
 
-		        commandString.toCharArray(commandChar, commandString.length());
-
-			String currentCommand = String(commandString);
+			//commandChar[incomingCommandPointer+1] = 0;
+			//commandChar[incomingCommandPointer+2] = 0;
+			//commandChar[incomingCommandPointer+3] = 0;
+			//commandString.toCharArray(commandChar, commandString.length());
+			//String currentCommand = String(commandString);
 
 			if (incomingCommandPointer > 1) {
 
@@ -223,6 +227,11 @@ void loop() {
 			Serial.print(freeMemory());
 			CurrentState::getInstance()->printQAndNewLine();
 
+			Serial.print(COMM_REPORT_COMMENT);
+			Serial.print(" Cycle ");
+			Serial.print(cycleCounter);
+			CurrentState::getInstance()->printQAndNewLine();
+
 			StepperControl::getInstance()->test();
 
 			//ParameterList::getInstance()->readAllValues();
@@ -234,6 +243,7 @@ void loop() {
 //				Serial.print(COMM_REPORT_NO_CONFIG);
 //			}
 
+			cycleCounter++;
 			lastAction = millis();
 		}
 	}

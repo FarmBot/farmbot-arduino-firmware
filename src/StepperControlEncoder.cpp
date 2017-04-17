@@ -3,10 +3,10 @@
 StepperControlEncoder::StepperControlEncoder() {
 	//lastCalcLog	= 0;
 
-        pinChannelA     = 0;
-        pinChannelB     = 0;
+	pinChannelA     = 0;
+	pinChannelB     = 0;
 
-        position        = 0;
+	position        = 0;
 	encoderType	= 0; // default type
 	scalingFactor	= 100;
 
@@ -16,9 +16,9 @@ StepperControlEncoder::StepperControlEncoder() {
 	prvValChannelA	= false;
 
 	readChannelA	= false;
-        readChannelAQ	= false;
-        readChannelB	= false;
-        readChannelBQ	= false;
+	readChannelAQ	= false;
+	readChannelB	= false;
+	readChannelBQ	= false;
 }
 
 void StepperControlEncoder::test() {
@@ -59,7 +59,8 @@ void StepperControlEncoder::setPosition(long newPosition) {
 
 long StepperControlEncoder::currentPosition() {
 
-//	return 0;
+	// Apply scaling to the output of the encoder, except when scaling is zero or lower
+
 	if (scalingFactor == 100 || scalingFactor <= 0) {
 		return position;
 	} else {
@@ -112,13 +113,10 @@ void StepperControlEncoder::readChannels() {
 	// read the new values from the coder
 
 	readChannelA	= digitalRead(pinChannelA);
-        readChannelAQ	= digitalRead(pinChannelAQ);
-        readChannelB	= digitalRead(pinChannelB);
-        readChannelBQ	= digitalRead(pinChannelBQ);
+    readChannelAQ	= digitalRead(pinChannelAQ);
+    readChannelB	= digitalRead(pinChannelB);
+    readChannelBQ	= digitalRead(pinChannelBQ);
 
-// Tim 2017-04-15 Experimental code disabled
-
-/*
 	if (encoderType == 1) {
 
 		// differential encoder
@@ -134,10 +132,10 @@ void StepperControlEncoder::readChannels() {
 		curValChannelA = readChannelA;
 		curValChannelB = readChannelB;
 	}
-*/
 
-//	curValChannelA = readChannelA;
-//	curValChannelB = readChannelB;
+
+	//curValChannelA = readChannelA;
+	//curValChannelB = readChannelB;
 
 //	curValChannelA = digitalRead(pinChannelA);
 //	curValChannelB = digitalRead(pinChannelB);
