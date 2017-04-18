@@ -389,7 +389,7 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 		}
 
 		// Check if there is an emergency stop command
-		if (Serial.available() > 0) {			
+		if (Serial.available() > 0) {
 			incomingByte = Serial.read();
 			if (incomingByte == 69 || incomingByte == 101) {
 				Serial.print("R99 emergency stop\r\n");
@@ -1103,4 +1103,19 @@ void StepperControl::reportPosition(){
 
 void StepperControl::storeEndStops() {
 	CurrentState::getInstance()->storeEndStops();
+}
+
+void StepperControl::setPositionX(long pos) {
+	axisX.setCurrentPosition(pos);
+	encoderX.setPosition(pos);
+}
+
+void StepperControl::setPositionY(long pos) {
+	axisY.setCurrentPosition(pos);
+	encoderY.setPosition(pos);
+}
+
+void StepperControl::setPositionZ(long pos) {
+	axisZ.setCurrentPosition(pos);
+	encoderZ.setPosition(pos);
 }

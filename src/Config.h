@@ -148,6 +148,7 @@ const long PIN_GUARD_5_ACTIVE_STATE_DEFAULT     	= 1;
 const long STATUS_GENERAL_DEFAULT               	= 0;
 
 
-const char SOFTWARE_VERSION[30] = {'G','E','N','E','S','I','S',' ','V','.','0','1','.','0','7','.','E','X','P','E','R','I','M','E','N','T','A','L','\0'};
+//const char SOFTWARE_VERSION[30] = {'G','E','N','E','S','I','S',' ','V','.','0','1','.','0','7','.','E','X','P','E','R','I','M','E','N','T','A','L','\0'};
+const char SOFTWARE_VERSION[] = "GENESIS.V.01.08.EXPERIMENTAL\0";
 
 #endif /* CONFIG_H_ */

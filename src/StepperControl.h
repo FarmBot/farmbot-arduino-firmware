@@ -44,6 +44,10 @@ public:
 	void storePosition();
 	void loadSettings();
 
+	void setPositionX(long pos);
+	void setPositionY(long pos);
+	void setPositionZ(long pos);
+
 	void test();
 	void test2();
 
