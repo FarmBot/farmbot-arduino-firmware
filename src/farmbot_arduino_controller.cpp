@@ -3,15 +3,20 @@
 #include "pins.h"
 #include "Config.h"
 #include "StepperControl.h"
-//#include "ServoControl.h"
+#include "ServoControl.h"
 #include "PinGuard.h"
 #include "TimerOne.h"
+#include "MemoryFree.h"
+
 
 static char commandEndChar = 0x0A;
 static GCodeProcessor* gCodeProcessor = new GCodeProcessor();
 
 unsigned long lastAction;
 unsigned long currentTime;
+unsigned long cycleCounter = 0;
+
+int lastParamChangeNr = 0;
 
 String commandString = "";
 char incomingChar = 0;
@@ -94,10 +99,6 @@ void setup() {
 
 	delay(100);
 
-//ParameterList::getInstance()->setAllValuesToDefault();
-//ParameterList::getInstance()->writeAllValuesToEeprom();
-//ParameterList::getInstance()->readAllValuesFromEeprom();
-
 	// Start the motor handling
 	//ServoControl::getInstance()->attach();
 
@@ -107,9 +108,10 @@ void setup() {
 	// Get the settings for the pin guard
 	PinGuard::getInstance()->loadConfig();
 
-	// Start the interrupt used for moviing
+	// Start the interrupt used for moving
 	// Interrupt management code library written by Paul Stoffregen
 	// The default time 100 micro seconds
+
 	Timer1.attachInterrupt(interrupt);
 	Timer1.initialize(MOVEMENT_INTERRUPT_SPEED);
 	Timer1.start();
@@ -145,15 +147,11 @@ void loop() {
 		        //char commandChar[currentCommand.length()];
 	        	//currentCommand.toCharArray(commandChar, currentCommand.length());
 
-		        char commandChar[incomingCommandPointer + 1];
+			char commandChar[incomingCommandPointer + 1];
 			for (int i = 0; i < incomingCommandPointer -1; i++) {
 				commandChar[i] = incomingCommandArray[i];
 			}
 			commandChar[incomingCommandPointer] = 0;
-
-		        commandString.toCharArray(commandChar, commandString.length());
-
-			String currentCommand = String(commandString);
 
 			if (incomingCommandPointer > 1) {
 
@@ -181,6 +179,22 @@ void loop() {
 
 	//StepperControl::getInstance()->test();
 
+	// Check if parameters are changes, and if so load the new settings
+
+	if (lastParamChangeNr != ParameterList::getInstance()->paramChangeNumber()) {
+		lastParamChangeNr = ParameterList::getInstance()->paramChangeNumber();
+
+		Serial.print(COMM_REPORT_COMMENT);
+		Serial.print(" loading parameters ");
+		CurrentState::getInstance()->printQAndNewLine();
+
+		StepperControl::getInstance()->loadSettings();
+		PinGuard::getInstance()->loadConfig();
+	}
+
+
+	// Do periodic checks and feedback
+
 	currentTime = millis();
 	if (currentTime < lastAction) {
 
@@ -191,18 +205,38 @@ void loop() {
 
 		if ((currentTime - lastAction) > 5000) {
 			// After an idle time, send the idle message
-			Serial.print("R00");
+
+			Serial.print(COMM_REPORT_CMD_IDLE);
 			CurrentState::getInstance()->printQAndNewLine();
 
+			StepperControl::getInstance()->storePosition();
 			CurrentState::getInstance()->printPosition();
+
 			CurrentState::getInstance()->storeEndStops();
 			CurrentState::getInstance()->printEndStops();
+
+			Serial.print(COMM_REPORT_COMMENT);
+			Serial.print(" MEM ");
+			Serial.print(freeMemory());
+			CurrentState::getInstance()->printQAndNewLine();
+
+			Serial.print(COMM_REPORT_COMMENT);
+			Serial.print(" Cycle ");
+			Serial.print(cycleCounter);
+			CurrentState::getInstance()->printQAndNewLine();
+
+			StepperControl::getInstance()->test();
 
 			//ParameterList::getInstance()->readAllValues();
 
 
-			StepperControl::getInstance()->test();
+			//StepperControl::getInstance()->test();
 
+//			if (ParameterList::getInstance()->getValue(PARAM_CONFIG_OK) != 1) {
+//				Serial.print(COMM_REPORT_NO_CONFIG);
+//			}
+
+			cycleCounter++;
 			lastAction = millis();
 		}
 	}

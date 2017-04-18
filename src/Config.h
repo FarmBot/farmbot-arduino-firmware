@@ -12,25 +12,25 @@ const int LOGGING = 0;
 
 const int INCOMING_CMD_BUF_SIZE = 50;
 
-//const unsigned long STEPS_FOR_ACC_DEC = 20;
-//const unsigned int MAX_ACCELERATION_STEPS_PER_SECOND = 2;
-
-//const unsigned int MOVEMENT_STEPS_ACC_DEC        = 100;
-//const unsigned int MOVEMENT_MAX_STEPS_PER_SECOND = 1000;
-//const unsigned int MOVEMENT_HOME_SPEED_S_P_S     = 200;
-//const unsigned int MOVEMENT_TIMEOUT              = 30;
-//const unsigned int INVERT_ENDSTOPS = 1;
-//const bool AXIS_HOME_UP_X = false;
-//const bool AXIS_HOME_UP_Y = false;
-//const bool AXIS_HOME_UP_Z = true;
-
+/*
+const String COMM_REPORT_CMD_IDLE    			= "R00";
 const String COMM_REPORT_CMD_START    			= "R01";
 const String COMM_REPORT_CMD_DONE     			= "R02";
 const String COMM_REPORT_CMD_ERROR    			= "R03";
 const String COMM_REPORT_CMD_BUSY     			= "R04";
 const String COMM_REPORT_CMD_STATUS   			= "R05";
 const String COMM_REPORT_CALIB_STATUS 			= "R06";
-const String COMM_REPORT_COMMENT     		 	= "R99";
+*/
+
+const char COMM_REPORT_CMD_IDLE[4]    			= {'R','0','0','\0'};
+const char COMM_REPORT_CMD_START[4]    			= {'R','0','1','\0'};
+const char COMM_REPORT_CMD_DONE[4]     			= {'R','0','2','\0'};
+const char COMM_REPORT_CMD_ERROR[4]    			= {'R','0','3','\0'};
+const char COMM_REPORT_CMD_BUSY[4]     			= {'R','0','4','\0'};
+const char COMM_REPORT_CMD_STATUS[4]   			= {'R','0','5','\0'};
+const char COMM_REPORT_CALIB_STATUS[4] 			= {'R','0','6','\0'};
+const char COMM_REPORT_NO_CONFIG[4]     		= {'R','8','8','\0'};
+const char COMM_REPORT_COMMENT[4]     		 	= {'R','9','9','\0'};
 
 const int COMM_REPORT_MOVE_STATUS_IDLE         		= 0;
 const int COMM_REPORT_MOVE_STATUS_START_MOTOR  		= 1;
@@ -47,13 +47,16 @@ const int COMM_REPORT_CALIBRATE_STATUS_TO_END  		= 2;
 const int COMM_REPORT_CALIBRATE_STATUS_ERROR   		= -1;
 
 
-const int MOVEMENT_INTERRUPT_SPEED = 100; // Interrupt cycle in micro seconds
+const int MOVEMENT_INTERRUPT_SPEED = 200; // Interrupt cycle in micro seconds
 
 const unsigned int MOVEMENT_SPEED_BASE_TIME      	= 2000;
 const unsigned int MOVEMENT_DELAY                	= 250;
 
 const long PARAM_VERSION_DEFAULT                	= 1;
 const long PARAM_TEST_DEFAULT                   	= 0;
+
+const long PARAM_CONFIG_OK_DEFAULT                	= 0;
+const long PARAM_USE_EEPROM_DEFAULT               	= 1;
 
 const long MOVEMENT_TIMEOUT_X_DEFAULT           	= 120;
 const long MOVEMENT_TIMEOUT_Y_DEFAULT           	= 120;
@@ -98,6 +101,18 @@ const long ENCODER_ENABLED_X_DEFAULT			= 0;
 const long ENCODER_ENABLED_Y_DEFAULT			= 0;
 const long ENCODER_ENABLED_Z_DEFAULT			= 0;
 
+// Type of enocder.
+// 0 = non-differential encoder, channel A,B
+// 1 = differenttial encoder, channel A, A*, B, B*
+const long ENCODER_TYPE_X_DEFAULT                      	= 0;
+const long ENCODER_TYPE_Y_DEFAULT                     	= 0;
+const long ENCODER_TYPE_Z_DEFAULT                      	= 0;
+
+// Position = encoder position * scaling / 100
+const long ENCODER_SCALING_X_DEFAULT                   	= 100;
+const long ENCODER_SCALING_Y_DEFAULT                   	= 100;
+const long ENCODER_SCALING_Z_DEFAULT                 	= 100;
+
 // Number of stes missed before motor is seen as not moving
 const long ENCODER_MISSED_STEPS_MAX_X_DEFAULT		= 10;
 const long ENCODER_MISSED_STEPS_MAX_Y_DEFAULT		= 10;
@@ -132,7 +147,6 @@ const long PIN_GUARD_5_ACTIVE_STATE_DEFAULT     	= 1;
 
 const long STATUS_GENERAL_DEFAULT               	= 0;
 
-
-const String SOFTWARE_VERSION = "GENESIS V.01.07.EXPERIMENTAL";
+const char SOFTWARE_VERSION[] = "GENESIS.V.01.08.EXPERIMENTAL\0";
 
 #endif /* CONFIG_H_ */

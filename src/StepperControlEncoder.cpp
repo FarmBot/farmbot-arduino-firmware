@@ -3,13 +3,26 @@
 StepperControlEncoder::StepperControlEncoder() {
 	//lastCalcLog	= 0;
 
-        pinChannelA     = 0;
-        pinChannelB     = 0;
+	pinChannelA     = 0;
+	pinChannelB     = 0;
 
-        position        = 0;
+	position        = 0;
+	encoderType	= 0; // default type
+	scalingFactor	= 100;
+
+	curValChannelA	= false;
+	curValChannelA	= false;
+	prvValChannelA	= false;
+	prvValChannelA	= false;
+
+	readChannelA	= false;
+	readChannelAQ	= false;
+	readChannelB	= false;
+	readChannelBQ	= false;
 }
 
 void StepperControlEncoder::test() {
+/*
                 Serial.print("R88 ");
                 Serial.print("position ");
                 Serial.print(position);
@@ -22,14 +35,22 @@ void StepperControlEncoder::test() {
                 Serial.print(" -> ");
                 Serial.print(curValChannelB);
                 Serial.print("\r\n");
+*/
 }
 
-void StepperControlEncoder::loadPinNumbers(int channelA, int channelB) {
-	pinChannelA = channelA;
-	pinChannelB = channelB;
+void StepperControlEncoder::loadPinNumbers(int channelA, int channelB, int channelAQ, int channelBQ) {
+	pinChannelA  = channelA;
+	pinChannelB  = channelB;
+	pinChannelAQ = channelAQ;
+	pinChannelBQ = channelBQ;
 
 	readChannels();
 	shiftChannels();
+}
+
+void StepperControlEncoder::loadSettings(int encType, int scaling) {
+	encoderType = encType;
+	scalingFactor = scaling;
 }
 
 void StepperControlEncoder::setPosition(long newPosition) {
@@ -37,7 +58,14 @@ void StepperControlEncoder::setPosition(long newPosition) {
 }
 
 long StepperControlEncoder::currentPosition() {
-	return position;
+
+	// Apply scaling to the output of the encoder, except when scaling is zero or lower
+
+	if (scalingFactor == 100 || scalingFactor <= 0) {
+		return position;
+	} else {
+		return position * scalingFactor / 100;
+	}
 }
 
 /* Check the encoder channels for movement accoridng to thisspecification
@@ -78,18 +106,46 @@ void StepperControlEncoder::readEncoder() {
 
 	position += delta;
 
-	//if (delta != 0) {
-	//	test();
-	//}
-
 }
 
 void StepperControlEncoder::readChannels() {
-	curValChannelA = digitalRead(pinChannelA);
-	curValChannelB = digitalRead(pinChannelB);
+
+	// read the new values from the coder
+
+	readChannelA	= digitalRead(pinChannelA);
+    readChannelAQ	= digitalRead(pinChannelAQ);
+    readChannelB	= digitalRead(pinChannelB);
+    readChannelBQ	= digitalRead(pinChannelBQ);
+
+	if (encoderType == 1) {
+
+		// differential encoder
+		if ((readChannelA ^ readChannelAQ) && (readChannelB ^ readChannelBQ)) {
+			curValChannelA = readChannelA;
+			curValChannelB = readChannelB;
+		}
+	}
+	else {
+
+		// encoderType <= 0
+		// non-differential incremental encoder
+		curValChannelA = readChannelA;
+		curValChannelB = readChannelB;
+	}
+
+
+	//curValChannelA = readChannelA;
+	//curValChannelB = readChannelB;
+
+//	curValChannelA = digitalRead(pinChannelA);
+//	curValChannelB = digitalRead(pinChannelB);
+
 }
 
 void StepperControlEncoder::shiftChannels() {
+
+	// Save the current enoder status to later on compare with new values
+
 	prvValChannelA = curValChannelA;
 	prvValChannelB = curValChannelB;
 }

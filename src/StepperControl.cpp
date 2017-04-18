@@ -65,10 +65,6 @@ StepperControl::StepperControl() {
 
 	// Initialize some variables for testing
 
-	//motorConsMissedStepsMax[0] = 50;
-	//motorConsMissedStepsMax[1] = 50;
-	//motorConsMissedStepsMax[2] = 50;
-
 	motorMotorsEnabled = false;
 
 	motorConsMissedSteps[0] = 0;
@@ -85,6 +81,24 @@ StepperControl::StepperControl() {
 	axisY.label = 'Y';
 	axisZ.label = 'Z';
 
+	// Create the encoder controller
+
+	encoderX = StepperControlEncoder();
+	encoderY = StepperControlEncoder();
+	encoderZ = StepperControlEncoder();
+
+	// Load settings
+
+	loadSettings();
+
+
+	motorMotorsEnabled = false;
+}
+
+void StepperControl::loadSettings() {
+
+	// Load motor settings
+
 	axisX.loadPinNumbers(X_STEP_PIN, X_DIR_PIN, X_ENABLE_PIN, X_MIN_PIN, X_MAX_PIN, E_STEP_PIN, E_DIR_PIN, E_ENABLE_PIN);
 	axisY.loadPinNumbers(Y_STEP_PIN, Y_DIR_PIN, Y_ENABLE_PIN, Y_MIN_PIN, Y_MAX_PIN, 0, 0, 0);
 	axisZ.loadPinNumbers(Z_STEP_PIN, Z_DIR_PIN, Z_ENABLE_PIN, Z_MIN_PIN, Z_MAX_PIN, 0, 0, 0);
@@ -94,21 +108,44 @@ StepperControl::StepperControl() {
 	axisSubStep[2] = COMM_REPORT_MOVE_STATUS_IDLE;
 
 	loadMotorSettings();
+
+	// Load encoder settings
+
 	loadEncoderSettings();
-	// Create the encoder controller
 
-	encoderX = StepperControlEncoder();
-	encoderY = StepperControlEncoder();
-	encoderZ = StepperControlEncoder();
+	encoderX.loadPinNumbers(X_ENCDR_A, X_ENCDR_B, X_ENCDR_A_Q, X_ENCDR_B_Q);
+	encoderY.loadPinNumbers(Y_ENCDR_A, Y_ENCDR_B, Y_ENCDR_A_Q, Y_ENCDR_B_Q);
+	encoderZ.loadPinNumbers(Z_ENCDR_A, Z_ENCDR_B, Z_ENCDR_A_Q, Z_ENCDR_B_Q);
 
-	encoderX.loadPinNumbers(X_ENCDR_A, X_ENCDR_B);
-	encoderY.loadPinNumbers(Y_ENCDR_A, Y_ENCDR_B);
-	encoderZ.loadPinNumbers(Z_ENCDR_A, Z_ENCDR_B);
+	encoderX.loadSettings( motorConsEncoderType[0], motorConsEncoderScaling[0]);
+	encoderY.loadSettings( motorConsEncoderType[1], motorConsEncoderScaling[1]);
+	encoderZ.loadSettings( motorConsEncoderType[2], motorConsEncoderScaling[2]);
 
-	motorMotorsEnabled = false;
 }
 
 void StepperControl::test() {
+
+	Serial.print("R99");
+	Serial.print(" mot x = ");
+	Serial.print(axisX.currentPosition());
+	Serial.print(" enc x = ");
+	Serial.print(encoderX.currentPosition());
+	Serial.print("\r\n");
+
+	Serial.print("R99");
+	Serial.print(" mot y = ");
+	Serial.print(axisY.currentPosition());
+	Serial.print(" enc y = ");
+	Serial.print(encoderY.currentPosition());
+	Serial.print("\r\n");
+
+	Serial.print("R99");
+	Serial.print(" mot z = ");
+	Serial.print(axisZ.currentPosition());
+	Serial.print(" enc z = ");
+	Serial.print(encoderZ.currentPosition());
+	Serial.print("\r\n");
+
 	// read changes in encoder
 	//encoderX.readEncoder();
 	//encoderY.readEncoder();
@@ -253,9 +290,9 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 		//encoderY.currentPosition();
 		//encoderZ.currentPosition();
 
-        	//axisX.checkTiming();
-        	//axisY.checkTiming();
-        	//axisZ.checkTiming();
+		//axisX.checkTiming();
+		//axisY.checkTiming();
+		//axisZ.checkTiming();
 
 		//checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
 		//checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
@@ -353,12 +390,15 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 
 		// Check if there is an emergency stop command
 		if (Serial.available() > 0) {
-			Serial.print("R99 emergency stop\r\n");
-                	incomingByte = Serial.read();
+			incomingByte = Serial.read();
 			if (incomingByte == 69 || incomingByte == 101) {
+				Serial.print("R99 emergency stop\r\n");
+				axisX.deactivateAxis();
+				axisY.deactivateAxis();
+				axisZ.deactivateAxis();
 				error = 1;
 			}
-	        }
+		}
 
 		if (error == 1) {
 			Serial.print("R99 error\r\n");
@@ -434,7 +474,7 @@ int StepperControl::moveToCoords(		long xDest, long yDest, long zDest,
 	CurrentState::getInstance()->setY(currentPoint[1]);
 	CurrentState::getInstance()->setZ(currentPoint[2]);
 
-        storeEndStops();
+	storeEndStops();
 	reportEndStops();
 	reportPosition();
 
@@ -480,8 +520,8 @@ int StepperControl::calibrateAxis(int axis) {
 	int parEndInv;
 	int parNbrStp;
 
-        float * missedSteps;
-        int   * missedStepsMax;
+	float * missedSteps;
+    int   * missedStepsMax;
 	long  * lastPosition;
 	float * encoderStepDecay;
 	bool  * encoderEnabled;
@@ -730,23 +770,6 @@ int StepperControl::calibrateAxis(int axis) {
 	                        //Serial.print("\r\n");
 				CurrentState::getInstance()->printQAndNewLine();
 	                }
-			/*
-	                if (stepsCount % (speedMin[axis] / 6) == 0)
-	                {
-				Serial.print("R99");
-				Serial.print(" step count ");
-				Serial.print(stepsCount);
-				Serial.print(" missed steps ");
-				Serial.print(*missedSteps);
-				Serial.print(" max steps ");
-				Serial.print(*missedStepsMax);
-				Serial.print(" cur pos mtr ");
-				Serial.print(calibAxis->currentPosition());
-				Serial.print(" cur pos enc ");
-				Serial.print(calibEncoder->currentPosition());
-				Serial.print("\r\n");
-			}
-			*/
 
 			calibAxis->resetMotorStep();
 			delayMicroseconds(100000 / speedMin[axis] /2);
@@ -785,16 +808,16 @@ int StepperControl::calibrateAxis(int axis) {
 		Serial.print("\r\n");
 	}
 
-        *axisStatus = COMM_REPORT_MOVE_STATUS_STOP_MOTOR;
-        reportStatus(&axisX, axisSubStep[0]);
+	*axisStatus = COMM_REPORT_MOVE_STATUS_STOP_MOTOR;
+	reportStatus(&axisX, axisSubStep[0]);
 
 	calibAxis->disableMotor();
 
-        storeEndStops();
+	storeEndStops();
 	reportEndStops();
 
 
-        switch (axis) {
+	switch (axis) {
 		case 0:
 			CurrentState::getInstance()->setX(stepsCount);
 			break;
@@ -809,8 +832,8 @@ int StepperControl::calibrateAxis(int axis) {
 	reportPosition();
 
 
-        *axisStatus = COMM_REPORT_MOVE_STATUS_IDLE;
-        reportStatus(&axisX, axisSubStep[0]);
+	*axisStatus = COMM_REPORT_MOVE_STATUS_IDLE;
+	reportStatus(&axisX, axisSubStep[0]);
 
 	reportCalib(&axisX, COMM_REPORT_CALIBRATE_STATUS_IDLE);
 
@@ -825,9 +848,9 @@ void StepperControl::handleMovementInterrupt(void){
 	encoderY.readEncoder();
 	encoderZ.readEncoder();
 
-        axisX.checkTiming();
-        axisY.checkTiming();
-        axisZ.checkTiming();
+	axisX.checkTiming();
+	axisY.checkTiming();
+	axisZ.checkTiming();
 
 	checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
 	checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
@@ -912,19 +935,19 @@ void StepperControl::loadMotorSettings() {
 	speedMax[1]		= ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Y);
 	speedMax[2]		= ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Z);
 
-	speedMin[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_X);
+	speedMin[0]		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_X);
 	speedMin[1]		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Y);
 	speedMin[2]		= ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Z);
 
-	stepsAcc[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_X);
+	stepsAcc[0]		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_X);
 	stepsAcc[1]		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Y);
 	stepsAcc[2]		= ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Z);
 
-	motorInv[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_X);
+	motorInv[0]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_X);
 	motorInv[1]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Y);
 	motorInv[2]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Z);
 
-	endStInv[0] 		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_X);
+	endStInv[0]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_X);
 	endStInv[1]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Y);
 	endStInv[2]		= ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Z);
 
@@ -961,21 +984,29 @@ void StepperControl::loadEncoderSettings() {
 
 	// Load encoder settings
 
-        motorConsMissedStepsMax[0]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_X);
-        motorConsMissedStepsMax[1]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_Y);
-        motorConsMissedStepsMax[2]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_Z);
+	motorConsMissedStepsMax[0]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_X);
+	motorConsMissedStepsMax[1]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_Y);
+	motorConsMissedStepsMax[2]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_Z);
 
 	motorConsMissedStepsDecay[0]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_X);
 	motorConsMissedStepsDecay[1]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_Y);
 	motorConsMissedStepsDecay[2]	= ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_Z);
 
-	motorConsMissedStepsDecay[0] = motorConsMissedStepsDecay[0] / 100;
-	motorConsMissedStepsDecay[1] = motorConsMissedStepsDecay[1] / 100;
-	motorConsMissedStepsDecay[2] = motorConsMissedStepsDecay[2] / 100;
+	motorConsMissedStepsDecay[0] 	= motorConsMissedStepsDecay[0] / 100;
+	motorConsMissedStepsDecay[1] 	= motorConsMissedStepsDecay[1] / 100;
+	motorConsMissedStepsDecay[2] 	= motorConsMissedStepsDecay[2] / 100;
 
 	motorConsMissedStepsDecay[0] 	= min(max(motorConsMissedStepsDecay[0],0.01),99);
 	motorConsMissedStepsDecay[1] 	= min(max(motorConsMissedStepsDecay[1],0.01),99);
 	motorConsMissedStepsDecay[2] 	= min(max(motorConsMissedStepsDecay[2],0.01),99);
+
+	motorConsEncoderType[0]		= ParameterList::getInstance()->getValue(ENCODER_TYPE_X);
+	motorConsEncoderType[1]		= ParameterList::getInstance()->getValue(ENCODER_TYPE_Y);
+	motorConsEncoderType[2]		= ParameterList::getInstance()->getValue(ENCODER_TYPE_Z);
+
+	motorConsEncoderScaling[0]	= ParameterList::getInstance()->getValue(ENCODER_SCALING_X);
+	motorConsEncoderScaling[1]	= ParameterList::getInstance()->getValue(ENCODER_SCALING_Y);
+	motorConsEncoderScaling[2]	= ParameterList::getInstance()->getValue(ENCODER_SCALING_Z);
 
 	if (ParameterList::getInstance()->getValue(ENCODER_ENABLED_X) == 1) {
 		motorConsEncoderEnabled[0]	= true;
@@ -994,6 +1025,7 @@ void StepperControl::loadEncoderSettings() {
 	} else {
 		motorConsEncoderEnabled[2]	= false;
 	}
+
 }
 
 unsigned long StepperControl::getMaxLength(unsigned long lengths[3]) {
@@ -1009,7 +1041,7 @@ unsigned long StepperControl::getMaxLength(unsigned long lengths[3]) {
 void StepperControl::enableMotors() {
 	motorMotorsEnabled = true;
 
-  axisX.enableMotor();
+	axisX.enableMotor();
 	axisY.enableMotor();
 	axisZ.enableMotor();
 	delay(100);
@@ -1018,7 +1050,7 @@ void StepperControl::enableMotors() {
 void StepperControl::disableMotors() {
 	motorMotorsEnabled = false;
 
-  axisX.disableMotor();
+	axisX.disableMotor();
 	axisY.disableMotor();
 	//axisZ.disableMotor();
 	delay(100);
@@ -1039,6 +1071,28 @@ bool StepperControl::endStopsReached() {
 
 }
 
+void StepperControl::storePosition(){
+
+	if (motorConsEncoderEnabled[0]) {
+	        CurrentState::getInstance()->setX(encoderX.currentPosition());
+	} else {
+	        CurrentState::getInstance()->setX(axisX.currentPosition());
+	}
+
+	if (motorConsEncoderEnabled[1]) {
+	        CurrentState::getInstance()->setY(encoderY.currentPosition());
+	} else {
+        	CurrentState::getInstance()->setY(axisY.currentPosition());
+	}
+
+	if (motorConsEncoderEnabled[2]) {
+	        CurrentState::getInstance()->setZ(encoderZ.currentPosition());
+	} else {
+        	CurrentState::getInstance()->setZ(axisZ.currentPosition());
+	}
+
+}
+
 void StepperControl::reportEndStops() {
 	CurrentState::getInstance()->printEndStops();
 }
@@ -1049,4 +1103,19 @@ void StepperControl::reportPosition(){
 
 void StepperControl::storeEndStops() {
 	CurrentState::getInstance()->storeEndStops();
+}
+
+void StepperControl::setPositionX(long pos) {
+	axisX.setCurrentPosition(pos);
+	encoderX.setPosition(pos);
+}
+
+void StepperControl::setPositionY(long pos) {
+	axisY.setCurrentPosition(pos);
+	encoderY.setPosition(pos);
+}
+
+void StepperControl::setPositionZ(long pos) {
+	axisZ.setCurrentPosition(pos);
+	encoderZ.setPosition(pos);
 }

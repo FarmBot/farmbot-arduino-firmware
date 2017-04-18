@@ -11,17 +11,6 @@ const char timeCode           = 'T';
 const char modeCode           = 'M';
 const char msgQueueCode       = 'Q';
 
-double axisValue[3] 		= { 0.0, 0.0, 0.0 };
-long   axisSpeedValue[3] 	= { 0, 0, 0 };
-double speedValue   		= 0.0;
-long   parameterId    		= 0;
-long   parameterValue 		= 0;
-long   parameterValue2          = 0;
-long   element                  = 0;
-long   time                     = 0;
-long   mode                     = 0;
-long   msgQueue                 = 0;
-
 CommandCodeEnum commandCodeEnum = CODE_UNDEFINED;
 
 Command::Command(char * commandChar) {
@@ -30,7 +19,7 @@ Command::Command(char * commandChar) {
 	char* charPointer;
 	bool invalidCommand = false;
 
-	charPointer = strtok(charBuf, " ");
+	charPointer = strtok(charBuf, " \n\r");
 
 	if (charPointer[0] == 'G' || charPointer[0] == 'F') {
 		commandCodeEnum = getGCodeEnum(charPointer);
@@ -121,6 +110,9 @@ CommandCodeEnum Command::getGCodeEnum(char* code) {
 	}
 	if (strcmp(code, "F83") == 0) {
 		return F83;
+	}
+	if (strcmp(code, "F84") == 0) {
+		return F84;
 	}
 
 	return CODE_UNDEFINED;

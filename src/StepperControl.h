@@ -41,6 +41,13 @@ public:
 	void disableMotors();
 	bool motorsEnabled();
 
+	void storePosition();
+	void loadSettings();
+
+	void setPositionX(long pos);
+	void setPositionY(long pos);
+	void setPositionZ(long pos);
+
 	void test();
 	void test2();
 
@@ -89,6 +96,8 @@ private:
         int motorConsMissedStepsMax[3];
         float motorConsMissedStepsDecay[3];
         bool motorConsEncoderEnabled[3];
+        int motorConsEncoderType[3];
+        int motorConsEncoderScaling[3];
 
 	bool motorMotorsEnabled;
 };

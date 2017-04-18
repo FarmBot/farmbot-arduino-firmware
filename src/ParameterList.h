@@ -7,13 +7,15 @@
 #include "CurrentState.h"
 
 //#define NULL 0
-const int PARAM_NR_OF_PARAMS = 300;
+const int PARAM_NR_OF_PARAMS = 225;
 
 
 enum ParamListEnum
 {
 	PARAM_VERSION 				= 0,
 	PARAM_TEST 				= 1,
+	PARAM_CONFIG_OK				= 2,
+	PARAM_USE_EEPROM			= 3,
 
 	// stepper motor settings
 
@@ -57,9 +59,17 @@ enum ParamListEnum
 	ENCODER_ENABLED_Y			= 102,
 	ENCODER_ENABLED_Z			= 103,
 
+	ENCODER_TYPE_X				= 105,
+	ENCODER_TYPE_Y				= 106,
+	ENCODER_TYPE_Z				= 107,
+
 	ENCODER_MISSED_STEPS_MAX_X		= 111,
 	ENCODER_MISSED_STEPS_MAX_Y		= 112,
 	ENCODER_MISSED_STEPS_MAX_Z		= 113,
+
+	ENCODER_SCALING_X			= 115,
+	ENCODER_SCALING_Y			= 116,
+	ENCODER_SCALING_Z			= 117,
 
 	ENCODER_MISSED_STEPS_DECAY_X		= 121,
 	ENCODER_MISSED_STEPS_DECAY_Y		= 122,
@@ -119,10 +129,15 @@ public:
 
 	void sendConfigToModules();
 
+	int paramChangeNumber();
+
 private:
 	ParameterList();
         ParameterList(ParameterList const&);
         void operator=(ParameterList const&);
+
+	int paramChangeNr;
+
 };
 
 

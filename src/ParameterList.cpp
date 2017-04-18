@@ -14,12 +14,20 @@ ParameterList * ParameterList::getInstance() {
 ParameterList::ParameterList() {
 	// at the first boot, load default parameters and set the parameter version
 	// so during subsequent boots the values are just loaded from eeprom 
+	// unless the eeprom is disabled with a parameter
+
+	int paramChangeNr = 0;
+
 	int paramVersion = readValueEeprom(0);
 	if (paramVersion <= 0) {
 		setAllValuesToDefault();
 		writeAllValuesToEeprom();
 	} else {
-		readAllValuesFromEeprom();
+		//if (readValueEeprom(PARAM_USE_EEPROM) == 1) {
+			readAllValuesFromEeprom();
+		//} else {
+		//	setAllValuesToDefault();
+		//}
 	}
 }
 
@@ -51,6 +59,12 @@ int ParameterList::readValue(int id) {
 }
 
 int ParameterList::writeValue(int id, int value) {
+
+	if (paramChangeNr < 9999) {
+		paramChangeNr++;
+	} else {
+		paramChangeNr = 0;
+	}
 
 	// Check if the value is a valid parameter
 	if (validParam(id)) {
@@ -107,6 +121,11 @@ int ParameterList::readAllValues() {
 int ParameterList::getValue(int id) {
 	return  paramValues[id];
 }
+
+int ParameterList::paramChangeNumber() {
+	return paramChangeNr;
+}
+
 
 // ===== eeprom handling ====
 
@@ -183,6 +202,8 @@ void ParameterList::loadDefaultValue(int id) {
 	{
 		case PARAM_VERSION                	: paramValues[id] = PARAM_VERSION_DEFAULT; break;
 		case PARAM_TEST                   	: paramValues[id] = PARAM_TEST_DEFAULT; break;
+		case PARAM_CONFIG_OK                   	: paramValues[id] = PARAM_CONFIG_OK_DEFAULT; break;
+		case PARAM_USE_EEPROM                  	: paramValues[id] = PARAM_USE_EEPROM; break;
 
         	case MOVEMENT_TIMEOUT_X           	: paramValues[id] = MOVEMENT_TIMEOUT_X_DEFAULT; break;
         	case MOVEMENT_TIMEOUT_Y           	: paramValues[id] = MOVEMENT_TIMEOUT_Y_DEFAULT; break;
@@ -223,14 +244,21 @@ void ParameterList::loadDefaultValue(int id) {
 	        case ENCODER_ENABLED_Y            	: paramValues[id] = ENCODER_ENABLED_Y_DEFAULT; break;
 	        case ENCODER_ENABLED_Z            	: paramValues[id] = ENCODER_ENABLED_Z_DEFAULT; break;
 
+	        case ENCODER_TYPE_X            		: paramValues[id] = ENCODER_TYPE_X_DEFAULT; break;
+	        case ENCODER_TYPE_Y     	       	: paramValues[id] = ENCODER_TYPE_Y_DEFAULT; break;
+	        case ENCODER_TYPE_Z 	           	: paramValues[id] = ENCODER_TYPE_Z_DEFAULT; break;
+
 	        case ENCODER_MISSED_STEPS_MAX_X   	: paramValues[id] = ENCODER_MISSED_STEPS_MAX_X_DEFAULT; break;
 	        case ENCODER_MISSED_STEPS_MAX_Y   	: paramValues[id] = ENCODER_MISSED_STEPS_MAX_Y_DEFAULT; break;
 	        case ENCODER_MISSED_STEPS_MAX_Z   	: paramValues[id] = ENCODER_MISSED_STEPS_MAX_Z_DEFAULT; break;
 
+	        case ENCODER_SCALING_X         		: paramValues[id] = ENCODER_SCALING_X_DEFAULT; break;
+	        case ENCODER_SCALING_Y     	       	: paramValues[id] = ENCODER_SCALING_Y_DEFAULT; break;
+	        case ENCODER_SCALING_Z 	           	: paramValues[id] = ENCODER_SCALING_Z_DEFAULT; break;
+
 	        case ENCODER_MISSED_STEPS_DECAY_X 	: paramValues[id] = ENCODER_MISSED_STEPS_DECAY_X_DEFAULT; break;
 	        case ENCODER_MISSED_STEPS_DECAY_Y 	: paramValues[id] = ENCODER_MISSED_STEPS_DECAY_Y_DEFAULT; break;
 	        case ENCODER_MISSED_STEPS_DECAY_Z 	: paramValues[id] = ENCODER_MISSED_STEPS_DECAY_Z_DEFAULT; break;
-
 
 		case PIN_GUARD_1_PIN_NR           	: paramValues[id] = PIN_GUARD_1_PIN_NR_DEFAULT; break;
 		case PIN_GUARD_1_TIME_OUT         	: paramValues[id] = PIN_GUARD_1_TIME_OUT_DEFAULT; break;
@@ -262,6 +290,8 @@ bool ParameterList::validParam(int id) {
 	switch(id)
 	{
 		case PARAM_VERSION:
+		case PARAM_CONFIG_OK:
+		case PARAM_USE_EEPROM:
 		case MOVEMENT_TIMEOUT_X:
 		case MOVEMENT_TIMEOUT_Y:
 		case MOVEMENT_TIMEOUT_Z:
@@ -291,9 +321,15 @@ bool ParameterList::validParam(int id) {
 		case ENCODER_ENABLED_X:
 		case ENCODER_ENABLED_Y:
 		case ENCODER_ENABLED_Z:
+		case ENCODER_TYPE_X:
+		case ENCODER_TYPE_Y:
+		case ENCODER_TYPE_Z:
 		case ENCODER_MISSED_STEPS_MAX_X:
 		case ENCODER_MISSED_STEPS_MAX_Y:
 		case ENCODER_MISSED_STEPS_MAX_Z:
+		case ENCODER_SCALING_X:
+		case ENCODER_SCALING_Y:
+		case ENCODER_SCALING_Z:
 		case ENCODER_MISSED_STEPS_DECAY_X:
 		case ENCODER_MISSED_STEPS_DECAY_Y:
 		case ENCODER_MISSED_STEPS_DECAY_Z:
