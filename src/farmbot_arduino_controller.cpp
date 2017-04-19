@@ -214,7 +214,7 @@ void loop() {
 
 			CurrentState::getInstance()->storeEndStops();
 			CurrentState::getInstance()->printEndStops();
-
+			/*
 			Serial.print(COMM_REPORT_COMMENT);
 			Serial.print(" MEM ");
 			Serial.print(freeMemory());
@@ -226,7 +226,7 @@ void loop() {
 			CurrentState::getInstance()->printQAndNewLine();
 
 			StepperControl::getInstance()->test();
-
+			*/
 			//ParameterList::getInstance()->readAllValues();
 
 
