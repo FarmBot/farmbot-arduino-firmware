@@ -7,23 +7,25 @@
 
 #include "F42Handler.h"
 
+static F42Handler *instance;
 
-static F42Handler* instance;
+F42Handler *F42Handler::getInstance()
+{
+  if (!instance)
+  {
+    instance = new F42Handler();
+  };
+  return instance;
+};
 
-F42Handler * F42Handler::getInstance() {
-        if (!instance) {
-                instance = new F42Handler();
-        };
-        return instance;
+F42Handler::F42Handler()
+{
 }
-;
 
-F42Handler::F42Handler() {
-}
+int F42Handler::execute(Command *command)
+{
 
-int F42Handler::execute(Command* command) {
+  PinControl::getInstance()->readValue(command->getP(), command->getM());
 
-        PinControl::getInstance()->readValue(command->getP(), command->getM());
-
-        return 0;
+  return 0;
 }

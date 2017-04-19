@@ -15,17 +15,18 @@
 #include "StepperControl.h"
 #include "PinControl.h"
 
-class F81Handler : public GCodeHandler {
+class F81Handler : public GCodeHandler
+{
 public:
-        static F81Handler* getInstance();
-        int execute(Command*);
+  static F81Handler *getInstance();
+  int execute(Command *);
+
 private:
-        F81Handler();
-        F81Handler(F81Handler const&);
-        void operator=(F81Handler const&);
-        long adjustStepAmount(long);
-        long getNumberOfSteps(double, double);
+  F81Handler();
+  F81Handler(F81Handler const &);
+  void operator=(F81Handler const &);
+  long adjustStepAmount(long);
+  long getNumberOfSteps(double, double);
 };
 
 #endif /* F81HANDLER_H_ */
-

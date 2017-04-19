@@ -7,23 +7,25 @@
 
 #include "F21Handler.h"
 
+static F21Handler *instance;
 
-static F21Handler* instance;
+F21Handler *F21Handler::getInstance()
+{
+  if (!instance)
+  {
+    instance = new F21Handler();
+  };
+  return instance;
+};
 
-F21Handler * F21Handler::getInstance() {
-	if (!instance) {
-		instance = new F21Handler();
-	};
-	return instance;
+F21Handler::F21Handler()
+{
 }
-;
 
-F21Handler::F21Handler() {
-}
+int F21Handler::execute(Command *command)
+{
 
-int F21Handler::execute(Command* command) {
+  ParameterList::getInstance()->readValue(command->getP());
 
-	ParameterList::getInstance()->readValue(command->getP());
-
-	return 0;
+  return 0;
 }
