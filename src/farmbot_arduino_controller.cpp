@@ -226,22 +226,19 @@ void loop()
 
       CurrentState::getInstance()->storeEndStops();
       CurrentState::getInstance()->printEndStops();
-
-      Serial.print(COMM_REPORT_COMMENT);
-      Serial.print(" MEM ");
-      Serial.print(freeMemory());
-      CurrentState::getInstance()->printQAndNewLine();
-
+			/*
+			Serial.print(COMM_REPORT_COMMENT);
+			Serial.print(" MEM ");
+			Serial.print(freeMemory());
+			CurrentState::getInstance()->printQAndNewLine();
+      
       Serial.print(COMM_REPORT_COMMENT);
       Serial.print(" Cycle ");
       Serial.print(cycleCounter);
       CurrentState::getInstance()->printQAndNewLine();
 
-      StepperControl::getInstance()->test();
-
-      //ParameterList::getInstance()->readAllValues();
-
-      //StepperControl::getInstance()->test();
+			StepperControl::getInstance()->test();
+			*/
 
       //			if (ParameterList::getInstance()->getValue(PARAM_CONFIG_OK) != 1) {
       //				Serial.print(COMM_REPORT_NO_CONFIG);
