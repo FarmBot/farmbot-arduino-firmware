@@ -125,6 +125,7 @@
     <ClInclude Include="Command.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="CurrentState.h" />
+    <ClInclude Include="Debug.h" />
     <ClInclude Include="F11Handler.h" />
     <ClInclude Include="F12Handler.h" />
     <ClInclude Include="F13Handler.h" />

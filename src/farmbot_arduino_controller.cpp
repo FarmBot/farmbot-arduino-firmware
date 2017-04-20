@@ -7,6 +7,7 @@
 #include "PinGuard.h"
 #include "TimerOne.h"
 #include "MemoryFree.h"
+#include "Debug.h"
 
 static char commandEndChar = 0x0A;
 static GCodeProcessor *gCodeProcessor = new GCodeProcessor();
@@ -39,23 +40,26 @@ bool interruptBusy = false;
 int interruptSecondTimer = 0;
 void interrupt(void)
 {
-  interruptSecondTimer++;
-
-  if (interruptBusy == false)
+  if (!debugInterrupt)
   {
+    interruptSecondTimer++;
 
-    interruptBusy = true;
-    StepperControl::getInstance()->handleMovementInterrupt();
-
-    // Check the actions triggered once per second
-    if (interruptSecondTimer >= 1000000 / MOVEMENT_INTERRUPT_SPEED)
+    if (interruptBusy == false)
     {
-      interruptSecondTimer = 0;
-      PinGuard::getInstance()->checkPins();
-      //blinkLed();
-    }
 
-    interruptBusy = false;
+      interruptBusy = true;
+      StepperControl::getInstance()->handleMovementInterrupt();
+
+      // Check the actions triggered once per second
+      if (interruptSecondTimer >= 1000000 / MOVEMENT_INTERRUPT_SPEED)
+      {
+        interruptSecondTimer = 0;
+        PinGuard::getInstance()->checkPins();
+        //blinkLed();
+      }
+
+      interruptBusy = false;
+    }
   }
 }
 
@@ -127,6 +131,11 @@ void setup()
 void loop()
 {
 
+  if (debugInterrupt)
+  {
+    StepperControl::getInstance()->handleMovementInterrupt();
+  }
+
   if (Serial.available())
   {
 
@@ -186,8 +195,6 @@ void loop()
     }
   }
 
-  //StepperControl::getInstance()->test();
-
   // Check if parameters are changes, and if so load the new settings
 
   if (lastParamChangeNr != ParameterList::getInstance()->paramChangeNumber())
@@ -226,23 +233,28 @@ void loop()
 
       CurrentState::getInstance()->storeEndStops();
       CurrentState::getInstance()->printEndStops();
-			/*
-			Serial.print(COMM_REPORT_COMMENT);
-			Serial.print(" MEM ");
-			Serial.print(freeMemory());
-			CurrentState::getInstance()->printQAndNewLine();
-      
-      Serial.print(COMM_REPORT_COMMENT);
-      Serial.print(" Cycle ");
-      Serial.print(cycleCounter);
-      CurrentState::getInstance()->printQAndNewLine();
 
-			StepperControl::getInstance()->test();
-			*/
+	    if (debugMessages)
+	    {
+        Serial.print(COMM_REPORT_COMMENT);
+        Serial.print(" MEM ");
+        Serial.print(freeMemory());
+        CurrentState::getInstance()->printQAndNewLine();
 
-      //			if (ParameterList::getInstance()->getValue(PARAM_CONFIG_OK) != 1) {
-      //				Serial.print(COMM_REPORT_NO_CONFIG);
-      //			}
+        Serial.print(COMM_REPORT_COMMENT);
+        Serial.print(" Cycle ");
+        Serial.print(cycleCounter);
+        CurrentState::getInstance()->printQAndNewLine();
+
+        StepperControl::getInstance()->test();
+	    }
+
+      //  Tim 2017-04-20 Temporary disabling the warning of no valid configuration
+      //  until fully supported on RPI
+      //  if (ParameterList::getInstance()->getValue(PARAM_CONFIG_OK) != 1)
+      //  {
+      //    Serial.print(COMM_REPORT_NO_CONFIG);
+      //	}
 
       cycleCounter++;
       lastAction = millis();

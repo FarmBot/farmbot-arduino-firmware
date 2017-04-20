@@ -1,4 +1,5 @@
 #include "StepperControl.h"
+#include "Debug.h"
 
 static StepperControl *instance;
 
@@ -17,7 +18,6 @@ void StepperControl::reportStatus(StepperControlAxis *axis, int axisStatus)
   Serial.print(" ");
   Serial.print(axis->label);
   Serial.print(axisStatus);
-  //Serial.print("\r\n");
   CurrentState::getInstance()->printQAndNewLine();
 }
 
@@ -27,7 +27,6 @@ void StepperControl::reportCalib(StepperControlAxis *axis, int calibStatus)
   Serial.print(" ");
   Serial.print(axis->label);
   Serial.print(calibStatus);
-  //Serial.print("\r\n");
   CurrentState::getInstance()->printQAndNewLine();
 }
 
@@ -298,20 +297,26 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
     checkAxisSubStatus(&axisY, &axisSubStep[1]);
     checkAxisSubStatus(&axisZ, &axisSubStep[2]);
 
-    delay(1);
-    //delayMicroseconds(100);
+    if (debugInterrupt)
+    {
+      delayMicroseconds(100);
 
-    //encoderX.currentPosition();
-    //encoderY.currentPosition();
-    //encoderZ.currentPosition();
+      encoderX.currentPosition();
+      encoderY.currentPosition();
+      encoderZ.currentPosition();
 
-    //axisX.checkTiming();
-    //axisY.checkTiming();
-    //axisZ.checkTiming();
+      axisX.checkTiming();
+      axisY.checkTiming();
+      axisZ.checkTiming();
 
-    //checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
-    //checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
-    //checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
+      checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
+      checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
+      checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
+    }
+    else
+    {
+      delay(1);
+    }
 
     if (motorConsMissedSteps[0] > motorConsMissedStepsMax[0])
     {
@@ -447,7 +452,9 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
       //Serial.print("\r\n");
       CurrentState::getInstance()->printQAndNewLine();
       reportPosition();
-      /*
+
+      if (debugMessages && debugInterrupt)
+      {
 				Serial.print("R99");
 				Serial.print(" encoder pos ");
 				Serial.print(encoderX.currentPosition());
@@ -463,16 +470,7 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
 				Serial.print(" axis pos ");
 				Serial.print(axisX.currentPosition());
 				Serial.print("\r\n");
-				*/
-
-      //Serial.print("R99");
-      //Serial.print(" missed step nr ");
-      //Serial.print(motorConsMissedSteps[0]);
-      //Serial.print(" encoder pos ");
-      //Serial.print(encoderX.currentPosition());
-      //Serial.print(" axis pos ");
-      //Serial.print(axisX.currentPosition());
-      //Serial.print("\r\n");
+      }
     }
   }
 
@@ -660,11 +658,6 @@ int StepperControl::calibrateAxis(int axis)
         error = 1;
       }
     }
-
-    // Ignore the missed steps at startup time
-    //if (stepsCount < 20) {
-    //	*missedSteps = 0;
-    //}
 
     // Move until the end stop for home position is reached, either by end stop or motot skipping
     if ((!calibAxis->endStopMin() && !calibAxis->endStopMax()) && !movementDone && (*missedSteps < *missedStepsMax))
@@ -912,34 +905,36 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
 
     bool stepMissed = false;
 
-    /*
-		debugPrintCount++;
-		if (debugPrintCount % 50 == 0)
-		{
-			Serial.print("R99");
-			Serial.print(" encoder pos ");
-			Serial.print(encoder->currentPosition());
-			Serial.print(" axis pos ");
-			Serial.print(axis->currentPosition());
-			Serial.print(" last pos ");
-			Serial.print(*lastPosition);
-			Serial.print(" move up ");
-			Serial.print(axis->movingUp());
-			Serial.print(" missed step cons ");
-			Serial.print(motorConsMissedSteps[0]);
-			Serial.print(" missed step ");
-			Serial.print(*missedSteps);
-			Serial.print(" encoder X pos ");
-			Serial.print(encoderX.currentPosition());
-			Serial.print(" axis X pos ");
-			Serial.print(axisX.currentPosition());
-			Serial.print(" decay ");
-			Serial.print(*encoderStepDecay);
-			Serial.print(" enabled ");
-			Serial.print(*encoderEnabled);
-			Serial.print("\r\n");
-		}
-		*/
+    if (debugInterrupt && debugMessages)
+    {      
+		  debugPrintCount++;
+		  if (debugPrintCount % 50 == 0)
+		  {
+			  Serial.print("R99");
+			  Serial.print(" encoder pos ");
+			  Serial.print(encoder->currentPosition());
+			  Serial.print(" axis pos ");
+			  Serial.print(axis->currentPosition());
+			  Serial.print(" last pos ");
+			  Serial.print(*lastPosition);
+			  Serial.print(" move up ");
+			  Serial.print(axis->movingUp());
+			  Serial.print(" missed step cons ");
+			  Serial.print(motorConsMissedSteps[0]);
+			  Serial.print(" missed step ");
+			  Serial.print(*missedSteps);
+			  Serial.print(" encoder X pos ");
+			  Serial.print(encoderX.currentPosition());
+			  Serial.print(" axis X pos ");
+			  Serial.print(axisX.currentPosition());
+			  Serial.print(" decay ");
+			  Serial.print(*encoderStepDecay);
+			  Serial.print(" enabled ");
+			  Serial.print(*encoderEnabled);
+			  Serial.print("\r\n");
+		  }
+		  
+    }
 
     // Decrease amount of missed steps if there are no missed step
     if (*missedSteps > 0)
