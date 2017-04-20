@@ -146,9 +146,11 @@ void StepperControlEncoder::readChannels()
   // read the new values from the coder
 
   readChannelA = digitalRead(pinChannelA);
-  readChannelAQ = digitalRead(pinChannelAQ);
+  //readChannelAQ = digitalRead(pinChannelAQ);
   readChannelB = digitalRead(pinChannelB);
-  readChannelBQ = digitalRead(pinChannelBQ);
+  //readChannelBQ = digitalRead(pinChannelBQ);
+
+  encoderType = 0; // TEVE 2017-04-20 Disabling the quadrature channels. They take too much time to read.
 
   if (encoderType == 1)
   {

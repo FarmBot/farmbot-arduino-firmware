@@ -12,16 +12,6 @@ const int LOGGING = 0;
 
 const int INCOMING_CMD_BUF_SIZE = 50;
 
-/*
-const String COMM_REPORT_CMD_IDLE    			= "R00";
-const String COMM_REPORT_CMD_START    			= "R01";
-const String COMM_REPORT_CMD_DONE     			= "R02";
-const String COMM_REPORT_CMD_ERROR    			= "R03";
-const String COMM_REPORT_CMD_BUSY     			= "R04";
-const String COMM_REPORT_CMD_STATUS   			= "R05";
-const String COMM_REPORT_CALIB_STATUS 			= "R06";
-*/
-
 const char COMM_REPORT_CMD_IDLE[4] = {'R', '0', '0', '\0'};
 const char COMM_REPORT_CMD_START[4] = {'R', '0', '1', '\0'};
 const char COMM_REPORT_CMD_DONE[4] = {'R', '0', '2', '\0'};
@@ -46,7 +36,7 @@ const int COMM_REPORT_CALIBRATE_STATUS_TO_HOME = 1;
 const int COMM_REPORT_CALIBRATE_STATUS_TO_END = 2;
 const int COMM_REPORT_CALIBRATE_STATUS_ERROR = -1;
 
-const int MOVEMENT_INTERRUPT_SPEED = 200; // Interrupt cycle in micro seconds
+const int MOVEMENT_INTERRUPT_SPEED = 100; // Interrupt cycle in micro seconds
 
 const unsigned int MOVEMENT_SPEED_BASE_TIME = 2000;
 const unsigned int MOVEMENT_DELAY = 250;
