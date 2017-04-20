@@ -8,25 +8,25 @@
 
 #include "F32Handler.h"
 
+static F32Handler *instance;
 
-static F32Handler* instance;
+F32Handler *F32Handler::getInstance()
+{
+  if (!instance)
+  {
+    instance = new F32Handler();
+  };
+  return instance;
+};
 
-F32Handler * F32Handler::getInstance() {
-        if (!instance) {
-                instance = new F32Handler();
-        };
-        return instance;
-}
-;
-
-F32Handler::F32Handler() {
-}
-
-int F32Handler::execute(Command* command) {
-
-        StatusList::getInstance()->readValue(command->getP());
-
-        return 0;
+F32Handler::F32Handler()
+{
 }
 
+int F32Handler::execute(Command *command)
+{
 
+  StatusList::getInstance()->readValue(command->getP());
+
+  return 0;
+}

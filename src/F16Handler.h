@@ -15,18 +15,18 @@
 #include "Config.h"
 #include "StepperControl.h"
 
-class F16Handler : public GCodeHandler {
+class F16Handler : public GCodeHandler
+{
 public:
-        static F16Handler* getInstance();
-        int execute(Command*);
+  static F16Handler *getInstance();
+  int execute(Command *);
+
 private:
-        F16Handler();
-        F16Handler(F16Handler const&);
-        void operator=(F16Handler const&);
-        long adjustStepAmount(long);
-        long getNumberOfSteps(double, double);
+  F16Handler();
+  F16Handler(F16Handler const &);
+  void operator=(F16Handler const &);
+  long adjustStepAmount(long);
+  long getNumberOfSteps(double, double);
 };
 
 #endif /* F16HANDLER_H_ */
-
-

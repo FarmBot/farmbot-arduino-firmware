@@ -95,7 +95,7 @@ X_MIN_PIN        |   3  | X axis end stop at home position
 X_MAX_PIN        |   2  | X axis end stop at far position
 X_ENCDR_A        |  16  | X axis encoder A channel
 X_ENCDR_B        |  17  | X axis encoder B channel
-X_ENCDR_A_Q      |  31  | X axis encoder A channel for quarature (not implemented) 
+X_ENCDR_A_Q      |  31  | X axis encoder A channel for quarature (not implemented)
 X_ENCDR_B_Q      |  33  | X axis encoder B channel for quarature (not implemented)
 Y_STEP_PIN       |  60  | Y axis step signal
 Y_DIR_PIN        |  61  | Y axis direction choice
@@ -104,8 +104,8 @@ Y_MIN_PIN        |  14  | Y axis end stop at home position
 Y_MAX_PIN        |  15  | Y axis end stop at far position
 Y_ENCDR_A        |  23  | Y axis encoder A channel
 Y_ENCDR_B        |  25  | Y axis encoder B channel
-Y_ENCDR_A_Q      |  35  | Y axis encoder A channel for quarature (not implemented) 
-Y_ENCDR_B_Q      |  37  | Y axis encoder B channel for quarature (not implemented) 
+Y_ENCDR_A_Q      |  35  | Y axis encoder A channel for quarature (not implemented)
+Y_ENCDR_B_Q      |  37  | Y axis encoder B channel for quarature (not implemented)
 Z_STEP_PIN       |  46  | Z axis step signal
 Z_DIR_PIN        |  48  | Z axis direction choice
 Z_ENABLE_PIN     |  62  | Z axis enable
@@ -113,8 +113,8 @@ Z_MIN_PIN        |  18  | Z axis end stop at home position
 Z_MAX_PIN        |  19  | Z axis end stop at far position
 Z_ENCDR_A        |  27  | Z axis encoder A channel
 Z_ENCDR_B        |  29  | Z axis encoder B channel
-Z_ENCDR_A_Q      |  39  | Z axis encoder A channel for quarature (not implemented) 
-Z_ENCDR_B_Q      |  41  | Z axis encoder B channel for quarature (not implemented) 
+Z_ENCDR_A_Q      |  39  | Z axis encoder A channel for quarature (not implemented)
+Z_ENCDR_B_Q      |  41  | Z axis encoder B channel for quarature (not implemented)
 LED_PIN          |  13  | on board LED
 FAN_PIN          |   9  | RAMPS board fan pin
 HEATER_0_PIN     |  10  | RAMPS board heating pin 0
@@ -150,7 +150,7 @@ F        |31    |P         |Read status
 F        |32    |P V       |Write status
 F        |41    |P V M     |Set a value V on an arduino pin in mode M (digital=0/analog=1)
 F        |42    |P M       |Read a value from an arduino pin P in mode M (digital=0/analog=1)
-F        |43    |P M       |Set the I/O mode M (input=0/output=1) of a pin P in arduino 
+F        |43    |P M       |Set the I/O mode M (input=0/output=1) of a pin P in arduino
 F        |44    |P V W T M |Set the value V on an arduino pin P, wait for time T in milliseconds, set value W on the arduino pin P in mode M (digital=0/analog=1)
 F        |51    |E P V     |Set a value on the tool mount with I2C (not implemented)
 F        |52    |E P       |Read value from the tool mount with I2C (not implemented)

@@ -7,13 +7,15 @@
 
 #include "GCodeHandler.h"
 
-GCodeHandler::GCodeHandler() {
-
+GCodeHandler::GCodeHandler()
+{
 }
 
-GCodeHandler::~GCodeHandler() {
+GCodeHandler::~GCodeHandler()
+{
 }
 
-int GCodeHandler::execute(Command*) {
-	return -1;
+int GCodeHandler::execute(Command *)
+{
+  return -1;
 }

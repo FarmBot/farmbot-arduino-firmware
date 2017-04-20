@@ -25,12 +25,12 @@ extern struct __freelist *__flp;
 /* Calculates the size of the free list */
 int freeListSize()
 {
-  struct __freelist* current;
+  struct __freelist *current;
   int total = 0;
   for (current = __flp; current; current = current->nx)
   {
     total += 2; /* Add two bytes for the memory block's header  */
-    total += (int) current->sz;
+    total += (int)current->sz;
   }
 
   return total;

@@ -14,16 +14,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-class ServoControl {
+class ServoControl
+{
 public:
-	static ServoControl* getInstance();
+  static ServoControl *getInstance();
 
-	int attach();
-	int setAngle(int pin, int angle);
+  int attach();
+  int setAngle(int pin, int angle);
+
 private:
-	ServoControl();
-	ServoControl(ServoControl const&);
-	void operator=(ServoControl const&);
+  ServoControl();
+  ServoControl(ServoControl const &);
+  void operator=(ServoControl const &);
 };
 
 #endif /* SERVOCONTROL_H_ */

@@ -16,48 +16,45 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-class StepperControlEncoder {
+class StepperControlEncoder
+{
 
 public:
+  StepperControlEncoder();
 
-	StepperControlEncoder();
+  void loadPinNumbers(int channelA, int channelB, int channelAQ, int channelBQ);
+  void loadSettings(int encType, int scaling);
 
-	void loadPinNumbers(int channelA, int channelB, int channelAQ, int channelBQ);
-	void loadSettings(int encType, int scaling);
+  void setPosition(long newPosition);
+  long currentPosition();
 
-	void setPosition(long newPosition);
-	long currentPosition();
-
-	void readEncoder();
-	void readChannels();
-	void shiftChannels();
-	void test();
+  void readEncoder();
+  void readChannels();
+  void shiftChannels();
+  void test();
 
 private:
+  // pin settings
+  int pinChannelA;
+  int pinChannelAQ;
+  int pinChannelB;
+  int pinChannelBQ;
 
-	// pin settings
-	int pinChannelA;
-	int pinChannelAQ;
-	int pinChannelB;
-	int pinChannelBQ;
+  // channels
+  bool prvValChannelA;
+  bool prvValChannelB;
+  bool curValChannelA;
+  bool curValChannelB;
 
-	// channels
-	bool prvValChannelA;
-	bool prvValChannelB;
-	bool curValChannelA;
-	bool curValChannelB;
+  bool readChannelA;
+  bool readChannelAQ;
+  bool readChannelB;
+  bool readChannelBQ;
 
-	bool readChannelA;
-	bool readChannelAQ;
-	bool readChannelB;
-	bool readChannelBQ;
-
-	// encoder
-	long position;
-	int scalingFactor;
-	int encoderType;
-
+  // encoder
+  long position;
+  int scalingFactor;
+  int encoderType;
 };
 
 #endif /* STEPPERCONTROLENCODER_H_ */
-

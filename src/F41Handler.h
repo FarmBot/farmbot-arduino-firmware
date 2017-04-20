@@ -14,20 +14,16 @@
 #include "Config.h"
 #include "PinControl.h"
 
-class F41Handler : public GCodeHandler {
+class F41Handler : public GCodeHandler
+{
 public:
-        static F41Handler* getInstance();
-        int execute(Command*);
+  static F41Handler *getInstance();
+  int execute(Command *);
+
 private:
-        F41Handler();
-        F41Handler(F41Handler const&);
-        void operator=(F41Handler const&);
+  F41Handler();
+  F41Handler(F41Handler const &);
+  void operator=(F41Handler const &);
 };
 
 #endif /* F41HANDLER_H_ */
-
-
-
-
-
-
