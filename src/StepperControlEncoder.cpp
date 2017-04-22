@@ -66,7 +66,7 @@ long StepperControlEncoder::currentPosition()
 {
 
   // Apply scaling to the output of the encoder, except when scaling is zero or lower
-
+  return position;
   if (scalingFactor == 100 || scalingFactor <= 0)
   {
     return position;
@@ -103,6 +103,18 @@ void StepperControlEncoder::readEncoder()
 
   // and check for a position change
   // no fancy code, just a few simple compares. sorry
+
+  //// Only detect edges on the A channel when the V channel is high
+  //if (curValChannelB == true && prvValChannelA == false && curValChannelA == true)
+  //{
+  //  delta--;
+  //}
+  //if (curValChannelB == true && prvValChannelA == true && curValChannelA == false)
+  //{
+  //  delta++;
+  //}
+
+  
   if (prvValChannelA == true && curValChannelA == true && prvValChannelB == false && curValChannelB == true)
   {
     delta++;
@@ -136,6 +148,7 @@ void StepperControlEncoder::readEncoder()
   {
     delta--;
   }
+  
 
   position += delta;
 }

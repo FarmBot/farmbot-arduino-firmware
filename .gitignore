@@ -23,6 +23,12 @@
 /spec.d
 /arduino
 /.build
+
+
+# Visual Studio files
 /.vs
 /src/Debug
 /src/__vm
+
+# Setting files
+Debug.h

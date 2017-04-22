@@ -252,6 +252,16 @@ void ParameterList::loadDefaultValue(int id)
     paramValues[id] = MOVEMENT_TIMEOUT_Z_DEFAULT;
     break;
 
+  case MOVEMENT_KEEP_ACTIVE_X:
+    paramValues[id] = MOVEMENT_KEEP_ACTIVE_X_DEFAULT;
+    break;
+  case MOVEMENT_KEEP_ACTIVE_Y:
+    paramValues[id] = MOVEMENT_KEEP_ACTIVE_Y_DEFAULT;
+    break;
+  case MOVEMENT_KEEP_ACTIVE_Z:
+    paramValues[id] = MOVEMENT_KEEP_ACTIVE_Z_DEFAULT;
+    break;
+
   case MOVEMENT_INVERT_ENDPOINTS_X:
     paramValues[id] = MOVEMENT_INVERT_ENDPOINTS_X_DEFAULT;
     break;
@@ -379,6 +389,16 @@ void ParameterList::loadDefaultValue(int id)
     paramValues[id] = ENCODER_MISSED_STEPS_DECAY_Z_DEFAULT;
     break;
 
+  case ENCODER_USE_FOR_POS_X:
+    paramValues[id] = ENCODER_USE_FOR_POS_X_DEFAULT;
+    break;
+  case ENCODER_USE_FOR_POS_Y:
+    paramValues[id] = ENCODER_USE_FOR_POS_Y_DEFAULT;
+    break;
+  case ENCODER_USE_FOR_POS_Z:
+    paramValues[id] = ENCODER_USE_FOR_POS_Z_DEFAULT;
+    break;
+
   case PIN_GUARD_1_PIN_NR:
     paramValues[id] = PIN_GUARD_1_PIN_NR_DEFAULT;
     break;
@@ -447,6 +467,9 @@ bool ParameterList::validParam(int id)
   case MOVEMENT_TIMEOUT_X:
   case MOVEMENT_TIMEOUT_Y:
   case MOVEMENT_TIMEOUT_Z:
+  case MOVEMENT_KEEP_ACTIVE_X:
+  case MOVEMENT_KEEP_ACTIVE_Y:
+  case MOVEMENT_KEEP_ACTIVE_Z:
   case MOVEMENT_ENABLE_ENDPOINTS_X:
   case MOVEMENT_ENABLE_ENDPOINTS_Y:
   case MOVEMENT_ENABLE_ENDPOINTS_Z:
@@ -485,6 +508,9 @@ bool ParameterList::validParam(int id)
   case ENCODER_MISSED_STEPS_DECAY_X:
   case ENCODER_MISSED_STEPS_DECAY_Y:
   case ENCODER_MISSED_STEPS_DECAY_Z:
+  case ENCODER_USE_FOR_POS_X:
+  case ENCODER_USE_FOR_POS_Y:
+  case ENCODER_USE_FOR_POS_Z:
   case PIN_GUARD_1_PIN_NR:
   case PIN_GUARD_1_TIME_OUT:
   case PIN_GUARD_1_ACTIVE_STATE:

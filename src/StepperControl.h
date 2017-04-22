@@ -36,9 +36,10 @@ public:
 
   void handleMovementInterrupt();
   int calibrateAxis(int axis);
-  void initInterrupt();
+  //void initInterrupt();
   void enableMotors();
   void disableMotors();
+  void primeMotors();
   bool motorsEnabled();
 
   void storePosition();
@@ -60,7 +61,7 @@ private:
   StepperControlEncoder encoderY;
   StepperControlEncoder encoderZ;
 
-  void checkAxisVsEncoder(StepperControlAxis *axis, StepperControlEncoder *encoder, float *missedSteps, long *lastPosition, float *encoderStepDecay, bool *encoderEnabled);
+  void checkAxisVsEncoder(StepperControlAxis *axis, StepperControlEncoder *encoder, float *missedSteps, long *lastPosition, long *encoderLastPosition, int *encoderUseForPos, float *encoderStepDecay, bool *encoderEnabled);
   void checkAxisSubStatus(StepperControlAxis *axis, int *axisSubStatus);
 
   bool axisActive[3];
@@ -84,6 +85,7 @@ private:
   long speedMin[3];
   long stepsAcc[3];
   bool motorInv[3];
+  bool motorKeepActive[3];
   bool motor2Inv[3];
   bool motor2Enbl[3];
   bool endStInv[3];
@@ -92,6 +94,8 @@ private:
 
   float motorConsMissedSteps[3];
   long motorLastPosition[3];
+  long encoderLastPosition[3];
+  int encoderUseForPos[3];
 
   int motorConsMissedStepsMax[3];
   float motorConsMissedStepsDecay[3];

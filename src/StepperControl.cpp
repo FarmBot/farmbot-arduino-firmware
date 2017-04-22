@@ -81,6 +81,14 @@ StepperControl::StepperControl()
   motorConsMissedSteps[1] = 0;
   motorConsMissedSteps[2] = 0;
 
+  motorLastPosition[0] = 0;
+  motorLastPosition[1] = 0;
+  motorLastPosition[2] = 0;
+
+  encoderLastPosition[0] = 0;
+  encoderLastPosition[1] = 0;
+  encoderLastPosition[2] = 0;
+
   // Create the axis controllers
 
   axisX = StepperControlAxis();
@@ -309,9 +317,9 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
       axisY.checkTiming();
       axisZ.checkTiming();
 
-      checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
-      checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
-      checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
+      checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &encoderLastPosition[0], &encoderUseForPos[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
+      checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &encoderLastPosition[1], &encoderUseForPos[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
+      checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &encoderLastPosition[2], &encoderUseForPos[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
     }
     else
     {
@@ -887,15 +895,15 @@ void StepperControl::handleMovementInterrupt(void)
   axisY.checkTiming();
   axisZ.checkTiming();
 
-  checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
-  checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
-  checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
+  checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &encoderLastPosition[0], &encoderUseForPos[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
+  checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &encoderLastPosition[1], &encoderUseForPos[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
+  checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &encoderLastPosition[2], &encoderUseForPos[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
 }
 
 int debugPrintCount = 0;
 
 // Check encoder to verify the motor is at the right position
-void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControlEncoder *encoder, float *missedSteps, long *lastPosition, float *encoderStepDecay, bool *encoderEnabled)
+void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControlEncoder *encoder, float *missedSteps, long *lastPosition, long *encoderLastPosition, int *encoderUseForPos, float *encoderStepDecay, bool *encoderEnabled)
 {
 
   // If a step is done
@@ -943,26 +951,37 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
     }
 
     // Check if the encoder goes in the wrong direction or nothing moved
-    if ((axis->movingUp() && *lastPosition >= axis->currentPosition()) ||
-        (!axis->movingUp() && *lastPosition <= axis->currentPosition()))
+    //if ((axis->movingUp() && *lastPosition >= axis->currentPosition()) ||
+    //    (!axis->movingUp() && *lastPosition <= axis->currentPosition()))
+    if ((axis->movingUp() && *encoderLastPosition >= encoder->currentPosition()) ||
+        (!axis->movingUp() && *encoderLastPosition <= encoder->currentPosition()))
     {
       stepMissed = true;
     }
 
-    if (abs(axis->currentPosition() - encoder->currentPosition()) > 2)
-    {
-      stepMissed = true;
-    }
+    //if (abs(axis->currentPosition() - encoder->currentPosition()) > 2)
+    //{
+    //  stepMissed = true;
+    //}
 
     if (stepMissed)
     {
-      axis->setCurrentPosition(encoder->currentPosition());
       (*missedSteps)++;
     }
 
-    *lastPosition = axis->currentPosition();
     axis->resetStepDone();
   }
+
+  if (*encoderUseForPos == 1)
+  {
+    axis->setCurrentPosition(encoder->currentPosition());
+  }
+
+  *lastPosition = axis->currentPosition();
+  *encoderLastPosition = encoder->currentPosition();
+
+
+
 }
 
 void StepperControl::loadMotorSettings()
@@ -1002,6 +1021,10 @@ void StepperControl::loadMotorSettings()
   timeOut[1] = ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
   timeOut[2] = ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
 
+  motorKeepActive[0] = ParameterList::getInstance()->getValue(MOVEMENT_KEEP_ACTIVE_X);
+  motorKeepActive[1] = ParameterList::getInstance()->getValue(MOVEMENT_KEEP_ACTIVE_Y);
+  motorKeepActive[2] = ParameterList::getInstance()->getValue(MOVEMENT_KEEP_ACTIVE_Z);
+
   motor2Inv[0] = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_SECONDARY_MOTOR_INVERT_X));
   motor2Inv[1] = false;
   motor2Inv[2] = false;
@@ -1013,6 +1036,8 @@ void StepperControl::loadMotorSettings()
   axisX.loadMotorSettings(speedMax[0], speedMin[0], stepsAcc[0], timeOut[0], homeIsUp[0], motorInv[0], endStInv[0], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[0], motor2Inv[0], endStEnbl[0]);
   axisY.loadMotorSettings(speedMax[1], speedMin[1], stepsAcc[1], timeOut[1], homeIsUp[1], motorInv[1], endStInv[1], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[1], motor2Inv[1], endStEnbl[1]);
   axisZ.loadMotorSettings(speedMax[2], speedMin[2], stepsAcc[2], timeOut[2], homeIsUp[2], motorInv[2], endStInv[2], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[2], motor2Inv[2], endStEnbl[2]);
+
+  primeMotors();
 }
 
 bool StepperControl::intToBool(int value)
@@ -1052,6 +1077,10 @@ void StepperControl::loadEncoderSettings()
   motorConsEncoderScaling[0] = ParameterList::getInstance()->getValue(ENCODER_SCALING_X);
   motorConsEncoderScaling[1] = ParameterList::getInstance()->getValue(ENCODER_SCALING_Y);
   motorConsEncoderScaling[2] = ParameterList::getInstance()->getValue(ENCODER_SCALING_Z);
+
+  encoderUseForPos[0] = ParameterList::getInstance()->getValue(ENCODER_USE_FOR_POS_X);
+  encoderUseForPos[1] = ParameterList::getInstance()->getValue(ENCODER_USE_FOR_POS_Y);
+  encoderUseForPos[2] = ParameterList::getInstance()->getValue(ENCODER_USE_FOR_POS_Z);
 
   if (ParameterList::getInstance()->getValue(ENCODER_ENABLED_X) == 1)
   {
@@ -1108,10 +1137,18 @@ void StepperControl::disableMotors()
 {
   motorMotorsEnabled = false;
 
-  axisX.disableMotor();
-  axisY.disableMotor();
-  //axisZ.disableMotor();
+  if (motorKeepActive[0] == 0) { axisX.disableMotor(); }
+  if (motorKeepActive[1] == 0) { axisY.disableMotor(); }
+  if (motorKeepActive[2] == 0) { axisZ.disableMotor(); }
+
   delay(100);
+}
+
+void StepperControl::primeMotors()
+{
+  if (motorKeepActive[0] == 1) { axisX.enableMotor(); } else { axisX.disableMotor(); }
+  if (motorKeepActive[1] == 1) { axisY.enableMotor(); } else { axisY.disableMotor(); }
+  if (motorKeepActive[2] == 1) { axisZ.enableMotor(); } else { axisZ.disableMotor(); }
 }
 
 bool StepperControl::motorsEnabled()
