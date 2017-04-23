@@ -82,6 +82,10 @@ enum ParamListEnum
   ENCODER_USE_FOR_POS_Y = 126,
   ENCODER_USE_FOR_POS_Z = 127,
 
+  ENCODER_INVERT_X = 131,
+  ENCODER_INVERT_Y = 132,
+  ENCODER_INVERT_Z = 133,
+
   // not used in software at this time
   MOVEMENT_AXIS_NR_STEPS_X = 141,
   MOVEMENT_AXIS_NR_STEPS_Y = 142,

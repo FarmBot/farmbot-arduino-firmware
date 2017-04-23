@@ -135,9 +135,9 @@ void StepperControl::loadSettings()
   encoderY.loadPinNumbers(Y_ENCDR_A, Y_ENCDR_B, Y_ENCDR_A_Q, Y_ENCDR_B_Q);
   encoderZ.loadPinNumbers(Z_ENCDR_A, Z_ENCDR_B, Z_ENCDR_A_Q, Z_ENCDR_B_Q);
 
-  encoderX.loadSettings(motorConsEncoderType[0], motorConsEncoderScaling[0]);
-  encoderY.loadSettings(motorConsEncoderType[1], motorConsEncoderScaling[1]);
-  encoderZ.loadSettings(motorConsEncoderType[2], motorConsEncoderScaling[2]);
+  encoderX.loadSettings(motorConsEncoderType[0], motorConsEncoderScaling[0], motorConsEncoderInvert[0]);
+  encoderY.loadSettings(motorConsEncoderType[1], motorConsEncoderScaling[1], motorConsEncoderInvert[1]);
+  encoderZ.loadSettings(motorConsEncoderType[2], motorConsEncoderScaling[2], motorConsEncoderInvert[2]);
 }
 
 void StepperControl::test()
@@ -317,9 +317,9 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
       axisY.checkTiming();
       axisZ.checkTiming();
 
-      checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &encoderLastPosition[0], &encoderUseForPos[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
-      checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &encoderLastPosition[1], &encoderUseForPos[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
-      checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &encoderLastPosition[2], &encoderUseForPos[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
+      checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &encoderLastPosition[0], &motorConsEncoderUseForPos[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
+      checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &encoderLastPosition[1], &motorConsEncoderUseForPos[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
+      checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &encoderLastPosition[2], &motorConsEncoderUseForPos[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
     }
     else
     {
@@ -587,7 +587,6 @@ int StepperControl::calibrateAxis(int axis)
     calibAxis = &axisY;
     calibEncoder = &encoderY;
     parEndInv = MOVEMENT_INVERT_ENDPOINTS_Y;
-    ;
     parNbrStp = MOVEMENT_AXIS_NR_STEPS_Y;
     invertEndStops = endStInv[1];
     missedSteps = &motorConsMissedSteps[1];
@@ -895,9 +894,9 @@ void StepperControl::handleMovementInterrupt(void)
   axisY.checkTiming();
   axisZ.checkTiming();
 
-  checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &encoderLastPosition[0], &encoderUseForPos[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
-  checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &encoderLastPosition[1], &encoderUseForPos[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
-  checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &encoderLastPosition[2], &encoderUseForPos[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
+  checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &encoderLastPosition[0], &motorConsEncoderUseForPos[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
+  checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &encoderLastPosition[1], &motorConsEncoderUseForPos[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
+  checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &encoderLastPosition[2], &motorConsEncoderUseForPos[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
 }
 
 int debugPrintCount = 0;
@@ -905,7 +904,7 @@ int debugPrintCount = 0;
 // Check encoder to verify the motor is at the right position
 void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControlEncoder *encoder, float *missedSteps, long *lastPosition, long *encoderLastPosition, int *encoderUseForPos, float *encoderStepDecay, bool *encoderEnabled)
 {
-
+  
   // If a step is done
   //if (axis->isStepDone() && axis->currentPosition() % 3 == 0) {
   if (*encoderEnabled && axis->isStepDone())
@@ -949,7 +948,7 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
     {
       (*missedSteps) -= (*encoderStepDecay);
     }
-
+    
     // Check if the encoder goes in the wrong direction or nothing moved
     //if ((axis->movingUp() && *lastPosition >= axis->currentPosition()) ||
     //    (!axis->movingUp() && *lastPosition <= axis->currentPosition()))
@@ -964,7 +963,7 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
     //  stepMissed = true;
     //}
 
-    if (stepMissed)
+    if (stepMissed && *missedSteps < 32000)
     {
       (*missedSteps)++;
     }
@@ -1078,9 +1077,13 @@ void StepperControl::loadEncoderSettings()
   motorConsEncoderScaling[1] = ParameterList::getInstance()->getValue(ENCODER_SCALING_Y);
   motorConsEncoderScaling[2] = ParameterList::getInstance()->getValue(ENCODER_SCALING_Z);
 
-  encoderUseForPos[0] = ParameterList::getInstance()->getValue(ENCODER_USE_FOR_POS_X);
-  encoderUseForPos[1] = ParameterList::getInstance()->getValue(ENCODER_USE_FOR_POS_Y);
-  encoderUseForPos[2] = ParameterList::getInstance()->getValue(ENCODER_USE_FOR_POS_Z);
+  motorConsEncoderUseForPos[0] = ParameterList::getInstance()->getValue(ENCODER_USE_FOR_POS_X);
+  motorConsEncoderUseForPos[1] = ParameterList::getInstance()->getValue(ENCODER_USE_FOR_POS_Y);
+  motorConsEncoderUseForPos[2] = ParameterList::getInstance()->getValue(ENCODER_USE_FOR_POS_Z);
+
+  motorConsEncoderInvert[0] = ParameterList::getInstance()->getValue(ENCODER_INVERT_X);
+  motorConsEncoderInvert[1] = ParameterList::getInstance()->getValue(ENCODER_INVERT_Y);
+  motorConsEncoderInvert[2] = ParameterList::getInstance()->getValue(ENCODER_INVERT_Z);
 
   if (ParameterList::getInstance()->getValue(ENCODER_ENABLED_X) == 1)
   {

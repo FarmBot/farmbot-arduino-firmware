@@ -3,6 +3,7 @@
  *
  *  Created on: 16 maj 2014
  *      Author: MattLech
+ *      Author: Tim Evers
  */
 
 #ifndef CONFIG_H_
@@ -36,7 +37,7 @@ const int COMM_REPORT_CALIBRATE_STATUS_TO_HOME = 1;
 const int COMM_REPORT_CALIBRATE_STATUS_TO_END = 2;
 const int COMM_REPORT_CALIBRATE_STATUS_ERROR = -1;
 
-const int MOVEMENT_INTERRUPT_SPEED = 100; // Interrupt cycle in micro seconds
+const int MOVEMENT_INTERRUPT_SPEED = 200; // Interrupt cycle in micro seconds
 
 const unsigned int MOVEMENT_SPEED_BASE_TIME = 2000;
 const unsigned int MOVEMENT_DELAY = 250;
@@ -120,6 +121,11 @@ const long ENCODER_MISSED_STEPS_DECAY_Z_DEFAULT = 10;
 const long ENCODER_USE_FOR_POS_X_DEFAULT = 0;
 const long ENCODER_USE_FOR_POS_Y_DEFAULT = 0;
 const long ENCODER_USE_FOR_POS_Z_DEFAULT = 0;
+
+// Invert the encoder position sign
+const long ENCODER_INVERT_X_DEFAULT = 0;
+const long ENCODER_INVERT_Y_DEFAULT = 0;
+const long ENCODER_INVERT_Z_DEFAULT = 0;
 
 // pin guard default settings
 const long PIN_GUARD_1_PIN_NR_DEFAULT = 0;

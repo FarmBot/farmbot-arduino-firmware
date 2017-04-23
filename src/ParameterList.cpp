@@ -399,6 +399,16 @@ void ParameterList::loadDefaultValue(int id)
     paramValues[id] = ENCODER_USE_FOR_POS_Z_DEFAULT;
     break;
 
+  case ENCODER_INVERT_X:
+    paramValues[id] = ENCODER_INVERT_X_DEFAULT;
+    break;
+  case ENCODER_INVERT_Y:
+    paramValues[id] = ENCODER_INVERT_Y_DEFAULT;
+    break;
+  case ENCODER_INVERT_Z:
+    paramValues[id] = ENCODER_INVERT_Z_DEFAULT;
+    break;
+
   case PIN_GUARD_1_PIN_NR:
     paramValues[id] = PIN_GUARD_1_PIN_NR_DEFAULT;
     break;
@@ -511,6 +521,9 @@ bool ParameterList::validParam(int id)
   case ENCODER_USE_FOR_POS_X:
   case ENCODER_USE_FOR_POS_Y:
   case ENCODER_USE_FOR_POS_Z:
+  case ENCODER_INVERT_X:
+  case ENCODER_INVERT_Y:
+  case ENCODER_INVERT_Z:
   case PIN_GUARD_1_PIN_NR:
   case PIN_GUARD_1_TIME_OUT:
   case PIN_GUARD_1_ACTIVE_STATE:

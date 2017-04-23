@@ -95,13 +95,14 @@ private:
   float motorConsMissedSteps[3];
   long motorLastPosition[3];
   long encoderLastPosition[3];
-  int encoderUseForPos[3];
 
   int motorConsMissedStepsMax[3];
   float motorConsMissedStepsDecay[3];
   bool motorConsEncoderEnabled[3];
   int motorConsEncoderType[3];
   int motorConsEncoderScaling[3];
+  int motorConsEncoderUseForPos[3];
+  int motorConsEncoderInvert[3];
 
   bool motorMotorsEnabled;
 };
