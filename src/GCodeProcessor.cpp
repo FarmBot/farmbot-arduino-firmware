@@ -83,12 +83,20 @@ int GCodeProcessor::execute(Command *command)
     return -1;
   }
 
-  // Execute te command, report start and end
+  // Execute the command, report start and end
 
   Serial.print(COMM_REPORT_CMD_START);
   CurrentState::getInstance()->printQAndNewLine();
 
   execution = handler->execute(command);
+
+  // Clean serial buffer
+  while (Serial.available() > 0)
+  {
+    Serial.read();
+  }
+
+  // Report back result of execution
   if (execution == 0)
   {
     Serial.print(COMM_REPORT_CMD_DONE);

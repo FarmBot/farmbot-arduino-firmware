@@ -6,6 +6,6 @@
 */
 
 #ifndef DEBUG_H_
-#define debugMessages   true
+#define debugMessages   false
 #define debugInterrupt  false
 #endif /* DEBUG_H_ */

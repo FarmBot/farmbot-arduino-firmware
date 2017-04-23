@@ -174,8 +174,8 @@ void StepperControlEncoder::readChannels()
 
   if (encoderType == 1)
   {
-    //readChannelAQ = digitalRead(pinChannelAQ);
-    //readChannelBQ = digitalRead(pinChannelBQ);
+    readChannelAQ = digitalRead(pinChannelAQ);
+    readChannelBQ = digitalRead(pinChannelBQ);
 
     // differential encoder
     if ((readChannelA ^ readChannelAQ) && (readChannelB ^ readChannelBQ))

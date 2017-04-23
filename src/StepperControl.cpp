@@ -85,9 +85,9 @@ StepperControl::StepperControl()
   motorLastPosition[1] = 0;
   motorLastPosition[2] = 0;
 
-  encoderLastPosition[0] = 0;
-  encoderLastPosition[1] = 0;
-  encoderLastPosition[2] = 0;
+  motorConsEncoderLastPosition[0] = 0;
+  motorConsEncoderLastPosition[1] = 0;
+  motorConsEncoderLastPosition[2] = 0;
 
   // Create the axis controllers
 
@@ -202,6 +202,7 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
 
   int incomingByte = 0;
   int error = 0;
+  bool emergencyStop = false;
 
   // load motor and encoder settings
 
@@ -298,7 +299,7 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
   axisZ.checkMovement();
 
   // Let the interrupt handle all the movements
-  while (axisActive[0] || axisActive[1] || axisActive[2])
+  while ((axisActive[0] || axisActive[1] || axisActive[2]) && !emergencyStop)
   {
 
     checkAxisSubStatus(&axisX, &axisSubStep[0]);
@@ -309,17 +310,7 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
     {
       delayMicroseconds(100);
 
-      encoderX.currentPosition();
-      encoderY.currentPosition();
-      encoderZ.currentPosition();
-
-      axisX.checkTiming();
-      axisY.checkTiming();
-      axisZ.checkTiming();
-
-      checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &encoderLastPosition[0], &motorConsEncoderUseForPos[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
-      checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &encoderLastPosition[1], &motorConsEncoderUseForPos[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
-      checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &encoderLastPosition[2], &motorConsEncoderUseForPos[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
+      handleMovementInterrupt();
     }
     else
     {
@@ -433,9 +424,17 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
       if (incomingByte == 69 || incomingByte == 101)
       {
         Serial.print("R99 emergency stop\r\n");
+
+        emergencyStop = true;
+
         axisX.deactivateAxis();
         axisY.deactivateAxis();
         axisZ.deactivateAxis();
+
+        axisActive[0] = false;
+        axisActive[1] = false;
+        axisActive[2] = false;
+
         error = 1;
       }
     }
@@ -452,12 +451,9 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
     // Periodically send message still active
     currentMillis++;
 
-    //if (currentMillis % 2500 == 0)
     if (currentMillis % 750 == 0)
-    //if (1 == 1)
     {
       Serial.print(COMM_REPORT_CMD_BUSY);
-      //Serial.print("\r\n");
       CurrentState::getInstance()->printQAndNewLine();
       reportPosition();
 
@@ -894,9 +890,9 @@ void StepperControl::handleMovementInterrupt(void)
   axisY.checkTiming();
   axisZ.checkTiming();
 
-  checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &encoderLastPosition[0], &motorConsEncoderUseForPos[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
-  checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &encoderLastPosition[1], &motorConsEncoderUseForPos[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
-  checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &encoderLastPosition[2], &motorConsEncoderUseForPos[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
+  checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsEncoderLastPosition[0], &motorConsEncoderUseForPos[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
+  checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &motorConsEncoderLastPosition[1], &motorConsEncoderUseForPos[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
+  checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &motorConsEncoderLastPosition[2], &motorConsEncoderUseForPos[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
 }
 
 int debugPrintCount = 0;
@@ -906,7 +902,6 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
 {
   
   // If a step is done
-  //if (axis->isStepDone() && axis->currentPosition() % 3 == 0) {
   if (*encoderEnabled && axis->isStepDone())
   {
 
@@ -914,13 +909,15 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
 
     if (debugInterrupt && debugMessages)
     {      
-		  debugPrintCount++;
-		  if (debugPrintCount % 50 == 0)
+		  //debugPrintCount++;
+		  //if (debugPrintCount % 50 == 0)
 		  {
 			  Serial.print("R99");
 			  Serial.print(" encoder pos ");
 			  Serial.print(encoder->currentPosition());
-			  Serial.print(" axis pos ");
+        Serial.print(" last enc ");
+        Serial.print(*encoderLastPosition);
+        Serial.print(" axis pos ");
 			  Serial.print(axis->currentPosition());
 			  Serial.print(" last pos ");
 			  Serial.print(*lastPosition);
@@ -930,10 +927,10 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
 			  Serial.print(motorConsMissedSteps[0]);
 			  Serial.print(" missed step ");
 			  Serial.print(*missedSteps);
-			  Serial.print(" encoder X pos ");
-			  Serial.print(encoderX.currentPosition());
-			  Serial.print(" axis X pos ");
-			  Serial.print(axisX.currentPosition());
+			  //Serial.print(" encoder X pos ");
+			  //Serial.print(encoderX.currentPosition());
+			  //Serial.print(" axis X pos ");
+			  //Serial.print(axisX.currentPosition());
 			  Serial.print(" decay ");
 			  Serial.print(*encoderStepDecay);
 			  Serial.print(" enabled ");
@@ -950,23 +947,19 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
     }
     
     // Check if the encoder goes in the wrong direction or nothing moved
-    //if ((axis->movingUp() && *lastPosition >= axis->currentPosition()) ||
-    //    (!axis->movingUp() && *lastPosition <= axis->currentPosition()))
     if ((axis->movingUp() && *encoderLastPosition >= encoder->currentPosition()) ||
         (!axis->movingUp() && *encoderLastPosition <= encoder->currentPosition()))
     {
       stepMissed = true;
     }
 
-    //if (abs(axis->currentPosition() - encoder->currentPosition()) > 2)
-    //{
-    //  stepMissed = true;
-    //}
-
     if (stepMissed && *missedSteps < 32000)
     {
       (*missedSteps)++;
     }
+
+    *encoderLastPosition = encoder->currentPosition();
+    *lastPosition = axis->currentPosition();
 
     axis->resetStepDone();
   }
@@ -975,12 +968,6 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
   {
     axis->setCurrentPosition(encoder->currentPosition());
   }
-
-  *lastPosition = axis->currentPosition();
-  *encoderLastPosition = encoder->currentPosition();
-
-
-
 }
 
 void StepperControl::loadMotorSettings()
@@ -1174,32 +1161,32 @@ bool StepperControl::endStopsReached()
 void StepperControl::storePosition()
 {
 
-  if (motorConsEncoderEnabled[0])
-  {
-    CurrentState::getInstance()->setX(encoderX.currentPosition());
-  }
-  else
-  {
+//  if (motorConsEncoderEnabled[0])
+//  {
+//    CurrentState::getInstance()->setX(encoderX.currentPosition());
+//  }
+//  else
+//  {
     CurrentState::getInstance()->setX(axisX.currentPosition());
-  }
+//  }
 
-  if (motorConsEncoderEnabled[1])
-  {
-    CurrentState::getInstance()->setY(encoderY.currentPosition());
-  }
-  else
-  {
+//  if (motorConsEncoderEnabled[1])
+//  {
+//    CurrentState::getInstance()->setY(encoderY.currentPosition());
+//  }
+//  else
+//  {
     CurrentState::getInstance()->setY(axisY.currentPosition());
-  }
+//  }
 
-  if (motorConsEncoderEnabled[2])
-  {
-    CurrentState::getInstance()->setZ(encoderZ.currentPosition());
-  }
-  else
-  {
+//  if (motorConsEncoderEnabled[2])
+//  {
+//    CurrentState::getInstance()->setZ(encoderZ.currentPosition());
+//  }
+//  else
+//  {
     CurrentState::getInstance()->setZ(axisZ.currentPosition());
-  }
+//  }
 }
 
 void StepperControl::reportEndStops()

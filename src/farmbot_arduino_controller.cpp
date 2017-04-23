@@ -144,8 +144,12 @@ void loop()
 
     // Get the input and start processing on receiving 'new line'
     incomingChar = Serial.read();
-    incomingCommandArray[incomingCommandPointer] = incomingChar;
-    incomingCommandPointer++;
+    // Filter out emergency stop. Emergency stop is captured in moving routines
+    if (!(incomingChar == 69 || incomingChar == 101))
+    {
+      incomingCommandArray[incomingCommandPointer] = incomingChar;
+      incomingCommandPointer++;
+    }
 
     // If the string is getting to long, cap it off with a new line and let it process anyway
     if (incomingCommandPointer >= INCOMING_CMD_BUF_SIZE - 1)
@@ -181,13 +185,13 @@ void loop()
         //Command* command = new Command(commandString);
         Command *command = new Command(commandChar);
 
-        if (LOGGING)
+        if (LOGGING || debugMessages)
         {
           command->print();
         }
-
+        Serial.print("R99 V1 \r\n");
         gCodeProcessor->execute(command);
-
+        Serial.print("R99 V2 \r\n");
         free(command);
       }
 

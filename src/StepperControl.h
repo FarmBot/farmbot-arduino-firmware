@@ -94,7 +94,7 @@ private:
 
   float motorConsMissedSteps[3];
   long motorLastPosition[3];
-  long encoderLastPosition[3];
+  long motorConsEncoderLastPosition[3];
 
   int motorConsMissedStepsMax[3];
   float motorConsMissedStepsDecay[3];
