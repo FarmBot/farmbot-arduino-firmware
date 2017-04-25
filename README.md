@@ -163,17 +163,17 @@ E        |      |          |Emergency stop
 ### Codes received from the arduino
 
 Code type|Number|Parameters|Function
----------|------|----------|--------
-R        |      |          |Report messages
-R        |01    |          |Current command started
-R        |02    |          |Current command finished successfully
-R        |03    |          |Current command finished with error
-R        |04    |          |Current command running
-R        |05    |          |Report motor/axis state
-R        |06    |          |Report calibration state during execution
-R        |21    |P V       |Report parameter value
-R        |31    |P V       |Report status value
-R        |41    |P V       |Report pin value
+---------|------|-----------------|--------
+R        |      |                 |Report messages
+R        |01    |                 |Current command started
+R        |02    |                 |Current command finished successfully
+R        |03    |                 |Current command finished with error
+R        |04    |                 |Current command running
+R        |05    |                 |Report motor/axis state
+R        |06    |                 |Report calibration state during execution
+R        |21    |P V              |Report parameter value
+R        |31    |P V              |Report status value
+R        |41    |P V              |Report pin value
 R        |81    |X1 X2 Y1 Y2 Z1 Z2|Reporting end stops - parameters: X1 (end stop x axis min) X2 (end stop x axis max) Y1 Y2 Z1 Z2
 R        |82    |X Y Z     |Report current position
 R        |83    |C         |Report software version
@@ -234,63 +234,72 @@ ZB        |End stop 2 on z axis   |0/1
 Arduino parameter numbers
 ------------------------
 
-Parameter name               |Parameter id
------------------------------|------------
-PARAM_CONFIG_OK              |2
-PARAM_USE_EEPROM             |3
-MOVEMENT_TIMEOUT_X           |11
-MOVEMENT_TIMEOUT_Y           |12
-MOVEMENT_TIMEOUT_Z           |13
-MOVEMENT_INVERT_ENDPOINTS_X  |21
-MOVEMENT_INVERT_ENDPOINTS_Y  |22
-MOVEMENT_INVERT_ENDPOINTS_Z  |23
-MOVEMENT_ENABLE_ENDPOINTS_X  |25
-MOVEMENT_ENABLE_ENDPOINTS_Y  |26
-MOVEMENT_ENABLE_ENDPOINTS_Z  |27
-MOVEMENT_INVERT_MOTOR_X      |31
-MOVEMENT_INVERT_MOTOR_Y      |32
-MOVEMENT_INVERT_MOTOR_Z      |33
-MOVEMENT_SECONDARY_MOTOR_X   |36
+Parameter name                    |Parameter id
+----------------------------------|------------
+PARAM_CONFIG_OK                   |2
+PARAM_USE_EEPROM                  |3
+MOVEMENT_KEEP_ACTIVE_X_DEFAULT    |15
+MOVEMENT_KEEP_ACTIVE_Y_DEFAULT    |16
+MOVEMENT_KEEP_ACTIVE_Z_DEFAULT    |17
+MOVEMENT_TIMEOUT_X                |11
+MOVEMENT_TIMEOUT_Y                |12
+MOVEMENT_TIMEOUT_Z                |13
+MOVEMENT_INVERT_ENDPOINTS_X       |21
+MOVEMENT_INVERT_ENDPOINTS_Y       |22
+MOVEMENT_INVERT_ENDPOINTS_Z       |23
+MOVEMENT_ENABLE_ENDPOINTS_X       |25
+MOVEMENT_ENABLE_ENDPOINTS_Y       |26
+MOVEMENT_ENABLE_ENDPOINTS_Z       |27
+MOVEMENT_INVERT_MOTOR_X           |31
+MOVEMENT_INVERT_MOTOR_Y           |32
+MOVEMENT_INVERT_MOTOR_Z           |33
+MOVEMENT_SECONDARY_MOTOR_X        |36
 MOVEMENT_SECONDARY_MOTOR_INVERT_X |37
-MOVEMENT_STEPS_ACC_DEC_X     |41
-MOVEMENT_STEPS_ACC_DEC_Y     |42
-MOVEMENT_STEPS_ACC_DEC_Z     |43
-MOVEMENT_HOME_UP_X           |51
-MOVEMENT_HOME_UP_Y           |52
-MOVEMENT_HOME_UP_Z           |53
-MOVEMENT_MIN_SPD_X           |61
-MOVEMENT_MIN_SPD_Y           |62
-MOVEMENT_MIN_SPD_Z           |63
-MOVEMENT_MAX_SPD_X           |71
-MOVEMENT_MAX_SPD_Y           |72
-MOVEMENT_MAX_SPD_Z           |73
-ENCODER_ENABLED_X            |101
-ENCODER_ENABLED_Y            |102
-ENCODER_ENABLED_Z            |103
-ENCODER_MISSED_STEPS_MAX_X   |111
-ENCODER_MISSED_STEPS_MAX_Y   |112
-ENCODER_MISSED_STEPS_MAX_Z   |113
-ENCODER_MISSED_STEPS_DECAY_X |121
-ENCODER_MISSED_STEPS_DECAY_Y |122
-ENCODER_MISSED_STEPS_DECAY_Z |123
-MOVEMENT_AXIS_NR_STEPS_X     |141
-MOVEMENT_AXIS_NR_STEPS_Y     |142
-MOVEMENT_AXIS_NR_STEPS_Z     |143
-PIN_GUARD_1_PIN_NR           |201
-PIN_GUARD_1_TIME_OUT         |202
-PIN_GUARD_1_ACTIVE_STATE     |203
-PIN_GUARD_2_PIN_NR           |205
-PIN_GUARD_2_TIME_OUT         |206
-PIN_GUARD_2_ACTIVE_STATE     |207
-PIN_GUARD_3_PIN_NR           |211
-PIN_GUARD_3_TIME_OUT         |212
-PIN_GUARD_3_ACTIVE_STATE     |213
-PIN_GUARD_4_PIN_NR           |215
-PIN_GUARD_4_TIME_OUT         |216
-PIN_GUARD_4_ACTIVE_STATE     |217
-PIN_GUARD_5_PIN_NR           |221
-PIN_GUARD_5_TIME_OUT         |222
-PIN_GUARD_5_ACTIVE_STATE     |223
+MOVEMENT_STEPS_ACC_DEC_X          |41
+MOVEMENT_STEPS_ACC_DEC_Y          |42
+MOVEMENT_STEPS_ACC_DEC_Z          |43
+MOVEMENT_HOME_UP_X                |51
+MOVEMENT_HOME_UP_Y                |52
+MOVEMENT_HOME_UP_Z                |53
+MOVEMENT_MIN_SPD_X                |61
+MOVEMENT_MIN_SPD_Y                |62
+MOVEMENT_MIN_SPD_Z                |63
+MOVEMENT_MAX_SPD_X                |71
+MOVEMENT_MAX_SPD_Y                |72
+MOVEMENT_MAX_SPD_Z                |73
+ENCODER_ENABLED_X                 |101
+ENCODER_ENABLED_Y                 |102
+ENCODER_ENABLED_Z                 |103
+ENCODER_MISSED_STEPS_MAX_X        |111
+ENCODER_MISSED_STEPS_MAX_Y        |112
+ENCODER_MISSED_STEPS_MAX_Z        |113
+ENCODER_MISSED_STEPS_DECAY_X      |121
+ENCODER_MISSED_STEPS_DECAY_Y      |122
+ENCODER_MISSED_STEPS_DECAY_Z      |123
+ENCODER_USE_FOR_POS_X             |125
+ENCODER_USE_FOR_POS_Y             |126
+ENCODER_USE_FOR_POS_Z             |127
+ENCODER_INVERT_X                  |131
+ENCODER_INVERT_Y                  |132
+ENCODER_INVERT_Z                  |133
+MOVEMENT_AXIS_NR_STEPS_X          |141
+MOVEMENT_AXIS_NR_STEPS_Y          |142
+MOVEMENT_AXIS_NR_STEPS_Z          |143
+PIN_GUARD_1_PIN_NR                |201
+PIN_GUARD_1_TIME_OUT              |202
+PIN_GUARD_1_ACTIVE_STATE          |203
+PIN_GUARD_2_PIN_NR                |205
+PIN_GUARD_2_TIME_OUT              |206
+PIN_GUARD_2_ACTIVE_STATE          |207
+PIN_GUARD_3_PIN_NR                |211
+PIN_GUARD_3_TIME_OUT              |212
+PIN_GUARD_3_ACTIVE_STATE          |213
+PIN_GUARD_4_PIN_NR                |215
+PIN_GUARD_4_TIME_OUT              |216
+PIN_GUARD_4_ACTIVE_STATE          |217
+PIN_GUARD_5_PIN_NR                |221
+PIN_GUARD_5_TIME_OUT              |222
+PIN_GUARD_5_ACTIVE_STATE          |223
 
 IMPORTANT
 =========
