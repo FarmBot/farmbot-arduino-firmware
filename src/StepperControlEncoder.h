@@ -23,7 +23,7 @@ public:
   StepperControlEncoder();
 
   void loadPinNumbers(int channelA, int channelB, int channelAQ, int channelBQ);
-  void loadSettings(int encType, int scaling);
+  void loadSettings(int encType, int scaling, int invert);
 
   void setPosition(long newPosition);
   long currentPosition();
@@ -55,6 +55,7 @@ private:
   long position;
   int scalingFactor;
   int encoderType;
+  int encoderInvert;
 };
 
 #endif /* STEPPERCONTROLENCODER_H_ */

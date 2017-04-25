@@ -3,6 +3,7 @@
  *
  *  Created on: 16 maj 2014
  *      Author: MattLech
+ *      Author: Tim Evers
  */
 
 #ifndef CONFIG_H_
@@ -36,7 +37,7 @@ const int COMM_REPORT_CALIBRATE_STATUS_TO_HOME = 1;
 const int COMM_REPORT_CALIBRATE_STATUS_TO_END = 2;
 const int COMM_REPORT_CALIBRATE_STATUS_ERROR = -1;
 
-const int MOVEMENT_INTERRUPT_SPEED = 100; // Interrupt cycle in micro seconds
+const int MOVEMENT_INTERRUPT_SPEED = 200; // Interrupt cycle in micro seconds
 
 const unsigned int MOVEMENT_SPEED_BASE_TIME = 2000;
 const unsigned int MOVEMENT_DELAY = 250;
@@ -50,6 +51,10 @@ const long PARAM_USE_EEPROM_DEFAULT = 1;
 const long MOVEMENT_TIMEOUT_X_DEFAULT = 120;
 const long MOVEMENT_TIMEOUT_Y_DEFAULT = 120;
 const long MOVEMENT_TIMEOUT_Z_DEFAULT = 120;
+
+const long MOVEMENT_KEEP_ACTIVE_X_DEFAULT = 0;
+const long MOVEMENT_KEEP_ACTIVE_Y_DEFAULT = 0;
+const long MOVEMENT_KEEP_ACTIVE_Z_DEFAULT = 1;
 
 const long MOVEMENT_ENABLE_ENDPOINTS_X_DEFAULT = 0;
 const long MOVEMENT_ENABLE_ENDPOINTS_Y_DEFAULT = 0;
@@ -112,6 +117,16 @@ const long ENCODER_MISSED_STEPS_DECAY_X_DEFAULT = 10;
 const long ENCODER_MISSED_STEPS_DECAY_Y_DEFAULT = 10;
 const long ENCODER_MISSED_STEPS_DECAY_Z_DEFAULT = 10;
 
+// Use the encoder for positioning
+const long ENCODER_USE_FOR_POS_X_DEFAULT = 0;
+const long ENCODER_USE_FOR_POS_Y_DEFAULT = 0;
+const long ENCODER_USE_FOR_POS_Z_DEFAULT = 0;
+
+// Invert the encoder position sign
+const long ENCODER_INVERT_X_DEFAULT = 0;
+const long ENCODER_INVERT_Y_DEFAULT = 0;
+const long ENCODER_INVERT_Z_DEFAULT = 0;
+
 // pin guard default settings
 const long PIN_GUARD_1_PIN_NR_DEFAULT = 0;
 const long PIN_GUARD_1_TIME_OUT_DEFAULT = 60;
@@ -135,6 +150,6 @@ const long PIN_GUARD_5_ACTIVE_STATE_DEFAULT = 1;
 
 const long STATUS_GENERAL_DEFAULT = 0;
 
-const char SOFTWARE_VERSION[] = "GENESIS.V.01.08.EXPERIMENTAL\0";
+const char SOFTWARE_VERSION[] = "GENESIS.V.01.09.EXPERIMENTAL\0";
 
 #endif /* CONFIG_H_ */

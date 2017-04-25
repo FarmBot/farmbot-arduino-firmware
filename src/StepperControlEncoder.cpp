@@ -51,10 +51,19 @@ void StepperControlEncoder::loadPinNumbers(int channelA, int channelB, int chann
   shiftChannels();
 }
 
-void StepperControlEncoder::loadSettings(int encType, int scaling)
+void StepperControlEncoder::loadSettings(int encType, int scaling, int invert)
 {
   encoderType = encType;
   scalingFactor = scaling;
+  if (invert == 1)
+  {
+    encoderInvert = -1;
+  }
+  else
+  {
+    encoderInvert = 1;
+  }
+  
 }
 
 void StepperControlEncoder::setPosition(long newPosition)
@@ -66,14 +75,14 @@ long StepperControlEncoder::currentPosition()
 {
 
   // Apply scaling to the output of the encoder, except when scaling is zero or lower
-
+  //return position;
   if (scalingFactor == 100 || scalingFactor <= 0)
   {
-    return position;
+    return position * encoderInvert;
   }
   else
   {
-    return position * scalingFactor / 100;
+    return position * scalingFactor / 100 * encoderInvert;
   }
 }
 
@@ -103,6 +112,18 @@ void StepperControlEncoder::readEncoder()
 
   // and check for a position change
   // no fancy code, just a few simple compares. sorry
+
+  //// Only detect edges on the A channel when the V channel is high
+  //if (curValChannelB == true && prvValChannelA == false && curValChannelA == true)
+  //{
+  //  delta--;
+  //}
+  //if (curValChannelB == true && prvValChannelA == true && curValChannelA == false)
+  //{
+  //  delta++;
+  //}
+
+  
   if (prvValChannelA == true && curValChannelA == true && prvValChannelB == false && curValChannelB == true)
   {
     delta++;
@@ -136,6 +157,7 @@ void StepperControlEncoder::readEncoder()
   {
     delta--;
   }
+  
 
   position += delta;
 }
@@ -146,14 +168,14 @@ void StepperControlEncoder::readChannels()
   // read the new values from the coder
 
   readChannelA = digitalRead(pinChannelA);
-  //readChannelAQ = digitalRead(pinChannelAQ);
   readChannelB = digitalRead(pinChannelB);
-  //readChannelBQ = digitalRead(pinChannelBQ);
 
   encoderType = 0; // TEVE 2017-04-20 Disabling the quadrature channels. They take too much time to read.
 
   if (encoderType == 1)
   {
+    readChannelAQ = digitalRead(pinChannelAQ);
+    readChannelBQ = digitalRead(pinChannelBQ);
 
     // differential encoder
     if ((readChannelA ^ readChannelAQ) && (readChannelB ^ readChannelBQ))
