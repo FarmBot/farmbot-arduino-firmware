@@ -65,19 +65,19 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
   {
     staPos = abs(sourcePosition);
     endPos = abs(destinationPosition);
-    ;
   }
   else
   {
     staPos = abs(destinationPosition);
-    ;
     endPos = abs(sourcePosition);
   }
 
+  /**/
   unsigned long halfway = ((endPos - staPos) / 2) + staPos;
+  //unsigned long halfway = ((destinationPosition - sourcePosition) / 2) + sourcePosition;
 
   // Set the minimum speed if the position would be out of bounds
-  if (curPos < staPos || curPos > endPos)
+  if (curPos < staPos || curPos > endPos || (!motorHomeIsUp && currentPosition <= 0) || (motorHomeIsUp && currentPosition >= 0))
   {
     newSpeed = minSpeed;
     movementCrawling = true;
@@ -367,15 +367,16 @@ void StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint
   coordHomeAxis = home;
 
   // Limit normal movmement to the home position
-  if (!motorHomeIsUp && coordDestinationPoint < 0)
-  {
-    coordDestinationPoint = 0;
-  }
+  /**/
+  //if (!motorHomeIsUp && coordDestinationPoint < 0)
+  //{
+  //  coordDestinationPoint = 0;
+  //}
 
-  if (motorHomeIsUp && coordDestinationPoint > 0)
-  {
-    coordDestinationPoint = 0;
-  }
+  //if (motorHomeIsUp && coordDestinationPoint > 0)
+  //{
+  //  coordDestinationPoint = 0;
+  //}
 
   // Initialize movement variables
   moveTicks = 0;

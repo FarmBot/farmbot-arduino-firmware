@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include "Command.h"
 
+
 class StepperControl
 {
 public:
@@ -64,8 +65,8 @@ private:
   void checkAxisVsEncoder(StepperControlAxis *axis, StepperControlEncoder *encoder, float *missedSteps, long *lastPosition, long *encoderLastPosition, int *encoderUseForPos, float *encoderStepDecay, bool *encoderEnabled);
   void checkAxisSubStatus(StepperControlAxis *axis, int *axisSubStatus);
 
-  bool axisActive[3];
-  int axisSubStep[3];
+  bool axisActive[3] = { false, false, false };
+  int axisSubStep[3] = { 0, 0, 0 };
 
   void loadMotorSettings();
   void loadEncoderSettings();
@@ -80,31 +81,32 @@ private:
   unsigned long getMaxLength(unsigned long lengths[3]);
   bool endStopsReached();
 
-  bool homeIsUp[3];
-  long speedMax[3];
-  long speedMin[3];
-  long stepsAcc[3];
-  bool motorInv[3];
-  bool motorKeepActive[3];
-  bool motor2Inv[3];
-  bool motor2Enbl[3];
-  bool endStInv[3];
-  bool endStEnbl[3];
-  long timeOut[3];
+  bool homeIsUp[3] = {false, false, false};
+  long speedMax[3] = {0, 0, 0 };
+  long speedMin[3] = { 0, 0, 0 };
+  long stepsAcc[3] = { 0, 0, 0 };
+  bool motorInv[3] = { false, false, false };
+  bool motorMaxSize[3] = { false, false, false };
+  bool motorKeepActive[3] = { false, false, false };
+  bool motor2Inv[3] = { false, false, false };
+  bool motor2Enbl[3] = { false, false, false };
+  bool endStInv[3] = { false, false, false };
+  bool endStEnbl[3] = { false, false, false };
+  long timeOut[3] = { 0, 0, 0 };
 
-  float motorConsMissedSteps[3];
-  long motorLastPosition[3];
-  long motorConsEncoderLastPosition[3];
+  float motorConsMissedSteps[3] = { 0, 0, 0 };
+  long motorLastPosition[3] = { 0, 0, 0 };
+  long motorConsEncoderLastPosition[3] = { 0, 0, 0 };
 
-  int motorConsMissedStepsMax[3];
-  float motorConsMissedStepsDecay[3];
-  bool motorConsEncoderEnabled[3];
-  int motorConsEncoderType[3];
-  int motorConsEncoderScaling[3];
-  int motorConsEncoderUseForPos[3];
-  int motorConsEncoderInvert[3];
+  int motorConsMissedStepsMax[3] = { 0, 0, 0 };
+  float motorConsMissedStepsDecay[3] = { 0, 0, 0 };
+  bool motorConsEncoderEnabled[3] = { false, false, false };
+  int motorConsEncoderType[3] = { 0, 0, 0 };
+  int motorConsEncoderScaling[3] = { 0, 0, 0 };
+  int motorConsEncoderUseForPos[3] = { 0, 0, 0 };
+  int motorConsEncoderInvert[3] = { 0, 0, 0 };
 
-  bool motorMotorsEnabled;
+  bool motorMotorsEnabled = false;
 };
 
 #endif /* STEPPERCONTROL_H_ */

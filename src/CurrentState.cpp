@@ -150,3 +150,18 @@ void CurrentState::printQAndNewLine()
   Serial.print(Q);
   Serial.print("\r\n");
 }
+
+void CurrentState::setEmergencyStop()
+{
+  emergencyStop = true;
+}
+
+void CurrentState::resetEmergencyStop()
+{
+  emergencyStop = false;
+}
+
+bool CurrentState::isEmergencyStop()
+{
+  return emergencyStop;
+}

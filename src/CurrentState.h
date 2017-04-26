@@ -14,6 +14,7 @@ class CurrentState
 {
 public:
   static CurrentState *getInstance();
+
   long getX();
   long getY();
   long getZ();
@@ -21,6 +22,7 @@ public:
   void setX(long);
   void setY(long);
   void setZ(long);
+
   void setEndStopState(unsigned int, unsigned int, bool);
   void printPosition();
   void storeEndStops();
@@ -32,10 +34,16 @@ public:
   void resetQ();
   void printQAndNewLine();
 
+  void setEmergencyStop();
+  void resetEmergencyStop();
+  bool isEmergencyStop();
+
 private:
   CurrentState();
   CurrentState(CurrentState const &);
   void operator=(CurrentState const &);
+
+  bool emergencyStop = false;
 };
 
 #endif /* CURRENTSTATE_H_ */

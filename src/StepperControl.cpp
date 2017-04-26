@@ -206,8 +206,8 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
 
   // load motor and encoder settings
 
-  loadMotorSettings();
-  loadEncoderSettings();
+  //loadMotorSettings();
+  //loadEncoderSettings();
   // load current encoder coordinates
   //axisX.setCurrentPosition(encoderX.currentPosition());
 
@@ -248,6 +248,42 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
   destinationPoint[0] = xDest;
   destinationPoint[1] = yDest;
   destinationPoint[2] = zDest;
+
+  if (abs(destinationPoint[0]) > abs(motorMaxSize[0]) && motorMaxSize[0] != 0)
+  {
+    if (destinationPoint[0] < 0)
+    {
+      destinationPoint[0] = abs(motorMaxSize[0]);
+    }
+    else
+    {
+      destinationPoint[0] = -abs(motorMaxSize[0]);
+    }
+  }
+
+  if (abs(destinationPoint[1]) > abs(motorMaxSize[1]) && motorMaxSize[1] != 0)
+  {
+    if (destinationPoint[1] < 0)
+    {
+      destinationPoint[1] = abs(motorMaxSize[1]);
+    }
+    else
+    {
+      destinationPoint[1] = -abs(motorMaxSize[1]);
+    }
+  }
+
+  if (abs(destinationPoint[2]) > abs(motorMaxSize[2]) && motorMaxSize[2] != 0)
+  {
+    if (destinationPoint[2] < 0)
+    {
+      destinationPoint[2] = abs(motorMaxSize[2]);
+    }
+    else
+    {
+      destinationPoint[2] = -abs(motorMaxSize[2]);
+    }
+  }
 
   motorConsMissedSteps[0] = 0;
   motorConsMissedSteps[1] = 0;
@@ -298,6 +334,8 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
   axisY.checkMovement();
   axisZ.checkMovement();
 
+  emergencyStop = CurrentState::getInstance()->isEmergencyStop();
+
   // Let the interrupt handle all the movements
   while ((axisActive[0] || axisActive[1] || axisActive[2]) && !emergencyStop)
   {
@@ -324,14 +362,14 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
       Serial.print(" deactivate motor X due to missed steps");
       Serial.print("\r\n");
 
-      if (axisX.movingToHome())
-      {
-        encoderX.setPosition(0);
-        axisX.setCurrentPosition(0);
-        Serial.print("R99");
-        Serial.print(" home position X axis detected with encoder");
-        Serial.print("\r\n");
-      }
+      //if (axisX.movingToHome())
+      //{
+      //  encoderX.setPosition(0);
+      //  axisX.setCurrentPosition(0);
+      //  Serial.print("R99");
+      //  Serial.print(" home position X axis detected with encoder");
+      //  Serial.print("\r\n");
+      //}
     }
 
     if (motorConsMissedSteps[1] > motorConsMissedStepsMax[1])
@@ -341,14 +379,14 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
       Serial.print(" deactivate motor Y due to missed steps");
       Serial.print("\r\n");
 
-      if (axisY.movingToHome())
-      {
-        encoderY.setPosition(0);
-        axisY.setCurrentPosition(0);
-        Serial.print("R99");
-        Serial.print(" home position Y axis detected with encoder");
-        Serial.print("\r\n");
-      }
+      //if (axisY.movingToHome())
+      //{
+      //  encoderY.setPosition(0);
+      //  axisY.setCurrentPosition(0);
+      //  Serial.print("R99");
+      //  Serial.print(" home position Y axis detected with encoder");
+      //  Serial.print("\r\n");
+      //}
     }
 
     if (motorConsMissedSteps[2] > motorConsMissedStepsMax[2])
@@ -358,14 +396,14 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
       Serial.print(" deactivate motor Z due to missed steps");
       Serial.print("\r\n");
 
-      if (axisZ.movingToHome())
-      {
-        encoderZ.setPosition(0);
-        axisZ.setCurrentPosition(0);
-        Serial.print("R99");
-        Serial.print(" home position Z axis detected with encoder");
-        Serial.print("\r\n");
-      }
+      //if (axisZ.movingToHome())
+      //{
+      //  encoderZ.setPosition(0);
+      //  axisZ.setCurrentPosition(0);
+      //  Serial.print("R99");
+      //  Serial.print(" home position Z axis detected with encoder");
+      //  Serial.print("\r\n");
+      //}
     }
 
     if (axisX.endStopAxisReached(false))
@@ -518,8 +556,12 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
 
   disableMotors();
 
-  // Return error
+  if (emergencyStop)
+  {
+    CurrentState::getInstance()->setEmergencyStop();
+  }
 
+  // Return error
   return error;
 }
 
@@ -1010,6 +1052,10 @@ void StepperControl::loadMotorSettings()
   motorKeepActive[0] = ParameterList::getInstance()->getValue(MOVEMENT_KEEP_ACTIVE_X);
   motorKeepActive[1] = ParameterList::getInstance()->getValue(MOVEMENT_KEEP_ACTIVE_Y);
   motorKeepActive[2] = ParameterList::getInstance()->getValue(MOVEMENT_KEEP_ACTIVE_Z);
+
+  motorMaxSize[0] = ParameterList::getInstance()->getValue(MOVEMENT_AXIS_NR_STEPS_X);
+  motorMaxSize[1] = ParameterList::getInstance()->getValue(MOVEMENT_AXIS_NR_STEPS_Y);
+  motorMaxSize[2] = ParameterList::getInstance()->getValue(MOVEMENT_AXIS_NR_STEPS_Z);
 
   motor2Inv[0] = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_SECONDARY_MOTOR_INVERT_X));
   motor2Inv[1] = false;

@@ -56,6 +56,10 @@ const long MOVEMENT_KEEP_ACTIVE_X_DEFAULT = 0;
 const long MOVEMENT_KEEP_ACTIVE_Y_DEFAULT = 0;
 const long MOVEMENT_KEEP_ACTIVE_Z_DEFAULT = 1;
 
+const long MOVEMENT_HOME_AT_BOOT_X_DEFAULT = 0;
+const long MOVEMENT_HOME_AT_BOOT_Y_DEFAULT = 0;
+const long MOVEMENT_HOME_AT_BOOT_Z_DEFAULT = 1;
+
 const long MOVEMENT_ENABLE_ENDPOINTS_X_DEFAULT = 0;
 const long MOVEMENT_ENABLE_ENDPOINTS_Y_DEFAULT = 0;
 const long MOVEMENT_ENABLE_ENDPOINTS_Z_DEFAULT = 0;
@@ -75,7 +79,7 @@ const long MOVEMENT_HOME_UP_X_DEFAULT = 0;
 const long MOVEMENT_HOME_UP_Y_DEFAULT = 0;
 const long MOVEMENT_HOME_UP_Z_DEFAULT = 1;
 
-// numver of steps used for acceleration or deceleration
+// Number of steps used for acceleration or deceleration
 const long MOVEMENT_STEPS_ACC_DEC_X_DEFAULT = 500;
 const long MOVEMENT_STEPS_ACC_DEC_Y_DEFAULT = 500;
 const long MOVEMENT_STEPS_ACC_DEC_Z_DEFAULT = 500;
@@ -107,12 +111,13 @@ const long ENCODER_SCALING_X_DEFAULT = 100;
 const long ENCODER_SCALING_Y_DEFAULT = 100;
 const long ENCODER_SCALING_Z_DEFAULT = 100;
 
-// Number of stes missed before motor is seen as not moving
+// Number of steps missed before motor is seen as not moving
 const long ENCODER_MISSED_STEPS_MAX_X_DEFAULT = 10;
 const long ENCODER_MISSED_STEPS_MAX_Y_DEFAULT = 10;
 const long ENCODER_MISSED_STEPS_MAX_Z_DEFAULT = 10;
 
 // How much a good step is substracted from the missed step total (1-99)
+// 10 means it ignores 10 steps in 100. This is normal because of jerkiness while moving
 const long ENCODER_MISSED_STEPS_DECAY_X_DEFAULT = 10;
 const long ENCODER_MISSED_STEPS_DECAY_Y_DEFAULT = 10;
 const long ENCODER_MISSED_STEPS_DECAY_Z_DEFAULT = 10;
@@ -127,7 +132,12 @@ const long ENCODER_INVERT_X_DEFAULT = 0;
 const long ENCODER_INVERT_Y_DEFAULT = 0;
 const long ENCODER_INVERT_Z_DEFAULT = 0;
 
-// pin guard default settings
+// Length of axis in steps. Zero means don't care
+const long MOVEMENT_AXIS_NR_STEPS_X_DEFAULT = 0;
+const long MOVEMENT_AXIS_NR_STEPS_Y_DEFAULT = 0;
+const long MOVEMENT_AXIS_NR_STEPS_Z_DEFAULT = 0;
+
+// Pin guard default settings
 const long PIN_GUARD_1_PIN_NR_DEFAULT = 0;
 const long PIN_GUARD_1_TIME_OUT_DEFAULT = 60;
 const long PIN_GUARD_1_ACTIVE_STATE_DEFAULT = 1;
