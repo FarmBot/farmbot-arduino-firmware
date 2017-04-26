@@ -171,6 +171,7 @@ R        |03    |                 |Current command finished with error
 R        |04    |                 |Current command running
 R        |05    |                 |Report motor/axis state
 R        |06    |                 |Report calibration state during execution
+R        |20    |                 |Report all paramaters complete
 R        |21    |P V              |Report parameter value
 R        |31    |P V              |Report status value
 R        |41    |P V              |Report pin value
