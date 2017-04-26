@@ -26,6 +26,8 @@ int F20Handler::execute(Command *command)
 {
 
   ParameterList::getInstance()->readAllValues();
+  Serial.print("R20");
+  CurrentState::getInstance()->printQAndNewLine();
 
-  return 1;
+  return 0;
 }

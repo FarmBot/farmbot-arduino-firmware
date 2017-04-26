@@ -110,7 +110,7 @@ void setup()
   //ServoControl::getInstance()->attach();
 
   // Dump all values to the serial interface
-  ParameterList::getInstance()->readAllValues();
+  // ParameterList::getInstance()->readAllValues();
 
   // Get the settings for the pin guard
   PinGuard::getInstance()->loadConfig();
@@ -238,8 +238,8 @@ void loop()
       CurrentState::getInstance()->storeEndStops();
       CurrentState::getInstance()->printEndStops();
 
-	    if (debugMessages)
-	    {
+      if (debugMessages)
+      {
         Serial.print(COMM_REPORT_COMMENT);
         Serial.print(" MEM ");
         Serial.print(freeMemory());
@@ -251,7 +251,7 @@ void loop()
         CurrentState::getInstance()->printQAndNewLine();
 
         StepperControl::getInstance()->test();
-	    }
+      }
 
       //  Tim 2017-04-20 Temporary disabling the warning of no valid configuration
       //  until fully supported on RPI
