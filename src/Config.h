@@ -89,10 +89,15 @@ const long MOVEMENT_MIN_SPD_X_DEFAULT = 50;
 const long MOVEMENT_MIN_SPD_Y_DEFAULT = 50;
 const long MOVEMENT_MIN_SPD_Z_DEFAULT = 50;
 
-// Maxumum speed in steps per second
+// Maxumim speed in steps per second
 const long MOVEMENT_MAX_SPD_X_DEFAULT = 800;
 const long MOVEMENT_MAX_SPD_Y_DEFAULT = 800;
 const long MOVEMENT_MAX_SPD_Z_DEFAULT = 800;
+
+// Stop at the home position or continue to other size of axis
+const long MOVEMENT_STOP_AT_HOME_X_DEFAULT = 0;
+const long MOVEMENT_STOP_AT_HOME_Y_DEFAULT = 0;
+const long MOVEMENT_STOP_AT_HOME_Z_DEFAULT = 0;
 
 // Use encoder (0 or 1)
 const long ENCODER_ENABLED_X_DEFAULT = 0;
@@ -160,6 +165,6 @@ const long PIN_GUARD_5_ACTIVE_STATE_DEFAULT = 1;
 
 const long STATUS_GENERAL_DEFAULT = 0;
 
-const char SOFTWARE_VERSION[] = "GENESIS.V.01.09.EXPERIMENTAL\0";
+const char SOFTWARE_VERSION[] = "GENESIS.V.01.11.EXPERIMENTAL\0";
 
 #endif /* CONFIG_H_ */

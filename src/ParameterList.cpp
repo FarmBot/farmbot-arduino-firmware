@@ -319,6 +319,16 @@ void ParameterList::loadDefaultValue(int id)
     paramValues[id] = MOVEMENT_STEPS_ACC_DEC_Z_DEFAULT;
     break;
 
+  case MOVEMENT_STOP_AT_HOME_X:
+    paramValues[id] = MOVEMENT_STOP_AT_HOME_X_DEFAULT;
+    break;
+  case MOVEMENT_STOP_AT_HOME_Y:
+    paramValues[id] = MOVEMENT_STOP_AT_HOME_Y_DEFAULT;
+    break;
+  case MOVEMENT_STOP_AT_HOME_Z:
+    paramValues[id] = MOVEMENT_STOP_AT_HOME_Z_DEFAULT;
+    break;
+
   case MOVEMENT_HOME_UP_X:
     paramValues[id] = MOVEMENT_HOME_UP_X_DEFAULT;
     break;
@@ -507,6 +517,9 @@ bool ParameterList::validParam(int id)
   case MOVEMENT_STEPS_ACC_DEC_X:
   case MOVEMENT_STEPS_ACC_DEC_Y:
   case MOVEMENT_STEPS_ACC_DEC_Z:
+  case MOVEMENT_STOP_AT_HOME_X:
+  case MOVEMENT_STOP_AT_HOME_Y:
+  case MOVEMENT_STOP_AT_HOME_Z:
   case MOVEMENT_HOME_UP_X:
   case MOVEMENT_HOME_UP_Y:
   case MOVEMENT_HOME_UP_Z:
