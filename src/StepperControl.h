@@ -86,7 +86,7 @@ private:
   long speedMin[3] = { 0, 0, 0 };
   long stepsAcc[3] = { 0, 0, 0 };
   bool motorInv[3] = { false, false, false };
-  bool motorMaxSize[3] = { false, false, false };
+  long motorMaxSize[3] = { 0, 0, 0};
   bool motorKeepActive[3] = { false, false, false };
   bool motor2Inv[3] = { false, false, false };
   bool motor2Enbl[3] = { false, false, false };

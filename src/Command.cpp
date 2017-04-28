@@ -55,6 +55,11 @@ CommandCodeEnum Command::getGCodeEnum(char *code)
   //	return F03;
   //}
 
+  if (strcmp(code, "F09") == 0 || strcmp(code, "F9") == 0)
+  {
+    return F09;
+  }
+
   if (strcmp(code, "F11") == 0)
   {
     return F11;

@@ -20,6 +20,7 @@ const char COMM_REPORT_CMD_ERROR[4] = {'R', '0', '3', '\0'};
 const char COMM_REPORT_CMD_BUSY[4] = {'R', '0', '4', '\0'};
 const char COMM_REPORT_CMD_STATUS[4] = {'R', '0', '5', '\0'};
 const char COMM_REPORT_CALIB_STATUS[4] = {'R', '0', '6', '\0'};
+const char COMM_REPORT_EMERGENCY_STOP[4] = { 'R', '8', '7', '\0' };
 const char COMM_REPORT_NO_CONFIG[4] = {'R', '8', '8', '\0'};
 const char COMM_REPORT_COMMENT[4] = {'R', '9', '9', '\0'};
 
@@ -58,7 +59,7 @@ const long MOVEMENT_KEEP_ACTIVE_Z_DEFAULT = 1;
 
 const long MOVEMENT_HOME_AT_BOOT_X_DEFAULT = 0;
 const long MOVEMENT_HOME_AT_BOOT_Y_DEFAULT = 0;
-const long MOVEMENT_HOME_AT_BOOT_Z_DEFAULT = 1;
+const long MOVEMENT_HOME_AT_BOOT_Z_DEFAULT = 0;
 
 const long MOVEMENT_ENABLE_ENDPOINTS_X_DEFAULT = 0;
 const long MOVEMENT_ENABLE_ENDPOINTS_Y_DEFAULT = 0;

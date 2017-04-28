@@ -31,7 +31,7 @@ int F09Handler::execute(Command *command)
     Serial.print("R99 Reset emergency stop\r\n");
   }
 
-  CurrentState::getInstance()->setEmergencyStop();
+  CurrentState::getInstance()->resetEmergencyStop();
 
   return 0;
 }

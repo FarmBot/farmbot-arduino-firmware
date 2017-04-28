@@ -326,14 +326,14 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
       Serial.print(" deactivate motor X due to missed steps");
       Serial.print("\r\n");
 
-      //if (axisX.movingToHome())
-      //{
-      //  encoderX.setPosition(0);
-      //  axisX.setCurrentPosition(0);
-      //  Serial.print("R99");
-      //  Serial.print(" home position X axis detected with encoder");
-      //  Serial.print("\r\n");
-      //}
+      if (xHome)
+      {
+        encoderX.setPosition(0);
+        axisX.setCurrentPosition(0);
+        Serial.print("R99");
+        Serial.print(" home position X axis detected with encoder");
+        Serial.print("\r\n");
+      }
     }
 
     if (motorConsMissedSteps[1] > motorConsMissedStepsMax[1])
@@ -343,14 +343,14 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
       Serial.print(" deactivate motor Y due to missed steps");
       Serial.print("\r\n");
 
-      //if (axisY.movingToHome())
-      //{
-      //  encoderY.setPosition(0);
-      //  axisY.setCurrentPosition(0);
-      //  Serial.print("R99");
-      //  Serial.print(" home position Y axis detected with encoder");
-      //  Serial.print("\r\n");
-      //}
+      if (yHome)
+      {
+        encoderY.setPosition(0);
+        axisY.setCurrentPosition(0);
+        Serial.print("R99");
+        Serial.print(" home position Y axis detected with encoder");
+        Serial.print("\r\n");
+      }
     }
 
     if (motorConsMissedSteps[2] > motorConsMissedStepsMax[2])
@@ -360,14 +360,14 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
       Serial.print(" deactivate motor Z due to missed steps");
       Serial.print("\r\n");
 
-      //if (axisZ.movingToHome())
-      //{
-      //  encoderZ.setPosition(0);
-      //  axisZ.setCurrentPosition(0);
-      //  Serial.print("R99");
-      //  Serial.print(" home position Z axis detected with encoder");
-      //  Serial.print("\r\n");
-      //}
+      if (zHome)
+      {
+        encoderZ.setPosition(0);
+        axisZ.setCurrentPosition(0);
+        Serial.print("R99");
+        Serial.print(" home position Z axis detected with encoder");
+        Serial.print("\r\n");
+      }
     }
 
     if (axisX.endStopAxisReached(false))

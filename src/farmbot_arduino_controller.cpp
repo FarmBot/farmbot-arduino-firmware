@@ -228,8 +228,14 @@ void loop()
   {
     StepperControl::getInstance()->disableMotors();
     PinControl::getInstance()->resetPinsUsed();
+    if (debugMessages)
+    {
+      Serial.print(COMM_REPORT_COMMENT);
+      Serial.print(" Going to safe state");
+      CurrentState::getInstance()->printQAndNewLine();
+    }
   }
-  previousEmergencyStop == CurrentState::getInstance()->isEmergencyStop();
+  previousEmergencyStop = CurrentState::getInstance()->isEmergencyStop();
     
   // Check if parameters are changes, and if so load the new settings
   if (lastParamChangeNr != ParameterList::getInstance()->paramChangeNumber())
@@ -260,8 +266,23 @@ void loop()
     {
       // After an idle time, send the idle message
 
-      Serial.print(COMM_REPORT_CMD_IDLE);
-      CurrentState::getInstance()->printQAndNewLine();
+      if (CurrentState::getInstance()->isEmergencyStop())
+      {
+        Serial.print(COMM_REPORT_EMERGENCY_STOP);
+        CurrentState::getInstance()->printQAndNewLine();
+
+        if (debugMessages)
+        {
+          Serial.print(COMM_REPORT_COMMENT);
+          Serial.print(" Emergency stop engaged");
+          CurrentState::getInstance()->printQAndNewLine();
+        }
+      }
+      else
+      {
+        Serial.print(COMM_REPORT_CMD_IDLE);
+        CurrentState::getInstance()->printQAndNewLine();
+      }
 
       StepperControl::getInstance()->storePosition();
       CurrentState::getInstance()->printPosition();

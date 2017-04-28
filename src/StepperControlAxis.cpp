@@ -398,11 +398,11 @@ void StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint
     {
       if (coordDestinationPoint < 0)
       {
-        coordDestinationPoint = abs(motorMaxSize);
+        coordDestinationPoint = -abs(motorMaxSize);
       }
       else
       {
-        coordDestinationPoint = -abs(motorMaxSize);
+        coordDestinationPoint = abs(motorMaxSize);
       }
     }
   }
