@@ -84,6 +84,7 @@
   <ItemGroup>
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="CurrentState.cpp" />
+    <ClCompile Include="F09Handler.cpp" />
     <ClCompile Include="F11Handler.cpp" />
     <ClCompile Include="F12Handler.cpp" />
     <ClCompile Include="F13Handler.cpp" />
@@ -126,6 +127,7 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="CurrentState.h" />
     <ClInclude Include="Debug.h" />
+    <ClInclude Include="F09Handler.h" />
     <ClInclude Include="F11Handler.h" />
     <ClInclude Include="F12Handler.h" />
     <ClInclude Include="F13Handler.h" />

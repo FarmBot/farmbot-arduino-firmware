@@ -24,7 +24,7 @@ public:
   StepperControlAxis();
 
   void loadPinNumbers(int step, int dir, int enable, int min, int max, int step2, int dir2, int enable2);
-  void loadMotorSettings(long speedMax, long speedMin, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, bool endStInv, long interruptSpeed, bool motor2Enbl, bool motor2Inv, bool endStEnbl);
+  void loadMotorSettings(long speedMax, long speedMin, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, bool endStInv, long interruptSpeed, bool motor2Enbl, bool motor2Inv, bool endStEnbl, bool stopAtHome, long maxSize);
   void loadCoordinates(long sourcePoint, long destinationPoint, bool home);
   void setMaxSpeed(long speed);
 
@@ -107,6 +107,8 @@ private:
   bool motorMotor2Enl;      // enable secondary motor
   bool motorMotor2Inv;      // invert secondary motor direction
   long motorInterruptSpeed; // period of interrupt in micro seconds
+  bool motorStopAtHome;     // stop at home position or also use other side of the axis
+  long motorMaxSize;        // maximum size of the axis
 
   // coordinates
   long coordSourcePoint; // all coordinated in steps
@@ -138,6 +140,7 @@ private:
   unsigned int calculateSpeed(long sourcePosition, long currentPosition, long destinationPosition, long minSpeed, long maxSpeed, long stepsAccDec);
   unsigned long getLength(long l1, long l2);
   void checkAxisDirection();
+
 };
 
 #endif /* STEPPERCONTROLAXIS_H_ */

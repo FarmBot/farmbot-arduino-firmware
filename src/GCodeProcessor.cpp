@@ -31,12 +31,34 @@ int GCodeProcessor::execute(Command *command)
   long Q = command->getQ();
   CurrentState::getInstance()->setQ(Q);
 
-  // Do not execute the command when the config complete parameter is not
-  // set by the raspberry pi and it's asked to do a move command
+  
+  //Only allow reset of emergency stop when emergency stop is engaged
+
+  if (CurrentState::getInstance()->isEmergencyStop()) 
+  {
+    if (!(
+      command->getCodeEnum() == F09 ||
+      command->getCodeEnum() == F20 ||
+      command->getCodeEnum() == F21 ||
+      command->getCodeEnum() == F22 ||
+      command->getCodeEnum() == F81 ||
+      command->getCodeEnum() == F82 ||
+      command->getCodeEnum() == F83 ))
+    {
+
+    Serial.print(COMM_REPORT_EMERGENCY_STOP);
+    CurrentState::getInstance()->printQAndNewLine();
+    return -1;
+    }
+  }
 
   // Tim 2017-04-15 Disable until the raspberry code is ready
   /*
-	if (ParameterList::getInstance()->getValue(PARAM_CONFIG_OK) != 1) {
+  // Do not execute the command when the config complete parameter is not
+  // set by the raspberry pi and it's asked to do a move command
+
+	if (ParameterList::getInstance()->getValue(PARAM_CONFIG_OK) != 1) 
+  {
 		if (	command->getCodeEnum() == G00 ||
 			command->getCodeEnum() == G01 ||
 			command->getCodeEnum() == F11 ||
@@ -44,13 +66,14 @@ int GCodeProcessor::execute(Command *command)
 			command->getCodeEnum() == F13 ||
 			command->getCodeEnum() == F14 ||
 			command->getCodeEnum() == F15 ||
-			command->getCodeEnum() == F16 ) {
+			command->getCodeEnum() == F16 ) 
+    {
 
         		Serial.print(COMM_REPORT_NO_CONFIG);
 			CurrentState::getInstance()->printQAndNewLine();
 			return -1;
 		}
-        }
+  }
 	*/
 
   // Return error when no command or invalid command is found
@@ -128,6 +151,11 @@ GCodeHandler *GCodeProcessor::getGCodeHandler(CommandCodeEnum codeEnum)
   if (codeEnum == G28)
   {
     handler = G28Handler::getInstance();
+  }
+
+  if (codeEnum == F09)
+  {
+    handler = F09Handler::getInstance();
   }
 
   if (codeEnum == F11)

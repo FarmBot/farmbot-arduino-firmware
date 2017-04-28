@@ -24,17 +24,38 @@ int PinControl::setMode(int pinNr, int mode)
 
 int PinControl::writeValue(int pinNr, int value, int mode)
 {
-  if (mode == 0)
+  if (pinNr > 0 && pinNr <= 52 && (mode == 0 || mode == 1))
   {
-    digitalWrite(pinNr, value);
-    return 0;
-  }
-  if (mode == 1)
-  {
-    analogWrite(pinNr, value);
-    return 0;
+    pinWritten[mode][pinNr] = true;
+
+    if (mode == 0)
+    {
+      digitalWrite(pinNr, value);
+      return 0;
+    }
+    if (mode == 1)
+    {
+      analogWrite(pinNr, value);
+      return 0;
+    }
   }
   return 1;
+}
+
+// Set all pins that were once used for writing to zero
+void PinControl::resetPinsUsed()
+{
+  for (int pinNr = 1; pinNr <= 52; pinNr++)
+  {
+    if (pinWritten[0][pinNr])
+    {
+      digitalWrite(pinNr, false);
+    }
+    if (pinWritten[1][pinNr])
+    {
+      analogWrite(pinNr, 0);
+    }
+  }
 }
 
 int PinControl::readValue(int pinNr, int mode)

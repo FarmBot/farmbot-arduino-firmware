@@ -8,6 +8,7 @@
 #include "TimerOne.h"
 #include "MemoryFree.h"
 #include "Debug.h"
+#include "CurrentState.h"
 
 static char commandEndChar = 0x0A;
 static GCodeProcessor *gCodeProcessor = new GCodeProcessor();
@@ -15,6 +16,7 @@ static GCodeProcessor *gCodeProcessor = new GCodeProcessor();
 unsigned long lastAction;
 unsigned long currentTime;
 unsigned long cycleCounter = 0;
+bool previousEmergencyStop = false;
 
 int lastParamChangeNr = 0;
 
@@ -109,6 +111,10 @@ void setup()
   // Start the motor handling
   //ServoControl::getInstance()->attach();
 
+  // Load motor settings
+  StepperControl::getInstance()->loadSettings();
+  /**/
+
   // Dump all values to the serial interface
   ParameterList::getInstance()->readAllValues();
 
@@ -125,6 +131,21 @@ void setup()
 
   // Initialize the inactivity check
   lastAction = millis();
+
+  if (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_X) == 1)
+  {
+    StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, true, false, false);
+  }
+
+  if (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_Y) == 1)
+  {
+    StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, true, false);
+  }
+
+  if (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_Z) == 1)
+  {
+    StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, false, true);
+  }
 }
 
 // The loop function is called in an endless loop
@@ -144,11 +165,16 @@ void loop()
 
     // Get the input and start processing on receiving 'new line'
     incomingChar = Serial.read();
-    // Filter out emergency stop. Emergency stop is captured in moving routines
+
+    // Filter out emergency stop.
     if (!(incomingChar == 69 || incomingChar == 101))
     {
       incomingCommandArray[incomingCommandPointer] = incomingChar;
       incomingCommandPointer++;
+    }
+    else
+    {
+      CurrentState::getInstance()->setEmergencyStop();
     }
 
     // If the string is getting to long, cap it off with a new line and let it process anyway
@@ -162,14 +188,10 @@ void loop()
     if (incomingChar == '\n' || incomingCommandPointer >= INCOMING_CMD_BUF_SIZE)
     {
 
-      //commandString += incomingChar;
-      //String commandString = Serial.readStringUntil(commandEndChar);
-      //char commandChar[currentCommand.length()];
-      //currentCommand.toCharArray(commandChar, currentCommand.length());
-
       char commandChar[incomingCommandPointer + 1];
       for (int i = 0; i < incomingCommandPointer - 1; i++)
       {
+        if (incomingChar)
         commandChar[i] = incomingCommandArray[i];
       }
       commandChar[incomingCommandPointer] = 0;
@@ -189,18 +211,33 @@ void loop()
         {
           command->print();
         }
-        Serial.print("R99 V1 \r\n");
+        
         gCodeProcessor->execute(command);
-        Serial.print("R99 V2 \r\n");
+        
         free(command);
+
       }
 
       incomingCommandPointer = 0;
     }
   }
 
+  // In case of emergency stop, disable movement and
+  // shut down the pins used
+  if (previousEmergencyStop == false && CurrentState::getInstance()->isEmergencyStop())
+  {
+    StepperControl::getInstance()->disableMotors();
+    PinControl::getInstance()->resetPinsUsed();
+    if (debugMessages)
+    {
+      Serial.print(COMM_REPORT_COMMENT);
+      Serial.print(" Going to safe state");
+      CurrentState::getInstance()->printQAndNewLine();
+    }
+  }
+  previousEmergencyStop = CurrentState::getInstance()->isEmergencyStop();
+    
   // Check if parameters are changes, and if so load the new settings
-
   if (lastParamChangeNr != ParameterList::getInstance()->paramChangeNumber())
   {
     lastParamChangeNr = ParameterList::getInstance()->paramChangeNumber();
@@ -229,8 +266,23 @@ void loop()
     {
       // After an idle time, send the idle message
 
-      Serial.print(COMM_REPORT_CMD_IDLE);
-      CurrentState::getInstance()->printQAndNewLine();
+      if (CurrentState::getInstance()->isEmergencyStop())
+      {
+        Serial.print(COMM_REPORT_EMERGENCY_STOP);
+        CurrentState::getInstance()->printQAndNewLine();
+
+        if (debugMessages)
+        {
+          Serial.print(COMM_REPORT_COMMENT);
+          Serial.print(" Emergency stop engaged");
+          CurrentState::getInstance()->printQAndNewLine();
+        }
+      }
+      else
+      {
+        Serial.print(COMM_REPORT_CMD_IDLE);
+        CurrentState::getInstance()->printQAndNewLine();
+      }
 
       StepperControl::getInstance()->storePosition();
       CurrentState::getInstance()->printPosition();
