@@ -38,6 +38,12 @@ void blinkLed()
 //   - encoders
 //   - pin guard
 //
+
+unsigned long interruptStartTime = 0;
+unsigned long interruptStopTime = 0;
+unsigned long interruptDuration = 0;
+unsigned long interruptDurationMax = 0;
+
 bool interruptBusy = false;
 int interruptSecondTimer = 0;
 void interrupt(void)
@@ -48,6 +54,7 @@ void interrupt(void)
 
     if (interruptBusy == false)
     {
+      interruptStartTime = micros();
 
       interruptBusy = true;
       StepperControl::getInstance()->handleMovementInterrupt();
@@ -58,6 +65,18 @@ void interrupt(void)
         interruptSecondTimer = 0;
         PinGuard::getInstance()->checkPins();
         //blinkLed();
+      }
+
+      interruptStopTime = micros();
+
+      if (interruptStopTime > interruptStartTime)
+      {
+        interruptDuration = interruptStopTime - interruptStartTime;
+      }
+
+      if (interruptDuration > interruptDurationMax)
+      {
+        interruptDurationMax = interruptDuration;
       }
 
       interruptBusy = false;
@@ -146,6 +165,8 @@ void setup()
   {
     StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, false, true);
   }
+
+  Serial.print("R99 ARDUINO STARTUP \r\n");
 }
 
 // The loop function is called in an endless loop
@@ -187,6 +208,7 @@ void loop()
 
     if (incomingChar == '\n' || incomingCommandPointer >= INCOMING_CMD_BUF_SIZE)
     {
+      /**/ interruptDurationMax = 0;
 
       char commandChar[incomingCommandPointer + 1];
       for (int i = 0; i < incomingCommandPointer - 1; i++)
@@ -242,9 +264,12 @@ void loop()
   {
     lastParamChangeNr = ParameterList::getInstance()->paramChangeNumber();
 
-    Serial.print(COMM_REPORT_COMMENT);
-    Serial.print(" loading parameters ");
-    CurrentState::getInstance()->printQAndNewLine();
+    if (debugMessages)
+    {
+      Serial.print(COMM_REPORT_COMMENT);
+      Serial.print(" loading parameters");
+      CurrentState::getInstance()->printQAndNewLine();
+    }
 
     StepperControl::getInstance()->loadSettings();
     PinGuard::getInstance()->loadConfig();
@@ -295,6 +320,13 @@ void loop()
         Serial.print(COMM_REPORT_COMMENT);
         Serial.print(" MEM ");
         Serial.print(freeMemory());
+        CurrentState::getInstance()->printQAndNewLine();
+
+        Serial.print(COMM_REPORT_COMMENT);
+        Serial.print(" IND DUR ");
+        Serial.print(interruptDuration);
+        Serial.print(" MAX ");
+        Serial.print(interruptDurationMax);
         CurrentState::getInstance()->printQAndNewLine();
 
         Serial.print(COMM_REPORT_COMMENT);

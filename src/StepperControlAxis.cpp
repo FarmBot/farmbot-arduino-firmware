@@ -266,7 +266,7 @@ void StepperControlAxis::checkTiming()
 
       // Negative flank for the steps
       resetMotorStep();
-      checkMovement();
+      /**/ // checkMovement();
     }
     else
     {

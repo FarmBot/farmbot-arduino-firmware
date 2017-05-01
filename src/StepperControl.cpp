@@ -308,6 +308,19 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
     checkAxisSubStatus(&axisY, &axisSubStep[1]);
     checkAxisSubStatus(&axisZ, &axisSubStep[2]);
 
+    if (axisX.isStepDone())
+    {
+      axisX.checkMovement();
+      axisY.checkMovement();
+      axisZ.checkMovement();
+
+      //checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsEncoderLastPosition[0], &motorConsEncoderUseForPos[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
+      //checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &motorConsEncoderLastPosition[1], &motorConsEncoderUseForPos[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
+      //checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &motorConsEncoderLastPosition[2], &motorConsEncoderUseForPos[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
+
+      axisX.resetStepDone();
+    }
+
     if (debugInterrupt)
     {
       delayMicroseconds(100);
@@ -887,7 +900,6 @@ int StepperControl::calibrateAxis(int axis)
 // Handle movement by checking each axis
 void StepperControl::handleMovementInterrupt(void)
 {
-
   encoderX.readEncoder();
   encoderY.readEncoder();
   encoderZ.readEncoder();
@@ -895,10 +907,6 @@ void StepperControl::handleMovementInterrupt(void)
   axisX.checkTiming();
   axisY.checkTiming();
   axisZ.checkTiming();
-
-  checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsEncoderLastPosition[0], &motorConsEncoderUseForPos[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
-  checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &motorConsEncoderLastPosition[1], &motorConsEncoderUseForPos[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
-  checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &motorConsEncoderLastPosition[2], &motorConsEncoderUseForPos[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
 }
 
 int debugPrintCount = 0;
