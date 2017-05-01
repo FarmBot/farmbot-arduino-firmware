@@ -32,6 +32,7 @@ public:
   void disableMotor();
   void checkMovement();
   void checkTiming();
+  void setTicks();
 
   bool isAxisActive();
   void deactivateAxis();

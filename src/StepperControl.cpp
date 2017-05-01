@@ -298,6 +298,10 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
   axisY.checkMovement();
   axisZ.checkMovement();
 
+  axisX.setTicks();
+  axisY.setTicks();
+  axisZ.setTicks();
+
   emergencyStop = CurrentState::getInstance()->isEmergencyStop();
 
   // Let the interrupt handle all the movements
@@ -313,6 +317,10 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
       axisX.checkMovement();
       axisY.checkMovement();
       axisZ.checkMovement();
+
+	Serial.print("R99 INT DUR ");
+	Serial.print(i2 - i1);
+	Serial.print("\r\n");
 
       //checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsEncoderLastPosition[0], &motorConsEncoderUseForPos[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
       //checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &motorConsEncoderLastPosition[1], &motorConsEncoderUseForPos[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
@@ -900,13 +908,18 @@ int StepperControl::calibrateAxis(int axis)
 // Handle movement by checking each axis
 void StepperControl::handleMovementInterrupt(void)
 {
+	i1 = micros();
+
   encoderX.readEncoder();
-  encoderY.readEncoder();
-  encoderZ.readEncoder();
+//  encoderY.readEncoder();
+//  encoderZ.readEncoder();
 
   axisX.checkTiming();
   axisY.checkTiming();
   axisZ.checkTiming();
+
+	i2 = micros();
+
 }
 
 int debugPrintCount = 0;

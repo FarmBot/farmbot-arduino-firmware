@@ -52,6 +52,9 @@ public:
 
   void test();
   void test2();
+	unsigned long i1 = 0;
+	unsigned long i2 = 0;
+
 
 private:
   StepperControlAxis axisX;

@@ -223,15 +223,15 @@ void StepperControlAxis::checkMovement()
       axisSpeed = calculateSpeed(coordSourcePoint, coordCurrentPoint, coordDestinationPoint,
                                  motorSpeedMin, motorSpeedMax, motorStepsAcc);
 
-      // Set the moments when the step is set to true and false
-      if (axisSpeed > 0)
-      {
+//      // Set the moments when the step is set to true and false
+//      if (axisSpeed > 0)
+//      {
 
         // Take the requested speed (steps / second) and divide by the interrupt speed (interrupts per seconde)
         // This gives the number of interrupts (called ticks here) before the pulse needs to be set for the next step
-        stepOnTick = moveTicks + (1000.0 * 1000.0 / motorInterruptSpeed / axisSpeed / 2);
-        stepOffTick = moveTicks + (1000.0 * 1000.0 / motorInterruptSpeed / axisSpeed);
-      }
+//        stepOnTick = moveTicks + (1000.0 * 1000.0 / motorInterruptSpeed / axisSpeed / 2);
+//        stepOffTick = moveTicks + (1000.0 * 1000.0 / motorInterruptSpeed / axisSpeed);
+//      }
     }
     else
     {
@@ -267,6 +267,8 @@ void StepperControlAxis::checkTiming()
       // Negative flank for the steps
       resetMotorStep();
       /**/ // checkMovement();
+      setTicks();
+
     }
     else
     {
@@ -279,6 +281,14 @@ void StepperControlAxis::checkTiming()
       }
     }
   }
+}
+
+void StepperControlAxis::setTicks()
+{
+  // Take the requested speed (steps / second) and divide by the interrupt speed (interrupts per seconde)
+  // This gives the number of interrupts (called ticks here) before the pulse needs to be set for the next step
+  stepOnTick = moveTicks + (1000.0 * 1000.0 / motorInterruptSpeed / axisSpeed / 2);
+  stepOffTick = moveTicks + (1000.0 * 1000.0 / motorInterruptSpeed / axisSpeed);
 }
 
 void StepperControlAxis::setStepAxis()
