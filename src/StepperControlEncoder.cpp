@@ -63,7 +63,8 @@ void StepperControlEncoder::loadSettings(int encType, int scaling, int invert)
   {
     encoderInvert = 1;
   }
-  
+
+  encoderType = 0; // TEVE 2017-04-20 Disabling the differential channels. They take too much time to read.
 }
 
 void StepperControlEncoder::setPosition(long newPosition)
@@ -105,8 +106,8 @@ void StepperControlEncoder::readEncoder()
 {
 
   // save the old values, read the new values
-  shiftChannels();
-  readChannels();
+//  shiftChannels();
+//  readChannels();
 
   int delta = 0;
 
@@ -157,7 +158,6 @@ void StepperControlEncoder::readEncoder()
   {
     delta--;
   }
-  
 
   position += delta;
 }
@@ -169,8 +169,6 @@ void StepperControlEncoder::readChannels()
 
   readChannelA = digitalRead(pinChannelA);
   readChannelB = digitalRead(pinChannelB);
-
-  encoderType = 0; // TEVE 2017-04-20 Disabling the quadrature channels. They take too much time to read.
 
   if (encoderType == 1)
   {
@@ -192,12 +190,28 @@ void StepperControlEncoder::readChannels()
     curValChannelA = readChannelA;
     curValChannelB = readChannelB;
   }
+}
 
-  //curValChannelA = readChannelA;
-  //curValChannelB = readChannelB;
+void StepperControlEncoder::setChannels(bool channelA, bool channelB, bool channelAQ, bool channelBQ)
+{
+  // read the new values from the coder
 
-  //	curValChannelA = digitalRead(pinChannelA);
-  //	curValChannelB = digitalRead(pinChannelB);
+  if (encoderType == 1)
+  {
+    // differential encoder
+    if ((channelA ^ channelAQ) && (channelB ^ channelBQ))
+    {
+      curValChannelA = channelA;
+      curValChannelB = channelB;
+    }
+  }
+  else
+  {
+    // encoderType <= 0
+    // non-differential incremental encoder
+    curValChannelA = channelA;
+    curValChannelB = channelB;
+  }
 }
 
 void StepperControlEncoder::shiftChannels()

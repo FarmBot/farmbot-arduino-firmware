@@ -98,6 +98,9 @@ void setup()
   pinMode(X_MIN_PIN, INPUT_PULLUP);
   pinMode(X_MAX_PIN, INPUT_PULLUP);
 
+  pinMode(X_ENCDR_A, INPUT_PULLUP);
+  pinMode(X_ENCDR_B, INPUT_PULLUP);
+
   pinMode(Y_STEP_PIN, OUTPUT);
   pinMode(Y_DIR_PIN, OUTPUT);
   pinMode(Y_ENABLE_PIN, OUTPUT);
@@ -233,9 +236,9 @@ void loop()
         {
           command->print();
         }
-        
+
         gCodeProcessor->execute(command);
-        
+
         free(command);
 
       }
@@ -258,7 +261,7 @@ void loop()
     }
   }
   previousEmergencyStop = CurrentState::getInstance()->isEmergencyStop();
-    
+
   // Check if parameters are changes, and if so load the new settings
   if (lastParamChangeNr != ParameterList::getInstance()->paramChangeNumber())
   {
@@ -315,8 +318,8 @@ void loop()
       CurrentState::getInstance()->storeEndStops();
       CurrentState::getInstance()->printEndStops();
 
-	    if (debugMessages)
-	    {
+      if (debugMessages)
+      {
         Serial.print(COMM_REPORT_COMMENT);
         Serial.print(" MEM ");
         Serial.print(freeMemory());
@@ -334,8 +337,25 @@ void loop()
         Serial.print(cycleCounter);
         CurrentState::getInstance()->printQAndNewLine();
 
+
+//        Serial.print(COMM_REPORT_COMMENT);
+//        Serial.print(" 16 ");
+//        Serial.print(PORTH & 0x02);
+//        Serial.print(PH4);
+//        Serial.print(" ");
+//        Serial.print(PINH);
+//        Serial.print(" ");
+//        Serial.print(digitalRead(16));
+//        Serial.print(" ");
+//        Serial.print(" 17 ");
+//        Serial.print(PORTH & 0x01);
+//        Serial.print(PH5);
+//        Serial.print(" ");
+//        Serial.print(digitalRead(17));
+//        CurrentState::getInstance()->printQAndNewLine();
+
         StepperControl::getInstance()->test();
-	    }
+      }
 
       //  Tim 2017-04-20 Temporary disabling the warning of no valid configuration
       //  until fully supported on RPI
