@@ -206,8 +206,8 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
 
   // load motor and encoder settings
 
-  loadMotorSettings();
-  loadEncoderSettings();
+  //loadMotorSettings();
+  //loadEncoderSettings();
   // load current encoder coordinates
   //axisX.setCurrentPosition(encoderX.currentPosition());
 
@@ -298,6 +298,8 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
   axisY.checkMovement();
   axisZ.checkMovement();
 
+  emergencyStop = CurrentState::getInstance()->isEmergencyStop();
+
   // Let the interrupt handle all the movements
   while ((axisActive[0] || axisActive[1] || axisActive[2]) && !emergencyStop)
   {
@@ -324,7 +326,7 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
       Serial.print(" deactivate motor X due to missed steps");
       Serial.print("\r\n");
 
-      if (axisX.movingToHome())
+      if (xHome)
       {
         encoderX.setPosition(0);
         axisX.setCurrentPosition(0);
@@ -341,7 +343,7 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
       Serial.print(" deactivate motor Y due to missed steps");
       Serial.print("\r\n");
 
-      if (axisY.movingToHome())
+      if (yHome)
       {
         encoderY.setPosition(0);
         axisY.setCurrentPosition(0);
@@ -358,7 +360,7 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
       Serial.print(" deactivate motor Z due to missed steps");
       Serial.print("\r\n");
 
-      if (axisZ.movingToHome())
+      if (zHome)
       {
         encoderZ.setPosition(0);
         axisZ.setCurrentPosition(0);
@@ -518,8 +520,12 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
 
   disableMotors();
 
-  // Return error
+  if (emergencyStop)
+  {
+    CurrentState::getInstance()->setEmergencyStop();
+  }
 
+  // Return error
   return error;
 }
 
@@ -1011,6 +1017,10 @@ void StepperControl::loadMotorSettings()
   motorKeepActive[1] = ParameterList::getInstance()->getValue(MOVEMENT_KEEP_ACTIVE_Y);
   motorKeepActive[2] = ParameterList::getInstance()->getValue(MOVEMENT_KEEP_ACTIVE_Z);
 
+  motorMaxSize[0] = ParameterList::getInstance()->getValue(MOVEMENT_AXIS_NR_STEPS_X);
+  motorMaxSize[1] = ParameterList::getInstance()->getValue(MOVEMENT_AXIS_NR_STEPS_Y);
+  motorMaxSize[2] = ParameterList::getInstance()->getValue(MOVEMENT_AXIS_NR_STEPS_Z);
+
   motor2Inv[0] = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_SECONDARY_MOTOR_INVERT_X));
   motor2Inv[1] = false;
   motor2Inv[2] = false;
@@ -1019,9 +1029,13 @@ void StepperControl::loadMotorSettings()
   motor2Enbl[1] = false;
   motor2Enbl[2] = false;
 
-  axisX.loadMotorSettings(speedMax[0], speedMin[0], stepsAcc[0], timeOut[0], homeIsUp[0], motorInv[0], endStInv[0], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[0], motor2Inv[0], endStEnbl[0]);
-  axisY.loadMotorSettings(speedMax[1], speedMin[1], stepsAcc[1], timeOut[1], homeIsUp[1], motorInv[1], endStInv[1], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[1], motor2Inv[1], endStEnbl[1]);
-  axisZ.loadMotorSettings(speedMax[2], speedMin[2], stepsAcc[2], timeOut[2], homeIsUp[2], motorInv[2], endStInv[2], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[2], motor2Inv[2], endStEnbl[2]);
+  motorStopAtHome[0] = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_STOP_AT_HOME_X));
+  motorStopAtHome[1] = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_STOP_AT_HOME_Y));
+  motorStopAtHome[2] = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_STOP_AT_HOME_Z));
+
+  axisX.loadMotorSettings(speedMax[0], speedMin[0], stepsAcc[0], timeOut[0], homeIsUp[0], motorInv[0], endStInv[0], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[0], motor2Inv[0], endStEnbl[0], motorStopAtHome[0], motorMaxSize[0]);
+  axisY.loadMotorSettings(speedMax[1], speedMin[1], stepsAcc[1], timeOut[1], homeIsUp[1], motorInv[1], endStInv[1], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[1], motor2Inv[1], endStEnbl[1], motorStopAtHome[1], motorMaxSize[1]);
+  axisZ.loadMotorSettings(speedMax[2], speedMin[2], stepsAcc[2], timeOut[2], homeIsUp[2], motorInv[2], endStInv[2], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[2], motor2Inv[2], endStEnbl[2], motorStopAtHome[2], motorMaxSize[2]);
 
   primeMotors();
 }

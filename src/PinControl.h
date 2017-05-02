@@ -25,11 +25,15 @@ public:
   int writeValue(int pinNr, int value, int mode);
   int readValue(int pinNr, int mode);
   int writePulse(int pinNr, int valueOne, int valueTwo, long time, int mode);
+  void resetPinsUsed();
 
 private:
   PinControl();
   PinControl(PinControl const &);
   void operator=(PinControl const &);
+
+  bool pinWritten[1][56];
+
 };
 
 #endif /* PINCONTROL_H_ */

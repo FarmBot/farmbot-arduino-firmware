@@ -132,6 +132,9 @@
     <ClCompile Include="StepperControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="F09Handler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GCodeProcessor.h">
@@ -262,6 +265,9 @@
     </ClInclude>
     <ClInclude Include="Debug.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F09Handler.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

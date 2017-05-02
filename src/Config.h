@@ -20,6 +20,7 @@ const char COMM_REPORT_CMD_ERROR[4] = {'R', '0', '3', '\0'};
 const char COMM_REPORT_CMD_BUSY[4] = {'R', '0', '4', '\0'};
 const char COMM_REPORT_CMD_STATUS[4] = {'R', '0', '5', '\0'};
 const char COMM_REPORT_CALIB_STATUS[4] = {'R', '0', '6', '\0'};
+const char COMM_REPORT_EMERGENCY_STOP[4] = { 'R', '8', '7', '\0' };
 const char COMM_REPORT_NO_CONFIG[4] = {'R', '8', '8', '\0'};
 const char COMM_REPORT_COMMENT[4] = {'R', '9', '9', '\0'};
 
@@ -56,6 +57,10 @@ const long MOVEMENT_KEEP_ACTIVE_X_DEFAULT = 0;
 const long MOVEMENT_KEEP_ACTIVE_Y_DEFAULT = 0;
 const long MOVEMENT_KEEP_ACTIVE_Z_DEFAULT = 1;
 
+const long MOVEMENT_HOME_AT_BOOT_X_DEFAULT = 0;
+const long MOVEMENT_HOME_AT_BOOT_Y_DEFAULT = 0;
+const long MOVEMENT_HOME_AT_BOOT_Z_DEFAULT = 0;
+
 const long MOVEMENT_ENABLE_ENDPOINTS_X_DEFAULT = 0;
 const long MOVEMENT_ENABLE_ENDPOINTS_Y_DEFAULT = 0;
 const long MOVEMENT_ENABLE_ENDPOINTS_Z_DEFAULT = 0;
@@ -75,7 +80,7 @@ const long MOVEMENT_HOME_UP_X_DEFAULT = 0;
 const long MOVEMENT_HOME_UP_Y_DEFAULT = 0;
 const long MOVEMENT_HOME_UP_Z_DEFAULT = 1;
 
-// numver of steps used for acceleration or deceleration
+// Number of steps used for acceleration or deceleration
 const long MOVEMENT_STEPS_ACC_DEC_X_DEFAULT = 500;
 const long MOVEMENT_STEPS_ACC_DEC_Y_DEFAULT = 500;
 const long MOVEMENT_STEPS_ACC_DEC_Z_DEFAULT = 500;
@@ -85,10 +90,15 @@ const long MOVEMENT_MIN_SPD_X_DEFAULT = 50;
 const long MOVEMENT_MIN_SPD_Y_DEFAULT = 50;
 const long MOVEMENT_MIN_SPD_Z_DEFAULT = 50;
 
-// Maxumum speed in steps per second
+// Maxumim speed in steps per second
 const long MOVEMENT_MAX_SPD_X_DEFAULT = 800;
 const long MOVEMENT_MAX_SPD_Y_DEFAULT = 800;
 const long MOVEMENT_MAX_SPD_Z_DEFAULT = 800;
+
+// Stop at the home position or continue to other size of axis
+const long MOVEMENT_STOP_AT_HOME_X_DEFAULT = 0;
+const long MOVEMENT_STOP_AT_HOME_Y_DEFAULT = 0;
+const long MOVEMENT_STOP_AT_HOME_Z_DEFAULT = 0;
 
 // Use encoder (0 or 1)
 const long ENCODER_ENABLED_X_DEFAULT = 0;
@@ -107,12 +117,13 @@ const long ENCODER_SCALING_X_DEFAULT = 100;
 const long ENCODER_SCALING_Y_DEFAULT = 100;
 const long ENCODER_SCALING_Z_DEFAULT = 100;
 
-// Number of stes missed before motor is seen as not moving
+// Number of steps missed before motor is seen as not moving
 const long ENCODER_MISSED_STEPS_MAX_X_DEFAULT = 10;
 const long ENCODER_MISSED_STEPS_MAX_Y_DEFAULT = 10;
 const long ENCODER_MISSED_STEPS_MAX_Z_DEFAULT = 10;
 
 // How much a good step is substracted from the missed step total (1-99)
+// 10 means it ignores 10 steps in 100. This is normal because of jerkiness while moving
 const long ENCODER_MISSED_STEPS_DECAY_X_DEFAULT = 10;
 const long ENCODER_MISSED_STEPS_DECAY_Y_DEFAULT = 10;
 const long ENCODER_MISSED_STEPS_DECAY_Z_DEFAULT = 10;
@@ -127,7 +138,12 @@ const long ENCODER_INVERT_X_DEFAULT = 0;
 const long ENCODER_INVERT_Y_DEFAULT = 0;
 const long ENCODER_INVERT_Z_DEFAULT = 0;
 
-// pin guard default settings
+// Length of axis in steps. Zero means don't care
+const long MOVEMENT_AXIS_NR_STEPS_X_DEFAULT = 0;
+const long MOVEMENT_AXIS_NR_STEPS_Y_DEFAULT = 0;
+const long MOVEMENT_AXIS_NR_STEPS_Z_DEFAULT = 0;
+
+// Pin guard default settings
 const long PIN_GUARD_1_PIN_NR_DEFAULT = 0;
 const long PIN_GUARD_1_TIME_OUT_DEFAULT = 60;
 const long PIN_GUARD_1_ACTIVE_STATE_DEFAULT = 1;
@@ -150,6 +166,6 @@ const long PIN_GUARD_5_ACTIVE_STATE_DEFAULT = 1;
 
 const long STATUS_GENERAL_DEFAULT = 0;
 
-const char SOFTWARE_VERSION[] = "GENESIS.V.01.10.EXPERIMENTAL\0";
+const char SOFTWARE_VERSION[] = "GENESIS.V.01.11.EXPERIMENTAL\0";
 
 #endif /* CONFIG_H_ */

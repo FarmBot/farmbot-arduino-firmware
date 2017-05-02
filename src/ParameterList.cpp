@@ -262,6 +262,16 @@ void ParameterList::loadDefaultValue(int id)
     paramValues[id] = MOVEMENT_KEEP_ACTIVE_Z_DEFAULT;
     break;
 
+  case MOVEMENT_HOME_AT_BOOT_X:
+    paramValues[id] = MOVEMENT_HOME_AT_BOOT_X_DEFAULT;
+    break;
+  case MOVEMENT_HOME_AT_BOOT_Y:
+    paramValues[id] = MOVEMENT_HOME_AT_BOOT_Y_DEFAULT;
+    break;
+  case MOVEMENT_HOME_AT_BOOT_Z:
+    paramValues[id] = MOVEMENT_HOME_AT_BOOT_Z_DEFAULT;
+    break;
+
   case MOVEMENT_INVERT_ENDPOINTS_X:
     paramValues[id] = MOVEMENT_INVERT_ENDPOINTS_X_DEFAULT;
     break;
@@ -307,6 +317,16 @@ void ParameterList::loadDefaultValue(int id)
     break;
   case MOVEMENT_STEPS_ACC_DEC_Z:
     paramValues[id] = MOVEMENT_STEPS_ACC_DEC_Z_DEFAULT;
+    break;
+
+  case MOVEMENT_STOP_AT_HOME_X:
+    paramValues[id] = MOVEMENT_STOP_AT_HOME_X_DEFAULT;
+    break;
+  case MOVEMENT_STOP_AT_HOME_Y:
+    paramValues[id] = MOVEMENT_STOP_AT_HOME_Y_DEFAULT;
+    break;
+  case MOVEMENT_STOP_AT_HOME_Z:
+    paramValues[id] = MOVEMENT_STOP_AT_HOME_Z_DEFAULT;
     break;
 
   case MOVEMENT_HOME_UP_X:
@@ -480,6 +500,9 @@ bool ParameterList::validParam(int id)
   case MOVEMENT_KEEP_ACTIVE_X:
   case MOVEMENT_KEEP_ACTIVE_Y:
   case MOVEMENT_KEEP_ACTIVE_Z:
+  case MOVEMENT_HOME_AT_BOOT_X:
+  case MOVEMENT_HOME_AT_BOOT_Y:
+  case MOVEMENT_HOME_AT_BOOT_Z:
   case MOVEMENT_ENABLE_ENDPOINTS_X:
   case MOVEMENT_ENABLE_ENDPOINTS_Y:
   case MOVEMENT_ENABLE_ENDPOINTS_Z:
@@ -494,6 +517,9 @@ bool ParameterList::validParam(int id)
   case MOVEMENT_STEPS_ACC_DEC_X:
   case MOVEMENT_STEPS_ACC_DEC_Y:
   case MOVEMENT_STEPS_ACC_DEC_Z:
+  case MOVEMENT_STOP_AT_HOME_X:
+  case MOVEMENT_STOP_AT_HOME_Y:
+  case MOVEMENT_STOP_AT_HOME_Z:
   case MOVEMENT_HOME_UP_X:
   case MOVEMENT_HOME_UP_Y:
   case MOVEMENT_HOME_UP_Z:
@@ -524,6 +550,9 @@ bool ParameterList::validParam(int id)
   case ENCODER_INVERT_X:
   case ENCODER_INVERT_Y:
   case ENCODER_INVERT_Z:
+  case MOVEMENT_AXIS_NR_STEPS_X:
+  case MOVEMENT_AXIS_NR_STEPS_Y:
+  case MOVEMENT_AXIS_NR_STEPS_Z:
   case PIN_GUARD_1_PIN_NR:
   case PIN_GUARD_1_TIME_OUT:
   case PIN_GUARD_1_ACTIVE_STATE:

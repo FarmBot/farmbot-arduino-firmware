@@ -65,19 +65,24 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
   {
     staPos = abs(sourcePosition);
     endPos = abs(destinationPosition);
-    ;
   }
   else
   {
     staPos = abs(destinationPosition);
-    ;
     endPos = abs(sourcePosition);
   }
 
+  /**/
   unsigned long halfway = ((endPos - staPos) / 2) + staPos;
+  //unsigned long halfway = ((destinationPosition - sourcePosition) / 2) + sourcePosition;
 
   // Set the minimum speed if the position would be out of bounds
-  if (curPos < staPos || curPos > endPos)
+  if (
+        (curPos < staPos || curPos > endPos) || 
+        // Also limit the speed to a crawl when the move would pass the home position
+        (sourcePosition > 0 && destinationPosition < 0) || (sourcePosition < 0 && destinationPosition > 0)
+       //(!motorHomeIsUp && currentPosition <= 0) || (motorHomeIsUp && currentPosition >= 0) ||)
+     )
   {
     newSpeed = minSpeed;
     movementCrawling = true;
@@ -122,6 +127,8 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
       }
     }
   }
+
+
 
   if (debugPrint && (millis() - lastCalcLog > 1000))
   {
@@ -342,7 +349,8 @@ void StepperControlAxis::StepperControlAxis::loadPinNumbers(int step, int dir, i
 
 void StepperControlAxis::loadMotorSettings(
     long speedMax, long speedMin, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv,
-    bool endStInv, long interruptSpeed, bool motor2Enbl, bool motor2Inv, bool endStEnbl)
+    bool endStInv, long interruptSpeed, bool motor2Enbl, bool motor2Inv, bool endStEnbl, 
+    bool stopAtHome, long maxSize)
 {
 
   motorSpeedMax = speedMax;
@@ -356,6 +364,8 @@ void StepperControlAxis::loadMotorSettings(
   motorInterruptSpeed = interruptSpeed;
   motorMotor2Enl = motor2Enbl;
   motorMotor2Inv = motor2Inv;
+  motorStopAtHome = stopAtHome;
+  motorMaxSize = maxSize;
 }
 
 void StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint, bool home)
@@ -366,15 +376,35 @@ void StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint
   coordDestinationPoint = destinationPoint;
   coordHomeAxis = home;
 
-  // Limit normal movmement to the home position
-  if (!motorHomeIsUp && coordDestinationPoint < 0)
+  // Limit normal movement to the home position
+
+  if (motorStopAtHome)
   {
-    coordDestinationPoint = 0;
+    if (!motorHomeIsUp && coordDestinationPoint < 0)
+    {
+      coordDestinationPoint = 0;
+    }
+
+    if (motorHomeIsUp && coordDestinationPoint > 0)
+    {
+      coordDestinationPoint = 0;
+    }
   }
 
-  if (motorHomeIsUp && coordDestinationPoint > 0)
+  // limit the maximum size the bot can move, when there is a size present
+  if (motorMaxSize > 0)
   {
-    coordDestinationPoint = 0;
+    if (abs(coordDestinationPoint) > abs(motorMaxSize))
+    {
+      if (coordDestinationPoint < 0)
+      {
+        coordDestinationPoint = -abs(motorMaxSize);
+      }
+      else
+      {
+        coordDestinationPoint = abs(motorMaxSize);
+      }
+    }
   }
 
   // Initialize movement variables
