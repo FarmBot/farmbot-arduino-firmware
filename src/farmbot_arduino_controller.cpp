@@ -54,7 +54,7 @@ void interrupt(void)
 
     if (interruptBusy == false)
     {
-//      interruptStartTime = micros();
+      interruptStartTime = micros();
 
       interruptBusy = true;
       StepperControl::getInstance()->handleMovementInterrupt();
@@ -67,17 +67,17 @@ void interrupt(void)
         //blinkLed();
       }
 
-//      interruptStopTime = micros();
+      interruptStopTime = micros();
 
-//      if (interruptStopTime > interruptStartTime)
-//      {
-//        interruptDuration = interruptStopTime - interruptStartTime;
-//      }
+      if (interruptStopTime > interruptStartTime)
+      {
+        interruptDuration = interruptStopTime - interruptStartTime;
+      }
 
-//      if (interruptDuration > interruptDurationMax)
-//      {
-//        interruptDurationMax = interruptDuration;
-//      }
+      if (interruptDuration > interruptDurationMax)
+      {
+        interruptDurationMax = interruptDuration;
+      }
 
       interruptBusy = false;
     }
@@ -100,6 +100,8 @@ void setup()
 
   pinMode(X_ENCDR_A, INPUT_PULLUP);
   pinMode(X_ENCDR_B, INPUT_PULLUP);
+  pinMode(X_ENCDR_A_Q, INPUT_PULLUP);
+  pinMode(X_ENCDR_B_Q, INPUT_PULLUP);
 
   pinMode(Y_STEP_PIN, OUTPUT);
   pinMode(Y_DIR_PIN, OUTPUT);
@@ -107,16 +109,37 @@ void setup()
   pinMode(Y_MIN_PIN, INPUT_PULLUP);
   pinMode(Y_MAX_PIN, INPUT_PULLUP);
 
+  pinMode(Y_ENCDR_A, INPUT_PULLUP);
+  pinMode(Y_ENCDR_B, INPUT_PULLUP);
+  pinMode(Y_ENCDR_A_Q, INPUT_PULLUP);
+  pinMode(Y_ENCDR_B_Q, INPUT_PULLUP);
+
   pinMode(Z_STEP_PIN, OUTPUT);
   pinMode(Z_DIR_PIN, OUTPUT);
   pinMode(Z_ENABLE_PIN, OUTPUT);
   pinMode(Z_MIN_PIN, INPUT_PULLUP);
   pinMode(Z_MAX_PIN, INPUT_PULLUP);
 
+  pinMode(Z_ENCDR_A, INPUT_PULLUP);
+  pinMode(Z_ENCDR_B, INPUT_PULLUP);
+  pinMode(Z_ENCDR_A_Q, INPUT_PULLUP);
+  pinMode(Z_ENCDR_B_Q, INPUT_PULLUP);
+
   pinMode(HEATER_0_PIN, OUTPUT);
   pinMode(HEATER_1_PIN, OUTPUT);
   pinMode(FAN_PIN, OUTPUT);
   pinMode(LED_PIN, OUTPUT);
+
+  pinMode(UTM_C, INPUT_PULLUP);
+  pinMode(UTM_D, INPUT_PULLUP);
+  pinMode(UTM_E, INPUT_PULLUP);
+  pinMode(UTM_F, INPUT_PULLUP);
+  pinMode(UTM_G, INPUT_PULLUP);
+  pinMode(UTM_H, INPUT_PULLUP);
+  pinMode(UTM_I, INPUT_PULLUP);
+  pinMode(UTM_J, INPUT_PULLUP);
+  pinMode(UTM_K, INPUT_PULLUP);
+  pinMode(UTM_L, INPUT_PULLUP);
 
   //pinMode(SERVO_0_PIN , OUTPUT);
   //pinMode(SERVO_1_PIN , OUTPUT);
@@ -135,7 +158,6 @@ void setup()
 
   // Load motor settings
   StepperControl::getInstance()->loadSettings();
-  /**/
 
   // Dump all values to the serial interface
   ParameterList::getInstance()->readAllValues();
@@ -332,10 +354,11 @@ void loop()
         Serial.print(interruptDurationMax);
         CurrentState::getInstance()->printQAndNewLine();
 
-        Serial.print(COMM_REPORT_COMMENT);
-        Serial.print(" Cycle ");
-        Serial.print(cycleCounter);
-        CurrentState::getInstance()->printQAndNewLine();
+        //StepperControl::getInstance()->checkEncoders();
+        //Serial.print(COMM_REPORT_COMMENT);
+        //Serial.print(" Cycle ");
+        //Serial.print(cycleCounter);
+        //CurrentState::getInstance()->printQAndNewLine();
 
 
 //        Serial.print(COMM_REPORT_COMMENT);

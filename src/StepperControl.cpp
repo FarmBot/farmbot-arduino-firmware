@@ -305,17 +305,27 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
     checkAxisSubStatus(&axisY, &axisSubStep[1]);
     checkAxisSubStatus(&axisZ, &axisSubStep[2]);
 
+    //checkEncoders();
+
     if (axisX.isStepDone())
     {
       axisX.checkMovement();
-      axisY.checkMovement();
-      axisZ.checkMovement();
-
       checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsEncoderLastPosition[0], &motorConsEncoderUseForPos[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
-      checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &motorConsEncoderLastPosition[1], &motorConsEncoderUseForPos[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
-      checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &motorConsEncoderLastPosition[2], &motorConsEncoderUseForPos[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
-
       axisX.resetStepDone();
+    }
+
+    if (axisY.isStepDone())
+    {
+      axisY.checkMovement();
+      checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &motorConsEncoderLastPosition[1], &motorConsEncoderUseForPos[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
+      axisY.resetStepDone();
+    }
+
+    if (axisZ.isStepDone())
+    {
+      axisZ.checkMovement();
+      checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &motorConsEncoderLastPosition[2], &motorConsEncoderUseForPos[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
+      axisZ.resetStepDone();
     }
 
     if (debugInterrupt)
@@ -469,22 +479,16 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
       CurrentState::getInstance()->printQAndNewLine();
       reportPosition();
 
-      if (debugMessages && debugInterrupt)
+      if (debugMessages /*&& debugInterrupt*/)
       {
-				Serial.print("R99");
-				Serial.print(" encoder pos ");
-				Serial.print(encoderX.currentPosition());
-				Serial.print(" axis pos ");
-				Serial.print(axisX.currentPosition());
-				Serial.print("\r\n");
 
 				Serial.print("R99");
 				Serial.print(" missed step ");
-				Serial.print(motorConsMissedSteps[0]);
+				Serial.print(motorConsMissedSteps[1]);
 				Serial.print(" encoder pos ");
-				Serial.print(encoderX.currentPosition());
+				Serial.print(encoderY.currentPosition());
 				Serial.print(" axis pos ");
-				Serial.print(axisX.currentPosition());
+				Serial.print(axisY.currentPosition());
 				Serial.print("\r\n");
       }
     }
@@ -894,38 +898,6 @@ int StepperControl::calibrateAxis(int axis)
   return error;
 }
 
-// Handle movement by checking each axis
-void StepperControl::handleMovementInterrupt(void)
-{
-	i1 = micros();
-  // read encoder pins using the arduin IN registers instead of digital in
-  // because it used much fewer cpu cycles
-
-  encoderX.shiftChannels();
-  encoderY.shiftChannels();
-  encoderZ.shiftChannels();
-
-  // A=16/PH1 B=17/PH0 AQ=31/PC6 BQ=33/PC4
-  encoderX.setChannels(PINH & 0x02, PINH & 0x01, PINC & 0x40, PINC & 0x10);
-  // A=23/PA1 B=25/PA3 AQ=35/PC2 BQ=37/PC0
-  encoderY.setChannels(PINA & 0x02, PINA & 0x04, PINC & 0x04, PINC & 0x01);
-  // A=27/PA5 B=29/PA7 AQ=39/PG2 BQ=41/PG0
-  encoderZ.setChannels(PINA & 0x10, PINA & 0x80, PING & 0x04, PING & 0x01);
-
-  encoderX.readEncoder();
-  encoderY.readEncoder();
-  encoderZ.readEncoder();
-
-
-  // handle motor timing
-  axisX.checkTiming();
-  axisY.checkTiming();
-  axisZ.checkTiming();
-
-	i2 = micros();
-
-}
-
 int debugPrintCount = 0;
 
 // Check encoder to verify the motor is at the right position
@@ -933,7 +905,8 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
 {
 
   // If a step is done
-  if (*encoderEnabled && axis->isStepDone())
+  //if (*encoderEnabled && axis->isStepDone()
+  if (*encoderEnabled)
   {
 
     bool stepMissed = false;
@@ -992,7 +965,7 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
     *encoderLastPosition = encoder->currentPosition();
     *lastPosition = axis->currentPosition();
 
-    axis->resetStepDone();
+    //axis->resetStepDone();
   }
 
   if (*encoderUseForPos == 1)
@@ -1259,4 +1232,54 @@ void StepperControl::setPositionZ(long pos)
 {
   axisZ.setCurrentPosition(pos);
   encoderZ.setPosition(pos);
+}
+
+// Handle movement by checking each axis
+void StepperControl::handleMovementInterrupt(void)
+{
+  i1 = micros();
+
+  checkEncoders();
+
+  // handle motor timing
+  axisX.checkTiming();
+  axisY.checkTiming();
+  axisZ.checkTiming();
+
+  i2 = micros();
+
+}
+
+void StepperControl::checkEncoders()
+{
+  // read encoder pins using the arduino IN registers instead of digital in
+  // because it used much fewer cpu cycles
+
+  encoderX.shiftChannels();
+  encoderY.shiftChannels();
+  encoderZ.shiftChannels();
+
+  /*
+  Serial.print("R99");
+  Serial.print(" PINA ");
+  Serial.print(PINA);
+  Serial.print(" ");
+  Serial.print((bool)(PINA & 0x02));
+  Serial.print((bool)(PINA & 0x08));
+  Serial.print(" Y ");
+  Serial.print(digitalRead(23));
+  Serial.print(digitalRead(25));
+  Serial.print("\r\n");
+  */
+
+  // A=16/PH1 B=17/PH0 AQ=31/PC6 BQ=33/PC4
+  encoderX.setChannels(PINH & 0x02, PINH & 0x01, PINC & 0x40, PINC & 0x10);
+  // A=23/PA1 B=25/PA3 AQ=35/PC2 BQ=37/PC0
+  encoderY.setChannels(PINA & 0x02, PINA & 0x08, PINC & 0x04, PINC & 0x01);
+  // A=27/PA5 B=29/PA7 AQ=39/PG2 BQ=41/PG0
+  encoderZ.setChannels(PINA & 0x20, PINA & 0x80, PING & 0x04, PING & 0x01);
+
+  encoderX.readEncoder();
+  encoderY.readEncoder();
+  encoderZ.readEncoder();
 }

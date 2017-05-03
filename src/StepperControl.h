@@ -36,6 +36,8 @@ public:
                    bool homeX, bool homeY, bool homeZ);
 
   void handleMovementInterrupt();
+  void checkEncoders();
+
   int calibrateAxis(int axis);
   //void initInterrupt();
   void enableMotors();

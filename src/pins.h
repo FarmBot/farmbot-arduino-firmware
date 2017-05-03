@@ -30,6 +30,17 @@
 #define Z_ENCDR_A_Q 39
 #define Z_ENCDR_B_Q 41
 
+#define UTM_C 63
+#define UTM_D 59
+#define UTM_E 40
+#define UTM_F 64
+#define UTM_G 42
+#define UTM_H 44
+#define UTM_I 65
+#define UTM_J 66
+#define UTM_K 52
+#define UTM_L 53
+
 #define E_STEP_PIN 26
 #define E_DIR_PIN 28
 #define E_ENABLE_PIN 24

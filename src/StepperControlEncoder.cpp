@@ -64,7 +64,7 @@ void StepperControlEncoder::loadSettings(int encType, int scaling, int invert)
     encoderInvert = 1;
   }
 
-  encoderType = 0; // TEVE 2017-04-20 Disabling the differential channels. They take too much time to read.
+//  encoderType = 0; // TEVE 2017-04-20 Disabling the differential channels. They take too much time to read.
 }
 
 void StepperControlEncoder::setPosition(long newPosition)
@@ -111,20 +111,21 @@ void StepperControlEncoder::readEncoder()
 
   int delta = 0;
 
-  // and check for a position change
+  // check for a position change
   // no fancy code, just a few simple compares. sorry
+  /*
+  // Only detect edges on the A channel when the V channel is high
+  if (curValChannelB == true && prvValChannelA == false && curValChannelA == true)
+  {
+    delta--;
+  }
+  if (curValChannelB == true && prvValChannelA == true && curValChannelA == false)
+  {
+    delta++;
+  }
+  */
 
-  //// Only detect edges on the A channel when the V channel is high
-  //if (curValChannelB == true && prvValChannelA == false && curValChannelA == true)
-  //{
-  //  delta--;
-  //}
-  //if (curValChannelB == true && prvValChannelA == true && curValChannelA == false)
-  //{
-  //  delta++;
-  //}
-
-  
+  ///*
   if (prvValChannelA == true && curValChannelA == true && prvValChannelB == false && curValChannelB == true)
   {
     delta++;
@@ -158,6 +159,7 @@ void StepperControlEncoder::readEncoder()
   {
     delta--;
   }
+  //*/
 
   position += delta;
 }
