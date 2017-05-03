@@ -287,6 +287,18 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
   axisActive[1] = true;
   axisActive[2] = true;
 
+  /**/
+  if (xHome || yHome || zHome)
+  {
+  if (!xHome) { axisX.deactivateAxis(); }
+  if (!yHome) { axisY.deactivateAxis(); }
+  if (!zHome) { axisZ.deactivateAxis(); }
+
+  axisActive[0] = xHome;
+  axisActive[1] = yHome;
+  axisActive[2] = zHome;
+  }
+
   axisX.checkMovement();
   axisY.checkMovement();
   axisZ.checkMovement();
