@@ -27,6 +27,7 @@ public:
 
   void setPosition(long newPosition);
   long currentPosition();
+  long currentPositionRaw();
 
   void readEncoder();
   void readChannels();

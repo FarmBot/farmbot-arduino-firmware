@@ -359,7 +359,7 @@ void StepperControlAxis::StepperControlAxis::loadPinNumbers(int step, int dir, i
 void StepperControlAxis::loadMotorSettings(
     long speedMax, long speedMin, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv,
     bool endStInv, long interruptSpeed, bool motor2Enbl, bool motor2Inv, bool endStEnbl, 
-    bool stopAtHome, long maxSize)
+    bool stopAtHome, long maxSize, bool stopAtMax)
 {
 
   motorSpeedMax = speedMax;
@@ -375,6 +375,7 @@ void StepperControlAxis::loadMotorSettings(
   motorMotor2Inv = motor2Inv;
   motorStopAtHome = stopAtHome;
   motorMaxSize = maxSize;
+  motorStopAtMax = stopAtMax;
 }
 
 void StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint, bool home)
@@ -401,7 +402,7 @@ void StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint
   }
 
   // limit the maximum size the bot can move, when there is a size present
-  if (motorMaxSize > 0)
+  if (motorMaxSize > 0 && motorStopAtMax)
   {
     if (abs(coordDestinationPoint) > abs(motorMaxSize))
     {

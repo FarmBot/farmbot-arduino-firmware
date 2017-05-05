@@ -52,6 +52,8 @@ public:
   void setPositionY(long pos);
   void setPositionZ(long pos);
 
+  void reportEncoders();
+
   void test();
   void test2();
 	unsigned long i1 = 0;
@@ -92,6 +94,7 @@ private:
   long stepsAcc[3] = { 0, 0, 0 };
   bool motorInv[3] = { false, false, false };
   long motorMaxSize[3] = { 0, 0, 0};
+  bool motorStopAtMax[3] = { false, false, false };
   bool motorKeepActive[3] = { false, false, false };
   bool motor2Inv[3] = { false, false, false };
   bool motor2Enbl[3] = { false, false, false };

@@ -20,6 +20,9 @@ const char COMM_REPORT_CMD_ERROR[4] = {'R', '0', '3', '\0'};
 const char COMM_REPORT_CMD_BUSY[4] = {'R', '0', '4', '\0'};
 const char COMM_REPORT_CMD_STATUS[4] = {'R', '0', '5', '\0'};
 const char COMM_REPORT_CALIB_STATUS[4] = {'R', '0', '6', '\0'};
+
+const char COMM_REPORT_ENCODER[4] = { 'R', '2', '1', '\0' };
+
 const char COMM_REPORT_EMERGENCY_STOP[4] = { 'R', '8', '7', '\0' };
 const char COMM_REPORT_NO_CONFIG[4] = {'R', '8', '8', '\0'};
 const char COMM_REPORT_COMMENT[4] = {'R', '9', '9', '\0'};
@@ -99,6 +102,11 @@ const long MOVEMENT_MAX_SPD_Z_DEFAULT = 800;
 const long MOVEMENT_STOP_AT_HOME_X_DEFAULT = 0;
 const long MOVEMENT_STOP_AT_HOME_Y_DEFAULT = 0;
 const long MOVEMENT_STOP_AT_HOME_Z_DEFAULT = 0;
+
+// Stop at the maximum size of the axis
+const long MOVEMENT_STOP_AT_MAX_X_DEFAULT = 0;
+const long MOVEMENT_STOP_AT_MAX_Y_DEFAULT = 0;
+const long MOVEMENT_STOP_AT_MAX_Z_DEFAULT = 0;
 
 // Use encoder (0 or 1)
 const long ENCODER_ENABLED_X_DEFAULT = 0;

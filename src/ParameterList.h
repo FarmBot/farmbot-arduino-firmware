@@ -99,6 +99,11 @@ enum ParamListEnum
   MOVEMENT_AXIS_NR_STEPS_Y = 142,
   MOVEMENT_AXIS_NR_STEPS_Z = 143,
 
+  // stop at end of axis
+  MOVEMENT_STOP_AT_MAX_X = 145,
+  MOVEMENT_STOP_AT_MAX_Y = 146,
+  MOVEMENT_STOP_AT_MAX_Z = 147,
+
   // pin guard settings
   PIN_GUARD_1_PIN_NR = 201,
   PIN_GUARD_1_TIME_OUT = 202,

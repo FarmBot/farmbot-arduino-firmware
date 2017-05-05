@@ -87,7 +87,12 @@ long StepperControlEncoder::currentPosition()
   }
 }
 
-/* Check the encoder channels for movement accoridng to thisspecification
+long StepperControlEncoder::currentPositionRaw()
+{
+    return position * encoderInvert;
+}
+
+/* Check the encoder channels for movement according to this specification
                     ________            ________
 Channel A          /        \          /        \
              _____/          \________/          \________

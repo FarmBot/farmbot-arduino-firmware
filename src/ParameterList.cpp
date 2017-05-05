@@ -359,6 +359,16 @@ void ParameterList::loadDefaultValue(int id)
     paramValues[id] = MOVEMENT_MAX_SPD_Z_DEFAULT;
     break;
 
+  case MOVEMENT_STOP_AT_MAX_X:
+    paramValues[id] = MOVEMENT_STOP_AT_MAX_X_DEFAULT;
+    break;
+  case MOVEMENT_STOP_AT_MAX_Y:
+    paramValues[id] = MOVEMENT_STOP_AT_MAX_Y_DEFAULT;
+    break;
+  case MOVEMENT_STOP_AT_MAX_Z:
+    paramValues[id] = MOVEMENT_STOP_AT_MAX_Z_DEFAULT;
+    break;
+
   case ENCODER_ENABLED_X:
     paramValues[id] = ENCODER_ENABLED_X_DEFAULT;
     break;
@@ -553,6 +563,9 @@ bool ParameterList::validParam(int id)
   case MOVEMENT_AXIS_NR_STEPS_X:
   case MOVEMENT_AXIS_NR_STEPS_Y:
   case MOVEMENT_AXIS_NR_STEPS_Z:
+  case MOVEMENT_STOP_AT_MAX_X:
+  case MOVEMENT_STOP_AT_MAX_Y:
+  case MOVEMENT_STOP_AT_MAX_Z:
   case PIN_GUARD_1_PIN_NR:
   case PIN_GUARD_1_TIME_OUT:
   case PIN_GUARD_1_ACTIVE_STATE:
