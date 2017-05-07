@@ -160,7 +160,7 @@ void setup()
   StepperControl::getInstance()->loadSettings();
 
   // Dump all values to the serial interface
-  //ParameterList::getInstance()->readAllValues();
+  // ParameterList::getInstance()->readAllValues();
 
   // Get the settings for the pin guard
   PinGuard::getInstance()->loadConfig();
