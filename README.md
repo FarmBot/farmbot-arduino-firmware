@@ -136,6 +136,7 @@ G        |28    |          |Move home all axis
 F        |      |          |Farm commands, commands specially added for the farmbot
 F        |01    |T         |Dose amount of water using time in millisecond
 F        |02    |N         |Dose amount of water using flow meter that measures pulses
+F        |09    |          |Reset emergency stop
 F        |11    |          |Home X axis
 F        |12    |          |Home Y axis
 F        |13    |          |Home Z axis
@@ -176,8 +177,10 @@ R        |21    |P V              |Report parameter value
 R        |31    |P V              |Report status value
 R        |41    |P V              |Report pin value
 R        |81    |X1 X2 Y1 Y2 Z1 Z2|Reporting end stops - parameters: X1 (end stop x axis min) X2 (end stop x axis max) Y1 Y2 Z1 Z2
-R        |82    |X Y Z     |Report current position
-R        |83    |C         |Report software version
+R        |82    |X Y Z            |Report current position
+R        |83    |C                |Report software version
+R        |84    |X Y Z            |Report encoder position scaled
+R        |85    |X Y Z            |Report encoder position raw
 R        |99    |C         |Debug message
 
 Axis states (R05)
@@ -298,6 +301,9 @@ ID   | Name
 141  | MOVEMENT_AXIS_NR_STEPS_X
 142  | MOVEMENT_AXIS_NR_STEPS_Y
 143  | MOVEMENT_AXIS_NR_STEPS_Z
+145  | MOVEMENT_STOP_AT_MAX_X
+146  | MOVEMENT_STOP_AT_MAX_Y
+147  | MOVEMENT_STOP_AT_MAX_Z
 201  | PIN_GUARD_1_PIN_NR
 202  | PIN_GUARD_1_TIME_OUT
 203  | PIN_GUARD_1_ACTIVE_STATE
