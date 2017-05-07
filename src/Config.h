@@ -21,8 +21,8 @@ const char COMM_REPORT_CMD_BUSY[4] = {'R', '0', '4', '\0'};
 const char COMM_REPORT_CMD_STATUS[4] = {'R', '0', '5', '\0'};
 const char COMM_REPORT_CALIB_STATUS[4] = {'R', '0', '6', '\0'};
 
-const char COMM_REPORT_ENCODER_SCALED[4] = { 'R', '2', '1', '\0' };
-const char COMM_REPORT_ENCODER_RAW[4] = { 'R', '2', '2', '\0' };
+const char COMM_REPORT_ENCODER_SCALED[4] = { 'R', '8', '4', '\0' };
+const char COMM_REPORT_ENCODER_RAW[4] = { 'R', '8', '5', '\0' };
 
 const char COMM_REPORT_EMERGENCY_STOP[4] = { 'R', '8', '7', '\0' };
 const char COMM_REPORT_NO_CONFIG[4] = {'R', '8', '8', '\0'};
