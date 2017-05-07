@@ -223,15 +223,15 @@ void StepperControlAxis::checkMovement()
       axisSpeed = calculateSpeed(coordSourcePoint, coordCurrentPoint, coordDestinationPoint,
                                  motorSpeedMin, motorSpeedMax, motorStepsAcc);
 
-      // Set the moments when the step is set to true and false
-      if (axisSpeed > 0)
-      {
+//      // Set the moments when the step is set to true and false
+//      if (axisSpeed > 0)
+//      {
 
         // Take the requested speed (steps / second) and divide by the interrupt speed (interrupts per seconde)
         // This gives the number of interrupts (called ticks here) before the pulse needs to be set for the next step
-        stepOnTick = moveTicks + (1000.0 * 1000.0 / motorInterruptSpeed / axisSpeed / 2);
-        stepOffTick = moveTicks + (1000.0 * 1000.0 / motorInterruptSpeed / axisSpeed);
-      }
+//        stepOnTick = moveTicks + (1000.0 * 1000.0 / motorInterruptSpeed / axisSpeed / 2);
+//        stepOffTick = moveTicks + (1000.0 * 1000.0 / motorInterruptSpeed / axisSpeed);
+//      }
     }
     else
     {
@@ -266,7 +266,8 @@ void StepperControlAxis::checkTiming()
 
       // Negative flank for the steps
       resetMotorStep();
-      checkMovement();
+      setTicks();
+
     }
     else
     {
@@ -279,6 +280,14 @@ void StepperControlAxis::checkTiming()
       }
     }
   }
+}
+
+void StepperControlAxis::setTicks()
+{
+  // Take the requested speed (steps / second) and divide by the interrupt speed (interrupts per seconde)
+  // This gives the number of interrupts (called ticks here) before the pulse needs to be set for the next step
+  stepOnTick = moveTicks + (1000.0 * 1000.0 / motorInterruptSpeed / axisSpeed / 2);
+  stepOffTick = moveTicks + (1000.0 * 1000.0 / motorInterruptSpeed / axisSpeed);
 }
 
 void StepperControlAxis::setStepAxis()
@@ -350,7 +359,7 @@ void StepperControlAxis::StepperControlAxis::loadPinNumbers(int step, int dir, i
 void StepperControlAxis::loadMotorSettings(
     long speedMax, long speedMin, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv,
     bool endStInv, long interruptSpeed, bool motor2Enbl, bool motor2Inv, bool endStEnbl, 
-    bool stopAtHome, long maxSize)
+    bool stopAtHome, long maxSize, bool stopAtMax)
 {
 
   motorSpeedMax = speedMax;
@@ -366,6 +375,7 @@ void StepperControlAxis::loadMotorSettings(
   motorMotor2Inv = motor2Inv;
   motorStopAtHome = stopAtHome;
   motorMaxSize = maxSize;
+  motorStopAtMax = stopAtMax;
 }
 
 void StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint, bool home)
@@ -392,7 +402,7 @@ void StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint
   }
 
   // limit the maximum size the bot can move, when there is a size present
-  if (motorMaxSize > 0)
+  if (motorMaxSize > 0 && motorStopAtMax)
   {
     if (abs(coordDestinationPoint) > abs(motorMaxSize))
     {

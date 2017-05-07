@@ -38,6 +38,12 @@ void blinkLed()
 //   - encoders
 //   - pin guard
 //
+
+unsigned long interruptStartTime = 0;
+unsigned long interruptStopTime = 0;
+unsigned long interruptDuration = 0;
+unsigned long interruptDurationMax = 0;
+
 bool interruptBusy = false;
 int interruptSecondTimer = 0;
 void interrupt(void)
@@ -48,6 +54,7 @@ void interrupt(void)
 
     if (interruptBusy == false)
     {
+      interruptStartTime = micros();
 
       interruptBusy = true;
       StepperControl::getInstance()->handleMovementInterrupt();
@@ -58,6 +65,18 @@ void interrupt(void)
         interruptSecondTimer = 0;
         PinGuard::getInstance()->checkPins();
         //blinkLed();
+      }
+
+      interruptStopTime = micros();
+
+      if (interruptStopTime > interruptStartTime)
+      {
+        interruptDuration = interruptStopTime - interruptStartTime;
+      }
+
+      if (interruptDuration > interruptDurationMax)
+      {
+        interruptDurationMax = interruptDuration;
       }
 
       interruptBusy = false;
@@ -79,11 +98,21 @@ void setup()
   pinMode(X_MIN_PIN, INPUT_PULLUP);
   pinMode(X_MAX_PIN, INPUT_PULLUP);
 
+  pinMode(X_ENCDR_A, INPUT_PULLUP);
+  pinMode(X_ENCDR_B, INPUT_PULLUP);
+  pinMode(X_ENCDR_A_Q, INPUT_PULLUP);
+  pinMode(X_ENCDR_B_Q, INPUT_PULLUP);
+
   pinMode(Y_STEP_PIN, OUTPUT);
   pinMode(Y_DIR_PIN, OUTPUT);
   pinMode(Y_ENABLE_PIN, OUTPUT);
   pinMode(Y_MIN_PIN, INPUT_PULLUP);
   pinMode(Y_MAX_PIN, INPUT_PULLUP);
+
+  pinMode(Y_ENCDR_A, INPUT_PULLUP);
+  pinMode(Y_ENCDR_B, INPUT_PULLUP);
+  pinMode(Y_ENCDR_A_Q, INPUT_PULLUP);
+  pinMode(Y_ENCDR_B_Q, INPUT_PULLUP);
 
   pinMode(Z_STEP_PIN, OUTPUT);
   pinMode(Z_DIR_PIN, OUTPUT);
@@ -91,10 +120,26 @@ void setup()
   pinMode(Z_MIN_PIN, INPUT_PULLUP);
   pinMode(Z_MAX_PIN, INPUT_PULLUP);
 
+  pinMode(Z_ENCDR_A, INPUT_PULLUP);
+  pinMode(Z_ENCDR_B, INPUT_PULLUP);
+  pinMode(Z_ENCDR_A_Q, INPUT_PULLUP);
+  pinMode(Z_ENCDR_B_Q, INPUT_PULLUP);
+
   pinMode(HEATER_0_PIN, OUTPUT);
   pinMode(HEATER_1_PIN, OUTPUT);
   pinMode(FAN_PIN, OUTPUT);
   pinMode(LED_PIN, OUTPUT);
+
+  pinMode(UTM_C, INPUT_PULLUP);
+  pinMode(UTM_D, INPUT_PULLUP);
+  pinMode(UTM_E, INPUT_PULLUP);
+  pinMode(UTM_F, INPUT_PULLUP);
+  pinMode(UTM_G, INPUT_PULLUP);
+  pinMode(UTM_H, INPUT_PULLUP);
+  pinMode(UTM_I, INPUT_PULLUP);
+  pinMode(UTM_J, INPUT_PULLUP);
+  pinMode(UTM_K, INPUT_PULLUP);
+  pinMode(UTM_L, INPUT_PULLUP);
 
   //pinMode(SERVO_0_PIN , OUTPUT);
   //pinMode(SERVO_1_PIN , OUTPUT);
@@ -113,7 +158,6 @@ void setup()
 
   // Load motor settings
   StepperControl::getInstance()->loadSettings();
-  /**/
 
   // Dump all values to the serial interface
   // ParameterList::getInstance()->readAllValues();
@@ -134,18 +178,23 @@ void setup()
 
   if (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_X) == 1)
   {
+    Serial.print("R99 HOME X ON STARTUP\r\n");
     StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, true, false, false);
   }
 
   if (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_Y) == 1)
   {
+    Serial.print("R99 HOME Y ON STARTUP\r\n");
     StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, true, false);
   }
 
   if (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_Z) == 1)
   {
+    Serial.print("R99 HOME Z ON STARTUP\r\n");
     StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, false, true);
   }
+
+  Serial.print("R99 ARDUINO STARTUP COMPLETE\r\n");
 }
 
 // The loop function is called in an endless loop
@@ -187,6 +236,7 @@ void loop()
 
     if (incomingChar == '\n' || incomingCommandPointer >= INCOMING_CMD_BUF_SIZE)
     {
+      /**/ interruptDurationMax = 0;
 
       char commandChar[incomingCommandPointer + 1];
       for (int i = 0; i < incomingCommandPointer - 1; i++)
@@ -211,9 +261,9 @@ void loop()
         {
           command->print();
         }
-        
+
         gCodeProcessor->execute(command);
-        
+
         free(command);
 
       }
@@ -236,15 +286,18 @@ void loop()
     }
   }
   previousEmergencyStop = CurrentState::getInstance()->isEmergencyStop();
-    
+
   // Check if parameters are changes, and if so load the new settings
   if (lastParamChangeNr != ParameterList::getInstance()->paramChangeNumber())
   {
     lastParamChangeNr = ParameterList::getInstance()->paramChangeNumber();
 
-    Serial.print(COMM_REPORT_COMMENT);
-    Serial.print(" loading parameters ");
-    CurrentState::getInstance()->printQAndNewLine();
+    if (debugMessages)
+    {
+      Serial.print(COMM_REPORT_COMMENT);
+      Serial.print(" loading parameters");
+      CurrentState::getInstance()->printQAndNewLine();
+    }
 
     StepperControl::getInstance()->loadSettings();
     PinGuard::getInstance()->loadConfig();
@@ -290,6 +343,8 @@ void loop()
       CurrentState::getInstance()->storeEndStops();
       CurrentState::getInstance()->printEndStops();
 
+      StepperControl::getInstance()->reportEncoders();
+
       if (debugMessages)
       {
         Serial.print(COMM_REPORT_COMMENT);
@@ -298,9 +353,34 @@ void loop()
         CurrentState::getInstance()->printQAndNewLine();
 
         Serial.print(COMM_REPORT_COMMENT);
-        Serial.print(" Cycle ");
-        Serial.print(cycleCounter);
+        Serial.print(" IND DUR ");
+        Serial.print(interruptDuration);
+        Serial.print(" MAX ");
+        Serial.print(interruptDurationMax);
         CurrentState::getInstance()->printQAndNewLine();
+
+        //StepperControl::getInstance()->checkEncoders();
+        //Serial.print(COMM_REPORT_COMMENT);
+        //Serial.print(" Cycle ");
+        //Serial.print(cycleCounter);
+        //CurrentState::getInstance()->printQAndNewLine();
+
+
+//        Serial.print(COMM_REPORT_COMMENT);
+//        Serial.print(" 16 ");
+//        Serial.print(PORTH & 0x02);
+//        Serial.print(PH4);
+//        Serial.print(" ");
+//        Serial.print(PINH);
+//        Serial.print(" ");
+//        Serial.print(digitalRead(16));
+//        Serial.print(" ");
+//        Serial.print(" 17 ");
+//        Serial.print(PORTH & 0x01);
+//        Serial.print(PH5);
+//        Serial.print(" ");
+//        Serial.print(digitalRead(17));
+//        CurrentState::getInstance()->printQAndNewLine();
 
         StepperControl::getInstance()->test();
       }
