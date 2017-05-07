@@ -14,22 +14,24 @@ StepperControl *StepperControl::getInstance()
 
 void StepperControl::reportEncoders()
 {
-  Serial.print(COMM_REPORT_ENCODER);
-  Serial.print(" XS");
+  Serial.print(COMM_REPORT_ENCODER_SCALED);
+  Serial.print(" X");
   Serial.print(encoderX.currentPosition());
-  Serial.print(" XR");
-  Serial.print(encoderX.currentPosition());
-
-  Serial.print(" YS");
+  Serial.print(" Y");
   Serial.print(encoderY.currentPosition());
-  Serial.print(" YR");
-  Serial.print(encoderY.currentPosition());
-
-  Serial.print(" ZS");
-  Serial.print(encoderZ.currentPosition());
-  Serial.print(" ZR");
+  Serial.print(" Z");
   Serial.print(encoderZ.currentPosition());
   CurrentState::getInstance()->printQAndNewLine();
+
+  Serial.print(COMM_REPORT_ENCODER_RAW);
+  Serial.print(" X");
+  Serial.print(encoderX.currentPositionRaw());
+  Serial.print(" Y");
+  Serial.print(encoderY.currentPositionRaw());
+  Serial.print(" Z");
+  Serial.print(encoderZ.currentPositionRaw());
+  CurrentState::getInstance()->printQAndNewLine();
+
 }
 
 void StepperControl::reportStatus(StepperControlAxis *axis, int axisStatus)
@@ -307,16 +309,15 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
   axisActive[1] = true;
   axisActive[2] = true;
 
-  /**/
   if (xHome || yHome || zHome)
   {
-  if (!xHome) { axisX.deactivateAxis(); }
-  if (!yHome) { axisY.deactivateAxis(); }
-  if (!zHome) { axisZ.deactivateAxis(); }
+    if (!xHome) { axisX.deactivateAxis(); }
+    if (!yHome) { axisY.deactivateAxis(); }
+    if (!zHome) { axisZ.deactivateAxis(); }
 
-  axisActive[0] = xHome;
-  axisActive[1] = yHome;
-  axisActive[2] = zHome;
+    axisActive[0] = xHome;
+    axisActive[1] = yHome;
+    axisActive[2] = zHome;
   }
 
   axisX.checkMovement();
@@ -363,7 +364,6 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
     if (debugInterrupt)
     {
       delayMicroseconds(100);
-
       handleMovementInterrupt();
     }
     else
@@ -505,11 +505,12 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
     // Periodically send message still active
     currentMillis++;
 
-    if (currentMillis % 750 == 0)
+    if (currentMillis % 300 == 0)
     {
       Serial.print(COMM_REPORT_CMD_BUSY);
       CurrentState::getInstance()->printQAndNewLine();
       reportPosition();
+      reportEncoders();
 
       if (debugMessages /*&& debugInterrupt*/)
       {
@@ -553,6 +554,7 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
   storeEndStops();
   reportEndStops();
   reportPosition();
+  reportEncoders();
 
   // Report axis idle
 
@@ -700,7 +702,7 @@ int StepperControl::calibrateAxis(int axis)
   while (!movementDone && error == 0)
   {
 
-    //checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
+    checkAxisVsEncoder(calibAxis, calibEncoder, &motorConsMissedSteps[axis], &motorLastPosition[axis], &motorConsEncoderLastPosition[axis], &motorConsEncoderUseForPos[axis], &motorConsMissedStepsDecay[axis], &motorConsEncoderEnabled[axis]);
 
     // Check if there is an emergency stop command
     if (Serial.available() > 0)
@@ -719,6 +721,7 @@ int StepperControl::calibrateAxis(int axis)
     {
 
       calibAxis->setStepAxis();
+      
 
       delayMicroseconds(100000 / speedMin[axis] / 2);
 
@@ -822,6 +825,8 @@ int StepperControl::calibrateAxis(int axis)
 
   while (!movementDone && error == 0)
   {
+
+    checkAxisVsEncoder(calibAxis, calibEncoder, &motorConsMissedSteps[axis], &motorLastPosition[axis], &motorConsEncoderLastPosition[axis], &motorConsEncoderUseForPos[axis], &motorConsMissedStepsDecay[axis], &motorConsEncoderEnabled[axis]);
 
     // Check if there is an emergency stop command
     if (Serial.available() > 0)
@@ -935,15 +940,11 @@ int debugPrintCount = 0;
 // Check encoder to verify the motor is at the right position
 void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControlEncoder *encoder, float *missedSteps, long *lastPosition, long *encoderLastPosition, int *encoderUseForPos, float *encoderStepDecay, bool *encoderEnabled)
 {
-
-  // If a step is done
-  //if (*encoderEnabled && axis->isStepDone()
   if (*encoderEnabled)
   {
-
     bool stepMissed = false;
 
-    if (debugInterrupt && debugMessages)
+    if (debugMessages)
     {
 		  //debugPrintCount++;
 		  //if (debugPrintCount % 50 == 0)

@@ -160,7 +160,7 @@ void setup()
   StepperControl::getInstance()->loadSettings();
 
   // Dump all values to the serial interface
-  ParameterList::getInstance()->readAllValues();
+  //ParameterList::getInstance()->readAllValues();
 
   // Get the settings for the pin guard
   PinGuard::getInstance()->loadConfig();
@@ -178,20 +178,23 @@ void setup()
 
   if (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_X) == 1)
   {
+    Serial.print("R99 HOME X ON STARTUP\r\n");
     StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, true, false, false);
   }
 
   if (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_Y) == 1)
   {
+    Serial.print("R99 HOME Y ON STARTUP\r\n");
     StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, true, false);
   }
 
   if (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_Z) == 1)
   {
+    Serial.print("R99 HOME Z ON STARTUP\r\n");
     StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, false, true);
   }
 
-  Serial.print("R99 ARDUINO STARTUP \r\n");
+  Serial.print("R99 ARDUINO STARTUP COMPLETE\r\n");
 }
 
 // The loop function is called in an endless loop
@@ -339,6 +342,8 @@ void loop()
 
       CurrentState::getInstance()->storeEndStops();
       CurrentState::getInstance()->printEndStops();
+
+      StepperControl::getInstance()->reportEncoders();
 
       if (debugMessages)
       {

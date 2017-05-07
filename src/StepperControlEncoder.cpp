@@ -74,9 +74,7 @@ void StepperControlEncoder::setPosition(long newPosition)
 
 long StepperControlEncoder::currentPosition()
 {
-
   // Apply scaling to the output of the encoder, except when scaling is zero or lower
-  //return position;
   if (scalingFactor == 100 || scalingFactor <= 0)
   {
     return position * encoderInvert;
