@@ -984,8 +984,8 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
     }
     
     // Check if the encoder goes in the wrong direction or nothing moved
-    if ((axis->movingUp() && *encoderLastPosition >= encoder->currentPosition()) ||
-        (!axis->movingUp() && *encoderLastPosition <= encoder->currentPosition()))
+    if ((axis->movingUp() && *encoderLastPosition >= encoder->currentPositionRaw()) ||
+        (!axis->movingUp() && *encoderLastPosition <= encoder->currentPositionRaw()))
     {
       stepMissed = true;
     }
@@ -995,7 +995,7 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
       (*missedSteps)++;
     }
 
-    *encoderLastPosition = encoder->currentPosition();
+    *encoderLastPosition = encoder->currentPositionRaw();
     *lastPosition = axis->currentPosition();
 
     //axis->resetStepDone();
