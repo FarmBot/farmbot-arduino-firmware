@@ -61,6 +61,8 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
   movementCrawling = false;
   movementMoving = false;
 
+
+  /*
   if (abs(sourcePosition) < abs(destinationPosition))
   {
     staPos = abs(sourcePosition);
@@ -71,6 +73,22 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
     staPos = abs(destinationPosition);
     endPos = abs(sourcePosition);
   }
+  */
+
+  // Set the possible negative coordinates to all positive numbers
+  // so the calculation code still works after the changes
+  staPos = 0;
+  endPos = abs(destinationPosition - sourcePosition);
+    
+  if (sourcePosition < destinationPosition)
+  {
+    curPos = currentPosition - sourcePosition;
+  }
+  else
+  {
+    curPos = currentPosition - destinationPosition;
+  }
+
 
   /**/
   unsigned long halfway = ((endPos - staPos) / 2) + staPos;
@@ -78,10 +96,11 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
 
   // Set the minimum speed if the position would be out of bounds
   if (
-        (curPos < staPos || curPos > endPos) || 
+        (curPos < staPos || curPos > endPos)
+        // || 
         // Also limit the speed to a crawl when the move would pass the home position
-        (sourcePosition > 0 && destinationPosition < 0) || (sourcePosition < 0 && destinationPosition > 0)
-       //(!motorHomeIsUp && currentPosition <= 0) || (motorHomeIsUp && currentPosition >= 0) ||)
+        // (sourcePosition > 0 && destinationPosition < 0) || (sourcePosition < 0 && destinationPosition > 0)
+        // (!motorHomeIsUp && currentPosition <= 0) || (motorHomeIsUp && currentPosition >= 0) ||)
      )
   {
     newSpeed = minSpeed;

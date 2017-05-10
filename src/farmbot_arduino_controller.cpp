@@ -340,10 +340,10 @@ void loop()
       StepperControl::getInstance()->storePosition();
       CurrentState::getInstance()->printPosition();
 
+      StepperControl::getInstance()->reportEncoders();
+
       CurrentState::getInstance()->storeEndStops();
       CurrentState::getInstance()->printEndStops();
-
-      StepperControl::getInstance()->reportEncoders();
 
       if (debugMessages)
       {
