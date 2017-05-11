@@ -1028,9 +1028,9 @@ void StepperControl::loadMotorSettings()
   stepsAcc[1] = ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Y);
   stepsAcc[2] = ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Z);
 
-  motorInv[0] = ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_X);
-  motorInv[1] = ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Y);
-  motorInv[2] = ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Z);
+  motorInv[0] = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_X));
+  motorInv[1] = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Y));
+  motorInv[2] = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Z));
 
   endStInv[0] = ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_X);
   endStInv[1] = ParameterList::getInstance()->getValue(MOVEMENT_INVERT_ENDPOINTS_Y);
