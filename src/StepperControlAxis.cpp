@@ -90,7 +90,6 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
   }
 
 
-  /**/
   unsigned long halfway = ((endPos - staPos) / 2) + staPos;
   //unsigned long halfway = ((destinationPosition - sourcePosition) / 2) + sourcePosition;
 
@@ -208,7 +207,7 @@ void StepperControlAxis::checkAxisDirection()
 void StepperControlAxis::setDirectionAxis()
 {
 
-  if (((!coordHomeAxis && coordCurrentPoint < coordDestinationPoint) || (coordHomeAxis && motorHomeIsUp)) ^ motorMotorInv)
+  if (((!coordHomeAxis && coordCurrentPoint < coordDestinationPoint) || (coordHomeAxis && motorHomeIsUp)))
   {
     setDirectionUp();
   }
@@ -463,6 +462,7 @@ void StepperControlAxis::disableMotor()
 
 void StepperControlAxis::setDirectionUp()
 {
+
   if (motorMotorInv)
   {
     digitalWrite(pinDirection, LOW);
