@@ -116,7 +116,7 @@ void StepperControlEncoder::readEncoder()
 
   // check for a position change
   // no fancy code, just a few simple compares. sorry
-  /*
+
   // Only detect edges on the A channel when the V channel is high
   if (curValChannelB == true && prvValChannelA == false && curValChannelA == true)
   {
@@ -126,9 +126,8 @@ void StepperControlEncoder::readEncoder()
   {
     delta++;
   }
-  */
 
-  ///*
+  /*
   if (prvValChannelA == true && curValChannelA == true && prvValChannelB == false && curValChannelB == true)
   {
     delta++;

@@ -268,6 +268,10 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
   motorConsMissedSteps[1] = 0;
   motorConsMissedSteps[2] = 0;
 
+  motorConsMissedStepsPrev[0] = 0;
+  motorConsMissedStepsPrev[1] = 0;
+  motorConsMissedStepsPrev[2] = 0;
+
   motorLastPosition[0] = currentPoint[0];
   motorLastPosition[1] = currentPoint[1];
   motorLastPosition[2] = currentPoint[2];
@@ -369,6 +373,33 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
     else
     {
       delay(1);
+    }
+
+    if ((int)motorConsMissedSteps[0] != motorConsMissedStepsPrev[0])
+    {
+      motorConsMissedStepsPrev[0] = (int) motorConsMissedSteps[0];
+      Serial.print("R99");
+      Serial.print(" missed steps X = ");
+      Serial.print(motorConsMissedStepsPrev[0]);
+      Serial.print("\r\n");
+    }
+
+    if ((int)motorConsMissedSteps[1] != motorConsMissedStepsPrev[1])
+    {
+      motorConsMissedStepsPrev[1] = (int)motorConsMissedSteps[1];
+      Serial.print("R99");
+      Serial.print(" missed steps Y = ");
+      Serial.print(motorConsMissedStepsPrev[1]);
+      Serial.print("\r\n");
+    }
+
+    if ((int)motorConsMissedSteps[2] != motorConsMissedStepsPrev[2])
+    {
+      motorConsMissedStepsPrev[2] = (int)motorConsMissedSteps[2];
+      Serial.print("R99");
+      Serial.print(" missed steps Z = ");
+      Serial.print(motorConsMissedStepsPrev[2]);
+      Serial.print("\r\n");
     }
 
     if (motorConsMissedSteps[0] > motorConsMissedStepsMax[0])
@@ -984,8 +1015,8 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
     }
     
     // Check if the encoder goes in the wrong direction or nothing moved
-    if ((axis->movingUp() && *encoderLastPosition >= encoder->currentPositionRaw()) ||
-        (!axis->movingUp() && *encoderLastPosition <= encoder->currentPositionRaw()))
+    if ((axis->movingUp() && *encoderLastPosition > encoder->currentPositionRaw()) ||
+        (!axis->movingUp() && *encoderLastPosition < encoder->currentPositionRaw()))
     {
       stepMissed = true;
     }
@@ -1169,7 +1200,17 @@ void StepperControl::enableMotors()
   axisX.enableMotor();
   axisY.enableMotor();
   axisZ.enableMotor();
+
   delay(100);
+}
+
+void StepperControl::disableMotorsEmergency()
+{
+  motorMotorsEnabled = false;
+
+  axisX.disableMotor();
+  axisY.disableMotor();
+  axisZ.disableMotor();
 }
 
 void StepperControl::disableMotors()
