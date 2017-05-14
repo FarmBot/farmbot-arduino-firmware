@@ -42,6 +42,7 @@ public:
   //void initInterrupt();
   void enableMotors();
   void disableMotors();
+  void disableMotorsEmergency();
   void primeMotors();
   bool motorsEnabled();
 
@@ -104,6 +105,7 @@ private:
   long timeOut[3] = { 0, 0, 0 };
 
   float motorConsMissedSteps[3] = { 0, 0, 0 };
+  int motorConsMissedStepsPrev[3] = { 0, 0, 0 };
   long motorLastPosition[3] = { 0, 0, 0 };
   long motorConsEncoderLastPosition[3] = { 0, 0, 0 };
 

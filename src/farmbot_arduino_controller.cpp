@@ -176,10 +176,10 @@ void setup()
   // Initialize the inactivity check
   lastAction = millis();
 
-  if (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_X) == 1)
+  if (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_Z) == 1)
   {
-    Serial.print("R99 HOME X ON STARTUP\r\n");
-    StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, true, false, false);
+    Serial.print("R99 HOME Z ON STARTUP\r\n");
+    StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, false, true);
   }
 
   if (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_Y) == 1)
@@ -188,10 +188,10 @@ void setup()
     StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, true, false);
   }
 
-  if (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_Z) == 1)
+  if (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_X) == 1)
   {
-    Serial.print("R99 HOME Z ON STARTUP\r\n");
-    StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, false, true);
+    Serial.print("R99 HOME X ON STARTUP\r\n");
+    StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, true, false, false);
   }
 
   Serial.print("R99 ARDUINO STARTUP COMPLETE\r\n");
@@ -276,7 +276,7 @@ void loop()
   // shut down the pins used
   if (previousEmergencyStop == false && CurrentState::getInstance()->isEmergencyStop())
   {
-    StepperControl::getInstance()->disableMotors();
+    StepperControl::getInstance()->disableMotorsEmergency();
     PinControl::getInstance()->resetPinsUsed();
     if (debugMessages)
     {
