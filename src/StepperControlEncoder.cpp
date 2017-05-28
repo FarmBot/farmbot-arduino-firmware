@@ -90,6 +90,14 @@ long StepperControlEncoder::currentPositionRaw()
     return position * encoderInvert;
 }
 
+void StepperControlEncoder::checkEncoder(bool channelA, bool channelB, bool channelAQ, bool channelBQ)
+{
+  shiftChannels();
+  setChannels(channelA, channelB, channelAQ, channelBQ);
+  processEncoder();
+}
+
+
 /* Check the encoder channels for movement according to this specification
                     ________            ________
 Channel A          /        \          /        \
@@ -105,14 +113,14 @@ rotation ----------------------------------------------------->
 
 */
 
-void StepperControlEncoder::readEncoder()
+void StepperControlEncoder::processEncoder()
 {
 
   // save the old values, read the new values
-//  shiftChannels();
-//  readChannels();
+  // shiftChannels();
+  // readChannels();
 
-  int delta = 0;
+  //int delta = 0;
 
   // check for a position change
   // no fancy code, just a few simple compares. sorry
@@ -120,11 +128,13 @@ void StepperControlEncoder::readEncoder()
   // Only detect edges on the A channel when the V channel is high
   if (curValChannelB == true && prvValChannelA == false && curValChannelA == true)
   {
-    delta--;
+    //delta--;
+    position--;
   }
   if (curValChannelB == true && prvValChannelA == true && curValChannelA == false)
   {
-    delta++;
+    //delta++;
+    position++;
   }
 
   /*
@@ -163,7 +173,7 @@ void StepperControlEncoder::readEncoder()
   }
   //*/
 
-  position += delta;
+  //position += delta;
 }
 
 void StepperControlEncoder::readChannels()

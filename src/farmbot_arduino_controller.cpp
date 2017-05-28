@@ -54,30 +54,30 @@ void interrupt(void)
 
     if (interruptBusy == false)
     {
-      interruptStartTime = micros();
+      //interruptStartTime = micros();
 
       interruptBusy = true;
       StepperControl::getInstance()->handleMovementInterrupt();
 
       // Check the actions triggered once per second
-      if (interruptSecondTimer >= 1000000 / MOVEMENT_INTERRUPT_SPEED)
-      {
-        interruptSecondTimer = 0;
-        PinGuard::getInstance()->checkPins();
-        //blinkLed();
-      }
+      //if (interruptSecondTimer >= 1000000 / MOVEMENT_INTERRUPT_SPEED)
+      //{
+      //  interruptSecondTimer = 0;
+      //  PinGuard::getInstance()->checkPins();
+      //  //blinkLed();
+      //}
 
-      interruptStopTime = micros();
+      //interruptStopTime = micros();
 
-      if (interruptStopTime > interruptStartTime)
-      {
-        interruptDuration = interruptStopTime - interruptStartTime;
-      }
+      //if (interruptStopTime > interruptStartTime)
+      //{
+      //  interruptDuration = interruptStopTime - interruptStartTime;
+      //}
 
-      if (interruptDuration > interruptDurationMax)
-      {
-        interruptDurationMax = interruptDuration;
-      }
+      //if (interruptDuration > interruptDurationMax)
+      //{
+      //  interruptDurationMax = interruptDuration;
+      //}
 
       interruptBusy = false;
     }
@@ -140,6 +140,23 @@ void setup()
   pinMode(UTM_J, INPUT_PULLUP);
   pinMode(UTM_K, INPUT_PULLUP);
   pinMode(UTM_L, INPUT_PULLUP);
+
+  // Aux 1 pins to safer state
+  pinMode(AUX1_00, INPUT_PULLUP);
+  pinMode(AUX1_01, INPUT_PULLUP);
+  pinMode(AUX1_57, INPUT_PULLUP);
+  pinMode(AUX1_58, INPUT_PULLUP);
+
+  // Aux 3 pins to safer state
+  pinMode(AUX3_49, INPUT_PULLUP);
+  pinMode(AUX3_50, INPUT_PULLUP);
+  pinMode(AUX3_51, INPUT_PULLUP);
+
+  // Aux 4 pins to safer state
+  pinMode(AUX4_43, INPUT_PULLUP);
+  pinMode(AUX4_45, INPUT_PULLUP);
+  pinMode(AUX4_47, INPUT_PULLUP);
+  pinMode(AUX4_32, INPUT_PULLUP);
 
   //pinMode(SERVO_0_PIN , OUTPUT);
   //pinMode(SERVO_1_PIN , OUTPUT);

@@ -173,7 +173,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties vm.programmer_name="avrisp" arduino.upload.port="COM5" />
+      <UserProperties vm.programmer_name="avrisp" arduino.upload.port="COM6" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
