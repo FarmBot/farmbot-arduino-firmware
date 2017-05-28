@@ -343,6 +343,9 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
     checkAxisSubStatus(&axisZ, &axisSubStep[2]);
 
     //checkEncoders();
+    //axisX.checkTiming();
+    //axisY.checkTiming();
+    //axisZ.checkTiming();
 
     if (axisX.isStepDone())
     {
@@ -1323,6 +1326,10 @@ void StepperControl::handleMovementInterrupt(void)
   checkEncoders();
 
   // handle motor timing
+  axisX.incrementTick();
+  axisY.incrementTick();
+  axisZ.incrementTick();
+
   axisX.checkTiming();
   axisY.checkTiming();
   axisZ.checkTiming();
@@ -1330,6 +1337,11 @@ void StepperControl::handleMovementInterrupt(void)
   if (debugMessages)
   {
     i2 = micros();
+    i3 = i2 - i1;
+    if (i3 > i4)
+    {
+      i4 = i3;
+    }
   }
 }
 
@@ -1338,9 +1350,9 @@ void StepperControl::checkEncoders()
   // read encoder pins using the arduino IN registers instead of digital in
   // because it used much fewer cpu cycles
 
-  encoderX.shiftChannels();
-  encoderY.shiftChannels();
-  encoderZ.shiftChannels();
+  //encoderX.shiftChannels();
+  //encoderY.shiftChannels();
+  //encoderZ.shiftChannels();
 
   /*
   Serial.print("R99");
@@ -1356,13 +1368,18 @@ void StepperControl::checkEncoders()
   */
 
   // A=16/PH1 B=17/PH0 AQ=31/PC6 BQ=33/PC4
-  encoderX.setChannels(PINH & 0x02, PINH & 0x01, PINC & 0x40, PINC & 0x10);
-  // A=23/PA1 B=25/PA3 AQ=35/PC2 BQ=37/PC0
-  encoderY.setChannels(PINA & 0x02, PINA & 0x08, PINC & 0x04, PINC & 0x01);
-  // A=27/PA5 B=29/PA7 AQ=39/PG2 BQ=41/PG0
-  encoderZ.setChannels(PINA & 0x20, PINA & 0x80, PING & 0x04, PING & 0x01);
+  encoderX.checkEncoder(PINH & 0x02, PINH & 0x01, PINC & 0x40, PINC & 0x10);
+  //encoderX.setChannels(PINH & 0x02, PINH & 0x01, PINC & 0x40, PINC & 0x10);
 
-  encoderX.readEncoder();
-  encoderY.readEncoder();
-  encoderZ.readEncoder();
+  // A=23/PA1 B=25/PA3 AQ=35/PC2 BQ=37/PC0
+  encoderY.checkEncoder(PINA & 0x02, PINA & 0x08, PINC & 0x04, PINC & 0x01);
+  //encoderY.setChannels(PINA & 0x02, PINA & 0x08, PINC & 0x04, PINC & 0x01);
+
+  // A=27/PA5 B=29/PA7 AQ=39/PG2 BQ=41/PG0
+  encoderZ.checkEncoder(PINA & 0x20, PINA & 0x80, PING & 0x04, PING & 0x01);
+  //encoderZ.setChannels(PINA & 0x20, PINA & 0x80, PING & 0x04, PING & 0x01);
+
+  //encoderX.processEncoder();
+  //encoderY.processEncoder();
+  //encoderZ.processEncoder();
 }

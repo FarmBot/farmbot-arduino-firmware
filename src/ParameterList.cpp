@@ -239,7 +239,10 @@ void ParameterList::loadDefaultValue(int id)
     paramValues[id] = PARAM_CONFIG_OK_DEFAULT;
     break;
   case PARAM_USE_EEPROM:
-    paramValues[id] = PARAM_USE_EEPROM;
+    paramValues[id] = PARAM_USE_EEPROM_DEFAULT;
+    break;
+  case PARAM_E_STOP_ON_MOV_ERR:
+    paramValues[id] = PARAM_E_STOP_ON_MOV_ERR_DEFAULT;
     break;
 
   case MOVEMENT_TIMEOUT_X:
@@ -504,6 +507,7 @@ bool ParameterList::validParam(int id)
   case PARAM_VERSION:
   case PARAM_CONFIG_OK:
   case PARAM_USE_EEPROM:
+  case PARAM_E_STOP_ON_MOV_ERR:
   case MOVEMENT_TIMEOUT_X:
   case MOVEMENT_TIMEOUT_Y:
   case MOVEMENT_TIMEOUT_Z:

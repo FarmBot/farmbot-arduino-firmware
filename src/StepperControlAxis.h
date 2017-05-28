@@ -31,6 +31,7 @@ public:
   void enableMotor();
   void disableMotor();
   void checkMovement();
+  void incrementTick();
   void checkTiming();
   void setTicks();
 

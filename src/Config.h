@@ -43,6 +43,7 @@ const int COMM_REPORT_CALIBRATE_STATUS_TO_END = 2;
 const int COMM_REPORT_CALIBRATE_STATUS_ERROR = -1;
 
 const int MOVEMENT_INTERRUPT_SPEED = 64; // Interrupt cycle in micro seconds
+//const int MOVEMENT_INTERRUPT_SPEED = 50; // Interrupt cycle in micro seconds
 
 const unsigned int MOVEMENT_SPEED_BASE_TIME = 2000;
 const unsigned int MOVEMENT_DELAY = 250;
@@ -52,6 +53,7 @@ const long PARAM_TEST_DEFAULT = 0;
 
 const long PARAM_CONFIG_OK_DEFAULT = 0;
 const long PARAM_USE_EEPROM_DEFAULT = 1;
+const long PARAM_E_STOP_ON_MOV_ERR_DEFAULT = 0;
 
 const long MOVEMENT_TIMEOUT_X_DEFAULT = 120;
 const long MOVEMENT_TIMEOUT_Y_DEFAULT = 120;
@@ -175,6 +177,6 @@ const long PIN_GUARD_5_ACTIVE_STATE_DEFAULT = 1;
 
 const long STATUS_GENERAL_DEFAULT = 0;
 
-const char SOFTWARE_VERSION[] = "GENESIS.V.01.11.EXPERIMENTAL\0";
+const char SOFTWARE_VERSION[] = "GENESIS.V.01.13.EXPERIMENTAL\0";
 
 #endif /* CONFIG_H_ */

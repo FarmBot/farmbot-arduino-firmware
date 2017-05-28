@@ -269,6 +269,14 @@ void StepperControlAxis::checkMovement()
   }
 }
 
+void StepperControlAxis::incrementTick()
+{
+  if (axisActive)
+  {
+    moveTicks++;
+  }
+}
+
 void StepperControlAxis::checkTiming()
 {
 
@@ -277,7 +285,7 @@ void StepperControlAxis::checkTiming()
   if (axisActive)
   {
 
-    moveTicks++;
+   // moveTicks++;
 
     if (moveTicks >= stepOffTick)
     {

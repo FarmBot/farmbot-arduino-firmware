@@ -10,6 +10,10 @@
 #define X_ENCDR_A_Q 31
 #define X_ENCDR_B_Q 33
 
+#define E_STEP_PIN 26
+#define E_DIR_PIN 28
+#define E_ENABLE_PIN 24
+
 #define Y_STEP_PIN 60
 #define Y_DIR_PIN 61
 #define Y_ENABLE_PIN 56
@@ -41,10 +45,6 @@
 #define UTM_K 52
 #define UTM_L 53
 
-#define E_STEP_PIN 26
-#define E_DIR_PIN 28
-#define E_ENABLE_PIN 24
-
 #define SDPOWER -1
 #define SDSS 53
 #define LED_PIN 13
@@ -61,3 +61,15 @@
 
 #define SERVO_0_PIN 4
 #define SERVO_1_PIN 5
+
+#define AUX1_00 0
+#define AUX1_01 1
+#define AUX1_57 57
+#define AUX1_58 58
+#define AUX3_49 49
+#define AUX3_50 50
+#define AUX3_51 51
+#define AUX4_43 43
+#define AUX4_45 45
+#define AUX4_47 47
+#define AUX4_32 32
