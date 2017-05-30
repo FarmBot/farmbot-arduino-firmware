@@ -1368,16 +1368,34 @@ void StepperControl::checkEncoders()
   */
 
   // A=16/PH1 B=17/PH0 AQ=31/PC6 BQ=33/PC4
-  encoderX.checkEncoder(PINH & 0x02, PINH & 0x01, PINC & 0x40, PINC & 0x10);
+  //encoderX.checkEncoder(PINH & 0x02, PINH & 0x01, PINC & 0x40, PINC & 0x10);
   //encoderX.setChannels(PINH & 0x02, PINH & 0x01, PINC & 0x40, PINC & 0x10);
+  encoderX.checkEncoder(
+    ENC_X_A_PORT   & ENC_X_A_BYTE,
+    ENC_X_B_PORT   & ENC_X_B_BYTE,
+    ENC_X_A_Q_PORT & ENC_X_A_Q_BYTE,
+    ENC_X_B_Q_PORT & ENC_X_B_Q_BYTE);
+
 
   // A=23/PA1 B=25/PA3 AQ=35/PC2 BQ=37/PC0
-  encoderY.checkEncoder(PINA & 0x02, PINA & 0x08, PINC & 0x04, PINC & 0x01);
+  //encoderY.checkEncoder(PINA & 0x02, PINA & 0x08, PINC & 0x04, PINC & 0x01);
   //encoderY.setChannels(PINA & 0x02, PINA & 0x08, PINC & 0x04, PINC & 0x01);
+  encoderY.checkEncoder(
+    ENC_Y_A_PORT   & ENC_Y_A_BYTE,
+    ENC_Y_B_PORT   & ENC_Y_B_BYTE,
+    ENC_Y_A_Q_PORT & ENC_Y_A_Q_BYTE,
+    ENC_Y_B_Q_PORT & ENC_Y_B_Q_BYTE);
+
 
   // A=27/PA5 B=29/PA7 AQ=39/PG2 BQ=41/PG0
-  encoderZ.checkEncoder(PINA & 0x20, PINA & 0x80, PING & 0x04, PING & 0x01);
+  //encoderZ.checkEncoder(PINA & 0x20, PINA & 0x80, PING & 0x04, PING & 0x01);
   //encoderZ.setChannels(PINA & 0x20, PINA & 0x80, PING & 0x04, PING & 0x01);
+  encoderZ.checkEncoder(
+    ENC_Z_A_PORT   & ENC_Z_A_BYTE,
+    ENC_Z_B_PORT   & ENC_Z_B_BYTE,
+    ENC_Z_A_Q_PORT & ENC_Z_A_Q_BYTE,
+    ENC_Z_B_Q_PORT & ENC_Z_B_Q_BYTE);
+
 
   //encoderX.processEncoder();
   //encoderY.processEncoder();
