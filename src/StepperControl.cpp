@@ -828,7 +828,8 @@ int StepperControl::calibrateAxis(int axis)
     Serial.print(" ");
     Serial.print("V");
     Serial.print(paramValueInt);
-    Serial.print("\r\n");
+    //Serial.print("\r\n");
+    CurrentState::getInstance()->printQAndNewLine();
   }
 
   // Store the status of the system
@@ -935,7 +936,8 @@ int StepperControl::calibrateAxis(int axis)
     Serial.print(" ");
     Serial.print("V");
     Serial.print(stepsCount);
-    Serial.print("\r\n");
+    //Serial.print("\r\n");
+    CurrentState::getInstance()->printQAndNewLine();
   }
 
   *axisStatus = COMM_REPORT_MOVE_STATUS_STOP_MOTOR;
