@@ -54,7 +54,7 @@ void interrupt(void)
 
     if (interruptBusy == false)
     {
-      //interruptStartTime = micros();
+      interruptStartTime = micros();
 
       interruptBusy = true;
       StepperControl::getInstance()->handleMovementInterrupt();
@@ -67,17 +67,17 @@ void interrupt(void)
       //  //blinkLed();
       //}
 
-      //interruptStopTime = micros();
+      interruptStopTime = micros();
 
-      //if (interruptStopTime > interruptStartTime)
-      //{
-      //  interruptDuration = interruptStopTime - interruptStartTime;
-      //}
+      if (interruptStopTime > interruptStartTime)
+      {
+        interruptDuration = interruptStopTime - interruptStartTime;
+      }
 
-      //if (interruptDuration > interruptDurationMax)
-      //{
-      //  interruptDurationMax = interruptDuration;
-      //}
+      if (interruptDuration > interruptDurationMax)
+      {
+        interruptDurationMax = interruptDuration;
+      }
 
       interruptBusy = false;
     }
@@ -324,7 +324,6 @@ void loop()
 
     if (incomingChar == '\n' || incomingCommandPointer >= INCOMING_CMD_BUF_SIZE)
     {
-      /**/ interruptDurationMax = 0;
 
       char commandChar[incomingCommandPointer + 1];
       for (int i = 0; i < incomingCommandPointer - 1; i++)

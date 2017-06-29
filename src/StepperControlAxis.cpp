@@ -30,6 +30,14 @@ StepperControlAxis::StepperControlAxis()
   movementCrawling = false;
   movementMotorActive = false;
   movementMoving = false;
+
+  stepIsOn = false;
+
+  setMotorStepWrite = &StepperControlAxis::setMotorStepWriteDefault;
+  setMotorStepWrite2 = &StepperControlAxis::setMotorStepWriteDefault2;
+  resetMotorStepWrite = &StepperControlAxis::resetMotorStepWriteDefault;
+  resetMotorStepWrite2 = &StepperControlAxis::resetMotorStepWriteDefault2;
+
 }
 
 void StepperControlAxis::test()
@@ -274,6 +282,7 @@ void StepperControlAxis::incrementTick()
   if (axisActive)
   {
     moveTicks++;
+    //moveTicks+=3;
   }
 }
 
@@ -282,27 +291,28 @@ void StepperControlAxis::checkTiming()
 
   //int i;
 
-  if (axisActive)
-  {
-
    // moveTicks++;
-
+  if (stepIsOn)
+  {
     if (moveTicks >= stepOffTick)
     {
 
       // Negative flank for the steps
       resetMotorStep();
       setTicks();
-
+      //stepOnTick = moveTicks + (500000.0 / motorInterruptSpeed / axisSpeed);
     }
-    else
+  }
+  else
+  {
+    if (axisActive)
     {
-
-      if (moveTicks == stepOnTick)
+      if (moveTicks >= stepOnTick)
       {
 
         // Positive flank for the steps
         setStepAxis();
+        //stepOffTick = moveTicks + (1000000.0 / motorInterruptSpeed / axisSpeed);
       }
     }
   }
@@ -318,6 +328,8 @@ void StepperControlAxis::setTicks()
 
 void StepperControlAxis::setStepAxis()
 {
+
+  stepIsOn = true;
 
   if (movementUp)
   {
@@ -402,6 +414,32 @@ void StepperControlAxis::loadMotorSettings(
   motorStopAtHome = stopAtHome;
   motorMaxSize = maxSize;
   motorStopAtMax = stopAtMax;
+
+  if (pinStep == 54)
+  {
+    setMotorStepWrite = &StepperControlAxis::setMotorStepWrite54;
+    resetMotorStepWrite = &StepperControlAxis::resetMotorStepWrite54;
+  }
+  
+  if (pinStep == 60)
+  {
+    setMotorStepWrite = &StepperControlAxis::setMotorStepWrite60;
+    resetMotorStepWrite = &StepperControlAxis::resetMotorStepWrite60;
+  }
+  
+
+  if (pinStep == 46)
+  {
+    setMotorStepWrite = &StepperControlAxis::setMotorStepWrite46;
+    resetMotorStepWrite = &StepperControlAxis::resetMotorStepWrite46;
+  }
+
+  if (pin2Step == 26)
+  {
+    setMotorStepWrite2 = &StepperControlAxis::setMotorStepWrite26;
+    resetMotorStepWrite2 = &StepperControlAxis::resetMotorStepWrite26;
+  }
+
 }
 
 void StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint, bool home)
@@ -590,20 +628,30 @@ void StepperControlAxis::deactivateAxis()
 
 void StepperControlAxis::setMotorStep()
 {
-  digitalWrite(pinStep, HIGH);
+  stepIsOn = true;
+
+  //digitalWrite(pinStep, HIGH);
+  (this->*setMotorStepWrite)();
+
   if (pin2Enable)
   {
-    digitalWrite(pin2Step, HIGH);
+    (this->*setMotorStepWrite2)();
+    //digitalWrite(pin2Step, HIGH);
   }
 }
 
 void StepperControlAxis::resetMotorStep()
 {
+  stepIsOn = false;
   movementStepDone = true;
+
   digitalWrite(pinStep, LOW);
+  //(this->*resetMotorStepWrite)();
+
   if (pin2Enable)
   {
     digitalWrite(pin2Step, LOW);
+    //(this->*resetMotorStepWrite2)();
   }
 }
 
@@ -675,4 +723,79 @@ bool StepperControlAxis::isCrawling()
 bool StepperControlAxis::isMotorActive()
 {
   return movementMotorActive;
+}
+
+/// Functions for pin writing using alternative method
+
+// Pin write default functions
+void StepperControlAxis::setMotorStepWriteDefault()
+{
+  digitalWrite(pinStep, HIGH);
+}
+
+void StepperControlAxis::setMotorStepWriteDefault2()
+{
+  digitalWrite(pin2Step, HIGH);
+}
+
+void StepperControlAxis::resetMotorStepWriteDefault()
+{
+  digitalWrite(pinStep, LOW);
+}
+
+void StepperControlAxis::resetMotorStepWriteDefault2()
+{
+  digitalWrite(pin2Step, LOW);
+}
+
+// X step
+void StepperControlAxis::setMotorStepWrite54()
+{
+  //PF0
+  PORTF |= B00000001;
+}
+
+void StepperControlAxis::resetMotorStepWrite54()
+{
+  //PF0
+  PORTF &= B11111110;
+}
+
+
+// X step 2
+void StepperControlAxis::setMotorStepWrite26()
+{
+  //PA4
+  PORTA |= B00010000;
+}
+
+void StepperControlAxis::resetMotorStepWrite26()
+{
+  PORTA &= B11101111;
+}
+
+// Y step
+void StepperControlAxis::setMotorStepWrite60()
+{
+  //PF6
+  PORTF |= B01000000;
+}
+
+void StepperControlAxis::resetMotorStepWrite60()
+{
+  //PF6
+  PORTF &= B10111111;
+}
+
+// Z step
+void StepperControlAxis::setMotorStepWrite46()
+{
+  //PL3
+  PORTL |= B00001000;
+}
+
+void StepperControlAxis::resetMotorStepWrite46()
+{
+  //PL3
+  PORTL &= B11110111;
 }
