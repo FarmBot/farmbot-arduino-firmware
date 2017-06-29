@@ -43,7 +43,7 @@ const int COMM_REPORT_CALIBRATE_STATUS_TO_END = 2;
 const int COMM_REPORT_CALIBRATE_STATUS_ERROR = -1;
 
 const int MOVEMENT_INTERRUPT_SPEED = 64; // Interrupt cycle in micro seconds
-//const int MOVEMENT_INTERRUPT_SPEED = 50; // Interrupt cycle in micro seconds
+//const int MOVEMENT_INTERRUPT_SPEED = 40; // Interrupt cycle in micro seconds
 
 const unsigned int MOVEMENT_SPEED_BASE_TIME = 2000;
 const unsigned int MOVEMENT_DELAY = 250;

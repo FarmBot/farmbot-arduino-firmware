@@ -85,6 +85,7 @@ int ParameterList::writeValue(int id, int value)
     // Store the value in memory
     paramValues[id] = value;
     writeValueEeprom(id, value);
+    readValue(id);
   }
   else
   {

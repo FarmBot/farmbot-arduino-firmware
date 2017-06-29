@@ -54,7 +54,7 @@ void interrupt(void)
 
     if (interruptBusy == false)
     {
-      //interruptStartTime = micros();
+      interruptStartTime = micros();
 
       interruptBusy = true;
       StepperControl::getInstance()->handleMovementInterrupt();
@@ -67,17 +67,17 @@ void interrupt(void)
       //  //blinkLed();
       //}
 
-      //interruptStopTime = micros();
+      interruptStopTime = micros();
 
-      //if (interruptStopTime > interruptStartTime)
-      //{
-      //  interruptDuration = interruptStopTime - interruptStartTime;
-      //}
+      if (interruptStopTime > interruptStartTime)
+      {
+        interruptDuration = interruptStopTime - interruptStartTime;
+      }
 
-      //if (interruptDuration > interruptDurationMax)
-      //{
-      //  interruptDurationMax = interruptDuration;
-      //}
+      if (interruptDuration > interruptDurationMax)
+      {
+        interruptDurationMax = interruptDuration;
+      }
 
       interruptBusy = false;
     }
@@ -88,78 +88,149 @@ void interrupt(void)
 void setup()
 {
 
-  // Setup pin input/output settings
-  pinMode(X_STEP_PIN, OUTPUT);
-  pinMode(X_DIR_PIN, OUTPUT);
-  pinMode(X_ENABLE_PIN, OUTPUT);
-  pinMode(E_STEP_PIN, OUTPUT);
-  pinMode(E_DIR_PIN, OUTPUT);
-  pinMode(E_ENABLE_PIN, OUTPUT);
-  pinMode(X_MIN_PIN, INPUT_PULLUP);
-  pinMode(X_MAX_PIN, INPUT_PULLUP);
+  #ifdef RAMPS_V14
 
-  pinMode(X_ENCDR_A, INPUT_PULLUP);
-  pinMode(X_ENCDR_B, INPUT_PULLUP);
-  pinMode(X_ENCDR_A_Q, INPUT_PULLUP);
-  pinMode(X_ENCDR_B_Q, INPUT_PULLUP);
+    // Setup pin input/output settings
+    pinMode(X_STEP_PIN, OUTPUT);
+    pinMode(X_DIR_PIN, OUTPUT);
+    pinMode(X_ENABLE_PIN, OUTPUT);
+    pinMode(E_STEP_PIN, OUTPUT);
+    pinMode(E_DIR_PIN, OUTPUT);
+    pinMode(E_ENABLE_PIN, OUTPUT);
+    pinMode(X_MIN_PIN, INPUT_PULLUP);
+    pinMode(X_MAX_PIN, INPUT_PULLUP);
 
-  pinMode(Y_STEP_PIN, OUTPUT);
-  pinMode(Y_DIR_PIN, OUTPUT);
-  pinMode(Y_ENABLE_PIN, OUTPUT);
-  pinMode(Y_MIN_PIN, INPUT_PULLUP);
-  pinMode(Y_MAX_PIN, INPUT_PULLUP);
+    pinMode(X_ENCDR_A, INPUT_PULLUP);
+    pinMode(X_ENCDR_B, INPUT_PULLUP);
+    pinMode(X_ENCDR_A_Q, INPUT_PULLUP);
+    pinMode(X_ENCDR_B_Q, INPUT_PULLUP);
 
-  pinMode(Y_ENCDR_A, INPUT_PULLUP);
-  pinMode(Y_ENCDR_B, INPUT_PULLUP);
-  pinMode(Y_ENCDR_A_Q, INPUT_PULLUP);
-  pinMode(Y_ENCDR_B_Q, INPUT_PULLUP);
+    pinMode(Y_STEP_PIN, OUTPUT);
+    pinMode(Y_DIR_PIN, OUTPUT);
+    pinMode(Y_ENABLE_PIN, OUTPUT);
+    pinMode(Y_MIN_PIN, INPUT_PULLUP);
+    pinMode(Y_MAX_PIN, INPUT_PULLUP);
 
-  pinMode(Z_STEP_PIN, OUTPUT);
-  pinMode(Z_DIR_PIN, OUTPUT);
-  pinMode(Z_ENABLE_PIN, OUTPUT);
-  pinMode(Z_MIN_PIN, INPUT_PULLUP);
-  pinMode(Z_MAX_PIN, INPUT_PULLUP);
+    pinMode(Y_ENCDR_A, INPUT_PULLUP);
+    pinMode(Y_ENCDR_B, INPUT_PULLUP);
+    pinMode(Y_ENCDR_A_Q, INPUT_PULLUP);
+    pinMode(Y_ENCDR_B_Q, INPUT_PULLUP);
 
-  pinMode(Z_ENCDR_A, INPUT_PULLUP);
-  pinMode(Z_ENCDR_B, INPUT_PULLUP);
-  pinMode(Z_ENCDR_A_Q, INPUT_PULLUP);
-  pinMode(Z_ENCDR_B_Q, INPUT_PULLUP);
+    pinMode(Z_STEP_PIN, OUTPUT);
+    pinMode(Z_DIR_PIN, OUTPUT);
+    pinMode(Z_ENABLE_PIN, OUTPUT);
+    pinMode(Z_MIN_PIN, INPUT_PULLUP);
+    pinMode(Z_MAX_PIN, INPUT_PULLUP);
 
-  pinMode(HEATER_0_PIN, OUTPUT);
-  pinMode(HEATER_1_PIN, OUTPUT);
-  pinMode(FAN_PIN, OUTPUT);
-  pinMode(LED_PIN, OUTPUT);
+    pinMode(Z_ENCDR_A, INPUT_PULLUP);
+    pinMode(Z_ENCDR_B, INPUT_PULLUP);
+    pinMode(Z_ENCDR_A_Q, INPUT_PULLUP);
+    pinMode(Z_ENCDR_B_Q, INPUT_PULLUP);
 
-  pinMode(UTM_C, INPUT_PULLUP);
-  pinMode(UTM_D, INPUT_PULLUP);
-  pinMode(UTM_E, INPUT_PULLUP);
-  pinMode(UTM_F, INPUT_PULLUP);
-  pinMode(UTM_G, INPUT_PULLUP);
-  pinMode(UTM_H, INPUT_PULLUP);
-  pinMode(UTM_I, INPUT_PULLUP);
-  pinMode(UTM_J, INPUT_PULLUP);
-  pinMode(UTM_K, INPUT_PULLUP);
-  pinMode(UTM_L, INPUT_PULLUP);
+    pinMode(HEATER_0_PIN, OUTPUT);
+    pinMode(HEATER_1_PIN, OUTPUT);
+    pinMode(FAN_PIN, OUTPUT);
+    pinMode(LED_PIN, OUTPUT);
 
-  // Aux 1 pins to safer state
-  pinMode(AUX1_00, INPUT_PULLUP);
-  pinMode(AUX1_01, INPUT_PULLUP);
-  pinMode(AUX1_57, INPUT_PULLUP);
-  pinMode(AUX1_58, INPUT_PULLUP);
+    pinMode(UTM_C, INPUT_PULLUP);
+    pinMode(UTM_D, INPUT_PULLUP);
+    pinMode(UTM_E, INPUT_PULLUP);
+    pinMode(UTM_F, INPUT_PULLUP);
+    pinMode(UTM_G, INPUT_PULLUP);
+    pinMode(UTM_H, INPUT_PULLUP);
+    pinMode(UTM_I, INPUT_PULLUP);
+    pinMode(UTM_J, INPUT_PULLUP);
+    pinMode(UTM_K, INPUT_PULLUP);
+    pinMode(UTM_L, INPUT_PULLUP);
 
-  // Aux 3 pins to safer state
-  pinMode(AUX3_49, INPUT_PULLUP);
-  pinMode(AUX3_50, INPUT_PULLUP);
-  pinMode(AUX3_51, INPUT_PULLUP);
+    // Aux 1 pins to safer state
+    pinMode(AUX1_00, INPUT_PULLUP);
+    pinMode(AUX1_01, INPUT_PULLUP);
+    pinMode(AUX1_57, INPUT_PULLUP);
+    pinMode(AUX1_58, INPUT_PULLUP);
 
-  // Aux 4 pins to safer state
-  pinMode(AUX4_43, INPUT_PULLUP);
-  pinMode(AUX4_45, INPUT_PULLUP);
-  pinMode(AUX4_47, INPUT_PULLUP);
-  pinMode(AUX4_32, INPUT_PULLUP);
+    // Aux 3 pins to safer state
+    pinMode(AUX3_49, INPUT_PULLUP);
+    pinMode(AUX3_50, INPUT_PULLUP);
+    pinMode(AUX3_51, INPUT_PULLUP);
 
-  //pinMode(SERVO_0_PIN , OUTPUT);
-  //pinMode(SERVO_1_PIN , OUTPUT);
+    // Aux 4 pins to safer state
+    pinMode(AUX4_43, INPUT_PULLUP);
+    pinMode(AUX4_45, INPUT_PULLUP);
+    pinMode(AUX4_47, INPUT_PULLUP);
+    pinMode(AUX4_32, INPUT_PULLUP);
+
+    //pinMode(SERVO_0_PIN , OUTPUT);
+    //pinMode(SERVO_1_PIN , OUTPUT);
+  #endif
+
+  #ifdef FARMDUINO_V10
+
+    // Setup pin input/output settings
+    pinMode(X_STEP_PIN, OUTPUT);
+    pinMode(X_DIR_PIN, OUTPUT);
+    pinMode(X_ENABLE_PIN, OUTPUT);
+    pinMode(E_STEP_PIN, OUTPUT);
+    pinMode(E_DIR_PIN, OUTPUT);
+    pinMode(E_ENABLE_PIN, OUTPUT);
+    pinMode(X_MIN_PIN, INPUT_PULLUP);
+    pinMode(X_MAX_PIN, INPUT_PULLUP);
+
+    pinMode(X_ENCDR_A, INPUT_PULLUP);
+    pinMode(X_ENCDR_B, INPUT_PULLUP);
+    pinMode(X_ENCDR_A_Q, INPUT_PULLUP);
+    pinMode(X_ENCDR_B_Q, INPUT_PULLUP);
+
+    pinMode(Y_STEP_PIN, OUTPUT);
+    pinMode(Y_DIR_PIN, OUTPUT);
+    pinMode(Y_ENABLE_PIN, OUTPUT);
+    pinMode(Y_MIN_PIN, INPUT_PULLUP);
+    pinMode(Y_MAX_PIN, INPUT_PULLUP);
+
+    pinMode(Y_ENCDR_A, INPUT_PULLUP);
+    pinMode(Y_ENCDR_B, INPUT_PULLUP);
+    pinMode(Y_ENCDR_A_Q, INPUT_PULLUP);
+    pinMode(Y_ENCDR_B_Q, INPUT_PULLUP);
+
+    pinMode(Z_STEP_PIN, OUTPUT);
+    pinMode(Z_DIR_PIN, OUTPUT);
+    pinMode(Z_ENABLE_PIN, OUTPUT);
+    pinMode(Z_MIN_PIN, INPUT_PULLUP);
+    pinMode(Z_MAX_PIN, INPUT_PULLUP);
+
+    pinMode(Z_ENCDR_A, INPUT_PULLUP);
+    pinMode(Z_ENCDR_B, INPUT_PULLUP);
+    pinMode(Z_ENCDR_A_Q, INPUT_PULLUP);
+    pinMode(Z_ENCDR_B_Q, INPUT_PULLUP);
+
+    //  pinMode(AUX_STEP_PIN, OUTPUT);
+    //  pinMode(AUX_DIR_PIN, OUTPUT);
+    //  pinMode(AUX_ENABLE_PIN, OUTPUT);
+
+    pinMode(LED_PIN, OUTPUT);
+    //  pinMode(VACUUM_PIN, OUTPUT);
+    //  pinMode(WATER_PIN, OUTPUT);
+    //  pinMode(LIGHTING_PIN, OUTPUT);
+    //  pinMode(PERIPHERAL_1_PIN, OUTPUT);
+    //  pinMode(PERIPHERAL_2_PIN, OUTPUT);
+
+    pinMode(UTM_C, INPUT_PULLUP);
+    pinMode(UTM_D, INPUT_PULLUP);
+    pinMode(UTM_E, INPUT_PULLUP);
+    pinMode(UTM_F, INPUT_PULLUP);
+    pinMode(UTM_G, INPUT_PULLUP);
+    pinMode(UTM_H, INPUT_PULLUP);
+    pinMode(UTM_I, INPUT_PULLUP);
+    pinMode(UTM_J, INPUT_PULLUP);
+    pinMode(UTM_K, INPUT_PULLUP);
+    pinMode(UTM_L, INPUT_PULLUP);
+
+    //  pinMode(SERVO_0_PIN, OUTPUT);
+    //  pinMode(SERVO_1_PIN, OUTPUT);
+    //  pinMode(SERVO_2_PIN, OUTPUT);
+    //  pinMode(SERVO_3_PIN, OUTPUT);
+
+  #endif
 
   digitalWrite(X_ENABLE_PIN, HIGH);
   digitalWrite(E_ENABLE_PIN, HIGH);
@@ -253,7 +324,6 @@ void loop()
 
     if (incomingChar == '\n' || incomingCommandPointer >= INCOMING_CMD_BUF_SIZE)
     {
-      /**/ interruptDurationMax = 0;
 
       char commandChar[incomingCommandPointer + 1];
       for (int i = 0; i < incomingCommandPointer - 1; i++)

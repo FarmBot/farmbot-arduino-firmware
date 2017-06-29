@@ -71,6 +71,13 @@ private:
   StepperControlEncoder encoderY;
   StepperControlEncoder encoderZ;
 
+  //char serialBuffer[100];
+  String serialBuffer;
+  int serialBufferLength = 0;
+  int serialBufferSending = 0;
+  int serialMessageNr = 0;
+  int serialMessageDelay = 0;
+
   void checkAxisVsEncoder(StepperControlAxis *axis, StepperControlEncoder *encoder, float *missedSteps, long *lastPosition, long *encoderLastPosition, int *encoderUseForPos, float *encoderStepDecay, bool *encoderEnabled);
   void checkAxisSubStatus(StepperControlAxis *axis, int *axisSubStatus);
 
@@ -82,6 +89,8 @@ private:
   bool intToBool(int value);
 
   void reportPosition();
+  String getReportPosition();
+
   void storeEndStops();
   void reportEndStops();
   void reportStatus(StepperControlAxis *axis, int axisSubStatus);
@@ -118,6 +127,8 @@ private:
   int motorConsEncoderUseForPos[3] = { 0, 0, 0 };
   int motorConsEncoderInvert[3] = { 0, 0, 0 };
 
+  int axisServiced = 0;
+  int axisServicedNext = 0;
   bool motorMotorsEnabled = false;
 };
 

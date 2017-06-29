@@ -123,6 +123,7 @@
     <ClCompile Include="TimerOne.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Board.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="CurrentState.h" />

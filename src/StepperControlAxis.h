@@ -137,12 +137,31 @@ private:
   bool movementCrawling;
   bool movementMotorActive;
   bool movementMoving;
-
+  bool stepIsOn;
   void step(long &currentPoint, unsigned long steps, long destinationPoint);
   bool pointReached(long currentPoint, long destinationPoint);
   unsigned int calculateSpeed(long sourcePosition, long currentPosition, long destinationPosition, long minSpeed, long maxSpeed, long stepsAccDec);
   unsigned long getLength(long l1, long l2);
   void checkAxisDirection();
+
+  void (StepperControlAxis::*setMotorStepWrite)();
+  void (StepperControlAxis::*setMotorStepWrite2)();
+  void (StepperControlAxis::*resetMotorStepWrite)();
+  void (StepperControlAxis::*resetMotorStepWrite2)();
+
+
+  void setMotorStepWriteDefault();
+  void setMotorStepWriteDefault2();
+  void resetMotorStepWriteDefault();
+  void resetMotorStepWriteDefault2();
+  void setMotorStepWrite54();
+  void resetMotorStepWrite54();
+  void setMotorStepWrite26();
+  void resetMotorStepWrite26();
+  void setMotorStepWrite60();
+  void resetMotorStepWrite60();
+  void setMotorStepWrite46();
+  void resetMotorStepWrite46();
 
 };
 
