@@ -78,6 +78,9 @@ private:
   int serialMessageNr = 0;
   int serialMessageDelay = 0;
 
+  void serialBufferSendNext();
+  void serialBufferEmpty();
+
   void checkAxisVsEncoder(StepperControlAxis *axis, StepperControlEncoder *encoder, float *missedSteps, long *lastPosition, long *encoderLastPosition, int *encoderUseForPos, float *encoderStepDecay, bool *encoderEnabled);
   void checkAxisSubStatus(StepperControlAxis *axis, int *axisSubStatus);
 

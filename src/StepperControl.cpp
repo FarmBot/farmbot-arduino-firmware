@@ -528,7 +528,12 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
       incomingByte = Serial.read();
       if (incomingByte == 69 || incomingByte == 101)
       {
-        Serial.print("R99 emergency stop\r\n");
+        serialBuffer += "R99 emergency stop\r\n";
+
+        Serial.print(COMM_REPORT_EMERGENCY_STOP);
+        CurrentState::getInstance()->printQAndNewLine();
+
+        //Serial.print("R99 emergency stop\r\n");
 
         emergencyStop = true;
 
@@ -546,7 +551,8 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
 
     if (error == 1)
     {
-      Serial.print("R99 error\r\n");
+      serialBuffer += "R99 error\r\n";
+      //Serial.print("R99 error\r\n");
 
       axisActive[0] = false;
       axisActive[1] = false;
@@ -554,48 +560,7 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
     }
 
     // Send the serial buffer one character per cycle to keep motor timing more accuracte
-    if (serialBuffer.length() > 0)
-    {
-
-      //Serial.print("[buf");
-      //Serial.print(serialBufferLength);
-      //Serial.print("]");
-
-      //Serial.print("[send");
-      //Serial.print(serialBufferSending);
-      //Serial.print("]");
-
-      if (serialBufferSending < serialBuffer.length())
-      {
-        //Serial.print("-");
-        switch(serialBuffer.charAt(serialBufferSending))
-        {
-          case 13:
-            Serial.print("\r\n");
-            break;
-          case 10:
-            break;
-          default:
-            Serial.print(serialBuffer.charAt(serialBufferSending));
-            break;
-        }
-
-        //Serial.print("<");
-        //Serial.print(serialBufferSending);
-        //Serial.print(">");
-
-        serialBufferSending++;
-      }
-      else
-      {
-        //Serial.print("reset");
-        // Reset length of buffer when done
-        serialBuffer = "";
-        serialBufferSending = 0;
-        
-        //Serial.println("YY");
-      }
-    }
+    serialBufferSendNext();
 
     // Periodically send message still active
     currentMillis++;
@@ -640,6 +605,7 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
     }
   }
 
+  serialBufferEmpty();
   Serial.print("R99 stopped\r\n");
 
   // Stop motors
@@ -688,6 +654,46 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
 
   // Return error
   return error;
+}
+
+void StepperControl::serialBufferEmpty()
+{
+  while (serialBuffer.length() > 0)
+  {
+    serialBufferSendNext();
+  }
+}
+
+void StepperControl::serialBufferSendNext()
+{
+  // Send the next char in the serialBuffer
+  if (serialBuffer.length() > 0)
+  {
+
+    if (serialBufferSending < serialBuffer.length())
+    {
+      //Serial.print("-");
+      switch (serialBuffer.charAt(serialBufferSending))
+      {
+      case 13:
+        Serial.print("\r\n");
+        break;
+      case 10:
+        break;
+      default:
+        Serial.print(serialBuffer.charAt(serialBufferSending));
+        break;
+      }
+
+      serialBufferSending++;
+    }
+    else
+    {
+      // Reset length of buffer when done
+      serialBuffer = "";
+      serialBufferSending = 0;
+    }
+  }
 }
 
 //
