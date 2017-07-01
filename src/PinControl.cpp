@@ -14,6 +14,12 @@ PinControl *PinControl::getInstance()
 
 PinControl::PinControl()
 {
+  for (int pinNr = 1; pinNr <= 52; pinNr++)
+  {
+    pinWritten[0][pinNr] = false;
+    pinWritten[1][pinNr] = false;
+  }
+
 }
 
 int PinControl::setMode(int pinNr, int mode)
@@ -49,11 +55,23 @@ void PinControl::resetPinsUsed()
   {
     if (pinWritten[0][pinNr])
     {
+      Serial.print("R99");
+      Serial.print(" resetting digital pin");
+      Serial.print(pinNr);
+      Serial.print("\r\n");
+
       digitalWrite(pinNr, false);
+      pinWritten[0][pinNr] = false;
     }
     if (pinWritten[1][pinNr])
     {
+      Serial.print("R99");
+      Serial.print(" resetting analog pin");
+      Serial.print(pinNr);
+      Serial.print("\r\n");
+
       analogWrite(pinNr, 0);
+      pinWritten[1][pinNr] = false;
     }
   }
 }

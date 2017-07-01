@@ -32,7 +32,7 @@ private:
   PinControl(PinControl const &);
   void operator=(PinControl const &);
 
-  bool pinWritten[1][56];
+  bool pinWritten[2][56];
 
 };
 
