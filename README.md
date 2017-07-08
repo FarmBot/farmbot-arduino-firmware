@@ -172,6 +172,7 @@ R        |03    |                 |Current command finished with error
 R        |04    |                 |Current command running
 R        |05    |                 |Report motor/axis state
 R        |06    |                 |Report calibration state during execution
+R        |07    |                 |Retry movement
 R        |20    |                 |Report all paramaters complete
 R        |21    |P V              |Report parameter value
 R        |31    |P V              |Report status value
@@ -242,6 +243,8 @@ ID   | Name
 -----|----------------------------
 2    | PARAM_CONFIG_OK
 3    | PARAM_USE_EEPROM
+4    | PARAM_E_STOP_ON_MOV_ERR [Not active]
+5    | PARAM_MOV_NR_RETRY
 11   | MOVEMENT_TIMEOUT_X
 12   | MOVEMENT_TIMEOUT_Y
 13   | MOVEMENT_TIMEOUT_Z
