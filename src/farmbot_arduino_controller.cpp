@@ -203,16 +203,16 @@ void setup()
     pinMode(Z_ENCDR_A_Q, INPUT_PULLUP);
     pinMode(Z_ENCDR_B_Q, INPUT_PULLUP);
 
-    //  pinMode(AUX_STEP_PIN, OUTPUT);
-    //  pinMode(AUX_DIR_PIN, OUTPUT);
-    //  pinMode(AUX_ENABLE_PIN, OUTPUT);
+    pinMode(AUX_STEP_PIN, OUTPUT);
+    pinMode(AUX_DIR_PIN, OUTPUT);
+    pinMode(AUX_ENABLE_PIN, OUTPUT);
 
     pinMode(LED_PIN, OUTPUT);
-    //  pinMode(VACUUM_PIN, OUTPUT);
-    //  pinMode(WATER_PIN, OUTPUT);
-    //  pinMode(LIGHTING_PIN, OUTPUT);
-    //  pinMode(PERIPHERAL_1_PIN, OUTPUT);
-    //  pinMode(PERIPHERAL_2_PIN, OUTPUT);
+    pinMode(VACUUM_PIN, OUTPUT);
+    pinMode(WATER_PIN, OUTPUT);
+    pinMode(LIGHTING_PIN, OUTPUT);
+    pinMode(PERIPHERAL_1_PIN, OUTPUT);
+    pinMode(PERIPHERAL_2_PIN, OUTPUT);
 
     pinMode(UTM_C, INPUT_PULLUP);
     pinMode(UTM_D, INPUT_PULLUP);
@@ -225,10 +225,10 @@ void setup()
     pinMode(UTM_K, INPUT_PULLUP);
     pinMode(UTM_L, INPUT_PULLUP);
 
-    //  pinMode(SERVO_0_PIN, OUTPUT);
-    //  pinMode(SERVO_1_PIN, OUTPUT);
-    //  pinMode(SERVO_2_PIN, OUTPUT);
-    //  pinMode(SERVO_3_PIN, OUTPUT);
+    pinMode(SERVO_0_PIN, OUTPUT);
+    pinMode(SERVO_1_PIN, OUTPUT);
+    pinMode(SERVO_2_PIN, OUTPUT);
+    pinMode(SERVO_3_PIN, OUTPUT);
 
   #endif
 
