@@ -27,11 +27,31 @@ int GCodeProcessor::execute(Command *command)
 {
 
   int execution = 0;
+  bool isMovement = false;
+
+  int attempt = 0;
+  int maximumAttempts = ParameterList::getInstance()->getValue(PARAM_MOV_NR_RETRY);
 
   long Q = command->getQ();
   CurrentState::getInstance()->setQ(Q);
 
-  
+  if
+  (
+    command->getCodeEnum() == G00 ||
+    command->getCodeEnum() == G01 ||
+    command->getCodeEnum() == F11 ||
+    command->getCodeEnum() == F12 ||
+    command->getCodeEnum() == F13 ||
+    command->getCodeEnum() == F14 ||
+    command->getCodeEnum() == F15 ||
+    command->getCodeEnum() == F16
+  )
+  {
+    isMovement = true;
+  }
+
+
+
   //Only allow reset of emergency stop when emergency stop is engaged
 
   if (CurrentState::getInstance()->isEmergencyStop()) 
@@ -106,13 +126,37 @@ int GCodeProcessor::execute(Command *command)
     return -1;
   }
 
-  // Execute the command, report start and end
+  // Report start of command
 
   Serial.print(COMM_REPORT_CMD_START);
   CurrentState::getInstance()->printQAndNewLine();
 
-  execution = handler->execute(command);
+  // Execute command with retry
+  CurrentState::getInstance()->setLastError(0);
+  while (attempt < 1 || (attempt < maximumAttempts && execution != 0))
+  {
+    Serial.print("R99 attempt ");
+    Serial.print(attempt);
+    Serial.print(" from ");
+    Serial.print(maximumAttempts);
 
+    Serial.print("\r\n");
+
+    attempt++;
+    if (attempt > 1)
+    {
+      Serial.print(COMM_REPORT_CMD_RETRY);
+      CurrentState::getInstance()->printQAndNewLine();
+    }
+    
+    handler->execute(command);
+    execution = CurrentState::getInstance()->getLastError();
+
+    Serial.print("R99 execution ");
+    Serial.print(execution);
+    Serial.print("\r\n");
+
+  }
   // Clean serial buffer
   while (Serial.available() > 0)
   {

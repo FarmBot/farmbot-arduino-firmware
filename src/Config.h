@@ -20,6 +20,7 @@ const char COMM_REPORT_CMD_ERROR[4] = {'R', '0', '3', '\0'};
 const char COMM_REPORT_CMD_BUSY[4] = {'R', '0', '4', '\0'};
 const char COMM_REPORT_CMD_STATUS[4] = {'R', '0', '5', '\0'};
 const char COMM_REPORT_CALIB_STATUS[4] = {'R', '0', '6', '\0'};
+const char COMM_REPORT_CMD_RETRY[4] = { 'R', '0', '7', '\0' };
 
 const char COMM_REPORT_ENCODER_SCALED[4] = { 'R', '8', '4', '\0' };
 const char COMM_REPORT_ENCODER_RAW[4] = { 'R', '8', '5', '\0' };
@@ -54,6 +55,7 @@ const long PARAM_TEST_DEFAULT = 0;
 const long PARAM_CONFIG_OK_DEFAULT = 0;
 const long PARAM_USE_EEPROM_DEFAULT = 1;
 const long PARAM_E_STOP_ON_MOV_ERR_DEFAULT = 0;
+const long PARAM_MOV_NR_RETRY_DEFAULT = 3;
 
 const long MOVEMENT_TIMEOUT_X_DEFAULT = 120;
 const long MOVEMENT_TIMEOUT_Y_DEFAULT = 120;
