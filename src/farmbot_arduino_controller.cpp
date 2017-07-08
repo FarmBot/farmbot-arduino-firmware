@@ -211,8 +211,8 @@ void setup()
     pinMode(VACUUM_PIN, OUTPUT);
     pinMode(WATER_PIN, OUTPUT);
     pinMode(LIGHTING_PIN, OUTPUT);
-    pinMode(PERIPHERAL_1_PIN, OUTPUT);
-    pinMode(PERIPHERAL_2_PIN, OUTPUT);
+    pinMode(PERIPHERAL_4_PIN, OUTPUT);
+    pinMode(PERIPHERAL_5_PIN, OUTPUT);
 
     pinMode(UTM_C, INPUT_PULLUP);
     pinMode(UTM_D, INPUT_PULLUP);

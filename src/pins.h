@@ -186,8 +186,8 @@
   #define VACUUM_PIN 12
   #define WATER_PIN 10
   #define LIGHTING_PIN 9
-  #define PERIPHERAL_1_PIN 8
-  #define PERIPHERAL_2_PIN 7
+  #define PERIPHERAL_4_PIN 8
+  #define PERIPHERAL_5_PIN 7
 
     // Auxiliary motors
   #define AUX_STEP_PIN 40
@@ -249,5 +249,3 @@
 
 
 #endif
-
-
