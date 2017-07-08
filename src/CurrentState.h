@@ -23,6 +23,9 @@ public:
   void setY(long);
   void setZ(long);
 
+  int getLastError();
+  void setLastError(int error);
+
   void setEndStopState(unsigned int, unsigned int, bool);
   void printPosition();
   String getPosition();

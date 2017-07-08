@@ -17,6 +17,8 @@ enum ParamListEnum
   PARAM_USE_EEPROM = 3,
   PARAM_E_STOP_ON_MOV_ERR = 4,
 
+  PARAM_MOV_NR_RETRY = 5,
+
   // stepper motor settings
 
   MOVEMENT_TIMEOUT_X = 11,

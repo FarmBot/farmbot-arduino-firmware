@@ -433,6 +433,10 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
         encoderX.setPosition(0);
         axisX.setCurrentPosition(0);
       }
+      else
+      {
+        error = 1;
+      }
     }
 
     if (axisY.isAxisActive() && motorConsMissedSteps[1] > motorConsMissedStepsMax[1])
@@ -449,6 +453,10 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
       {
         encoderY.setPosition(0);
         axisY.setCurrentPosition(0);
+      }
+      else
+      {
+        error = 1;
       }
     }
 
@@ -467,6 +475,10 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
       {
         encoderZ.setPosition(0);
         axisZ.setCurrentPosition(0);        
+      }
+      else
+      {
+        error = 1;
       }
     }
 
@@ -652,7 +664,14 @@ int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
     CurrentState::getInstance()->setEmergencyStop();
   }
 
+  Serial.print("R99 error ");
+  Serial.print(error);
+  Serial.print("\r\n");
+
+
   // Return error
+  CurrentState::getInstance()->setLastError(error);
+
   return error;
 }
 

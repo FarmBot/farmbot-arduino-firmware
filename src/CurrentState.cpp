@@ -14,6 +14,7 @@ long z = 0;
 unsigned int speed = 0;
 bool endStopState[3][2];
 long Q = 0;
+int lastError = 0;
 
 CurrentState *CurrentState::getInstance()
 {
@@ -31,6 +32,7 @@ CurrentState::CurrentState()
   z = 0;
   speed = 0;
   Q = 0;
+  lastError = 0;
 }
 
 long CurrentState::getX()
@@ -67,6 +69,16 @@ void CurrentState::setY(long newY)
 void CurrentState::setZ(long newZ)
 {
   z = newZ;
+}
+
+int CurrentState::getLastError()
+{
+  return lastError;
+}
+
+void CurrentState::setLastError(int error)
+{
+  lastError = error;
 }
 
 void CurrentState::setEndStopState(unsigned int axis, unsigned int position, bool state)
