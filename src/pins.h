@@ -141,6 +141,8 @@
   #define X_MAX_PIN 68
   #define X_ENCDR_A 16
   #define X_ENCDR_B 17
+  #define X2_ENCDR_A 22
+  #define X2_ENCDR_B 39
   #define X_ENCDR_A_Q -1 // N/A
   #define X_ENCDR_B_Q -1 // N/A
 
@@ -177,17 +179,17 @@
   #define UTM_J -1
   #define UTM_K -1
   #define UTM_L -1
-    // Available digital pins: 2,3,18,19,22,38,39,42,43,44,45,46,47,48,49
+    // Available digital pins: 2,3,18,19,38,42,43,44,45,46,47,48,49
     // Available analog pins: 0,1,2,3,4,6,7,8
 
   #define LED_PIN 13
 
     // Peripherals
-  #define VACUUM_PIN 12
-  #define WATER_PIN 10
-  #define LIGHTING_PIN 9
-  #define PERIPHERAL_4_PIN 8
-  #define PERIPHERAL_5_PIN 7
+  #define LIGHTING_PIN 7
+  #define WATER_PIN 8
+  #define VACUUM_PIN 9
+  #define PERIPHERAL_4_PIN 10
+  #define PERIPHERAL_5_PIN 12
 
     // Auxiliary motors
   #define AUX_STEP_PIN 40
