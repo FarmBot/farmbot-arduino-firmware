@@ -344,6 +344,11 @@ void loop()
         //Command* command = new Command(commandString);
         Command *command = new Command(commandChar);
 
+        // Report back the received command
+        Serial.print(COMM_REPORT_CMD_ECHO);
+        Serial.print(commandChar);
+
+        // Log the values if needed for debugging
         if (LOGGING || debugMessages)
         {
           command->print();

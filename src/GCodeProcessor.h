@@ -11,6 +11,8 @@
 #include "Command.h"
 #include "Config.h"
 
+#include "Debug.h"
+
 #include "GCodeHandler.h"
 #include "G00Handler.h"
 #include "G28Handler.h"
