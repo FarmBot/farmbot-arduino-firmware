@@ -285,6 +285,9 @@ void setup()
   Serial.print("R99 ARDUINO STARTUP COMPLETE\r\n");
 }
 
+//char commandIn[100];
+char commandChar[INCOMING_CMD_BUF_SIZE + 1];
+
 // The loop function is called in an endless loop
 void loop()
 {
@@ -325,25 +328,33 @@ void loop()
     if (incomingChar == '\n' || incomingCommandPointer >= INCOMING_CMD_BUF_SIZE)
     {
 
-      char commandChar[incomingCommandPointer + 1];
+      //char commandChar[incomingCommandPointer + 1];
       for (int i = 0; i < incomingCommandPointer - 1; i++)
       {
-        if (incomingChar)
-        commandChar[i] = incomingCommandArray[i];
+          commandChar[i] = incomingCommandArray[i];
       }
-      commandChar[incomingCommandPointer] = 0;
+      commandChar[incomingCommandPointer-1] = '\0';
 
       if (incomingCommandPointer > 1)
       {
 
-        // Copy the command to another string object.
-        // because there are issues with passing the
-        // string to the command object
+        // Report back the received command
+        Serial.print(COMM_REPORT_CMD_ECHO);
+        Serial.print(" ");
+        Serial.print("*");
+        Serial.print(commandChar);
+        Serial.print("*");
+        Serial.print("\r\n");
 
         // Create a command and let it execute
         //Command* command = new Command(commandString);
         Command *command = new Command(commandChar);
 
+        //strcpy()
+        //commandEcho
+
+
+        // Log the values if needed for debugging
         if (LOGGING || debugMessages)
         {
           command->print();

@@ -100,6 +100,10 @@ int GCodeProcessor::execute(Command *command)
 
   if (command == NULL)
   {
+
+    Serial.print(COMM_REPORT_BAD_CMD);
+    CurrentState::getInstance()->printQAndNewLine();
+
     if (LOGGING)
     {
       printCommandLog(command);
@@ -109,6 +113,9 @@ int GCodeProcessor::execute(Command *command)
 
   if (command->getCodeEnum() == CODE_UNDEFINED)
   {
+    Serial.print(COMM_REPORT_BAD_CMD);
+    CurrentState::getInstance()->printQAndNewLine();
+
     if (LOGGING)
     {
       printCommandLog(command);
@@ -122,6 +129,9 @@ int GCodeProcessor::execute(Command *command)
 
   if (handler == NULL)
   {
+    Serial.print(COMM_REPORT_BAD_CMD);
+    CurrentState::getInstance()->printQAndNewLine();
+
     Serial.println("R99 handler == NULL\r\n");
     return -1;
   }
@@ -135,12 +145,15 @@ int GCodeProcessor::execute(Command *command)
   CurrentState::getInstance()->setLastError(0);
   while (attempt < 1 || (attempt < maximumAttempts && execution != 0))
   {
-    Serial.print("R99 attempt ");
-    Serial.print(attempt);
-    Serial.print(" from ");
-    Serial.print(maximumAttempts);
 
-    Serial.print("\r\n");
+    if (LOGGING || debugMessages)
+    {
+      Serial.print("R99 attempt ");
+      Serial.print(attempt);
+      Serial.print(" from ");
+      Serial.print(maximumAttempts);
+      Serial.print("\r\n");
+    }
 
     attempt++;
     if (attempt > 1)
@@ -152,15 +165,33 @@ int GCodeProcessor::execute(Command *command)
     handler->execute(command);
     execution = CurrentState::getInstance()->getLastError();
 
-    Serial.print("R99 execution ");
-    Serial.print(execution);
-    Serial.print("\r\n");
-
+    if (LOGGING || debugMessages)
+    {
+      Serial.print("R99 execution ");
+      Serial.print(execution);
+      Serial.print("\r\n");
+    }
   }
+
   // Clean serial buffer
   while (Serial.available() > 0)
   {
     Serial.read();
+  }
+
+  // if movemement failed after retry
+  // and parameter for emergency stop is set
+  // set the emergency stop
+
+  if (execution != 0)
+  {
+    if (isMovement)
+    {
+      if (ParameterList::getInstance()->getValue(PARAM_E_STOP_ON_MOV_ERR) == 1)
+      {
+        CurrentState::getInstance()->setEmergencyStop();
+      }
+    }
   }
 
   // Report back result of execution
