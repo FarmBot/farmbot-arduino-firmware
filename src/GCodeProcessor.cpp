@@ -182,7 +182,8 @@ int GCodeProcessor::execute(Command *command)
   // if movemement failed after retry
   // and parameter for emergency stop is set
   // set the emergency stop
-  if (execution == 0)
+
+  if (execution != 0)
   {
     if (isMovement)
     {
