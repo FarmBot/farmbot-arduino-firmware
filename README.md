@@ -174,6 +174,7 @@ R        |05    |                 |Report motor/axis state
 R        |06    |                 |Report calibration state during execution
 R        |07    |                 |Retry movement
 R        |08    |                 |Command echo
+R        |09    |                 |Command invalid
 R        |20    |                 |Report all paramaters complete
 R        |21    |P V              |Report parameter value
 R        |31    |P V              |Report status value
