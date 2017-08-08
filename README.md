@@ -85,6 +85,7 @@ Codes used for communication
 Pin Numbering
 -------------
 
+### RAMPS 1.4 (for other boards, see [/src/pins.h](/src/pins.h))
 
 Tag              |Pin Nr|Comment
 -----------------|------|-------
@@ -119,8 +120,9 @@ LED_PIN          |  13  | on board LED
 FAN_PIN          |   9  | RAMPS board fan pin
 HEATER_0_PIN     |  10  | RAMPS board heating pin 0
 HEATER_1_PIN     |   8  | RAMPS board heating pin 1
-SERVO_0_PIN	     |   4  | Servo motor 0 signal pin
-SERVO_1_PIN	     |   5  | Servo motor 1 signal pin
+SERVO_0_PIN	  |   4  | Servo motor 0 signal pin
+SERVO_1_PIN	  |   5  | Servo motor 1 signal pin
+
 
 G-Codes
 -------
@@ -166,6 +168,7 @@ E        |      |          |Emergency stop
 Code type|Number|Parameters|Function
 ---------|------|-----------------|--------
 R        |      |                 |Report messages
+R        |00    |                 |Idle
 R        |01    |                 |Current command started
 R        |02    |                 |Current command finished successfully
 R        |03    |                 |Current command finished with error
@@ -184,7 +187,8 @@ R        |82    |X Y Z            |Report current position
 R        |83    |C                |Report software version
 R        |84    |X Y Z            |Report encoder position scaled
 R        |85    |X Y Z            |Report encoder position raw
-R        |99    |C         |Debug message
+R        |87    |                 |Emergency lock
+R        |99    |C                |Debug message
 
 Axis states (R05)
 -----------------
@@ -325,9 +329,11 @@ ID   | Name
 222  | PIN_GUARD_5_TIME_OUT
 223  | PIN_GUARD_5_ACTIVE_STATE
 
+<!--
 IMPORTANT
 =========
 
 Farmbot will NOT move until the configuration has been approved. To approve manually, send 'F22 P2 V1 Q0' (after the next PR)
 
 To move, use the command 'G00 X0 Y0 Z0 Q0' where you type in the coordinates just after X, Y and Z.
+-->
