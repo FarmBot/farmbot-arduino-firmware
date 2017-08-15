@@ -85,6 +85,7 @@ Codes used for communication
 Pin Numbering
 -------------
 
+### RAMPS 1.4 (for other boards, see [/src/pins.h](/src/pins.h))
 
 Tag              |Pin Nr|Comment
 -----------------|------|-------
@@ -119,8 +120,9 @@ LED_PIN          |  13  | on board LED
 FAN_PIN          |   9  | RAMPS board fan pin
 HEATER_0_PIN     |  10  | RAMPS board heating pin 0
 HEATER_1_PIN     |   8  | RAMPS board heating pin 1
-SERVO_0_PIN	     |   4  | Servo motor 0 signal pin
-SERVO_1_PIN	     |   5  | Servo motor 1 signal pin
+SERVO_0_PIN	  |   4  | Servo motor 0 signal pin
+SERVO_1_PIN	  |   5  | Servo motor 1 signal pin
+
 
 G-Codes
 -------
@@ -136,6 +138,7 @@ G        |28    |          |Move home all axis
 F        |      |          |Farm commands, commands specially added for the farmbot
 F        |01    |T         |Dose amount of water using time in millisecond
 F        |02    |N         |Dose amount of water using flow meter that measures pulses
+F        |09    |          |Reset emergency stop
 F        |11    |          |Home X axis
 F        |12    |          |Home Y axis
 F        |13    |          |Home Z axis
@@ -165,20 +168,27 @@ E        |      |          |Emergency stop
 Code type|Number|Parameters|Function
 ---------|------|-----------------|--------
 R        |      |                 |Report messages
+R        |00    |                 |Idle
 R        |01    |                 |Current command started
 R        |02    |                 |Current command finished successfully
 R        |03    |                 |Current command finished with error
 R        |04    |                 |Current command running
 R        |05    |                 |Report motor/axis state
 R        |06    |                 |Report calibration state during execution
+R        |07    |                 |Retry movement
+R        |08    |                 |Command echo
+R        |09    |                 |Command invalid
 R        |20    |                 |Report all paramaters complete
 R        |21    |P V              |Report parameter value
 R        |31    |P V              |Report status value
 R        |41    |P V              |Report pin value
 R        |81    |X1 X2 Y1 Y2 Z1 Z2|Reporting end stops - parameters: X1 (end stop x axis min) X2 (end stop x axis max) Y1 Y2 Z1 Z2
-R        |82    |X Y Z     |Report current position
-R        |83    |C         |Report software version
-R        |99    |C         |Debug message
+R        |82    |X Y Z            |Report current position
+R        |83    |C                |Report software version
+R        |84    |X Y Z            |Report encoder position scaled
+R        |85    |X Y Z            |Report encoder position raw
+R        |87    |                 |Emergency lock
+R        |99    |C                |Debug message
 
 Axis states (R05)
 -----------------
@@ -239,6 +249,8 @@ ID   | Name
 -----|----------------------------
 2    | PARAM_CONFIG_OK
 3    | PARAM_USE_EEPROM
+4    | PARAM_E_STOP_ON_MOV_ERR
+5    | PARAM_MOV_NR_RETRY
 11   | MOVEMENT_TIMEOUT_X
 12   | MOVEMENT_TIMEOUT_Y
 13   | MOVEMENT_TIMEOUT_Z
@@ -298,6 +310,9 @@ ID   | Name
 141  | MOVEMENT_AXIS_NR_STEPS_X
 142  | MOVEMENT_AXIS_NR_STEPS_Y
 143  | MOVEMENT_AXIS_NR_STEPS_Z
+145  | MOVEMENT_STOP_AT_MAX_X
+146  | MOVEMENT_STOP_AT_MAX_Y
+147  | MOVEMENT_STOP_AT_MAX_Z
 201  | PIN_GUARD_1_PIN_NR
 202  | PIN_GUARD_1_TIME_OUT
 203  | PIN_GUARD_1_ACTIVE_STATE
@@ -314,9 +329,11 @@ ID   | Name
 222  | PIN_GUARD_5_TIME_OUT
 223  | PIN_GUARD_5_ACTIVE_STATE
 
+<!--
 IMPORTANT
 =========
 
 Farmbot will NOT move until the configuration has been approved. To approve manually, send 'F22 P2 V1 Q0' (after the next PR)
 
 To move, use the command 'G00 X0 Y0 Z0 Q0' where you type in the coordinates just after X, Y and Z.
+-->
