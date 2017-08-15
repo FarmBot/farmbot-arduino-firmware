@@ -43,10 +43,16 @@ public:
   void resetEmergencyStop();
   bool isEmergencyStop();
 
+  void setStepsPerMm(int stepsX, int stepsY, int stepsZ);
+
 private:
   CurrentState();
   CurrentState(CurrentState const &);
   void operator=(CurrentState const &);
+
+  int stepsPerMmX;
+  int stepsPerMmY;
+  int stepsPerMmZ;
 
   bool emergencyStop = false;
 };

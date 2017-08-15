@@ -86,6 +86,13 @@ void CurrentState::setEndStopState(unsigned int axis, unsigned int position, boo
   endStopState[axis][position] = state;
 }
 
+void CurrentState::setStepsPerMm(int stepsX, int stepsY, int stepsZ)
+{
+  stepsPerMmX = stepsX;
+  stepsPerMmY = stepsY;
+  stepsPerMmZ = stepsZ;
+}
+
 void CurrentState::storeEndStops()
 {
   CurrentState::getInstance()->setEndStopState(0, 0, digitalRead(X_MIN_PIN));
@@ -98,28 +105,37 @@ void CurrentState::storeEndStops()
 
 void CurrentState::printPosition()
 {
+
+  if (stepsPerMmX <= 0) { stepsPerMmX = 1; }
+  if (stepsPerMmY <= 0) { stepsPerMmY = 1; }
+  if (stepsPerMmZ <= 0) { stepsPerMmZ = 1; }
+
   Serial.print("R82");
   Serial.print(" X");
-  Serial.print(x);
+  Serial.print((float)x / (float)stepsPerMmX);
   Serial.print(" Y");
-  Serial.print(y);
+  Serial.print((float)y / (float)stepsPerMmY );
   Serial.print(" Z");
-  Serial.print(z);
-  //	Serial.print("\r\n");
+  Serial.print((float)z / (float)stepsPerMmZ * 1.0);
   printQAndNewLine();
 }
 
 String CurrentState::getPosition()
 {
+
+  if (stepsPerMmX <= 0) { stepsPerMmX = 1; }
+  if (stepsPerMmY <= 0) { stepsPerMmY = 1; }
+  if (stepsPerMmZ <= 0) { stepsPerMmZ = 1; }
+
   String output = "";
 
   output += "R82";
   output += " X";
-  output += x;
+  output += (float)x / (float)stepsPerMmX * 1.0;
   output += " Y";
-  output += y;
+  output += (float)y / (float)stepsPerMmY * 1.0;
   output += " Z";
-  output += z;
+  output += (float)z / (float)stepsPerMmZ * 1.0;
   //output += getQAndNewLine();
 
   return output;
