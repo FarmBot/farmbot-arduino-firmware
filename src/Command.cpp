@@ -20,7 +20,7 @@ Command::Command(char *commandChar)
   char *charPointer;
   bool invalidCommand = false;
 
-  charPointer = strtok(charBuf, " \n\r");
+  charPointer = strtok(charBuf, " \n\r\0");
 
   if (charPointer[0] == 'G' || charPointer[0] == 'F')
   {

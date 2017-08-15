@@ -90,6 +90,10 @@ const long MOVEMENT_HOME_UP_X_DEFAULT = 0;
 const long MOVEMENT_HOME_UP_Y_DEFAULT = 0;
 const long MOVEMENT_HOME_UP_Z_DEFAULT = 1;
 
+const long MOVEMENT_STEP_PER_MM_X_DEFAULT = 5;
+const long MOVEMENT_STEP_PER_MM_Y_DEFAULT = 5;
+const long MOVEMENT_STEP_PER_MM_Z_DEFAULT = 25;
+
 // Number of steps used for acceleration or deceleration
 const long MOVEMENT_STEPS_ACC_DEC_X_DEFAULT = 300;
 const long MOVEMENT_STEPS_ACC_DEC_Y_DEFAULT = 300;

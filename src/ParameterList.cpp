@@ -345,6 +345,16 @@ void ParameterList::loadDefaultValue(int id)
     paramValues[id] = MOVEMENT_HOME_UP_Z_DEFAULT;
     break;
 
+  case MOVEMENT_STEP_PER_MM_X:
+    paramValues[id] = MOVEMENT_STEP_PER_MM_X_DEFAULT;
+    break;
+  case MOVEMENT_STEP_PER_MM_Y:
+    paramValues[id] = MOVEMENT_STEP_PER_MM_Y_DEFAULT;
+    break;
+  case MOVEMENT_STEP_PER_MM_Z:
+    paramValues[id] = MOVEMENT_STEP_PER_MM_Z_DEFAULT;
+    break;
+
   case MOVEMENT_MIN_SPD_X:
     paramValues[id] = MOVEMENT_MIN_SPD_X_DEFAULT;
     break;
@@ -541,6 +551,9 @@ bool ParameterList::validParam(int id)
   case MOVEMENT_HOME_UP_X:
   case MOVEMENT_HOME_UP_Y:
   case MOVEMENT_HOME_UP_Z:
+  case MOVEMENT_STEP_PER_MM_X:
+  case MOVEMENT_STEP_PER_MM_Y:
+  case MOVEMENT_STEP_PER_MM_Z:
   case MOVEMENT_MIN_SPD_X:
   case MOVEMENT_MIN_SPD_Y:
   case MOVEMENT_MIN_SPD_Z:

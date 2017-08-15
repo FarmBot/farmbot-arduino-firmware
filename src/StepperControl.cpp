@@ -220,10 +220,14 @@ void StepperControl::test2()
  * maxStepsPerSecond - maximum number of steps per second
  * maxAccelerationStepsPerSecond - maximum number of acceleration in steps per second
  */
-int StepperControl::moveToCoords(long xDest, long yDest, long zDest,
+int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double zDestScaled,
                                  unsigned int xMaxSpd, unsigned int yMaxSpd, unsigned int zMaxSpd,
                                  bool xHome, bool yHome, bool zHome)
 {
+
+  long xDest = xDestScaled * stepsPerMm[0];
+  long yDest = yDestScaled * stepsPerMm[1];
+  long zDest = zDestScaled * stepsPerMm[2];
 
   unsigned long currentMillis = 0;
   unsigned long timeStart = millis();
@@ -746,6 +750,7 @@ int StepperControl::calibrateAxis(int axis)
   float *encoderStepDecay;
   bool *encoderEnabled;
   int *axisStatus;
+  int *axisStepsPerMm;
 
   // Prepare for movement
 
@@ -770,6 +775,7 @@ int StepperControl::calibrateAxis(int axis)
     encoderStepDecay = &motorConsMissedStepsDecay[0];
     encoderEnabled = &motorConsEncoderEnabled[0];
     axisStatus = &axisSubStep[0];
+    axisStepsPerMm = &axisStepsPerMm[0];
     break;
   case 1:
     calibAxis = &axisY;
@@ -783,6 +789,7 @@ int StepperControl::calibrateAxis(int axis)
     encoderStepDecay = &motorConsMissedStepsDecay[1];
     encoderEnabled = &motorConsEncoderEnabled[1];
     axisStatus = &axisSubStep[1];
+    axisStepsPerMm = &axisStepsPerMm[1];
     break;
   case 2:
     calibAxis = &axisZ;
@@ -796,6 +803,7 @@ int StepperControl::calibrateAxis(int axis)
     encoderStepDecay = &motorConsMissedStepsDecay[2];
     encoderEnabled = &motorConsEncoderEnabled[2];
     axisStatus = &axisSubStep[2];
+    axisStepsPerMm = &axisStepsPerMm[2];
     break;
   default:
     Serial.print("R99 Calibration error: invalid axis selected\r\n");
@@ -1039,8 +1047,7 @@ int StepperControl::calibrateAxis(int axis)
     Serial.print(parNbrStp);
     Serial.print(" ");
     Serial.print("V");
-    Serial.print(stepsCount);
-    //Serial.print("\r\n");
+    Serial.print((float)stepsCount / (float)(*axisStepsPerMm));
     CurrentState::getInstance()->printQAndNewLine();
   }
 
@@ -1207,6 +1214,27 @@ void StepperControl::loadMotorSettings()
   motorStopAtMax[0] = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_STOP_AT_MAX_X));
   motorStopAtMax[1] = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_STOP_AT_MAX_Y));
   motorStopAtMax[2] = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_STOP_AT_MAX_Z));
+
+  stepsPerMm[0] = ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_X);
+  stepsPerMm[1] = ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_Y);
+  stepsPerMm[2] = ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_Z);
+
+  if (stepsPerMm[0] < 1) 
+  {
+    stepsPerMm[0] = 1;
+  }
+
+  if (stepsPerMm[1] < 1)
+  {
+    stepsPerMm[1] = 1;
+  }
+
+  if (stepsPerMm[2] < 1)
+  {
+    stepsPerMm[2] = 1;
+  }
+
+  CurrentState::getInstance()->setStepsPerMm(stepsPerMm[0], stepsPerMm[1], stepsPerMm[2]);
 
   axisX.loadMotorSettings(speedMax[0], speedMin[0], stepsAcc[0], timeOut[0], homeIsUp[0], motorInv[0], endStInv[0], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[0], motor2Inv[0], endStEnbl[0], motorStopAtHome[0], motorMaxSize[0], motorStopAtMax[0]);
   axisY.loadMotorSettings(speedMax[1], speedMin[1], stepsAcc[1], timeOut[1], homeIsUp[1], motorInv[1], endStInv[1], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[1], motor2Inv[1], endStEnbl[1], motorStopAtHome[1], motorMaxSize[1], motorStopAtMax[1]);
