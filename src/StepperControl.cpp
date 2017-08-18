@@ -16,11 +16,11 @@ void StepperControl::reportEncoders()
 {
   Serial.print(COMM_REPORT_ENCODER_SCALED);
   Serial.print(" X");
-  Serial.print(encoderX.currentPosition());
+  Serial.print((float)encoderX.currentPosition() / (float)stepsPerMm[0]);
   Serial.print(" Y");
-  Serial.print(encoderY.currentPosition());
+  Serial.print((float)encoderY.currentPosition() / (float)stepsPerMm[0]);
   Serial.print(" Z");
-  Serial.print(encoderZ.currentPosition());
+  Serial.print((float)encoderZ.currentPosition() / (float)stepsPerMm[0]);
   CurrentState::getInstance()->printQAndNewLine();
 
   Serial.print(COMM_REPORT_ENCODER_RAW);
@@ -1046,7 +1046,7 @@ int StepperControl::calibrateAxis(int axis)
     Serial.print(parNbrStp);
     Serial.print(" ");
     Serial.print("V");
-    Serial.print(stepsCount / *axisStepsPerMm * 1.0);
+    Serial.print((float)stepsCount / (float)(*axisStepsPerMm));
     Serial.print("\r\n");
   }
 
@@ -1387,32 +1387,32 @@ bool StepperControl::endStopsReached()
 void StepperControl::storePosition()
 {
 
-//  if (motorConsEncoderEnabled[0])
-//  {
-//    CurrentState::getInstance()->setX(encoderX.currentPosition());
-//  }
-//  else
-//  {
+  if (motorConsEncoderEnabled[0])
+  {
+    CurrentState::getInstance()->setX(encoderX.currentPosition());
+  }
+  else
+  {
     CurrentState::getInstance()->setX(axisX.currentPosition());
-//  }
+  }
 
-//  if (motorConsEncoderEnabled[1])
-//  {
-//    CurrentState::getInstance()->setY(encoderY.currentPosition());
-//  }
-//  else
-//  {
+  if (motorConsEncoderEnabled[1])
+  {
+    CurrentState::getInstance()->setY(encoderY.currentPosition());
+  }
+  else
+  {
     CurrentState::getInstance()->setY(axisY.currentPosition());
-//  }
+  }
 
-//  if (motorConsEncoderEnabled[2])
-//  {
-//    CurrentState::getInstance()->setZ(encoderZ.currentPosition());
-//  }
-//  else
-//  {
+  if (motorConsEncoderEnabled[2])
+  {
+    CurrentState::getInstance()->setZ(encoderZ.currentPosition());
+  }
+  else
+  {
     CurrentState::getInstance()->setZ(axisZ.currentPosition());
-//  }
+  }
 }
 
 void StepperControl::reportEndStops()
