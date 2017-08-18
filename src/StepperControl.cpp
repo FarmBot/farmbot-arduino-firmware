@@ -16,11 +16,11 @@ void StepperControl::reportEncoders()
 {
   Serial.print(COMM_REPORT_ENCODER_SCALED);
   Serial.print(" X");
-  Serial.print((float)encoderX.currentPosition() / (float)stepsPerMm[0]);
+  Serial.print(encoderX.currentPosition());
   Serial.print(" Y");
-  Serial.print((float)encoderY.currentPosition() / (float)stepsPerMm[0]);
+  Serial.print(encoderY.currentPosition());
   Serial.print(" Z");
-  Serial.print((float)encoderZ.currentPosition() / (float)stepsPerMm[0]);
+  Serial.print(encoderZ.currentPosition());
   CurrentState::getInstance()->printQAndNewLine();
 
   Serial.print(COMM_REPORT_ENCODER_RAW);
@@ -940,7 +940,8 @@ int StepperControl::calibrateAxis(int axis)
     Serial.print(" ");
     Serial.print("V");
     Serial.print(paramValueInt);
-    Serial.print("\r\n");
+    //Serial.print("\r\n");
+    CurrentState::getInstance()->printQAndNewLine();
   }
 
   // Store the status of the system
@@ -1047,7 +1048,7 @@ int StepperControl::calibrateAxis(int axis)
     Serial.print(" ");
     Serial.print("V");
     Serial.print((float)stepsCount / (float)(*axisStepsPerMm));
-    Serial.print("\r\n");
+    CurrentState::getInstance()->printQAndNewLine();
   }
 
   *axisStatus = COMM_REPORT_MOVE_STATUS_STOP_MOTOR;
@@ -1387,32 +1388,32 @@ bool StepperControl::endStopsReached()
 void StepperControl::storePosition()
 {
 
-  if (motorConsEncoderEnabled[0])
-  {
-    CurrentState::getInstance()->setX(encoderX.currentPosition());
-  }
-  else
-  {
+//  if (motorConsEncoderEnabled[0])
+//  {
+//    CurrentState::getInstance()->setX(encoderX.currentPosition());
+//  }
+//  else
+//  {
     CurrentState::getInstance()->setX(axisX.currentPosition());
-  }
+//  }
 
-  if (motorConsEncoderEnabled[1])
-  {
-    CurrentState::getInstance()->setY(encoderY.currentPosition());
-  }
-  else
-  {
+//  if (motorConsEncoderEnabled[1])
+//  {
+//    CurrentState::getInstance()->setY(encoderY.currentPosition());
+//  }
+//  else
+//  {
     CurrentState::getInstance()->setY(axisY.currentPosition());
-  }
+//  }
 
-  if (motorConsEncoderEnabled[2])
-  {
-    CurrentState::getInstance()->setZ(encoderZ.currentPosition());
-  }
-  else
-  {
+//  if (motorConsEncoderEnabled[2])
+//  {
+//    CurrentState::getInstance()->setZ(encoderZ.currentPosition());
+//  }
+//  else
+//  {
     CurrentState::getInstance()->setZ(axisZ.currentPosition());
-  }
+//  }
 }
 
 void StepperControl::reportEndStops()
