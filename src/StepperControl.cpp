@@ -750,7 +750,7 @@ int StepperControl::calibrateAxis(int axis)
   float *encoderStepDecay;
   bool *encoderEnabled;
   int *axisStatus;
-  int *axisStepsPerMm;
+  long *axisStepsPerMm;
 
   // Prepare for movement
 
@@ -775,7 +775,8 @@ int StepperControl::calibrateAxis(int axis)
     encoderStepDecay = &motorConsMissedStepsDecay[0];
     encoderEnabled = &motorConsEncoderEnabled[0];
     axisStatus = &axisSubStep[0];
-    axisStepsPerMm = &axisStepsPerMm[0];
+    //axisStepsPerMm = &axisStepsPerMm[0];
+    axisStepsPerMm = &stepsPerMm[0];
     break;
   case 1:
     calibAxis = &axisY;
@@ -789,7 +790,8 @@ int StepperControl::calibrateAxis(int axis)
     encoderStepDecay = &motorConsMissedStepsDecay[1];
     encoderEnabled = &motorConsEncoderEnabled[1];
     axisStatus = &axisSubStep[1];
-    axisStepsPerMm = &axisStepsPerMm[1];
+    //axisStepsPerMm = &axisStepsPerMm[1];
+    axisStepsPerMm = &stepsPerMm[1];
     break;
   case 2:
     calibAxis = &axisZ;
@@ -803,7 +805,8 @@ int StepperControl::calibrateAxis(int axis)
     encoderStepDecay = &motorConsMissedStepsDecay[2];
     encoderEnabled = &motorConsEncoderEnabled[2];
     axisStatus = &axisSubStep[2];
-    axisStepsPerMm = &axisStepsPerMm[2];
+    //axisStepsPerMm = &axisStepsPerMm[2];
+    axisStepsPerMm = &stepsPerMm[1];
     break;
   default:
     Serial.print("R99 Calibration error: invalid axis selected\r\n");
@@ -869,10 +872,10 @@ int StepperControl::calibrateAxis(int axis)
       calibAxis->setStepAxis();
       
 
-      delayMicroseconds(100000 / speedMin[axis] / 2);
+      delayMicroseconds(100000 / speedHome[axis] / 2);
 
       stepsCount++;
-      if (stepsCount % (speedMin[axis] * 3) == 0)
+      if (stepsCount % (speedHome[axis] * 3) == 0)
       {
         // Periodically send message still active
         Serial.print(COMM_REPORT_CMD_BUSY);
@@ -880,7 +883,7 @@ int StepperControl::calibrateAxis(int axis)
         CurrentState::getInstance()->printQAndNewLine();
       }
 
-      if (stepsCount % (speedMin[axis] / 6) == 0 /*|| *missedSteps > 3*/)
+      if (stepsCount % (speedHome[axis] / 6) == 0 /*|| *missedSteps > 3*/)
       {
         Serial.print("R99");
         Serial.print(" step count ");
@@ -897,7 +900,7 @@ int StepperControl::calibrateAxis(int axis)
       }
 
       calibAxis->resetMotorStep();
-      delayMicroseconds(100000 / speedMin[axis] / 2);
+      delayMicroseconds(100000 / speedHome[axis] / 2);
     }
     else
     {
@@ -1002,9 +1005,9 @@ int StepperControl::calibrateAxis(int axis)
 
       //checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
 
-      delayMicroseconds(100000 / speedMin[axis] / 2);
+      delayMicroseconds(100000 / speedHome[axis] / 2);
 
-      if (stepsCount % (speedMin[axis] * 3) == 0)
+      if (stepsCount % (speedHome[axis] * 3) == 0)
       {
         // Periodically send message still active
         Serial.print(COMM_REPORT_CMD_BUSY);
@@ -1013,7 +1016,7 @@ int StepperControl::calibrateAxis(int axis)
       }
 
       calibAxis->resetMotorStep();
-      delayMicroseconds(100000 / speedMin[axis] / 2);
+      delayMicroseconds(100000 / speedHome[axis] / 2);
     }
     else
     {
@@ -1170,6 +1173,10 @@ void StepperControl::loadMotorSettings()
   speedMin[0] = ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_X);
   speedMin[1] = ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Y);
   speedMin[2] = ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Z);
+
+  speedHome[0] = ParameterList::getInstance()->getValue(MOVEMENT_HOME_SPEED_X);
+  speedHome[1] = ParameterList::getInstance()->getValue(MOVEMENT_HOME_SPEED_Y);
+  speedHome[2] = ParameterList::getInstance()->getValue(MOVEMENT_HOME_SPEED_Z);
 
   stepsAcc[0] = ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_X);
   stepsAcc[1] = ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Y);
