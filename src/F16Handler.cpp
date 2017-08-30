@@ -25,13 +25,19 @@ F16Handler::F16Handler()
 
 int F16Handler::execute(Command *command)
 {
+  int ret = 0;
 
   if (LOGGING)
   {
     Serial.print("R99 HOME Z\r\n");
   }
 
-  StepperControl::getInstance()->calibrateAxis(2);
+  ret = StepperControl::getInstance()->calibrateAxis(2);
+
+  if (ret == 0) {
+    StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, false, true);
+  }
+
 
   if (LOGGING)
   {

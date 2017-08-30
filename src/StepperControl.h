@@ -105,6 +105,7 @@ private:
   bool homeIsUp[3] = {false, false, false};
   long speedMax[3] = {0, 0, 0 };
   long speedMin[3] = { 0, 0, 0 };
+  long speedHome[3] = { 0, 0, 0 };
   long stepsAcc[3] = { 0, 0, 0 };
   bool motorInv[3] = { false, false, false };
   long motorMaxSize[3] = { 0, 0, 0};

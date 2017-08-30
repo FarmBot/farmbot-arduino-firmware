@@ -24,7 +24,7 @@ public:
   StepperControlAxis();
 
   void loadPinNumbers(int step, int dir, int enable, int min, int max, int step2, int dir2, int enable2);
-  void loadMotorSettings(long speedMax, long speedMin, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, bool endStInv, long interruptSpeed, bool motor2Enbl, bool motor2Inv, bool endStEnbl, bool stopAtHome, long maxSize, bool stopAtMax);
+  void loadMotorSettings(long speedMax, long speedMin, long speedHome, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, bool endStInv, long interruptSpeed, bool motor2Enbl, bool motor2Inv, bool endStEnbl, bool stopAtHome, long maxSize, bool stopAtMax);
   void loadCoordinates(long sourcePoint, long destinationPoint, bool home);
   void setMaxSpeed(long speed);
 
@@ -102,6 +102,7 @@ private:
   // motor settings
   long motorSpeedMax;       // maximum speed in steps per second
   long motorSpeedMin;       // minimum speed in steps per second
+  long motorSpeedHome;      // homing speed in steps per second
   long motorStepsAcc;       // number of steps used for acceleration
   long motorTimeOut;        // timeout in seconds
   bool motorHomeIsUp;       // direction to move when reached 0 on axis but no end stop detected while homing
