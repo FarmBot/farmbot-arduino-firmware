@@ -101,7 +101,7 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
   unsigned long halfway = ((endPos - staPos) / 2) + staPos;
   //unsigned long halfway = ((destinationPosition - sourcePosition) / 2) + sourcePosition;
 
-  // Set the minimum speed if the position would be out of bounds
+  // Set the homing speed if the position would be out of bounds
   if (
         (curPos < staPos || curPos > endPos)
         // || 
@@ -110,7 +110,8 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
         // (!motorHomeIsUp && currentPosition <= 0) || (motorHomeIsUp && currentPosition >= 0) ||)
      )
   {
-    newSpeed = minSpeed;
+    newSpeed = motorSpeedHome;
+    //newSpeed = minSpeed;
     movementCrawling = true;
     movementMoving = true;
   }
@@ -395,13 +396,14 @@ void StepperControlAxis::StepperControlAxis::loadPinNumbers(int step, int dir, i
 }
 
 void StepperControlAxis::loadMotorSettings(
-    long speedMax, long speedMin, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv,
+    long speedMax, long speedMin, long speedHome, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv,
     bool endStInv, long interruptSpeed, bool motor2Enbl, bool motor2Inv, bool endStEnbl, 
     bool stopAtHome, long maxSize, bool stopAtMax)
 {
 
   motorSpeedMax = speedMax;
   motorSpeedMin = speedMin;
+  motorSpeedHome = speedHome;
   motorStepsAcc = stepsAcc;
   motorTimeOut = timeOut;
   motorHomeIsUp = homeIsUp;
