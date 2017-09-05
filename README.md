@@ -160,8 +160,9 @@ F        |52    |E P       |Read value from the tool mount with I2C (not impleme
 F        |61    |P V       |Set the servo on the pin P (only pin 4 and 5) to the requested angle V
 F        |81    |          |Report end stop
 F        |82    |          |Report current position
-F        |83    |          |Report software version
-E        |      |          |Emergency stop
+F        |83    |          |Report software version
+F        |84    |X Y Z     |Set axis current position to zero (yes=1/no=0)
+E        |      |          |Emergency stop
 
 ### Codes received from the arduino
 
