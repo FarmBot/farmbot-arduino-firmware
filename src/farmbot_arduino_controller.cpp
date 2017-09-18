@@ -206,6 +206,7 @@ void setup()
     pinMode(AUX_STEP_PIN, OUTPUT);
     pinMode(AUX_DIR_PIN, OUTPUT);
     pinMode(AUX_ENABLE_PIN, OUTPUT);
+    digitalWrite(AUX_ENABLE_PIN, HIGH);
 
     pinMode(LED_PIN, OUTPUT);
     pinMode(VACUUM_PIN, OUTPUT);
