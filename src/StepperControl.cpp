@@ -92,7 +92,7 @@ void StepperControl::checkAxisSubStatus(StepperControlAxis *axis, int *axisSubSt
 
   if (statusChanged)
   {
-    reportStatus(&axisX, *axisSubStatus);
+    reportStatus(axis, *axisSubStatus);
   }
 }
 
@@ -828,7 +828,7 @@ int StepperControl::calibrateAxis(int axis)
   Serial.print("\r\n");
 
   *axisStatus = COMM_REPORT_MOVE_STATUS_START_MOTOR;
-  reportStatus(&axisX, axisSubStep[0]);
+  reportStatus(calibAxis, axisSubStep[0]);
 
   // Move towards home
   calibAxis->enableMotor();
@@ -844,9 +844,9 @@ int StepperControl::calibrateAxis(int axis)
   motorConsMissedSteps[2] = 0;
 
   *axisStatus = COMM_REPORT_MOVE_STATUS_CRAWLING;
-  reportStatus(&axisX, axisSubStep[0]);
+  reportStatus(calibAxis, axisSubStep[0]);
 
-  reportCalib(&axisX, COMM_REPORT_CALIBRATE_STATUS_TO_HOME);
+  reportCalib(calibAxis, COMM_REPORT_CALIBRATE_STATUS_TO_HOME);
 
   while (!movementDone && error == 0)
   {
@@ -915,7 +915,7 @@ int StepperControl::calibrateAxis(int axis)
     }
   }
 
-  reportCalib(&axisX, COMM_REPORT_CALIBRATE_STATUS_TO_END);
+  reportCalib(calibAxis, COMM_REPORT_CALIBRATE_STATUS_TO_END);
 
   Serial.print("R99");
   Serial.print(" axis ");
@@ -1055,7 +1055,7 @@ int StepperControl::calibrateAxis(int axis)
   }
 
   *axisStatus = COMM_REPORT_MOVE_STATUS_STOP_MOTOR;
-  reportStatus(&axisX, axisSubStep[0]);
+  reportStatus(calibAxis, axisSubStep[0]);
 
   calibAxis->disableMotor();
 
@@ -1078,9 +1078,9 @@ int StepperControl::calibrateAxis(int axis)
   reportPosition();
 
   *axisStatus = COMM_REPORT_MOVE_STATUS_IDLE;
-  reportStatus(&axisX, axisSubStep[0]);
+  reportStatus(calibAxis, axisSubStep[0]);
 
-  reportCalib(&axisX, COMM_REPORT_CALIBRATE_STATUS_IDLE);
+  reportCalib(calibAxis, COMM_REPORT_CALIBRATE_STATUS_IDLE);
 
   return error;
 }
