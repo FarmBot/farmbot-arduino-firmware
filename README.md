@@ -120,8 +120,8 @@ LED_PIN          |  13  | on board LED
 FAN_PIN          |   9  | RAMPS board fan pin
 HEATER_0_PIN     |  10  | RAMPS board heating pin 0
 HEATER_1_PIN     |   8  | RAMPS board heating pin 1
-SERVO_0_PIN	  |   4  | Servo motor 0 signal pin
-SERVO_1_PIN	  |   5  | Servo motor 1 signal pin
+SERVO_0_PIN      |   4  | Servo motor 0 signal pin
+SERVO_1_PIN      |   5  | Servo motor 1 signal pin
 
 
 G-Codes
@@ -174,8 +174,8 @@ R        |01    |                 |Current command started
 R        |02    |                 |Current command finished successfully
 R        |03    |                 |Current command finished with error
 R        |04    |                 |Current command running
-R        |05    |                 |Report motor/axis state
-R        |06    |                 |Report calibration state during execution
+R        |05    |X Y Z            |Report motor/axis state
+R        |06    |X Y Z            |Report calibration state during execution
 R        |07    |                 |Retry movement
 R        |08    |                 |Command echo
 R        |09    |                 |Command invalid
@@ -183,13 +183,13 @@ R        |20    |                 |Report all paramaters complete
 R        |21    |P V              |Report parameter value
 R        |31    |P V              |Report status value
 R        |41    |P V              |Report pin value
-R        |81    |X1 X2 Y1 Y2 Z1 Z2|Reporting end stops - parameters: X1 (end stop x axis min) X2 (end stop x axis max) Y1 Y2 Z1 Z2
+R        |81    |XA XB YA YB ZA ZB|Report end stops
 R        |82    |X Y Z            |Report current position
-R        |83    |C                |Report software version
+R        |83    |                 |Report software version
 R        |84    |X Y Z            |Report encoder position scaled
 R        |85    |X Y Z            |Report encoder position raw
 R        |87    |                 |Emergency lock
-R        |99    |C                |Debug message
+R        |99    |                 |Debug message
 
 Axis states (R05)
 -----------------
@@ -222,17 +222,18 @@ Parameters for commands
 
 Parameters|Description            |Unit of Measurement
 ----------|-----------------------|-------------------
-X         |X movement             |steps
-Y         |Y movement             |steps
-Z         |Z movement	         |steps
-S         |Speed                  |steps/second
+X         |X movement             |millimeters
+Y         |Y movement             |millimeters
+Z         |Z movement             |millimeters
+A         |X speed                |steps/second
+B         |Y speed                |steps/second
+C         |Z speed                |steps/second
 Q         |Queue number           |#
 T         |Time                   |seconds
-C         |Comment                |text
+N         |Number                 |#
 P         |Parameter/pin number   |#
 V         |Value number           |#
 W         |Secondary value        |#
-L         |Number                 |#
 E         |Element (in tool mount)|#
 M         |Mode (set pin mode)    |0 = output / 1 = input
 M         |Mode (read/write)      |0 = digital / 1 = analog
