@@ -24,6 +24,10 @@
   const char COMM_REPORT_CMD_ECHO[4] = { 'R', '0', '8', '\0' };
   const char COMM_REPORT_BAD_CMD[4] = { 'R', '0', '9', '\0' };
 
+  const char COMM_REPORT_HOMED_X[4] = { 'R', '1', '1', '\0' };
+  const char COMM_REPORT_HOMED_Y[4] = { 'R', '1', '2', '\0' };
+  const char COMM_REPORT_HOMED_Z[4] = { 'R', '1', '3', '\0' };
+
   const char COMM_REPORT_ENCODER_SCALED[4] = { 'R', '8', '4', '\0' };
   const char COMM_REPORT_ENCODER_RAW[4] = { 'R', '8', '5', '\0' };
 

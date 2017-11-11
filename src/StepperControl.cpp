@@ -624,6 +624,26 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
   serialBufferEmpty();
   Serial.print("R99 stopped\r\n");
 
+  // Send feedback for homing
+
+  if (xHome && !error && !emergencyStop)
+  {
+    Serial.print(COMM_REPORT_HOMED_X);
+    CurrentState::getInstance()->printQAndNewLine();
+  }
+
+  if (yHome && !error && !emergencyStop)
+  {
+    Serial.print(COMM_REPORT_HOMED_Y);
+    CurrentState::getInstance()->printQAndNewLine();
+  }
+
+  if (zHome && !error && !emergencyStop)
+  {
+    Serial.print(COMM_REPORT_HOMED_Z);
+    CurrentState::getInstance()->printQAndNewLine();
+  }
+
   // Stop motors
 
   axisSubStep[0] = COMM_REPORT_MOVE_STATUS_STOP_MOTOR;
