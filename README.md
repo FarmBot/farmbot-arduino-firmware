@@ -179,6 +179,9 @@ R        |06    |X Y Z            |Report calibration state during execution
 R        |07    |                 |Retry movement
 R        |08    |                 |Command echo
 R        |09    |                 |Command invalid
+R        |11    |                 |X axis homing complete
+R        |12    |                 |Y axis homing complete
+R        |13    |                 |Z axis homing complete
 R        |20    |                 |Report all paramaters complete
 R        |21    |P V              |Report parameter value
 R        |31    |P V              |Report status value
