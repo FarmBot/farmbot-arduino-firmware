@@ -61,6 +61,7 @@ void PinControl::resetPinsUsed()
       Serial.print("\r\n");
 
       digitalWrite(pinNr, false);
+      readValue(pinNr, 0);
       pinWritten[0][pinNr] = false;
     }
     if (pinWritten[1][pinNr])
@@ -71,6 +72,7 @@ void PinControl::resetPinsUsed()
       Serial.print("\r\n");
 
       analogWrite(pinNr, 0);
+      readValue(pinNr, 1);
       pinWritten[1][pinNr] = false;
     }
   }
