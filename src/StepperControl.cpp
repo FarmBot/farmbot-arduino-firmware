@@ -826,7 +826,7 @@ int StepperControl::calibrateAxis(int axis)
     encoderEnabled = &motorConsEncoderEnabled[2];
     axisStatus = &axisSubStep[2];
     //axisStepsPerMm = &axisStepsPerMm[2];
-    axisStepsPerMm = &stepsPerMm[1];
+    axisStepsPerMm = &stepsPerMm[2];
     break;
   default:
     Serial.print("R99 Calibration error: invalid axis selected\r\n");
