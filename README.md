@@ -131,13 +131,13 @@ G-Codes
 
 Code type|Number|Parameters|Function
 ---------|------|----------|--------
-G        |      |          |G-Code, the codes working the same as a 3D printer
+_G_      |      |          |_G-Code, the codes working the same as a 3D printer_
 G        |00    |X Y Z S   |Move to location at given speed for axis (don't have to be a straight line), in absolute coordinates
 G        |01    |X Y Z S   |Move to location on a straight line
 G        |28    |          |Move home all axis
-F        |      |          |Farm commands, commands specially added for the farmbot
-F        |01    |T         |Dose amount of water using time in millisecond
-F        |02    |N         |Dose amount of water using flow meter that measures pulses
+_F_      |      |          |_Farm commands, commands specially added for FarmBot_
+F        |01    |T         |Dose amount of water using time in millisecond (not implemented)
+F        |02    |N         |Dose amount of water using flow meter that measures pulses (not implemented)
 F        |09    |          |Reset emergency stop
 F        |11    |          |Home X axis
 F        |12    |          |Home Y axis
@@ -166,9 +166,9 @@ E        |      |          |Emergency stop
 
 ### Codes received from the arduino
 
-Code type|Number|Parameters|Function
+Code type|Number|Parameters       |Function
 ---------|------|-----------------|--------
-R        |      |                 |Report messages
+_R_      |      |                 |_Report messages_
 R        |00    |                 |Idle
 R        |01    |                 |Current command started
 R        |02    |                 |Current command finished successfully
@@ -184,6 +184,7 @@ R        |12    |                 |Y axis homing complete
 R        |13    |                 |Z axis homing complete
 R        |20    |                 |Report all paramaters complete
 R        |21    |P V              |Report parameter value
+R        |23    |P V              |Report updated parameter (during calibration)
 R        |31    |P V              |Report status value
 R        |41    |P V              |Report pin value
 R        |81    |XA XB YA YB ZA ZB|Report end stops
