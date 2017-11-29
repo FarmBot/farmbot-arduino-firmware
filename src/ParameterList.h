@@ -105,10 +105,14 @@ enum ParamListEnum
   ENCODER_INVERT_Y = 132,
   ENCODER_INVERT_Z = 133,
 
-  // sizes of axis
+  // sizes of axis, lower byte and higher byte
   MOVEMENT_AXIS_NR_STEPS_X = 141,
   MOVEMENT_AXIS_NR_STEPS_Y = 142,
   MOVEMENT_AXIS_NR_STEPS_Z = 143,
+
+  MOVEMENT_AXIS_NR_STEPS_H_X = 151,/**/
+  MOVEMENT_AXIS_NR_STEPS_H_Y = 152,
+  MOVEMENT_AXIS_NR_STEPS_H_Z = 153,
 
   // stop at end of axis
   MOVEMENT_STOP_AT_MAX_X = 145,
@@ -160,8 +164,8 @@ public:
   int writeAllValuesToEeprom();
   int setAllValuesToDefault();
 
-  int readValueEeprom(int id);
-  int writeValueEeprom(int id, int value);
+  long readValueEeprom(int id);
+  int writeValueEeprom(int id, long value);
 
   void sendConfigToModules();
 

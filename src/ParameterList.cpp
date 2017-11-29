@@ -148,35 +148,60 @@ int ParameterList::paramChangeNumber()
 
 // ===== eeprom handling ====
 
-int ParameterList::readValueEeprom(int id)
+long ParameterList::readValueEeprom(int id)
 {
 
   // Assume all values are ints and calculate address for that
   int address = id * 2;
 
   //Read the 2 bytes from the eeprom memory.
-  long two = EEPROM.read(address);
-  long one = EEPROM.read(address + 1);
+  long one   = EEPROM.read(address + 0);
+  long two   = EEPROM.read(address + 1);
+
+  long three = 0;
+  long four  = 0;
+
+  if (id == 141 || id == 142 || id == 143)
+  {
+    three = EEPROM.read(address + 20);
+    four = EEPROM.read(address + 21);
+  }
+
+  // just in case there are non uninitialized EEPROM bytes
+  // put them both to zero
+  if (three == -1 && four == -1)
+  {
+    three = 0;
+    four = 0;
+  }
 
   //Return the recomposed long by using bitshift.
-  return ((two << 0) & 0xFF) + ((one << 8) & 0xFFFF);
+  return ((one << 0) & 0xFF) + ((two << 8) & 0xFF00) + ((three << 16) & 0xFF0000); +((four << 24) & 0xFF000000);
 }
 
-int ParameterList::writeValueEeprom(int id, int value)
+int ParameterList::writeValueEeprom(int id, long value)
 {
 
   // Assume all values are ints and calculate address for that
   int address = id * 2;
 
   //Decomposition from a int to 2 bytes by using bitshift.
-  //One = Most significant -> Two = Least significant byte
-  byte two = (value & 0xFF);
-  byte one = ((value >> 8) & 0xFF);
+  //One = Least significant -> Four = Most significant byte
+  byte one= (value & 0xFF);
+  byte two = ((value >> 8) & 0xFF);
+  byte three = ((value >> 16) & 0xFF);
+  byte four = ((value >> 24) & 0xFF);
 
   //Write the 4 bytes into the eeprom memory.
-  EEPROM.write(address, two);
-  EEPROM.write(address + 1, one);
+  EEPROM.write(address + 0, one);
+  EEPROM.write(address + 1, two);
 
+  // Only this parameter needs a long value
+  if (id == 141 || id == 142 || id == 143)
+  {
+    EEPROM.write(address + 20, one);
+    EEPROM.write(address + 21, two);
+  }
   return 0;
 }
 

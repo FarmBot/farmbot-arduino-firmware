@@ -18,6 +18,9 @@ unsigned long currentTime;
 unsigned long cycleCounter = 0;
 bool previousEmergencyStop = false;
 
+unsigned long pinGuardLastCheck;
+unsigned long pinGuardCurrentTime;
+
 int lastParamChangeNr = 0;
 
 String commandString = "";
@@ -50,11 +53,11 @@ void interrupt(void)
 {
   if (!debugInterrupt)
   {
-    interruptSecondTimer++;
+    //interruptSecondTimer++;
 
     if (interruptBusy == false)
     {
-      interruptStartTime = micros();
+      //interruptStartTime = micros();
 
       interruptBusy = true;
       StepperControl::getInstance()->handleMovementInterrupt();
@@ -67,17 +70,17 @@ void interrupt(void)
       //  //blinkLed();
       //}
 
-      interruptStopTime = micros();
+      //interruptStopTime = micros();
 
-      if (interruptStopTime > interruptStartTime)
-      {
-        interruptDuration = interruptStopTime - interruptStartTime;
-      }
+      //if (interruptStopTime > interruptStartTime)
+      //{
+      //  interruptDuration = interruptStopTime - interruptStartTime;
+      //}
 
-      if (interruptDuration > interruptDurationMax)
-      {
-        interruptDurationMax = interruptDuration;
-      }
+      //if (interruptDuration > interruptDurationMax)
+      //{
+      //  interruptDurationMax = interruptDuration;
+      //}
 
       interruptBusy = false;
     }
@@ -252,6 +255,7 @@ void setup()
 
   // Get the settings for the pin guard
   PinGuard::getInstance()->loadConfig();
+  pinGuardLastCheck = millis();
 
   // Start the interrupt used for moving
   // Interrupt management code library written by Paul Stoffregen
@@ -299,6 +303,21 @@ void loop()
 
   if (Serial.available())
   {
+
+    unsigned long pinGuardLastCheck;
+    pinGuardCurrentTime = millis();
+    if (pinGuardCurrentTime < pinGuardLastCheck)
+    {
+      pinGuardLastCheck = pinGuardCurrentTime;
+    }
+    else
+    {
+      if (pinGuardLastCheck - pinGuardCurrentTime >= 999)
+      {
+        // check the pins for timeouts
+        PinGuard::getInstance()->checkPins();
+      }
+    }
 
     // Save current time stamp for timeout actions
     lastAction = millis();
