@@ -173,6 +173,7 @@ void setup()
     pinMode(X_STEP_PIN, OUTPUT);
     pinMode(X_DIR_PIN, OUTPUT);
     pinMode(X_ENABLE_PIN, OUTPUT);
+
     pinMode(E_STEP_PIN, OUTPUT);
     pinMode(E_DIR_PIN, OUTPUT);
     pinMode(E_ENABLE_PIN, OUTPUT);
@@ -222,7 +223,7 @@ void setup()
     pinMode(UTM_E, INPUT_PULLUP);
     pinMode(UTM_F, INPUT_PULLUP);
     pinMode(UTM_G, INPUT_PULLUP);
-    pinMode(UTM_H, INPUT_PULLUP);
+    if (UTM_H > 0) { pinMode(UTM_H, INPUT_PULLUP) };
     pinMode(UTM_I, INPUT_PULLUP);
     pinMode(UTM_J, INPUT_PULLUP);
     pinMode(UTM_K, INPUT_PULLUP);
@@ -268,6 +269,9 @@ void setup()
   // Initialize the inactivity check
   lastAction = millis();
 
+  pinGuardCurrentTime = millis();
+  pinGuardLastCheck = millis();
+
   if (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_Z) == 1)
   {
     Serial.print("R99 HOME Z ON STARTUP\r\n");
@@ -301,23 +305,24 @@ void loop()
     StepperControl::getInstance()->handleMovementInterrupt();
   }
 
+  pinGuardCurrentTime = millis();
+  if (pinGuardCurrentTime < pinGuardLastCheck)
+  {
+    pinGuardLastCheck = pinGuardCurrentTime;
+  }
+  else
+  {
+    if (pinGuardCurrentTime - pinGuardLastCheck >= 1000)
+    {
+      pinGuardLastCheck += 1000;
+
+      // check the pins for timeouts
+      PinGuard::getInstance()->checkPins();
+    }
+  }
+
   if (Serial.available())
   {
-
-    unsigned long pinGuardLastCheck;
-    pinGuardCurrentTime = millis();
-    if (pinGuardCurrentTime < pinGuardLastCheck)
-    {
-      pinGuardLastCheck = pinGuardCurrentTime;
-    }
-    else
-    {
-      if (pinGuardLastCheck - pinGuardCurrentTime >= 999)
-      {
-        // check the pins for timeouts
-        PinGuard::getInstance()->checkPins();
-      }
-    }
 
     // Save current time stamp for timeout actions
     lastAction = millis();

@@ -134,13 +134,16 @@
   #define X_STEP_PIN 26 // X1_STEP_PIN
   #define X_DIR_PIN 27 // X1_DIR_PIN
   #define X_ENABLE_PIN 25 // X1_ENABLE_PIN
+
   #define E_STEP_PIN 15 // X2_STEP_PIN
   #define E_DIR_PIN 30 // X2_DIR_PIN
   #define E_ENABLE_PIN 14 // X2_ENABLE_PIN
+
   #define X_MIN_PIN 69
   #define X_MAX_PIN 68
   #define X_ENCDR_A 16
   #define X_ENCDR_B 17
+  
   #define X2_ENCDR_A 22
   #define X2_ENCDR_B 39
   #define X_ENCDR_A_Q -1 // N/A
