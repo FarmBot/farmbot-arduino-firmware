@@ -1070,7 +1070,7 @@ int StepperControl::calibrateAxis(int axis)
     Serial.print(parNbrStp);
     Serial.print(" ");
     Serial.print("V");
-    Serial.print((float)stepsCount / (float)(*axisStepsPerMm));
+    Serial.print((float)stepsCount);
     CurrentState::getInstance()->printQAndNewLine();
   }
 
