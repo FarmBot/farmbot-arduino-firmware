@@ -113,7 +113,7 @@
   const long MOVEMENT_HOME_SPEED_Y_DEFAULT = 50;
   const long MOVEMENT_HOME_SPEED_Z_DEFAULT = 50;
 
-  // Maxumim speed in steps per second
+  // Maximum speed in steps per second
   const long MOVEMENT_MAX_SPD_X_DEFAULT = 400;
   const long MOVEMENT_MAX_SPD_Y_DEFAULT = 400;
   const long MOVEMENT_MAX_SPD_Z_DEFAULT = 400;

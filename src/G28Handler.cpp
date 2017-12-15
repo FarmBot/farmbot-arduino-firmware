@@ -27,9 +27,14 @@ int G28Handler::execute(Command *command)
 
   //Serial.print("home\r\n");
 
-  StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, false, true);
-  StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, true, true, false);
-  //StepperControl::getInstance()->moveAbsoluteConstant(0,0,0,HOME_MOVEMENT_SPEED_S_P_S,true);
+  long sourcePoint[2] = {0, 0};
+  sourcePoint[0] = CurrentState::getInstance()->getX();
+  sourcePoint[1] = CurrentState::getInstance()->getY();
+
+  StepperControl::getInstance()->moveToCoords(sourcePoint[0], sourcePoint[1], 0, 0, 0, 0, false, false, false);
+  StepperControl::getInstance()->moveToCoords(sourcePoint[0], 0, 0, 0, 0, 0, false, false, false);
+  StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, false, false);
+
   if (LOGGING)
   {
     CurrentState::getInstance()->print();
