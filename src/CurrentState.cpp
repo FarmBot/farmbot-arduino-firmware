@@ -86,7 +86,7 @@ void CurrentState::setEndStopState(unsigned int axis, unsigned int position, boo
   endStopState[axis][position] = state;
 }
 
-void CurrentState::setStepsPerMm(int stepsX, int stepsY, int stepsZ)
+void CurrentState::setStepsPerMm(long stepsX, long stepsY, long stepsZ)
 {
   stepsPerMmX = stepsX;
   stepsPerMmY = stepsY;

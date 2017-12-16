@@ -18,6 +18,9 @@ unsigned long currentTime;
 unsigned long cycleCounter = 0;
 bool previousEmergencyStop = false;
 
+unsigned long pinGuardLastCheck;
+unsigned long pinGuardCurrentTime;
+
 int lastParamChangeNr = 0;
 
 String commandString = "";
@@ -50,11 +53,11 @@ void interrupt(void)
 {
   if (!debugInterrupt)
   {
-    interruptSecondTimer++;
+    //interruptSecondTimer++;
 
     if (interruptBusy == false)
     {
-      interruptStartTime = micros();
+      //interruptStartTime = micros();
 
       interruptBusy = true;
       StepperControl::getInstance()->handleMovementInterrupt();
@@ -67,17 +70,17 @@ void interrupt(void)
       //  //blinkLed();
       //}
 
-      interruptStopTime = micros();
+      //interruptStopTime = micros();
 
-      if (interruptStopTime > interruptStartTime)
-      {
-        interruptDuration = interruptStopTime - interruptStartTime;
-      }
+      //if (interruptStopTime > interruptStartTime)
+      //{
+      //  interruptDuration = interruptStopTime - interruptStartTime;
+      //}
 
-      if (interruptDuration > interruptDurationMax)
-      {
-        interruptDurationMax = interruptDuration;
-      }
+      //if (interruptDuration > interruptDurationMax)
+      //{
+      //  interruptDurationMax = interruptDuration;
+      //}
 
       interruptBusy = false;
     }
@@ -170,6 +173,7 @@ void setup()
     pinMode(X_STEP_PIN, OUTPUT);
     pinMode(X_DIR_PIN, OUTPUT);
     pinMode(X_ENABLE_PIN, OUTPUT);
+
     pinMode(E_STEP_PIN, OUTPUT);
     pinMode(E_DIR_PIN, OUTPUT);
     pinMode(E_ENABLE_PIN, OUTPUT);
@@ -253,6 +257,7 @@ void setup()
 
   // Get the settings for the pin guard
   PinGuard::getInstance()->loadConfig();
+  pinGuardLastCheck = millis();
 
   // Start the interrupt used for moving
   // Interrupt management code library written by Paul Stoffregen
@@ -264,6 +269,9 @@ void setup()
 
   // Initialize the inactivity check
   lastAction = millis();
+
+  pinGuardCurrentTime = millis();
+  pinGuardLastCheck = millis();
 
   if (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_Z) == 1)
   {
@@ -296,6 +304,22 @@ void loop()
   if (debugInterrupt)
   {
     StepperControl::getInstance()->handleMovementInterrupt();
+  }
+
+  pinGuardCurrentTime = millis();
+  if (pinGuardCurrentTime < pinGuardLastCheck)
+  {
+    pinGuardLastCheck = pinGuardCurrentTime;
+  }
+  else
+  {
+    if (pinGuardCurrentTime - pinGuardLastCheck >= 1000)
+    {
+      pinGuardLastCheck += 1000;
+
+      // check the pins for timeouts
+      PinGuard::getInstance()->checkPins();
+    }
   }
 
   if (Serial.available())
