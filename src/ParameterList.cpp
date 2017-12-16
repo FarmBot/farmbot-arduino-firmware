@@ -2,7 +2,7 @@
 #include <EEPROM.h>
 
 static ParameterList *instanceParam;
-int paramValues[PARAM_NR_OF_PARAMS];
+long paramValues[PARAM_NR_OF_PARAMS];
 
 ParameterList *ParameterList::getInstance()
 {
@@ -46,9 +46,9 @@ int ParameterList::readValue(int id)
   if (validParam(id))
   {
     // Retrieve the value from memory
-    int value = paramValues[id];
+    long value = paramValues[id];
 
-    // Send to the raspberrt pi
+    // Send to the raspberry pi
     Serial.print("R21");
     Serial.print(" ");
     Serial.print("P");
@@ -67,7 +67,7 @@ int ParameterList::readValue(int id)
   return 0;
 }
 
-int ParameterList::writeValue(int id, int value)
+int ParameterList::writeValue(int id, long value)
 {
 
   if (paramChangeNr < 9999)
@@ -136,7 +136,7 @@ int ParameterList::readAllValues()
   }
 }
 
-int ParameterList::getValue(int id)
+long ParameterList::getValue(int id)
 {
   return paramValues[id];
 }
@@ -176,7 +176,7 @@ long ParameterList::readValueEeprom(int id)
   }
 
   //Return the recomposed long by using bitshift.
-  return ((one << 0) & 0xFF) + ((two << 8) & 0xFF00) + ((three << 16) & 0xFF0000); +((four << 24) & 0xFF000000);
+  return ((one << 0) & 0xFF) + ((two << 8) & 0xFF00) + ((three << 16) & 0xFF0000) + ((four << 24) & 0xFF000000);
 }
 
 int ParameterList::writeValueEeprom(int id, long value)
@@ -187,7 +187,7 @@ int ParameterList::writeValueEeprom(int id, long value)
 
   //Decomposition from a int to 2 bytes by using bitshift.
   //One = Least significant -> Four = Most significant byte
-  byte one= (value & 0xFF);
+  byte one = (value & 0xFF);
   byte two = ((value >> 8) & 0xFF);
   byte three = ((value >> 16) & 0xFF);
   byte four = ((value >> 24) & 0xFF);
@@ -199,8 +199,8 @@ int ParameterList::writeValueEeprom(int id, long value)
   // Only this parameter needs a long value
   if (id == 141 || id == 142 || id == 143)
   {
-    EEPROM.write(address + 20, one);
-    EEPROM.write(address + 21, two);
+    EEPROM.write(address + 20, three);
+    EEPROM.write(address + 21, four);
   }
   return 0;
 }

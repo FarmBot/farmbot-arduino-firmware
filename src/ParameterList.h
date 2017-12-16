@@ -152,9 +152,9 @@ class ParameterList
 
 public:
   static ParameterList *getInstance();
-  int writeValue(int id, int value);
+  int writeValue(int id, long value);
   int readValue(int id);
-  int getValue(int id);
+  long getValue(int id);
 
   bool validParam(int id);
   void loadDefaultValue(int id);
