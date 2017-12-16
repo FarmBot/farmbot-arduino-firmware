@@ -243,22 +243,34 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
 
   if (xMaxSpd > 0 && xMaxSpd < speedMax[0])
   {
-    speedMax[0] = xMaxSpd;
+    commandSpeed[0] = xMaxSpd;
+  }
+  else
+  {
+    commandSpeed[0] = speedMax[0];
   }
 
   if (yMaxSpd > 0 && yMaxSpd < speedMax[1])
   {
-    speedMax[1] = yMaxSpd;
+    commandSpeed[1] = yMaxSpd;
+  }
+    else
+  {
+    commandSpeed[1] = speedMax[1];
   }
 
   if (zMaxSpd > 0 && zMaxSpd < speedMax[2])
   {
-    speedMax[2] = zMaxSpd;
+    commandSpeed[2] = zMaxSpd;
+  }
+    else
+  {
+    commandSpeed[2] = speedMax[2];
   }
 
-  axisX.setMaxSpeed(speedMax[0]);
-  axisY.setMaxSpeed(speedMax[1]);
-  axisZ.setMaxSpeed(speedMax[2]);
+  axisX.setMaxSpeed(commandSpeed[0]);
+  axisY.setMaxSpeed(commandSpeed[1]);
+  axisZ.setMaxSpeed(commandSpeed[2]);
 
   // Load coordinates into axis class
 
