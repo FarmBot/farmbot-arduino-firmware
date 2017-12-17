@@ -377,7 +377,6 @@ void loop()
         //strcpy()
         //commandEcho
 
-
         // Log the values if needed for debugging
         if (LOGGING || debugMessages)
         {

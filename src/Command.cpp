@@ -261,8 +261,17 @@ void Command::print()
   Serial.print(element);
   Serial.print(", M: ");
   Serial.print(mode);
+
+  Serial.print(", A: ");
+  Serial.print(axisSpeedValue[0]);
+  Serial.print(", B: ");
+  Serial.print(axisSpeedValue[1]);
+  Serial.print(", C: ");
+  Serial.print(axisSpeedValue[2]);
+
   Serial.print(", Q: ");
   Serial.print(msgQueue);
+
   Serial.print("\r\n");
 }
 

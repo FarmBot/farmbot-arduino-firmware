@@ -167,25 +167,8 @@ long ParameterList::readValueEeprom(int id)
     four = EEPROM.read(address + 21);
   }
 
-  if (id == 141 || id == 142 || id == 143)
-  {
-    Serial.print("reading bytes");
-    Serial.print(" ");
-    Serial.print(id);
-    Serial.print(" ");
-    Serial.print(four, HEX);
-    Serial.print(" ");
-    Serial.print(three, HEX);
-    Serial.print(" ");
-    Serial.print(two, HEX);
-    Serial.print(" ");
-    Serial.print(one, HEX);
-    Serial.print("\r\n");
-  }
-
   // just in case there are non uninitialized EEPROM bytes
   // put them both to zero
-  /**/
   if (three == -1 && four == -1)
   {
     three = 0;
@@ -208,23 +191,6 @@ int ParameterList::writeValueEeprom(int id, long value)
   byte two = ((value >> 8) & 0xFF);
   byte three = ((value >> 16) & 0xFF);
   byte four = ((value >> 24) & 0xFF);
-
-  Serial.print("writing bytes");
-  Serial.print(" ");
-  Serial.print(id);
-  Serial.print(" ");
-  Serial.print(value);
-  Serial.print(" ");
-  Serial.print(value, HEX);
-  Serial.print(" ");
-  Serial.print(four, HEX);
-  Serial.print(" ");
-  Serial.print(three,HEX);
-  Serial.print(" ");
-  Serial.print(two, HEX);
-  Serial.print(" ");
-  Serial.print(one, HEX);
-  Serial.print("\r\n");
 
   //Write the 4 bytes into the eeprom memory.
   EEPROM.write(address + 0, one);

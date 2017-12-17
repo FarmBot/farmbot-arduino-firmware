@@ -24,23 +24,24 @@ G00Handler::G00Handler()
 
 int G00Handler::execute(Command *command)
 {
+  /*
+  	Serial.print("G00 was here\r\n");
 
-  //	Serial.print("G00 was here\r\n");
-
-  //	Serial.print("R99");
-  //	Serial.print(" X ");
-  //	Serial.print(command->getX());
-  //	Serial.print(" Y ");
-  //	Serial.print(command->getY());
-  //	Serial.print(" Z ");
-  //	Serial.print(command->getZ());
-  //	Serial.print(" A ");
-  //	Serial.print(command->getA());
-  //	Serial.print(" B ");
-  //	Serial.print(command->getB());
-  //	Serial.print(" C ");
-  //	Serial.print(command->getC());
-  //	Serial.print("\r\n");
+  	Serial.print("R99");
+  	Serial.print(" X ");
+  	Serial.print(command->getX());
+  	Serial.print(" Y ");
+  	Serial.print(command->getY());
+  	Serial.print(" Z ");
+  	Serial.print(command->getZ());
+  	Serial.print(" A ");
+  	Serial.print(command->getA());
+  	Serial.print(" B ");
+  	Serial.print(command->getB());
+  	Serial.print(" C ");
+  	Serial.print(command->getC());
+  	Serial.print("\r\n");
+  */
 
   StepperControl::getInstance()->moveToCoords(
       command->getX(), command->getY(), command->getZ(),
