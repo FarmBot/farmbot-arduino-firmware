@@ -238,6 +238,7 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
   int incomingByte = 0;
   int error = 0;
   bool emergencyStop = false;
+  unsigned int commandSpeed[3];
 
   // if a speed is given in the command, use that instead of the config speed
 
