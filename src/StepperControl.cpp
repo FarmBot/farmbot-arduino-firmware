@@ -92,7 +92,7 @@ void StepperControl::checkAxisSubStatus(StepperControlAxis *axis, int *axisSubSt
 
   if (statusChanged)
   {
-    reportStatus(&axisX, *axisSubStatus);
+    reportStatus(axis, *axisSubStatus);
   }
 }
 
@@ -243,22 +243,34 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
 
   if (xMaxSpd > 0 && xMaxSpd < speedMax[0])
   {
-    speedMax[0] = xMaxSpd;
+    commandSpeed[0] = xMaxSpd;
+  }
+  else
+  {
+    commandSpeed[0] = speedMax[0];
   }
 
   if (yMaxSpd > 0 && yMaxSpd < speedMax[1])
   {
-    speedMax[1] = yMaxSpd;
+    commandSpeed[1] = yMaxSpd;
+  }
+    else
+  {
+    commandSpeed[1] = speedMax[1];
   }
 
   if (zMaxSpd > 0 && zMaxSpd < speedMax[2])
   {
-    speedMax[2] = zMaxSpd;
+    commandSpeed[2] = zMaxSpd;
+  }
+    else
+  {
+    commandSpeed[2] = speedMax[2];
   }
 
-  axisX.setMaxSpeed(speedMax[0]);
-  axisY.setMaxSpeed(speedMax[1]);
-  axisZ.setMaxSpeed(speedMax[2]);
+  axisX.setMaxSpeed(commandSpeed[0]);
+  axisY.setMaxSpeed(commandSpeed[1]);
+  axisZ.setMaxSpeed(commandSpeed[2]);
 
   // Load coordinates into axis class
 
@@ -848,7 +860,7 @@ int StepperControl::calibrateAxis(int axis)
   Serial.print("\r\n");
 
   *axisStatus = COMM_REPORT_MOVE_STATUS_START_MOTOR;
-  reportStatus(&axisX, axisSubStep[0]);
+  reportStatus(calibAxis, axisSubStep[0]);
 
   // Move towards home
   calibAxis->enableMotor();
@@ -864,9 +876,9 @@ int StepperControl::calibrateAxis(int axis)
   motorConsMissedSteps[2] = 0;
 
   *axisStatus = COMM_REPORT_MOVE_STATUS_CRAWLING;
-  reportStatus(&axisX, axisSubStep[0]);
+  reportStatus(calibAxis, axisSubStep[0]);
 
-  reportCalib(&axisX, COMM_REPORT_CALIBRATE_STATUS_TO_HOME);
+  reportCalib(calibAxis, COMM_REPORT_CALIBRATE_STATUS_TO_HOME);
 
   while (!movementDone && error == 0)
   {
@@ -935,7 +947,7 @@ int StepperControl::calibrateAxis(int axis)
     }
   }
 
-  reportCalib(&axisX, COMM_REPORT_CALIBRATE_STATUS_TO_END);
+  reportCalib(calibAxis, COMM_REPORT_CALIBRATE_STATUS_TO_END);
 
   Serial.print("R99");
   Serial.print(" axis ");
@@ -1070,12 +1082,12 @@ int StepperControl::calibrateAxis(int axis)
     Serial.print(parNbrStp);
     Serial.print(" ");
     Serial.print("V");
-    Serial.print((float)stepsCount / (float)(*axisStepsPerMm));
+    Serial.print((float)stepsCount);
     CurrentState::getInstance()->printQAndNewLine();
   }
 
   *axisStatus = COMM_REPORT_MOVE_STATUS_STOP_MOTOR;
-  reportStatus(&axisX, axisSubStep[0]);
+  reportStatus(calibAxis, axisSubStep[0]);
 
   calibAxis->disableMotor();
 
@@ -1098,9 +1110,9 @@ int StepperControl::calibrateAxis(int axis)
   reportPosition();
 
   *axisStatus = COMM_REPORT_MOVE_STATUS_IDLE;
-  reportStatus(&axisX, axisSubStep[0]);
+  reportStatus(calibAxis, axisSubStep[0]);
 
-  reportCalib(&axisX, COMM_REPORT_CALIBRATE_STATUS_IDLE);
+  reportCalib(calibAxis, COMM_REPORT_CALIBRATE_STATUS_IDLE);
 
   return error;
 }

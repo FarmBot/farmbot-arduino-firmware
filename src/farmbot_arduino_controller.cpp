@@ -182,8 +182,8 @@ void setup()
 
     pinMode(X_ENCDR_A, INPUT_PULLUP);
     pinMode(X_ENCDR_B, INPUT_PULLUP);
-    pinMode(X_ENCDR_A_Q, INPUT_PULLUP);
-    pinMode(X_ENCDR_B_Q, INPUT_PULLUP);
+    //pinMode(X_ENCDR_A_Q, INPUT_PULLUP);
+    //pinMode(X_ENCDR_B_Q, INPUT_PULLUP);
 
     pinMode(Y_STEP_PIN, OUTPUT);
     pinMode(Y_DIR_PIN, OUTPUT);
@@ -193,8 +193,8 @@ void setup()
 
     pinMode(Y_ENCDR_A, INPUT_PULLUP);
     pinMode(Y_ENCDR_B, INPUT_PULLUP);
-    pinMode(Y_ENCDR_A_Q, INPUT_PULLUP);
-    pinMode(Y_ENCDR_B_Q, INPUT_PULLUP);
+    //pinMode(Y_ENCDR_A_Q, INPUT_PULLUP);
+    //pinMode(Y_ENCDR_B_Q, INPUT_PULLUP);
 
     pinMode(Z_STEP_PIN, OUTPUT);
     pinMode(Z_DIR_PIN, OUTPUT);
@@ -204,12 +204,13 @@ void setup()
 
     pinMode(Z_ENCDR_A, INPUT_PULLUP);
     pinMode(Z_ENCDR_B, INPUT_PULLUP);
-    pinMode(Z_ENCDR_A_Q, INPUT_PULLUP);
-    pinMode(Z_ENCDR_B_Q, INPUT_PULLUP);
+    //pinMode(Z_ENCDR_A_Q, INPUT_PULLUP);
+    //pinMode(Z_ENCDR_B_Q, INPUT_PULLUP);
 
     pinMode(AUX_STEP_PIN, OUTPUT);
     pinMode(AUX_DIR_PIN, OUTPUT);
     pinMode(AUX_ENABLE_PIN, OUTPUT);
+    digitalWrite(AUX_ENABLE_PIN, HIGH);
 
     pinMode(LED_PIN, OUTPUT);
     pinMode(VACUUM_PIN, OUTPUT);
@@ -220,14 +221,14 @@ void setup()
 
     pinMode(UTM_C, INPUT_PULLUP);
     pinMode(UTM_D, INPUT_PULLUP);
-    pinMode(UTM_E, INPUT_PULLUP);
-    pinMode(UTM_F, INPUT_PULLUP);
-    pinMode(UTM_G, INPUT_PULLUP);
-    if (UTM_H > 0) { pinMode(UTM_H, INPUT_PULLUP) };
-    pinMode(UTM_I, INPUT_PULLUP);
-    pinMode(UTM_J, INPUT_PULLUP);
-    pinMode(UTM_K, INPUT_PULLUP);
-    pinMode(UTM_L, INPUT_PULLUP);
+    if (UTM_E > 0) { pinMode(UTM_E, INPUT_PULLUP); };
+    if (UTM_F > 0) { pinMode(UTM_F, INPUT_PULLUP); };
+    if (UTM_G > 0) { pinMode(UTM_G, INPUT_PULLUP); };
+    if (UTM_H > 0) { pinMode(UTM_H, INPUT_PULLUP); };
+    if (UTM_I > 0) { pinMode(UTM_I, INPUT_PULLUP); };
+    if (UTM_J > 0) { pinMode(UTM_J, INPUT_PULLUP); };
+    if (UTM_K > 0) { pinMode(UTM_K, INPUT_PULLUP); };
+    if (UTM_L > 0) { pinMode(UTM_L, INPUT_PULLUP); };
 
     pinMode(SERVO_0_PIN, OUTPUT);
     pinMode(SERVO_1_PIN, OUTPUT);

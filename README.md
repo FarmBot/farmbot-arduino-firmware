@@ -120,8 +120,8 @@ LED_PIN          |  13  | on board LED
 FAN_PIN          |   9  | RAMPS board fan pin
 HEATER_0_PIN     |  10  | RAMPS board heating pin 0
 HEATER_1_PIN     |   8  | RAMPS board heating pin 1
-SERVO_0_PIN	  |   4  | Servo motor 0 signal pin
-SERVO_1_PIN	  |   5  | Servo motor 1 signal pin
+SERVO_0_PIN      |   4  | Servo motor 0 signal pin
+SERVO_1_PIN      |   5  | Servo motor 1 signal pin
 
 
 G-Codes
@@ -131,13 +131,13 @@ G-Codes
 
 Code type|Number|Parameters|Function
 ---------|------|----------|--------
-G        |      |          |G-Code, the codes working the same as a 3D printer
+_G_      |      |          |_G-Code, the codes working the same as a 3D printer_
 G        |00    |X Y Z S   |Move to location at given speed for axis (don't have to be a straight line), in absolute coordinates
 G        |01    |X Y Z S   |Move to location on a straight line
 G        |28    |          |Move home all axis
-F        |      |          |Farm commands, commands specially added for the farmbot
-F        |01    |T         |Dose amount of water using time in millisecond
-F        |02    |N         |Dose amount of water using flow meter that measures pulses
+_F_      |      |          |_Farm commands, commands specially added for FarmBot_
+F        |01    |T         |Dose amount of water using time in millisecond (not implemented)
+F        |02    |N         |Dose amount of water using flow meter that measures pulses (not implemented)
 F        |09    |          |Reset emergency stop
 F        |11    |          |Home X axis
 F        |12    |          |Home Y axis
@@ -160,35 +160,40 @@ F        |52    |E P       |Read value from the tool mount with I2C (not impleme
 F        |61    |P V       |Set the servo on the pin P (only pin 4 and 5) to the requested angle V
 F        |81    |          |Report end stop
 F        |82    |          |Report current position
-F        |83    |          |Report software version
-E        |      |          |Emergency stop
+F        |83    |          |Report software version
+F        |84    |X Y Z     |Set axis current position to zero (yes=1/no=0)
+E        |      |          |Emergency stop
 
 ### Codes received from the arduino
 
-Code type|Number|Parameters|Function
+Code type|Number|Parameters       |Function
 ---------|------|-----------------|--------
-R        |      |                 |Report messages
+_R_      |      |                 |_Report messages_
 R        |00    |                 |Idle
 R        |01    |                 |Current command started
 R        |02    |                 |Current command finished successfully
 R        |03    |                 |Current command finished with error
 R        |04    |                 |Current command running
-R        |05    |                 |Report motor/axis state
-R        |06    |                 |Report calibration state during execution
+R        |05    |X Y Z            |Report motor/axis state
+R        |06    |X Y Z            |Report calibration state during execution
 R        |07    |                 |Retry movement
 R        |08    |                 |Command echo
 R        |09    |                 |Command invalid
+R        |11    |                 |X axis homing complete
+R        |12    |                 |Y axis homing complete
+R        |13    |                 |Z axis homing complete
 R        |20    |                 |Report all paramaters complete
 R        |21    |P V              |Report parameter value
+R        |23    |P V              |Report updated parameter (during calibration)
 R        |31    |P V              |Report status value
 R        |41    |P V              |Report pin value
-R        |81    |X1 X2 Y1 Y2 Z1 Z2|Reporting end stops - parameters: X1 (end stop x axis min) X2 (end stop x axis max) Y1 Y2 Z1 Z2
+R        |81    |XA XB YA YB ZA ZB|Report end stops
 R        |82    |X Y Z            |Report current position
-R        |83    |C                |Report software version
+R        |83    |                 |Report software version
 R        |84    |X Y Z            |Report encoder position scaled
 R        |85    |X Y Z            |Report encoder position raw
 R        |87    |                 |Emergency lock
-R        |99    |C                |Debug message
+R        |99    |                 |Debug message
 
 Axis states (R05)
 -----------------
@@ -221,17 +226,18 @@ Parameters for commands
 
 Parameters|Description            |Unit of Measurement
 ----------|-----------------------|-------------------
-X         |X movement             |steps
-Y         |Y movement             |steps
-Z         |Z movement	         |steps
-S         |Speed                  |steps/second
+X         |X movement             |millimeters
+Y         |Y movement             |millimeters
+Z         |Z movement             |millimeters
+A         |X speed                |steps/second
+B         |Y speed                |steps/second
+C         |Z speed                |steps/second
 Q         |Queue number           |#
 T         |Time                   |seconds
-C         |Comment                |text
+N         |Number                 |#
 P         |Parameter/pin number   |#
 V         |Value number           |#
 W         |Secondary value        |#
-L         |Number                 |#
 E         |Element (in tool mount)|#
 M         |Mode (set pin mode)    |0 = output / 1 = input
 M         |Mode (read/write)      |0 = digital / 1 = analog
@@ -279,10 +285,16 @@ ID   | Name
 47   | MOVEMENT_STOP_AT_HOME_Z
 51   | MOVEMENT_HOME_UP_X
 52   | MOVEMENT_HOME_UP_Y
-53   | MOVEMENT_HOME_UP_Z
-61   | MOVEMENT_MIN_SPD_X
+53   | MOVEMENT_HOME_UP_Z
+55   | MOVEMENT_STEP_PER_MM_X
+56   | MOVEMENT_STEP_PER_MM_Y
+57   | MOVEMENT_STEP_PER_MM_Z
+61   | MOVEMENT_MIN_SPD_X
 62   | MOVEMENT_MIN_SPD_Y
 63   | MOVEMENT_MIN_SPD_Z
+65   | MOVEMENT_HOME_SPD_X
+66   | MOVEMENT_HOME_SPD_Y
+67   | MOVEMENT_HOME_SPD_Z
 71   | MOVEMENT_MAX_SPD_X
 72   | MOVEMENT_MAX_SPD_Y
 73   | MOVEMENT_MAX_SPD_Z
