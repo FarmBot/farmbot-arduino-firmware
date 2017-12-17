@@ -1,6 +1,7 @@
 
 #include "PinGuardPin.h"
 #include "ParameterList.h"
+#include "PinControl.h"
 
 PinGuardPin::PinGuardPin()
 {
@@ -41,5 +42,6 @@ void PinGuardPin::processTick()
   if (timeOutCount >= timeOut)
   {
     digitalWrite(pinNr, !activeState);
+    PinControl::getInstance()->readValue(pinNr, 0);
   }
 }
