@@ -916,20 +916,23 @@ int StepperControl::calibrateAxis(int axis)
         CurrentState::getInstance()->printQAndNewLine();
       }
 
-      if (stepsCount % (speedHome[axis] / 6) == 0 /*|| *missedSteps > 3*/)
+      if (debugMessages)
       {
-        Serial.print("R99");
-        Serial.print(" step count ");
-        Serial.print(stepsCount);
-        Serial.print(" missed steps ");
-        Serial.print(*missedSteps);
-        Serial.print(" max steps ");
-        Serial.print(*missedStepsMax);
-        Serial.print(" cur pos mtr ");
-        Serial.print(calibAxis->currentPosition());
-        Serial.print(" cur pos enc ");
-        Serial.print(calibEncoder->currentPosition());
-        Serial.print("\r\n");
+        if (stepsCount % (speedHome[axis] / 6) == 0 /*|| *missedSteps > 3*/)
+        {
+          Serial.print("R99");
+          Serial.print(" step count ");
+          Serial.print(stepsCount);
+          Serial.print(" missed steps ");
+          Serial.print(*missedSteps);
+          Serial.print(" max steps ");
+          Serial.print(*missedStepsMax);
+          Serial.print(" cur pos mtr ");
+          Serial.print(calibAxis->currentPosition());
+          Serial.print(" cur pos enc ");
+          Serial.print(calibEncoder->currentPosition());
+          Serial.print("\r\n");
+        }
       }
 
       calibAxis->resetMotorStep();
@@ -1046,6 +1049,11 @@ int StepperControl::calibrateAxis(int axis)
         Serial.print(COMM_REPORT_CMD_BUSY);
         //Serial.print("\r\n");
         CurrentState::getInstance()->printQAndNewLine();
+
+        Serial.print("R99");
+        Serial.print(" step count: ");
+        Serial.print(stepsCount);
+        Serial.print("\r\n");
       }
 
       calibAxis->resetMotorStep();
