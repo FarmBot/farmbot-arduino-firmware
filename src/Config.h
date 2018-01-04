@@ -140,10 +140,10 @@
   const long ENCODER_TYPE_Y_DEFAULT = 0;
   const long ENCODER_TYPE_Z_DEFAULT = 0;
 
-  // Position = encoder position * scaling / 100
-  const long ENCODER_SCALING_X_DEFAULT = 56;
-  const long ENCODER_SCALING_Y_DEFAULT = 56;
-  const long ENCODER_SCALING_Z_DEFAULT = 56;
+  // Position = encoder position * scaling / 10000
+  const long ENCODER_SCALING_X_DEFAULT = 5556;
+  const long ENCODER_SCALING_Y_DEFAULT = 5556;
+  const long ENCODER_SCALING_Z_DEFAULT = 5556;
 
   // Number of steps missed before motor is seen as not moving
   const long ENCODER_MISSED_STEPS_MAX_X_DEFAULT = 5;
