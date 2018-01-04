@@ -410,6 +410,16 @@ void ParameterList::loadDefaultValue(int id)
     paramValues[id] = MOVEMENT_MAX_SPD_Z_DEFAULT;
     break;
 
+  case MOVEMENT_INVERT_2_ENDPOINTS_X:
+    paramValues[id] = MOVEMENT_INVERT_2_ENDPOINTS_X_DEFAULT;
+    break;
+  case MOVEMENT_INVERT_2_ENDPOINTS_Y:
+    paramValues[id] = MOVEMENT_INVERT_2_ENDPOINTS_Y_DEFAULT;
+    break;
+  case MOVEMENT_INVERT_2_ENDPOINTS_Z:
+    paramValues[id] = MOVEMENT_INVERT_2_ENDPOINTS_Z_DEFAULT;
+    break;
+
   case MOVEMENT_STOP_AT_MAX_X:
     paramValues[id] = MOVEMENT_STOP_AT_MAX_X_DEFAULT;
     break;

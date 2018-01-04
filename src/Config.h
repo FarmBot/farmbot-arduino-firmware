@@ -28,6 +28,10 @@
   const char COMM_REPORT_HOMED_Y[4] = { 'R', '1', '2', '\0' };
   const char COMM_REPORT_HOMED_Z[4] = { 'R', '1', '3', '\0' };
 
+  const char COMM_REPORT_TIMEOUT_X[4] = { 'R', '7', '1', '\0' };
+  const char COMM_REPORT_TIMEOUT_Y[4] = { 'R', '7', '2', '\0' };
+  const char COMM_REPORT_TIMEOUT_Z[4] = { 'R', '7', '3', '\0' };
+
   const char COMM_REPORT_ENCODER_SCALED[4] = { 'R', '8', '4', '\0' };
   const char COMM_REPORT_ENCODER_RAW[4] = { 'R', '8', '5', '\0' };
 
@@ -117,6 +121,11 @@
   const long MOVEMENT_MAX_SPD_X_DEFAULT = 400;
   const long MOVEMENT_MAX_SPD_Y_DEFAULT = 400;
   const long MOVEMENT_MAX_SPD_Z_DEFAULT = 400;
+
+  // switch the end contacts from NO to NC
+  const long MOVEMENT_INVERT_2_ENDPOINTS_X_DEFAULT = 0;
+  const long MOVEMENT_INVERT_2_ENDPOINTS_Y_DEFAULT = 0;
+  const long MOVEMENT_INVERT_2_ENDPOINTS_Z_DEFAULT = 0;
 
   // Stop at the home position or continue to other size of axis
   const long MOVEMENT_STOP_AT_HOME_X_DEFAULT = 0;

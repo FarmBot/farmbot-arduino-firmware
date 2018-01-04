@@ -24,7 +24,7 @@ public:
   StepperControlAxis();
 
   void loadPinNumbers(int step, int dir, int enable, int min, int max, int step2, int dir2, int enable2);
-  void loadMotorSettings(long speedMax, long speedMin, long speedHome, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, bool endStInv, long interruptSpeed, bool motor2Enbl, bool motor2Inv, bool endStEnbl, bool stopAtHome, long maxSize, bool stopAtMax);
+  void loadMotorSettings(long speedMax, long speedMin, long speedHome, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, bool endStInv, bool endStInv2, long interruptSpeed, bool motor2Enbl, bool motor2Inv, bool endStEnbl, bool stopAtHome, long maxSize, bool stopAtMax);
   void loadCoordinates(long sourcePoint, long destinationPoint, bool home);
   void setMaxSpeed(long speed);
 
@@ -96,7 +96,8 @@ private:
   int pinMax;
 
   // motor settings
-  bool motorEndStopInv;  // invert input (true/false) of end stops
+  bool motorEndStopInv;  // switch places of end stops
+  bool motorEndStopInv2; // invert input (true/normal open, falce/normal closed) of end stops
   bool motorEndStopEnbl; // enable the use of the end stops
 
   // motor settings

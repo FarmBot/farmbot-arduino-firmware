@@ -76,6 +76,11 @@ enum ParamListEnum
   MOVEMENT_MAX_SPD_Y = 72,
   MOVEMENT_MAX_SPD_Z = 73,
 
+  // switch the end contacts from NO to NC
+  MOVEMENT_INVERT_2_ENDPOINTS_X = 75,
+  MOVEMENT_INVERT_2_ENDPOINTS_Y = 76,
+  MOVEMENT_INVERT_2_ENDPOINTS_Z = 77,
+
   // encoder settings
   ENCODER_ENABLED_X = 101,
   ENCODER_ENABLED_Y = 102,
