@@ -163,20 +163,28 @@ long ParameterList::readValueEeprom(int id)
 
   if (id == 141 || id == 142 || id == 143)
   {
+    // 4-byte EEPROM value
     three = EEPROM.read(address + 20);
     four = EEPROM.read(address + 21);
+    if ((three == -1 && four == -1 || three == 255 && four == 255)
+        && !(one == -1 && two == -1 || one == 255 && two == 255))
+    {
+      three = 0;
+      four = 0;
+    }
   }
-
-  // just in case there are non uninitialized EEPROM bytes
-  // put them both to zero
-  if (three == -1 && four == -1)
+  else
   {
-    three = 0;
-    four = 0;
+    // 2-byte EEPROM value
+    if (one == -1 && two == -1 || one == 255 && two == 255)
+    {
+      // Return -1 to indicate value should be set to default.
+      return -1;
+    }
   }
 
-  //Return the recomposed long by using bitshift.
-  return ((one << 0) & 0xFF) + ((two << 8) & 0xFF00) + ((three << 16) & 0xFF0000) + ((four << 24) & 0xFF000000);
+  // Return the recomposed long by using bitshift.
+  return ((one & 0xFFl) << 0) + ((two & 0xFFl) << 8) + ((three & 0xFFl) << 16) + ((four & 0xFFl) << 24);
 }
 
 int ParameterList::writeValueEeprom(int id, long value)
