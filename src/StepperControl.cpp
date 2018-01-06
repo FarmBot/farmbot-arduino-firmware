@@ -843,7 +843,9 @@ int StepperControl::calibrateAxis(int axis)
     break;
   default:
     Serial.print("R99 Calibration error: invalid axis selected\r\n");
-    return 1;
+    error = 1;
+    CurrentState::getInstance()->setLastError(error);
+    return error;
   }
 
   // Preliminary checks
@@ -851,7 +853,9 @@ int StepperControl::calibrateAxis(int axis)
   if (calibAxis->endStopMin() || calibAxis->endStopMax())
   {
     Serial.print("R99 Calibration error: end stop active before start\r\n");
-    return 1;
+    error = 1;
+    CurrentState::getInstance()->setLastError(error);
+    return error;
   }
 
   Serial.print("R99");
@@ -894,11 +898,14 @@ int StepperControl::calibrateAxis(int axis)
       {
         Serial.print("R99 emergency stop\r\n");
         movementDone = true;
+        CurrentState::getInstance()->setEmergencyStop();
+        Serial.print(COMM_REPORT_EMERGENCY_STOP);
+        CurrentState::getInstance()->printQAndNewLine();
         error = 1;
       }
     }
 
-    // Move until the end stop for home position is reached, either by end stop or motot skipping
+    // Move until the end stop for home position is reached, either by end stop or motor skipping
     if ((!calibAxis->endStopMin() && !calibAxis->endStopMax()) && !movementDone && (*missedSteps < *missedStepsMax))
     {
 
@@ -1022,6 +1029,9 @@ int StepperControl::calibrateAxis(int axis)
       {
         Serial.print("R99 emergency stop\r\n");
         movementDone = true;
+        CurrentState::getInstance()->setEmergencyStop();
+        Serial.print(COMM_REPORT_EMERGENCY_STOP);
+        CurrentState::getInstance()->printQAndNewLine();
         error = 1;
       }
     }
@@ -1123,6 +1133,7 @@ int StepperControl::calibrateAxis(int axis)
 
   reportCalib(calibAxis, COMM_REPORT_CALIBRATE_STATUS_IDLE);
 
+  CurrentState::getInstance()->setLastError(error);
   return error;
 }
 
