@@ -146,7 +146,8 @@ int GCodeProcessor::execute(Command *command)
 
   // Execute command with retry
   CurrentState::getInstance()->setLastError(0);
-  while (attempt < 1 || (!emergencyStop && attempt < maximumAttempts && execution != 0))
+  while (attempt < 1 || (!emergencyStop && attempt < maximumAttempts && execution != 0 && execution != 2))
+  // error 2 is timeout error: stop movement retries
   {
 
     if (LOGGING || debugMessages)

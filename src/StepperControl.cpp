@@ -536,19 +536,22 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
     {
       serialBuffer += "R99 timeout X axis\r\n";
       //Serial.print("R99 timeout X axis\r\n");
-      error = 1;
+      // error 2 is timeout error: stop movement retries
+      error = 2;
     }
     if (axisActive[1] == true && ((millis() >= timeStart && millis() - timeStart > timeOut[0] * 1000) || (millis() < timeStart && millis() > timeOut[0] * 1000)))
     {
       serialBuffer += "R99 timeout Y axis\r\n";
       //Serial.print("R99 timeout Y axis\r\n");
-      error = 1;
+      // error 2 is timeout error: stop movement retries
+      error = 2;
     }
     if (axisActive[2] == true && ((millis() >= timeStart && millis() - timeStart > timeOut[0] * 1000) || (millis() < timeStart && millis() > timeOut[0] * 1000)))
     {
       serialBuffer += "R99 timeout Z axis\r\n";
       //Serial.print("R99 timeout Z axis\r\n");
-      error = 1;
+      // error 2 is timeout error: stop movement retries
+      error = 2;
     }
 
     // Check if there is an emergency stop command
@@ -578,7 +581,7 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
       }
     }
 
-    if (error == 1)
+    if (error != 0)
     {
       serialBuffer += "R99 error\r\n";
       //Serial.print("R99 error\r\n");
