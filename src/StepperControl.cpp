@@ -1250,8 +1250,8 @@ void StepperControl::loadMotorSettings()
   endStEnbl[2] = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_ENABLE_ENDPOINTS_Z));
 
   timeOut[0] = ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
-  timeOut[1] = ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
-  timeOut[2] = ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
+  timeOut[1] = ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_Y);
+  timeOut[2] = ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_Z);
 
   motorKeepActive[0] = ParameterList::getInstance()->getValue(MOVEMENT_KEEP_ACTIVE_X);
   motorKeepActive[1] = ParameterList::getInstance()->getValue(MOVEMENT_KEEP_ACTIVE_Y);
