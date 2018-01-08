@@ -539,14 +539,14 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
       // error 2 is timeout error: stop movement retries
       error = 2;
     }
-    if (axisActive[1] == true && ((millis() >= timeStart && millis() - timeStart > timeOut[0] * 1000) || (millis() < timeStart && millis() > timeOut[0] * 1000)))
+    if (axisActive[1] == true && ((millis() >= timeStart && millis() - timeStart > timeOut[1] * 1000) || (millis() < timeStart && millis() > timeOut[1] * 1000)))
     {
       serialBuffer += "R99 timeout Y axis\r\n";
       //Serial.print("R99 timeout Y axis\r\n");
       // error 2 is timeout error: stop movement retries
       error = 2;
     }
-    if (axisActive[2] == true && ((millis() >= timeStart && millis() - timeStart > timeOut[0] * 1000) || (millis() < timeStart && millis() > timeOut[0] * 1000)))
+    if (axisActive[2] == true && ((millis() >= timeStart && millis() - timeStart > timeOut[2] * 1000) || (millis() < timeStart && millis() > timeOut[2] * 1000)))
     {
       serialBuffer += "R99 timeout Z axis\r\n";
       //Serial.print("R99 timeout Z axis\r\n");
@@ -868,7 +868,7 @@ int StepperControl::calibrateAxis(int axis)
   Serial.print("\r\n");
 
   *axisStatus = COMM_REPORT_MOVE_STATUS_START_MOTOR;
-  reportStatus(calibAxis, axisSubStep[0]);
+  reportStatus(calibAxis, axisStatus[0]);
 
   // Move towards home
   calibAxis->enableMotor();
@@ -884,7 +884,7 @@ int StepperControl::calibrateAxis(int axis)
   motorConsMissedSteps[2] = 0;
 
   *axisStatus = COMM_REPORT_MOVE_STATUS_CRAWLING;
-  reportStatus(calibAxis, axisSubStep[0]);
+  reportStatus(calibAxis, axisStatus[0]);
 
   reportCalib(calibAxis, COMM_REPORT_CALIBRATE_STATUS_TO_HOME);
 
@@ -1109,7 +1109,7 @@ int StepperControl::calibrateAxis(int axis)
   }
 
   *axisStatus = COMM_REPORT_MOVE_STATUS_STOP_MOTOR;
-  reportStatus(calibAxis, axisSubStep[0]);
+  reportStatus(calibAxis, axisStatus[0]);
 
   calibAxis->disableMotor();
 
@@ -1132,7 +1132,7 @@ int StepperControl::calibrateAxis(int axis)
   reportPosition();
 
   *axisStatus = COMM_REPORT_MOVE_STATUS_IDLE;
-  reportStatus(calibAxis, axisSubStep[0]);
+  reportStatus(calibAxis, axisStatus[0]);
 
   reportCalib(calibAxis, COMM_REPORT_CALIBRATE_STATUS_IDLE);
 
