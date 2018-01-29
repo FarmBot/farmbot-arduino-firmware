@@ -205,6 +205,18 @@
 
 //const char SOFTWARE_VERSION[] = "4.0.2\0";
 
+#define NSS_PIN 22 
+#define READ_ENA_PIN 49
+#define NULL 0
+
+static const int mdl_spi_encoder_offset = 4;
+enum MdlSpiEncoders
+{
+  _MDL_X1 = 0b0001,
+  _MDL_X2 = 0b0010,
+  _MDL_Y = 0b0100,
+  _MDL_Z = 0b1000,
+};
 #endif /* CONFIG_H_ */
 
 #if defined(RAMPS_V14) && !defined(SOFTWARE_VERSION)
@@ -212,5 +224,9 @@
 #endif
 
 #if defined(FARMDUINO_V10) && !defined(SOFTWARE_VERSION)
+#define SOFTWARE_VERSION "6.0.1.F\0"
+#endif
+
+#if defined(FARMDUINO_V14) && !defined(SOFTWARE_VERSION)
 #define SOFTWARE_VERSION "6.0.1.F\0"
 #endif

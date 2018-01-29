@@ -15,6 +15,7 @@
 #include "Config.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <SPI.h>
 
 class StepperControlEncoder
 {
@@ -24,6 +25,9 @@ public:
 
   void loadPinNumbers(int channelA, int channelB, int channelAQ, int channelBQ);
   void loadSettings(int encType, int scaling, int invert);
+
+  // Load the id for the motor dynamics lab encoder
+  void loadMdlEncoderId(MdlSpiEncoders encoder);
 
   void setPosition(long newPosition);
   long currentPosition();
@@ -59,6 +63,9 @@ private:
   int scalingFactor;
   int encoderType;
   int encoderInvert;
+
+  MdlSpiEncoders mdlEncoder = _MDL_X1;
+
 };
 
 #endif /* STEPPERCONTROLENCODER_H_ */

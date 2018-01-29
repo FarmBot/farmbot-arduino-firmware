@@ -7,5 +7,5 @@
 
 #ifndef DEBUG_H_
 #define debugMessages   false
-#define debugInterrupt  false
+#define debugInterrupt  true
 #endif /* DEBUG_H_ */

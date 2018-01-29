@@ -20,6 +20,8 @@ StepperControlEncoder::StepperControlEncoder()
   readChannelAQ = false;
   readChannelB = false;
   readChannelBQ = false;
+
+  mdlEncoder = _MDL_X1;
 }
 
 void StepperControlEncoder::test()
@@ -67,6 +69,11 @@ void StepperControlEncoder::loadSettings(int encType, int scaling, int invert)
 //  encoderType = 0; // TEVE 2017-04-20 Disabling the differential channels. They take too much time to read.
 }
 
+void StepperControlEncoder::loadMdlEncoderId(MdlSpiEncoders encoder)
+{
+  mdlEncoder = encoder;
+}
+
 void StepperControlEncoder::setPosition(long newPosition)
 {
   position = newPosition;
@@ -92,9 +99,16 @@ long StepperControlEncoder::currentPositionRaw()
 
 void StepperControlEncoder::checkEncoder(bool channelA, bool channelB, bool channelAQ, bool channelBQ)
 {
-  shiftChannels();
-  setChannels(channelA, channelB, channelAQ, channelBQ);
-  processEncoder();
+  #if defined(RAMPS_V14) || defined(FARMDUINO_V10)
+    shiftChannels();
+    setChannels(channelA, channelB, channelAQ, channelBQ);
+    processEncoder();
+  #endif
+
+  #if defined(FARMDUINO_V14)
+    processEncoder();
+  #endif
+
 }
 
 
@@ -116,69 +130,48 @@ rotation ----------------------------------------------------->
 void StepperControlEncoder::processEncoder()
 {
 
-  // save the old values, read the new values
-  // shiftChannels();
-  // readChannels();
+  #if defined(RAMPS_V14) || defined(FARMDUINO_V10)
 
-  //int delta = 0;
+    // Detect edges on the A channel when the B channel is high
+    if (curValChannelB == true && prvValChannelA == false && curValChannelA == true)
+    {
+      //delta--;
+      position--;
+    }
+    if (curValChannelB == true && prvValChannelA == true && curValChannelA == false)
+    {
+      //delta++;
+      position++;
+    }
 
-  // check for a position change
-  // no fancy code, just a few simple compares. sorry
+  #endif
 
-  // Only detect edges on the A channel when the V channel is high
-  if (curValChannelB == true && prvValChannelA == false && curValChannelA == true)
-  {
-    //delta--;
-    position--;
-  }
-  if (curValChannelB == true && prvValChannelA == true && curValChannelA == false)
-  {
-    //delta++;
-    position++;
-  }
+  // If using farmduino, revision 1.4, use the SPI interface to read from the Motor Dynamics Lab chip
+  #if defined(FARMDUINO_V14)
+    const byte read_cmd = 0x0F;
+    int readSize = 4;
+    long encoderVal = 0;
 
-  /*
-  if (prvValChannelA == true && curValChannelA == true && prvValChannelB == false && curValChannelB == true)
-  {
-    delta++;
-  }
-  if (prvValChannelA == true && curValChannelA == false && prvValChannelB == true && curValChannelB == true)
-  {
-    delta++;
-  }
-  if (prvValChannelA == false && curValChannelA == false && prvValChannelB == true && curValChannelB == false)
-  {
-    delta++;
-  }
-  if (prvValChannelA == false && curValChannelA == true && prvValChannelB == false && curValChannelB == false)
-  {
-    delta++;
-  }
+    digitalWrite(NSS_PIN, LOW);
+    SPI.transfer(read_cmd | (mdlEncoder << mdl_spi_encoder_offset));
+    delayMicroseconds(10);
 
-  if (prvValChannelA == false && curValChannelA == false && prvValChannelB == false && curValChannelB == true)
-  {
-    delta--;
-  }
-  if (prvValChannelA == false && curValChannelA == true && prvValChannelB == true && curValChannelB == true)
-  {
-    delta--;
-  }
-  if (prvValChannelA == true && curValChannelA == true && prvValChannelB == true && curValChannelB == false)
-  {
-    delta--;
-  }
-  if (prvValChannelA == true && curValChannelA == false && prvValChannelB == false && curValChannelB == false)
-  {
-    delta--;
-  }
-  //*/
+    for (int i = 0; i < readSize; ++i)
+    {
+      encoderVal <<= 8;
+      encoderVal |= SPI.transfer(0x01);
+    }
 
-  //position += delta;
+    digitalWrite(NSS_PIN, HIGH);
+    position = encoderVal;
+  #endif
+
 }
 
 void StepperControlEncoder::readChannels()
 {
 
+#if defined(RAMPS_V14) || defined(FARMDUINO_V10)
   // read the new values from the coder
 
   readChannelA = digitalRead(pinChannelA);
@@ -204,6 +197,8 @@ void StepperControlEncoder::readChannels()
     curValChannelA = readChannelA;
     curValChannelB = readChannelB;
   }
+#endif
+
 }
 
 void StepperControlEncoder::setChannels(bool channelA, bool channelB, bool channelAQ, bool channelBQ)

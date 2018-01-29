@@ -9,6 +9,7 @@
 #include "MemoryFree.h"
 #include "Debug.h"
 #include "CurrentState.h"
+#include <SPI.h>
 
 static char commandEndChar = 0x0A;
 static GCodeProcessor *gCodeProcessor = new GCodeProcessor();
@@ -167,7 +168,7 @@ void setup()
     //pinMode(SERVO_1_PIN , OUTPUT);
   #endif
 
-  #ifdef FARMDUINO_V10
+  #if defined(FARMDUINO_V10) || defined(FARMDUINO_V14)
 
     // Setup pin input/output settings
     pinMode(X_STEP_PIN, OUTPUT);
@@ -241,7 +242,20 @@ void setup()
   digitalWrite(E_ENABLE_PIN, HIGH);
   digitalWrite(Y_ENABLE_PIN, HIGH);
   digitalWrite(Z_ENABLE_PIN, HIGH);
+  
+  #if defined(FARMDUINO_V14)
 
+    pinMode(READ_ENA_PIN, INPUT_PULLUP);
+    pinMode(NSS_PIN, OUTPUT);
+    digitalWrite(NSS_PIN, HIGH);
+
+    SPI.setBitOrder(MSBFIRST);
+    SPI.setDataMode(SPI_MODE0);
+    SPI.setClockDivider(SPI_CLOCK_DIV4);
+    SPI.begin();
+
+  #endif
+  
   Serial.begin(115200);
 
   delay(100);

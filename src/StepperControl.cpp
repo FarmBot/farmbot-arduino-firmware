@@ -1,5 +1,6 @@
 #include "StepperControl.h"
 #include "Debug.h"
+#include "Config.h"
 
 static StepperControl *instance;
 
@@ -158,6 +159,10 @@ void StepperControl::loadSettings()
   // Load encoder settings
 
   loadEncoderSettings();
+
+  encoderX.loadMdlEncoderId(_MDL_X1);
+  encoderY.loadMdlEncoderId(_MDL_Y);
+  encoderZ.loadMdlEncoderId(_MDL_Z);
 
   encoderX.loadPinNumbers(X_ENCDR_A, X_ENCDR_B, X_ENCDR_A_Q, X_ENCDR_B_Q);
   encoderY.loadPinNumbers(Y_ENCDR_A, Y_ENCDR_B, Y_ENCDR_A_Q, Y_ENCDR_B_Q);
@@ -462,10 +467,7 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
       serialBuffer += "R99";
       serialBuffer += " deactivate motor Y due to missed steps";
       serialBuffer += "\r\n";
-      //Serial.print("R99");
-      //Serial.print(" deactivate motor Y due to missed steps");
-      //Serial.print("\r\n");
-
+      
       if (yHome)
       {
         encoderY.setPosition(0);
@@ -484,9 +486,6 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
       serialBuffer += "R99";
       serialBuffer += " deactivate motor Z due to missed steps";
       serialBuffer += "\r\n";
-      //Serial.print("R99");
-      //Serial.print(" deactivate motor Z due to missed steps");
-      //Serial.print("\r\n");
 
       if (zHome)
       {
@@ -537,8 +536,6 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
       serialBuffer += COMM_REPORT_TIMEOUT_X;
       serialBuffer += "\r\n";
       serialBuffer += "R99 timeout X axis\r\n";
-      //Serial.print("R99 timeout X axis\r\n");
-      // error 2 is timeout error: stop movement retries
       error = 2;
     }
     if (axisActive[1] == true && ((millis() >= timeStart && millis() - timeStart > timeOut[1] * 1000) || (millis() < timeStart && millis() > timeOut[1] * 1000)))
@@ -546,8 +543,6 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
       serialBuffer += COMM_REPORT_TIMEOUT_Y;
       serialBuffer += "\r\n";
       serialBuffer += "R99 timeout Y axis\r\n";
-      //Serial.print("R99 timeout Y axis\r\n");
-      // error 2 is timeout error: stop movement retries
       error = 2;
     }
     if (axisActive[2] == true && ((millis() >= timeStart && millis() - timeStart > timeOut[2] * 1000) || (millis() < timeStart && millis() > timeOut[2] * 1000)))
@@ -555,8 +550,6 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
       serialBuffer += COMM_REPORT_TIMEOUT_Z;
       serialBuffer += "\r\n";
       serialBuffer += "R99 timeout Z axis\r\n";
-      //Serial.print("R99 timeout Z axis\r\n");
-      // error 2 is timeout error: stop movement retries
       error = 2;
     }
 
@@ -570,8 +563,6 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
 
         Serial.print(COMM_REPORT_EMERGENCY_STOP);
         CurrentState::getInstance()->printQAndNewLine();
-
-        //Serial.print("R99 emergency stop\r\n");
 
         emergencyStop = true;
 
@@ -590,7 +581,6 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
     if (error != 0)
     {
       serialBuffer += "R99 error\r\n";
-      //Serial.print("R99 error\r\n");
 
       axisActive[0] = false;
       axisActive[1] = false;
@@ -817,7 +807,6 @@ int StepperControl::calibrateAxis(int axis)
     encoderStepDecay = &motorConsMissedStepsDecay[0];
     encoderEnabled = &motorConsEncoderEnabled[0];
     axisStatus = &axisSubStep[0];
-    //axisStepsPerMm = &axisStepsPerMm[0];
     axisStepsPerMm = &stepsPerMm[0];
     break;
   case 1:
@@ -832,7 +821,6 @@ int StepperControl::calibrateAxis(int axis)
     encoderStepDecay = &motorConsMissedStepsDecay[1];
     encoderEnabled = &motorConsEncoderEnabled[1];
     axisStatus = &axisSubStep[1];
-    //axisStepsPerMm = &axisStepsPerMm[1];
     axisStepsPerMm = &stepsPerMm[1];
     break;
   case 2:
@@ -847,7 +835,6 @@ int StepperControl::calibrateAxis(int axis)
     encoderStepDecay = &motorConsMissedStepsDecay[2];
     encoderEnabled = &motorConsEncoderEnabled[2];
     axisStatus = &axisSubStep[2];
-    //axisStepsPerMm = &axisStepsPerMm[2];
     axisStepsPerMm = &stepsPerMm[2];
     break;
   default:
@@ -928,7 +915,6 @@ int StepperControl::calibrateAxis(int axis)
       {
         // Periodically send message still active
         Serial.print(COMM_REPORT_CMD_BUSY);
-        //Serial.print("\r\n");
         CurrentState::getInstance()->printQAndNewLine();
       }
 
@@ -1592,6 +1578,7 @@ void StepperControl::checkEncoders()
   Serial.print("\r\n");
   */
 
+
   // A=16/PH1 B=17/PH0 AQ=31/PC6 BQ=33/PC4
   //encoderX.checkEncoder(PINH & 0x02, PINH & 0x01, PINC & 0x40, PINC & 0x10);
   //encoderX.setChannels(PINH & 0x02, PINH & 0x01, PINC & 0x40, PINC & 0x10);
@@ -1625,4 +1612,5 @@ void StepperControl::checkEncoders()
   //encoderX.processEncoder();
   //encoderY.processEncoder();
   //encoderZ.processEncoder();
+
 }
