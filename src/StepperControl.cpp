@@ -538,23 +538,26 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
       serialBuffer += "\r\n";
       serialBuffer += "R99 timeout X axis\r\n";
       //Serial.print("R99 timeout X axis\r\n");
-      error = 1;
+      // error 2 is timeout error: stop movement retries
+      error = 2;
     }
-    if (axisActive[1] == true && ((millis() >= timeStart && millis() - timeStart > timeOut[0] * 1000) || (millis() < timeStart && millis() > timeOut[0] * 1000)))
+    if (axisActive[1] == true && ((millis() >= timeStart && millis() - timeStart > timeOut[1] * 1000) || (millis() < timeStart && millis() > timeOut[1] * 1000)))
     {
       serialBuffer += COMM_REPORT_TIMEOUT_Y;
       serialBuffer += "\r\n";
       serialBuffer += "R99 timeout Y axis\r\n";
       //Serial.print("R99 timeout Y axis\r\n");
-      error = 1;
+      // error 2 is timeout error: stop movement retries
+      error = 2;
     }
-    if (axisActive[2] == true && ((millis() >= timeStart && millis() - timeStart > timeOut[0] * 1000) || (millis() < timeStart && millis() > timeOut[0] * 1000)))
+    if (axisActive[2] == true && ((millis() >= timeStart && millis() - timeStart > timeOut[2] * 1000) || (millis() < timeStart && millis() > timeOut[2] * 1000)))
     {
       serialBuffer += COMM_REPORT_TIMEOUT_Z;
       serialBuffer += "\r\n";
       serialBuffer += "R99 timeout Z axis\r\n";
       //Serial.print("R99 timeout Z axis\r\n");
-      error = 1;
+      // error 2 is timeout error: stop movement retries
+      error = 2;
     }
 
     // Check if there is an emergency stop command
@@ -584,7 +587,7 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
       }
     }
 
-    if (error == 1)
+    if (error != 0)
     {
       serialBuffer += "R99 error\r\n";
       //Serial.print("R99 error\r\n");
@@ -849,7 +852,9 @@ int StepperControl::calibrateAxis(int axis)
     break;
   default:
     Serial.print("R99 Calibration error: invalid axis selected\r\n");
-    return 1;
+    error = 1;
+    CurrentState::getInstance()->setLastError(error);
+    return error;
   }
 
   // Preliminary checks
@@ -857,7 +862,9 @@ int StepperControl::calibrateAxis(int axis)
   if (calibAxis->endStopMin() || calibAxis->endStopMax())
   {
     Serial.print("R99 Calibration error: end stop active before start\r\n");
-    return 1;
+    error = 1;
+    CurrentState::getInstance()->setLastError(error);
+    return error;
   }
 
   Serial.print("R99");
@@ -867,7 +874,7 @@ int StepperControl::calibrateAxis(int axis)
   Serial.print("\r\n");
 
   *axisStatus = COMM_REPORT_MOVE_STATUS_START_MOTOR;
-  reportStatus(calibAxis, axisSubStep[0]);
+  reportStatus(calibAxis, axisStatus[0]);
 
   // Move towards home
   calibAxis->enableMotor();
@@ -883,7 +890,7 @@ int StepperControl::calibrateAxis(int axis)
   motorConsMissedSteps[2] = 0;
 
   *axisStatus = COMM_REPORT_MOVE_STATUS_CRAWLING;
-  reportStatus(calibAxis, axisSubStep[0]);
+  reportStatus(calibAxis, axisStatus[0]);
 
   reportCalib(calibAxis, COMM_REPORT_CALIBRATE_STATUS_TO_HOME);
 
@@ -900,11 +907,14 @@ int StepperControl::calibrateAxis(int axis)
       {
         Serial.print("R99 emergency stop\r\n");
         movementDone = true;
+        CurrentState::getInstance()->setEmergencyStop();
+        Serial.print(COMM_REPORT_EMERGENCY_STOP);
+        CurrentState::getInstance()->printQAndNewLine();
         error = 1;
       }
     }
 
-    // Move until the end stop for home position is reached, either by end stop or motot skipping
+    // Move until the end stop for home position is reached, either by end stop or motor skipping
     if ((!calibAxis->endStopMin() && !calibAxis->endStopMax()) && !movementDone && (*missedSteps < *missedStepsMax))
     {
 
@@ -922,20 +932,23 @@ int StepperControl::calibrateAxis(int axis)
         CurrentState::getInstance()->printQAndNewLine();
       }
 
-      if (stepsCount % (speedHome[axis] / 6) == 0 /*|| *missedSteps > 3*/)
+      if (debugMessages)
       {
-        Serial.print("R99");
-        Serial.print(" step count ");
-        Serial.print(stepsCount);
-        Serial.print(" missed steps ");
-        Serial.print(*missedSteps);
-        Serial.print(" max steps ");
-        Serial.print(*missedStepsMax);
-        Serial.print(" cur pos mtr ");
-        Serial.print(calibAxis->currentPosition());
-        Serial.print(" cur pos enc ");
-        Serial.print(calibEncoder->currentPosition());
-        Serial.print("\r\n");
+        if (stepsCount % (speedHome[axis] / 6) == 0 /*|| *missedSteps > 3*/)
+        {
+          Serial.print("R99");
+          Serial.print(" step count ");
+          Serial.print(stepsCount);
+          Serial.print(" missed steps ");
+          Serial.print(*missedSteps);
+          Serial.print(" max steps ");
+          Serial.print(*missedStepsMax);
+          Serial.print(" cur pos mtr ");
+          Serial.print(calibAxis->currentPosition());
+          Serial.print(" cur pos enc ");
+          Serial.print(calibEncoder->currentPosition());
+          Serial.print("\r\n");
+        }
       }
 
       calibAxis->resetMotorStep();
@@ -1025,6 +1038,9 @@ int StepperControl::calibrateAxis(int axis)
       {
         Serial.print("R99 emergency stop\r\n");
         movementDone = true;
+        CurrentState::getInstance()->setEmergencyStop();
+        Serial.print(COMM_REPORT_EMERGENCY_STOP);
+        CurrentState::getInstance()->printQAndNewLine();
         error = 1;
       }
     }
@@ -1052,6 +1068,11 @@ int StepperControl::calibrateAxis(int axis)
         Serial.print(COMM_REPORT_CMD_BUSY);
         //Serial.print("\r\n");
         CurrentState::getInstance()->printQAndNewLine();
+
+        Serial.print("R99");
+        Serial.print(" step count: ");
+        Serial.print(stepsCount);
+        Serial.print("\r\n");
       }
 
       calibAxis->resetMotorStep();
@@ -1094,7 +1115,7 @@ int StepperControl::calibrateAxis(int axis)
   }
 
   *axisStatus = COMM_REPORT_MOVE_STATUS_STOP_MOTOR;
-  reportStatus(calibAxis, axisSubStep[0]);
+  reportStatus(calibAxis, axisStatus[0]);
 
   calibAxis->disableMotor();
 
@@ -1117,10 +1138,11 @@ int StepperControl::calibrateAxis(int axis)
   reportPosition();
 
   *axisStatus = COMM_REPORT_MOVE_STATUS_IDLE;
-  reportStatus(calibAxis, axisSubStep[0]);
+  reportStatus(calibAxis, axisStatus[0]);
 
   reportCalib(calibAxis, COMM_REPORT_CALIBRATE_STATUS_IDLE);
 
+  CurrentState::getInstance()->setLastError(error);
   return error;
 }
 
@@ -1238,8 +1260,8 @@ void StepperControl::loadMotorSettings()
   endStEnbl[2] = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_ENABLE_ENDPOINTS_Z));
 
   timeOut[0] = ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
-  timeOut[1] = ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
-  timeOut[2] = ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_X);
+  timeOut[1] = ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_Y);
+  timeOut[2] = ParameterList::getInstance()->getValue(MOVEMENT_TIMEOUT_Z);
 
   motorKeepActive[0] = ParameterList::getInstance()->getValue(MOVEMENT_KEEP_ACTIVE_X);
   motorKeepActive[1] = ParameterList::getInstance()->getValue(MOVEMENT_KEEP_ACTIVE_Y);

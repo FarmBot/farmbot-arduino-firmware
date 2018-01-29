@@ -29,6 +29,7 @@ Command::Command(char *commandChar)
   else
   {
     invalidCommand = true;
+    commandCodeEnum = CODE_UNDEFINED;
     return;
   }
 

@@ -9,7 +9,7 @@ StepperControlEncoder::StepperControlEncoder()
 
   position = 0;
   encoderType = 0; // default type
-  scalingFactor = 100;
+  scalingFactor = 10000;
 
   curValChannelA = false;
   curValChannelA = false;
@@ -75,13 +75,13 @@ void StepperControlEncoder::setPosition(long newPosition)
 long StepperControlEncoder::currentPosition()
 {
   // Apply scaling to the output of the encoder, except when scaling is zero or lower
-  if (scalingFactor == 100 || scalingFactor <= 0)
+  if (scalingFactor == 10000 || scalingFactor <= 0)
   {
     return position * encoderInvert;
   }
   else
   {
-    return position * scalingFactor / 100 * encoderInvert;
+    return position * scalingFactor / 10000 * encoderInvert;
   }
 }
 

@@ -139,12 +139,12 @@ _F_      |      |          |_Farm commands, commands specially added for FarmBot
 F        |01    |T         |Dose amount of water using time in millisecond (not implemented)
 F        |02    |N         |Dose amount of water using flow meter that measures pulses (not implemented)
 F        |09    |          |Reset emergency stop
-F        |11    |          |Home X axis
-F        |12    |          |Home Y axis
-F        |13    |          |Home Z axis
-F        |14    |          |Calibrate X axis
-F        |15    |          |Calibrate Y axis
-F        |16    |          |Calibrate Z axis
+F        |11    |          |Home X axis (find 0) __*__
+F        |12    |          |Home Y axis (find 0) __*__
+F        |13    |          |Home Z axis (find 0) __*__
+F        |14    |          |Calibrate X axis (measure length + find 0) __*__
+F        |15    |          |Calibrate Y axis (measure length + find 0) __*__
+F        |16    |          |Calibrate Z axis (measure length + find 0) __*__
 F        |20    |          |List all parameters and value
 F        |21    |P         |Read parameter
 F        |22    |P V       |Write parameter
@@ -161,8 +161,10 @@ F        |61    |P V       |Set the servo on the pin P (only pin 4 and 5) to the
 F        |81    |          |Report end stop
 F        |82    |          |Report current position
 F        |83    |          |Report software version
-F        |84    |X Y Z     |Set axis current position to zero (yes=1/no=0)
+F        |84    |X Y Z     |Set axis current position to zero (yes=1/no=0)
 E        |      |          |Emergency stop
+
+__*__ Requires the use of encoders or end stops.
 
 ### Codes received from the arduino
 
