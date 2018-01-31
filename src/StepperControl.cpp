@@ -369,6 +369,10 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
   while ((axisActive[0] || axisActive[1] || axisActive[2]) && !emergencyStop)
   {
 
+    #if defined(FARMDUINO_V14)
+    checkEncoders();
+    #endif
+
     checkAxisSubStatus(&axisX, &axisSubStep[0]);
     checkAxisSubStatus(&axisY, &axisSubStep[1]);
     checkAxisSubStatus(&axisZ, &axisSubStep[2]);
@@ -399,6 +403,7 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
       checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &motorConsEncoderLastPosition[2], &motorConsEncoderUseForPos[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
       axisZ.resetStepDone();
     }
+
 
     //if (debugInterrupt)
     //{
@@ -445,10 +450,6 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
       serialBuffer += "R99";
       serialBuffer += " deactivate motor X due to missed steps";
       serialBuffer += "\r\n";
-
-      //Serial.print("R99");
-      //Serial.print(" deactivate motor X due to missed steps");
-      //Serial.print("\r\n");
 
       if (xHome)
       {
@@ -884,6 +885,10 @@ int StepperControl::calibrateAxis(int axis)
   while (!movementDone && error == 0)
   {
 
+    #if defined(FARMDUINO_V14)
+      checkEncoders();
+    #endif
+
     checkAxisVsEncoder(calibAxis, calibEncoder, &motorConsMissedSteps[axis], &motorLastPosition[axis], &motorConsEncoderLastPosition[axis], &motorConsEncoderUseForPos[axis], &motorConsMissedStepsDecay[axis], &motorConsEncoderEnabled[axis]);
 
     // Check if there is an emergency stop command
@@ -1013,6 +1018,10 @@ int StepperControl::calibrateAxis(int axis)
 
   while (!movementDone && error == 0)
   {
+
+    #if defined(FARMDUINO_V14)
+       checkEncoders();
+    #endif
 
     checkAxisVsEncoder(calibAxis, calibEncoder, &motorConsMissedSteps[axis], &motorLastPosition[axis], &motorConsEncoderLastPosition[axis], &motorConsEncoderUseForPos[axis], &motorConsMissedStepsDecay[axis], &motorConsEncoderEnabled[axis]);
 
@@ -1515,7 +1524,10 @@ void StepperControl::handleMovementInterrupt(void)
   //  i1 = micros();
   //}
 
-  checkEncoders();
+  // No need to check the encoders for Farmduino 1.4
+  #if defined(RAMPS_V14) || defined(FARMDUINO_V10)
+    checkEncoders();
+  #endif
 
   // handle motor timing
 

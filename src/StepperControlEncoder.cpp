@@ -76,11 +76,28 @@ void StepperControlEncoder::loadMdlEncoderId(MdlSpiEncoders encoder)
 
 void StepperControlEncoder::setPosition(long newPosition)
 {
-  position = newPosition;
+  #if defined(RAMPS_V14) || defined(FARMDUINO_V10)
+    position = newPosition;
+  #endif
+
+  #if defined(FARMDUINO_V14)
+    if (newPosition == 0)
+    {
+      position = newPosition;
+
+      const byte reset_cmd = 0x00;
+
+      digitalWrite(NSS_PIN, LOW);
+      SPI.transfer(reset_cmd | (mdlEncoder << mdl_spi_encoder_offset));
+      digitalWrite(NSS_PIN, HIGH);
+    }
+  #endif
 }
 
 long StepperControlEncoder::currentPosition()
 {
+
+
   // Apply scaling to the output of the encoder, except when scaling is zero or lower
   if (scalingFactor == 10000 || scalingFactor <= 0)
   {

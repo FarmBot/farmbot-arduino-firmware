@@ -320,6 +320,11 @@ void loop()
     StepperControl::getInstance()->handleMovementInterrupt();
   }
 
+  #if defined(FARMDUINO_V14)
+    // Check encoders out of interrupt for farmduino 1.4
+    StepperControl::getInstance()->checkEncoders();
+  #endif
+
   pinGuardCurrentTime = millis();
   if (pinGuardCurrentTime < pinGuardLastCheck)
   {
