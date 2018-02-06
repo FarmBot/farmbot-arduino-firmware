@@ -343,11 +343,10 @@ ID   | Name
 222  | PIN_GUARD_5_TIME_OUT
 223  | PIN_GUARD_5_ACTIVE_STATE
 
-<!--
 IMPORTANT
 =========
 
-Farmbot will NOT move until the configuration has been approved. To approve manually, send 'F22 P2 V1 Q0' (after the next PR)
+Farmbot will NOT move until the configuration has been approved.
+To approve manually, send 'F22 P2 V1 Q0'
 
 To move, use the command 'G00 X0 Y0 Z0 Q0' where you type in the coordinates just after X, Y and Z.
--->
