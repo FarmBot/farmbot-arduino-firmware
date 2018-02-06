@@ -29,11 +29,12 @@ ParameterList::ParameterList()
   }
   else
   {
-    //if (readValueEeprom(PARAM_USE_EEPROM) == 1) {
-    readAllValuesFromEeprom();
-    //} else {
-    //	setAllValuesToDefault();
-    //}
+    if (readValueEeprom(PARAM_USE_EEPROM) == 1)
+    {
+      readAllValuesFromEeprom();
+    } else {
+      setAllValuesToDefault();
+    }
   }
 }
 

@@ -75,29 +75,18 @@ int GCodeProcessor::execute(Command *command)
     }
   }
 
-  // Tim 2017-04-15 Disable until the raspberry code is ready
-  /*
   // Do not execute the command when the config complete parameter is not
   // set by the raspberry pi and it's asked to do a move command
 
-	if (ParameterList::getInstance()->getValue(PARAM_CONFIG_OK) != 1) 
+  if (ParameterList::getInstance()->getValue(PARAM_CONFIG_OK) != 1)
   {
-		if (	command->getCodeEnum() == G00 ||
-			command->getCodeEnum() == G01 ||
-			command->getCodeEnum() == F11 ||
-			command->getCodeEnum() == F12 ||
-			command->getCodeEnum() == F13 ||
-			command->getCodeEnum() == F14 ||
-			command->getCodeEnum() == F15 ||
-			command->getCodeEnum() == F16 ) 
+    if (isMovement)
     {
-
-        		Serial.print(COMM_REPORT_NO_CONFIG);
-			CurrentState::getInstance()->printQAndNewLine();
-			return -1;
-		}
+      Serial.print(COMM_REPORT_NO_CONFIG);
+      CurrentState::getInstance()->printQAndNewLine();
+      return -1;
+    }
   }
-	*/
 
   // Return error when no command or invalid command is found
 

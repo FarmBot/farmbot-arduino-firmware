@@ -287,19 +287,31 @@ void setup()
   pinGuardCurrentTime = millis();
   pinGuardLastCheck = millis();
 
-  if (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_Z) == 1)
+  if
+  (
+    (ParameterList::getInstance()->getValue(PARAM_CONFIG_OK) == 1) &&
+    (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_Z) == 1)
+  )
   {
     Serial.print("R99 HOME Z ON STARTUP\r\n");
     StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, false, true);
   }
 
-  if (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_Y) == 1)
+  if
+  (
+    (ParameterList::getInstance()->getValue(PARAM_CONFIG_OK) == 1) &&
+    (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_Y) == 1)
+  )
   {
     Serial.print("R99 HOME Y ON STARTUP\r\n");
     StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, true, false);
   }
 
-  if (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_X) == 1)
+  if
+  (
+    (ParameterList::getInstance()->getValue(PARAM_CONFIG_OK) == 1) &&
+    (ParameterList::getInstance()->getValue(MOVEMENT_HOME_AT_BOOT_X) == 1)
+  )
   {
     Serial.print("R99 HOME X ON STARTUP\r\n");
     StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, true, false, false);
@@ -526,12 +538,10 @@ void loop()
         StepperControl::getInstance()->test();
       }
 
-      //  Tim 2017-04-20 Temporary disabling the warning of no valid configuration
-      //  until fully supported on RPI
-      //  if (ParameterList::getInstance()->getValue(PARAM_CONFIG_OK) != 1)
-      //  {
-      //    Serial.print(COMM_REPORT_NO_CONFIG);
-      //	}
+      if (ParameterList::getInstance()->getValue(PARAM_CONFIG_OK) != 1)
+      {
+        Serial.print(COMM_REPORT_NO_CONFIG);
+      }
 
       cycleCounter++;
       lastAction = millis();
