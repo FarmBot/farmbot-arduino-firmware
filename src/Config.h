@@ -228,5 +228,5 @@ enum MdlSpiEncoders
 #endif
 
 #if defined(FARMDUINO_V14) && !defined(SOFTWARE_VERSION)
-#define SOFTWARE_VERSION "6.0.1.F\0"
+#define SOFTWARE_VERSION "6.0.1.G\0"
 #endif
