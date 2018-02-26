@@ -189,12 +189,16 @@ R        |21    |P V              |Report parameter value
 R        |23    |P V              |Report updated parameter (during calibration)
 R        |31    |P V              |Report status value
 R        |41    |P V              |Report pin value
+R        |71    |                 |X axis timeout
+R        |72    |                 |Y axis timeout
+R        |73    |                 |Z axis timeout
 R        |81    |XA XB YA YB ZA ZB|Report end stops
 R        |82    |X Y Z            |Report current position
 R        |83    |                 |Report software version
 R        |84    |X Y Z            |Report encoder position scaled
 R        |85    |X Y Z            |Report encoder position raw
 R        |87    |                 |Emergency lock
+R        |88    |                 |No config (see [configuration approval](#important))
 R        |99    |                 |Debug message
 
 Axis states (R05)
