@@ -541,6 +541,7 @@ void loop()
       if (ParameterList::getInstance()->getValue(PARAM_CONFIG_OK) != 1)
       {
         Serial.print(COMM_REPORT_NO_CONFIG);
+        CurrentState::getInstance()->printQAndNewLine();
       }
 
       cycleCounter++;
