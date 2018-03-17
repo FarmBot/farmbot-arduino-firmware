@@ -308,11 +308,31 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
   motorLastPosition[2] = currentPoint[2];
 
   // Load coordinates into motor control
+  // Report back coordinates if target coordinates changed
 
-  axisX.loadCoordinates(currentPoint[0], destinationPoint[0], xHome);
-  axisY.loadCoordinates(currentPoint[1], destinationPoint[1], yHome);
-  axisZ.loadCoordinates(currentPoint[2], destinationPoint[2], zHome);
+  if (axisX.loadCoordinates(currentPoint[0], destinationPoint[0], xHome))
+  {
+    Serial.print(COMM_REPORT_COORD_CHANGED_X);
+    Serial.print(" X");
+    Serial.print(destinationPoint[0]);
+    CurrentState::getInstance()->printQAndNewLine();
+  }
 
+  if (axisY.loadCoordinates(currentPoint[1], destinationPoint[1], yHome))
+  {
+    Serial.print(COMM_REPORT_COORD_CHANGED_Y);
+    Serial.print(" Y");
+    Serial.print(destinationPoint[1]);
+    CurrentState::getInstance()->printQAndNewLine();
+  }
+
+  if (axisZ.loadCoordinates(currentPoint[2], destinationPoint[2], zHome))
+  {
+    Serial.print(COMM_REPORT_COORD_CHANGED_Z);
+    Serial.print(" Z");
+    Serial.print(destinationPoint[2]);
+    CurrentState::getInstance()->printQAndNewLine();
+  }
   // Prepare for movement
 
   axisX.movementStarted = false;
