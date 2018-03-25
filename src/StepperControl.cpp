@@ -314,7 +314,7 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
   {
     Serial.print(COMM_REPORT_COORD_CHANGED_X);
     Serial.print(" X");
-    Serial.print(destinationPoint[0]);
+    Serial.print(axisX.destinationPosition());
     CurrentState::getInstance()->printQAndNewLine();
   }
 
@@ -322,7 +322,7 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
   {
     Serial.print(COMM_REPORT_COORD_CHANGED_Y);
     Serial.print(" Y");
-    Serial.print(destinationPoint[1]);
+    Serial.print(axisY.destinationPosition());
     CurrentState::getInstance()->printQAndNewLine();
   }
 
@@ -330,7 +330,7 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
   {
     Serial.print(COMM_REPORT_COORD_CHANGED_Z);
     Serial.print(" Z");
-    Serial.print(destinationPoint[2]);
+    Serial.print(axisZ.destinationPosition());
     CurrentState::getInstance()->printQAndNewLine();
   }
   // Prepare for movement

@@ -681,6 +681,11 @@ void StepperControlAxis::setCurrentPosition(long newPos)
   coordCurrentPoint = newPos;
 }
 
+long StepperControlAxis::destinationPosition()
+{
+  return coordDestinationPoint;
+}
+
 void StepperControlAxis::setMaxSpeed(long speed)
 {
   motorSpeedMax = speed;

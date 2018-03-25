@@ -51,6 +51,7 @@ public:
 
   long currentPosition();
   void setCurrentPosition(long newPos);
+  long destinationPosition();
 
   void setStepAxis();
   void setMotorStep();
