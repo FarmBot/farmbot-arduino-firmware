@@ -19,6 +19,8 @@
 #include <stdlib.h>
 #include "Command.h"
 
+#include "StepperControlAxisA4988.h"
+#include "StepperControlAxisTMC2130.h"
 
 class StepperControl
 {

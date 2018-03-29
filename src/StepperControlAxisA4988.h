@@ -1,12 +1,12 @@
 /*
- * StepperControlAxis.h
+ * StepperControlAxisA4988.h
  *
- *  Created on: 18 juli 2015
+ *  Created on: 2019-02-28
  *      Author: Tim Evers
  */
 
-#ifndef STEPPERCONTROLAXIS_H_
-#define STEPPERCONTROLAXIS_H_
+#ifndef STEPPERCONTROLAXISA4988_H_
+#define STEPPERCONTROLAXISA4988_H_
 
 #include "Arduino.h"
 #include "CurrentState.h"
@@ -17,11 +17,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-class StepperControlAxis
+#include "StepperControlAxis.h"
+
+class StepperControlAxisA4988 : public StepperControlAxis
 {
 
 public:
-  StepperControlAxis();
+  StepperControlAxisA4988();
 
   void loadPinNumbers(int step, int dir, int enable, int min, int max, int step2, int dir2, int enable2);
   void loadMotorSettings(long speedMax, long speedMin, long speedHome, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, bool endStInv, bool endStInv2, long interruptSpeed, bool motor2Enbl, bool motor2Inv, bool endStEnbl, bool stopAtHome, long maxSize, bool stopAtMax);
@@ -147,10 +149,10 @@ private:
   unsigned long getLength(long l1, long l2);
   void checkAxisDirection();
 
-  void (StepperControlAxis::*setMotorStepWrite)();
-  void (StepperControlAxis::*setMotorStepWrite2)();
-  void (StepperControlAxis::*resetMotorStepWrite)();
-  void (StepperControlAxis::*resetMotorStepWrite2)();
+  void (StepperControlAxisA4988::*setMotorStepWrite)();
+  void (StepperControlAxisA4988::*setMotorStepWrite2)();
+  void (StepperControlAxisA4988::*resetMotorStepWrite)();
+  void (StepperControlAxisA4988::*resetMotorStepWrite2)();
 
 
   void setMotorStepWriteDefault();
@@ -168,4 +170,4 @@ private:
 
 };
 
-#endif /* STEPPERCONTROLAXIS_H_ */
+#endif /* STEPPERCONTROLAXISA4988_H_ */
