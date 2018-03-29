@@ -308,11 +308,31 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
   motorLastPosition[2] = currentPoint[2];
 
   // Load coordinates into motor control
+  // Report back coordinates if target coordinates changed
 
-  axisX.loadCoordinates(currentPoint[0], destinationPoint[0], xHome);
-  axisY.loadCoordinates(currentPoint[1], destinationPoint[1], yHome);
-  axisZ.loadCoordinates(currentPoint[2], destinationPoint[2], zHome);
+  if (axisX.loadCoordinates(currentPoint[0], destinationPoint[0], xHome))
+  {
+    Serial.print(COMM_REPORT_COORD_CHANGED_X);
+    Serial.print(" X");
+    Serial.print(axisX.destinationPosition() / stepsPerMm[0]);
+    CurrentState::getInstance()->printQAndNewLine();
+  }
 
+  if (axisY.loadCoordinates(currentPoint[1], destinationPoint[1], yHome))
+  {
+    Serial.print(COMM_REPORT_COORD_CHANGED_Y);
+    Serial.print(" Y");
+    Serial.print(axisY.destinationPosition() / stepsPerMm[1]);
+    CurrentState::getInstance()->printQAndNewLine();
+  }
+
+  if (axisZ.loadCoordinates(currentPoint[2], destinationPoint[2], zHome))
+  {
+    Serial.print(COMM_REPORT_COORD_CHANGED_Z);
+    Serial.print(" Z");
+    Serial.print(axisZ.destinationPosition() / stepsPerMm[2]);
+    CurrentState::getInstance()->printQAndNewLine();
+  }
   // Prepare for movement
 
   axisX.movementStarted = false;
@@ -1303,9 +1323,9 @@ void StepperControl::loadMotorSettings()
 
   CurrentState::getInstance()->setStepsPerMm(stepsPerMm[0], stepsPerMm[1], stepsPerMm[2]);
 
-  axisX.loadMotorSettings(speedMax[0], speedMin[0], speedHome[0], stepsAcc[0], timeOut[0], homeIsUp[0], motorInv[0], endStInv[0], endStInv2[0], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[0], motor2Inv[0], endStEnbl[0], motorStopAtHome[0], motorMaxSize[0], motorStopAtMax[0]);
-  axisY.loadMotorSettings(speedMax[1], speedMin[1], speedHome[1], stepsAcc[1], timeOut[1], homeIsUp[1], motorInv[1], endStInv[1], endStInv2[1], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[1], motor2Inv[1], endStEnbl[1], motorStopAtHome[1], motorMaxSize[1], motorStopAtMax[1]);
-  axisZ.loadMotorSettings(speedMax[2], speedMin[2], speedHome[2], stepsAcc[2], timeOut[2], homeIsUp[2], motorInv[2], endStInv[2], endStInv2[2], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[2], motor2Inv[2], endStEnbl[2], motorStopAtHome[2], motorMaxSize[2], motorStopAtMax[2]);
+  axisX.loadMotorSettings(speedMax[0], speedMin[0], speedHome[0], stepsAcc[0], timeOut[0], homeIsUp[0], motorInv[0], endStInv[0], endStInv2[0], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[0], motor2Inv[0], endStEnbl[0], motorStopAtHome[0], motorMaxSize[0] *= stepsPerMm[0], motorStopAtMax[0]);
+  axisY.loadMotorSettings(speedMax[1], speedMin[1], speedHome[1], stepsAcc[1], timeOut[1], homeIsUp[1], motorInv[1], endStInv[1], endStInv2[1], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[1], motor2Inv[1], endStEnbl[1], motorStopAtHome[1], motorMaxSize[1] *= stepsPerMm[1], motorStopAtMax[1]);
+  axisZ.loadMotorSettings(speedMax[2], speedMin[2], speedHome[2], stepsAcc[2], timeOut[2], homeIsUp[2], motorInv[2], endStInv[2], endStInv2[2], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[2], motor2Inv[2], endStEnbl[2], motorStopAtHome[2], motorMaxSize[2] *= stepsPerMm[2], motorStopAtMax[2]);
 
   primeMotors();
 }

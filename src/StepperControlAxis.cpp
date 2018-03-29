@@ -445,13 +445,15 @@ void StepperControlAxis::loadMotorSettings(
 
 }
 
-void StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint, bool home)
+bool StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint, bool home)
 {
 
   coordSourcePoint = sourcePoint;
   coordCurrentPoint = sourcePoint;
   coordDestinationPoint = destinationPoint;
   coordHomeAxis = home;
+
+  bool changed = false;
 
   // Limit normal movement to the home position
 
@@ -460,11 +462,13 @@ void StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint
     if (!motorHomeIsUp && coordDestinationPoint < 0)
     {
       coordDestinationPoint = 0;
+      changed = true;
     }
 
     if (motorHomeIsUp && coordDestinationPoint > 0)
     {
       coordDestinationPoint = 0;
+      changed = true;
     }
   }
 
@@ -476,10 +480,12 @@ void StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint
       if (coordDestinationPoint < 0)
       {
         coordDestinationPoint = -abs(motorMaxSize);
+        changed = true;
       }
       else
       {
         coordDestinationPoint = abs(motorMaxSize);
+        changed = true;
       }
     }
   }
@@ -487,6 +493,8 @@ void StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint
   // Initialize movement variables
   moveTicks = 0;
   axisActive = true;
+
+  return changed;
 }
 
 void StepperControlAxis::enableMotor()
@@ -671,6 +679,11 @@ long StepperControlAxis::currentPosition()
 void StepperControlAxis::setCurrentPosition(long newPos)
 {
   coordCurrentPoint = newPos;
+}
+
+long StepperControlAxis::destinationPosition()
+{
+  return coordDestinationPoint;
 }
 
 void StepperControlAxis::setMaxSpeed(long speed)
