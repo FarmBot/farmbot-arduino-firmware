@@ -1225,11 +1225,11 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
     *lastPosition = axis->currentPosition();
 
     //axis->resetStepDone();
-  }
 
-  if (*encoderUseForPos)
-  {
-    axis->setCurrentPosition(encoder->currentPosition());
+    if (*encoderUseForPos)
+    {
+      axis->setCurrentPosition(encoder->currentPosition());
+    }
   }
 }
 
