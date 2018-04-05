@@ -113,7 +113,7 @@ private:
   bool motorMotor2Inv;      // invert secondary motor direction
   long motorInterruptSpeed; // period of interrupt in micro seconds
   bool motorStopAtHome;     // stop at home position or also use other side of the axis
-  long motorMaxSize;        // maximum size of the axis
+  long motorMaxSize;        // maximum size of the axis in steps
   bool motorStopAtMax;      // stop at the maximum size
 
   // coordinates
