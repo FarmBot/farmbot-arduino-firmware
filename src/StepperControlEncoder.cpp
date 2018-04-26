@@ -105,6 +105,9 @@ long StepperControlEncoder::currentPosition()
   }
   else
   {
+    #if defined(FARMDUINO_V14)
+      return position * scalingFactor / 40000 * encoderInvert;
+    #endif
     return position * scalingFactor / 10000 * encoderInvert;
   }
 }
