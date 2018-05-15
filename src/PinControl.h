@@ -16,19 +16,24 @@
 #include <stdlib.h>
 #include "CurrentState.h"
 
-class PinControl {
+class PinControl
+{
 public:
-        static PinControl* getInstance();
+  static PinControl *getInstance();
 
-	int setMode(int pinNr, int mode);
-	int writeValue(int pinNr, int value, int mode);
-	int readValue(int pinNr, int mode);
-	int writePulse(int pinNr, int valueOne, int valueTwo, long time, int mode);
+  int setMode(int pinNr, int mode);
+  int writeValue(int pinNr, int value, int mode);
+  int readValue(int pinNr, int mode);
+  int writePulse(int pinNr, int valueOne, int valueTwo, long time, int mode);
+  void resetPinsUsed();
 
 private:
-        PinControl();
-        PinControl(PinControl const&);
-        void operator=(PinControl const&);
+  PinControl();
+  PinControl(PinControl const &);
+  void operator=(PinControl const &);
+
+  bool pinWritten[2][56];
+
 };
 
 #endif /* PINCONTROL_H_ */

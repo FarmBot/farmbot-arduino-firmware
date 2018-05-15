@@ -7,23 +7,27 @@
 
 #include "F20Handler.h"
 
+static F20Handler *instance;
 
-static F20Handler* instance;
+F20Handler *F20Handler::getInstance()
+{
+  if (!instance)
+  {
+    instance = new F20Handler();
+  };
+  return instance;
+};
 
-F20Handler * F20Handler::getInstance() {
-	if (!instance) {
-		instance = new F20Handler();
-	};
-	return instance;
+F20Handler::F20Handler()
+{
 }
-;
 
-F20Handler::F20Handler() {
-}
+int F20Handler::execute(Command *command)
+{
 
-int F20Handler::execute(Command* command) {
+  ParameterList::getInstance()->readAllValues();
+  Serial.print("R20");
+  CurrentState::getInstance()->printQAndNewLine();
 
-	ParameterList::getInstance()->readAllValues();
-
-	return 1;
+  return 0;
 }

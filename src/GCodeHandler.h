@@ -9,11 +9,12 @@
 #define GCODEHANDLER_H_
 #include "Command.h"
 
-class GCodeHandler {
+class GCodeHandler
+{
 public:
-	GCodeHandler();
-	virtual ~GCodeHandler();
-	virtual int execute(Command*);
+  GCodeHandler();
+  virtual ~GCodeHandler();
+  virtual int execute(Command *);
 };
 
 #endif /* GCODEHANDLER_H_ */

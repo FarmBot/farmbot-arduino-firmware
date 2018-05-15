@@ -15,39 +15,57 @@
 #include "Config.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <SPI.h>
 
-class StepperControlEncoder {
+class StepperControlEncoder
+{
 
 public:
+  StepperControlEncoder();
 
-	StepperControlEncoder();
+  void loadPinNumbers(int channelA, int channelB, int channelAQ, int channelBQ);
+  void loadSettings(int encType, int scaling, int invert);
 
-	void loadPinNumbers(int channelA, int channelB);
+  // Load the id for the motor dynamics lab encoder
+  void loadMdlEncoderId(MdlSpiEncoders encoder);
 
-	void setPosition(long newPosition);
-	long currentPosition();
+  void setPosition(long newPosition);
+  long currentPosition();
+  long currentPositionRaw();
 
-	void readEncoder();
-	void readChannels();
-	void shiftChannels();
-	void test();
+  void checkEncoder(bool channelA, bool channelB, bool channelAQ, bool channelBQ);
+  void processEncoder();
+  void readChannels();
+  void setChannels(bool channelA, bool channelB, bool channelAQ, bool channelBQ);
+  void shiftChannels();
+  void test();
 
 private:
+  // pin settings
+  int pinChannelA;
+  int pinChannelAQ;
+  int pinChannelB;
+  int pinChannelBQ;
 
-	// pin settings
-	int pinChannelA;
-	int pinChannelB;
+  // channels
+  bool prvValChannelA;
+  bool prvValChannelB;
+  bool curValChannelA;
+  bool curValChannelB;
 
-	// channels
-	bool prvValChannelA;
-	bool prvValChannelB;
-	bool curValChannelA;
-	bool curValChannelB;
+  bool readChannelA;
+  bool readChannelAQ;
+  bool readChannelB;
+  bool readChannelBQ;
 
-	// encoder
-	long position;
+  // encoder
+  long position;
+  int scalingFactor;
+  int encoderType;
+  int encoderInvert;
+
+  MdlSpiEncoders mdlEncoder = _MDL_X1;
 
 };
 
 #endif /* STEPPERCONTROLENCODER_H_ */
-

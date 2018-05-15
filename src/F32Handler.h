@@ -16,19 +16,18 @@
 #include "StepperControl.h"
 #include "StatusList.h"
 
-class F32Handler : public GCodeHandler {
+class F32Handler : public GCodeHandler
+{
 public:
-        static F32Handler* getInstance();
-        int execute(Command*);
+  static F32Handler *getInstance();
+  int execute(Command *);
+
 private:
-        F32Handler();
-        F32Handler(F32Handler const&);
-        void operator=(F32Handler const&);
-        long adjustStepAmount(long);
-        long getNumberOfSteps(double, double);
+  F32Handler();
+  F32Handler(F32Handler const &);
+  void operator=(F32Handler const &);
+  long adjustStepAmount(long);
+  long getNumberOfSteps(double, double);
 };
 
 #endif /* F32HANDLER_H_ */
-
-
-

@@ -1,0 +1,184 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C5F80730-F44F-4478-BDAE-6634EFC2CA88}</ProjectGuid>
+    <RootNamespace>src</RootNamespace>
+    <ProjectName>src</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>
+    </PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>
+    </PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\src;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.19\libraries\SPI\src;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.19\libraries\EEPROM\src;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\libraries\Servo\src;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\libraries;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.19\libraries;$(ProjectDir)..\..\..\..\Documents\Arduino\libraries;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.19\cores\arduino;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.19\variants\mega;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\avr\include\;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\avr\include\avr\;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\lib\gcc\avr\4.8.1\include;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\lib\gcc\avr\4.9.2\include;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\lib\gcc\avr\4.9.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ProjectDir)__vm\.src.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <PreprocessorDefinitions>__AVR_ATmega2560__;_VMDEBUG=1;F_CPU=16000000L;ARDUINO=10802;ARDUINO_AVR_MEGA2560;ARDUINO_ARCH_AVR;__cplusplus=201103L;_VMICRO_INTELLISENSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.19\libraries\SPI\src;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.19\libraries\EEPROM\src;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\libraries\Servo\src;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\libraries;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.19\libraries;$(ProjectDir)..\..\..\..\Documents\Arduino\libraries;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.19\cores\arduino;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.19\variants\mega;$(ProjectDir)..\src;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\avr\include\;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\avr\include\avr\;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\lib\gcc\avr\4.8.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ProjectDir)__vm\.src.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <PreprocessorDefinitions>__AVR_ATmega2560__;F_CPU=16000000L;ARDUINO=10802;ARDUINO_AVR_MEGA2560;ARDUINO_ARCH_AVR;__cplusplus=201103L;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="VisualMicro" />
+  </ItemGroup>
+  <PropertyGroup>
+    <DebuggerFlavor>VisualMicroDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="src.ino">
+      <FileType>CppCode</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Command.cpp" />
+    <ClCompile Include="CurrentState.cpp" />
+    <ClCompile Include="F09Handler.cpp" />
+    <ClCompile Include="F11Handler.cpp" />
+    <ClCompile Include="F12Handler.cpp" />
+    <ClCompile Include="F13Handler.cpp" />
+    <ClCompile Include="F14Handler.cpp" />
+    <ClCompile Include="F15Handler.cpp" />
+    <ClCompile Include="F16Handler.cpp" />
+    <ClCompile Include="F20Handler.cpp" />
+    <ClCompile Include="F21Handler.cpp" />
+    <ClCompile Include="F22Handler.cpp" />
+    <ClCompile Include="F31Handler.cpp" />
+    <ClCompile Include="F32Handler.cpp" />
+    <ClCompile Include="F41Handler.cpp" />
+    <ClCompile Include="F42Handler.cpp" />
+    <ClCompile Include="F43Handler.cpp" />
+    <ClCompile Include="F44Handler.cpp" />
+    <ClCompile Include="F61Handler.cpp" />
+    <ClCompile Include="F81Handler.cpp" />
+    <ClCompile Include="F82Handler.cpp" />
+    <ClCompile Include="F83Handler.cpp" />
+    <ClCompile Include="F84Handler.cpp" />
+    <ClCompile Include="farmbot_arduino_controller.cpp" />
+    <ClCompile Include="G00Handler.cpp" />
+    <ClCompile Include="G28Handler.cpp" />
+    <ClCompile Include="GCodeHandler.cpp" />
+    <ClCompile Include="GCodeProcessor.cpp" />
+    <ClCompile Include="MemoryFree.cpp" />
+    <ClCompile Include="ParameterList.cpp" />
+    <ClCompile Include="PinControl.cpp" />
+    <ClCompile Include="PinGuard.cpp" />
+    <ClCompile Include="PinGuardPin.cpp" />
+    <ClCompile Include="ServoControl.cpp" />
+    <ClCompile Include="StatusList.cpp" />
+    <ClCompile Include="StepperControl.cpp" />
+    <ClCompile Include="StepperControlAxis.cpp" />
+    <ClCompile Include="StepperControlEncoder.cpp" />
+    <ClCompile Include="TimerOne.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Board.h" />
+    <ClInclude Include="Command.h" />
+    <ClInclude Include="Config.h" />
+    <ClInclude Include="CurrentState.h" />
+    <ClInclude Include="Debug.h" />
+    <ClInclude Include="F09Handler.h" />
+    <ClInclude Include="F11Handler.h" />
+    <ClInclude Include="F12Handler.h" />
+    <ClInclude Include="F13Handler.h" />
+    <ClInclude Include="F14Handler.h" />
+    <ClInclude Include="F15Handler.h" />
+    <ClInclude Include="F16Handler.h" />
+    <ClInclude Include="F20Handler.h" />
+    <ClInclude Include="F21Handler.h" />
+    <ClInclude Include="F22Handler.h" />
+    <ClInclude Include="F31Handler.h" />
+    <ClInclude Include="F32Handler.h" />
+    <ClInclude Include="F41Handler.h" />
+    <ClInclude Include="F42Handler.h" />
+    <ClInclude Include="F43Handler.h" />
+    <ClInclude Include="F44Handler.h" />
+    <ClInclude Include="F61Handler.h" />
+    <ClInclude Include="F81Handler.h" />
+    <ClInclude Include="F82Handler.h" />
+    <ClInclude Include="F83Handler.h" />
+    <ClInclude Include="F84Handler.h" />
+    <ClInclude Include="farmbot_arduino_controller.h" />
+    <ClInclude Include="G00Handler.h" />
+    <ClInclude Include="G28Handler.h" />
+    <ClInclude Include="GCodeHandler.h" />
+    <ClInclude Include="GCodeProcessor.h" />
+    <ClInclude Include="known_16bit_timers.h" />
+    <ClInclude Include="MemoryFree.h" />
+    <ClInclude Include="ParameterList.h" />
+    <ClInclude Include="PinControl.h" />
+    <ClInclude Include="PinGuard.h" />
+    <ClInclude Include="PinGuardPin.h" />
+    <ClInclude Include="pins.h" />
+    <ClInclude Include="ServoControl.h" />
+    <ClInclude Include="StatusList.h" />
+    <ClInclude Include="StepperControl.h" />
+    <ClInclude Include="StepperControlAxis.h" />
+    <ClInclude Include="StepperControlEncoder.h" />
+    <ClInclude Include="TimerOne.h" />
+    <ClInclude Include="__vm\.src.vsarduino.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties vm.programmer_name="avrisp" arduino.upload.port="COM6" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

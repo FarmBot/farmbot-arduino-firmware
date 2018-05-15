@@ -9,155 +9,304 @@
 #include "GCodeProcessor.h"
 #include "CurrentState.h"
 
-GCodeProcessor::GCodeProcessor() {
-
+GCodeProcessor::GCodeProcessor()
+{
 }
 
-GCodeProcessor::~GCodeProcessor() {
+GCodeProcessor::~GCodeProcessor()
+{
 }
 
-void GCodeProcessor::printCommandLog(Command* command) {
-	Serial.print("command == NULL: ");
-	Serial.println("\r\n");
+void GCodeProcessor::printCommandLog(Command *command)
+{
+  Serial.print("command == NULL: ");
+  Serial.println("\r\n");
 }
 
-int GCodeProcessor::execute(Command* command) {
+int GCodeProcessor::execute(Command *command)
+{
 
-	int execution = 0;
+  int execution = 0;
+  bool isMovement = false;
+
+  bool emergencyStop = false;
+  emergencyStop = CurrentState::getInstance()->isEmergencyStop();
+
+  int attempt = 0;
+  int maximumAttempts = ParameterList::getInstance()->getValue(PARAM_MOV_NR_RETRY);
+
+  long Q = command->getQ();
+  CurrentState::getInstance()->setQ(Q);
+
+  if
+  (
+    command->getCodeEnum() == G00 ||
+    command->getCodeEnum() == G01 ||
+    command->getCodeEnum() == F11 ||
+    command->getCodeEnum() == F12 ||
+    command->getCodeEnum() == F13 ||
+    command->getCodeEnum() == F14 ||
+    command->getCodeEnum() == F15 ||
+    command->getCodeEnum() == F16
+  )
+  {
+    isMovement = true;
+  }
 
 
-	long Q = command->getQ();
-	CurrentState::getInstance()->setQ(Q);
 
-	if(command == NULL) {
-		if(LOGGING) {
-			printCommandLog(command);
-		}
-		return -1;
-	}
+  //Only allow reset of emergency stop when emergency stop is engaged
 
-	if(command->getCodeEnum() == CODE_UNDEFINED) {
-		if(LOGGING) {
-			printCommandLog(command);
-		}
-		return -1;
-	}
+  if (emergencyStop)
+  {
+    if (!(
+      command->getCodeEnum() == F09 ||
+      command->getCodeEnum() == F20 ||
+      command->getCodeEnum() == F21 ||
+      command->getCodeEnum() == F22 ||
+      command->getCodeEnum() == F81 ||
+      command->getCodeEnum() == F82 ||
+      command->getCodeEnum() == F83 ))
+    {
 
-	GCodeHandler* handler = getGCodeHandler(command->getCodeEnum());
+    Serial.print(COMM_REPORT_EMERGENCY_STOP);
+    CurrentState::getInstance()->printQAndNewLine();
+    return -1;
+    }
+  }
 
-	if(handler == NULL) {
-		Serial.println("R99 handler == NULL\r\n");
-		return -1;
-	}
+  // Do not execute the command when the config complete parameter is not
+  // set by the raspberry pi and it's asked to do a move command
 
-	Serial.print(COMM_REPORT_CMD_START);
-	CurrentState::getInstance()->printQAndNewLine();
+  if (ParameterList::getInstance()->getValue(PARAM_CONFIG_OK) != 1)
+  {
+    if (isMovement)
+    {
+      Serial.print(COMM_REPORT_NO_CONFIG);
+      CurrentState::getInstance()->printQAndNewLine();
+      return -1;
+    }
+  }
 
-	execution = handler->execute(command);
-	if(execution == 0) {
-		Serial.print(COMM_REPORT_CMD_DONE);
-		CurrentState::getInstance()->printQAndNewLine();
-	} else {
-		Serial.print(COMM_REPORT_CMD_ERROR);
-		CurrentState::getInstance()->printQAndNewLine();
-	}
+  // Return error when no command or invalid command is found
 
-	CurrentState::getInstance()->resetQ();
-	return execution;
+  if (command == NULL)
+  {
+
+    Serial.print(COMM_REPORT_BAD_CMD);
+    CurrentState::getInstance()->printQAndNewLine();
+
+    if (LOGGING)
+    {
+      printCommandLog(command);
+    }
+    return -1;
+  }
+
+  if (command->getCodeEnum() == CODE_UNDEFINED)
+  {
+    Serial.print(COMM_REPORT_BAD_CMD);
+    CurrentState::getInstance()->printQAndNewLine();
+
+    if (LOGGING)
+    {
+      printCommandLog(command);
+    }
+    return -1;
+  }
+
+  // Get the right handler for this command
+
+  GCodeHandler *handler = getGCodeHandler(command->getCodeEnum());
+
+  if (handler == NULL)
+  {
+    Serial.print(COMM_REPORT_BAD_CMD);
+    CurrentState::getInstance()->printQAndNewLine();
+
+    Serial.println("R99 handler == NULL\r\n");
+    return -1;
+  }
+
+  // Report start of command
+
+  Serial.print(COMM_REPORT_CMD_START);
+  CurrentState::getInstance()->printQAndNewLine();
+
+  // Execute command with retry
+  CurrentState::getInstance()->setLastError(0);
+  while (attempt < 1 || (!emergencyStop && attempt < maximumAttempts && execution != 0 && execution != 2))
+  // error 2 is timeout error: stop movement retries
+  {
+
+    if (LOGGING || debugMessages)
+    {
+      Serial.print("R99 attempt ");
+      Serial.print(attempt);
+      Serial.print(" from ");
+      Serial.print(maximumAttempts);
+      Serial.print("\r\n");
+    }
+
+    attempt++;
+    if (attempt > 1)
+    {
+      Serial.print(COMM_REPORT_CMD_RETRY);
+      CurrentState::getInstance()->printQAndNewLine();
+    }
+    
+    handler->execute(command);
+    execution = CurrentState::getInstance()->getLastError();
+    emergencyStop = CurrentState::getInstance()->isEmergencyStop();
+
+    if (LOGGING || debugMessages)
+    {
+      Serial.print("R99 execution ");
+      Serial.print(execution);
+      Serial.print("\r\n");
+    }
+  }
+
+  // Clean serial buffer
+  while (Serial.available() > 0)
+  {
+    Serial.read();
+  }
+
+  // if movemement failed after retry
+  // and parameter for emergency stop is set
+  // set the emergency stop
+
+  if (execution != 0)
+  {
+    if (isMovement)
+    {
+      if (ParameterList::getInstance()->getValue(PARAM_E_STOP_ON_MOV_ERR) == 1)
+      {
+        CurrentState::getInstance()->setEmergencyStop();
+      }
+    }
+  }
+
+  // Report back result of execution
+  if (execution == 0)
+  {
+    Serial.print(COMM_REPORT_CMD_DONE);
+    CurrentState::getInstance()->printQAndNewLine();
+  }
+  else
+  {
+    Serial.print(COMM_REPORT_CMD_ERROR);
+    CurrentState::getInstance()->printQAndNewLine();
+  }
+
+  CurrentState::getInstance()->resetQ();
+  return execution;
 };
 
-GCodeHandler* GCodeProcessor::getGCodeHandler(CommandCodeEnum codeEnum) {
+GCodeHandler *GCodeProcessor::getGCodeHandler(CommandCodeEnum codeEnum)
+{
 
-	GCodeHandler* handler = NULL;
+  GCodeHandler *handler = NULL;
 
-	if (codeEnum == G00) {handler = G00Handler::getInstance();}
+  // These are if statements so they can be disabled as test
+  // Usefull when running into memory issues again
 
-	if (codeEnum == G28) {handler = G28Handler::getInstance();}
+  if (codeEnum == G00)
+  {
+    handler = G00Handler::getInstance();
+  }
 
-	if (codeEnum == F11) {handler = F11Handler::getInstance();}
-	if (codeEnum == F12) {handler = F12Handler::getInstance();}
-	if (codeEnum == F13) {handler = F13Handler::getInstance();}
+  if (codeEnum == G28)
+  {
+    handler = G28Handler::getInstance();
+  }
 
-	if (codeEnum == F14) {handler = F14Handler::getInstance();}
-	if (codeEnum == F15) {handler = F15Handler::getInstance();}
-	if (codeEnum == F16) {handler = F16Handler::getInstance();}
+  if (codeEnum == F09)
+  {
+    handler = F09Handler::getInstance();
+  }
 
-	if (codeEnum == F20) {handler = F20Handler::getInstance();}
-	if (codeEnum == F21) {handler = F21Handler::getInstance();}
-	if (codeEnum == F22) {handler = F22Handler::getInstance();}
+  if (codeEnum == F11)
+  {
+    handler = F11Handler::getInstance();
+  }
+  if (codeEnum == F12)
+  {
+    handler = F12Handler::getInstance();
+  }
+  if (codeEnum == F13)
+  {
+    handler = F13Handler::getInstance();
+  }
 
-//	if (codeEnum == F31) {handler = F31Handler::getInstance();}
-//	if (codeEnum == F32) {handler = F32Handler::getInstance();}
+  if (codeEnum == F14)
+  {
+    handler = F14Handler::getInstance();
+  }
+  if (codeEnum == F15)
+  {
+    handler = F15Handler::getInstance();
+  }
+  if (codeEnum == F16)
+  {
+    handler = F16Handler::getInstance();
+  }
 
-	if (codeEnum == F41) {handler = F41Handler::getInstance();}
-	if (codeEnum == F42) {handler = F42Handler::getInstance();}
-	if (codeEnum == F43) {handler = F43Handler::getInstance();}
-	if (codeEnum == F44) {handler = F44Handler::getInstance();}
+  if (codeEnum == F20)
+  {
+    handler = F20Handler::getInstance();
+  }
+  if (codeEnum == F21)
+  {
+    handler = F21Handler::getInstance();
+  }
+  if (codeEnum == F22)
+  {
+    handler = F22Handler::getInstance();
+  }
 
-//	if (codeEnum == F61) {handler = F61Handler::getInstance();}
+  //	if (codeEnum == F31) {handler = F31Handler::getInstance();}
+  //	if (codeEnum == F32) {handler = F32Handler::getInstance();}
 
-	if (codeEnum == F81) {handler = F81Handler::getInstance();}
-	if (codeEnum == F82) {handler = F82Handler::getInstance();}
-	if (codeEnum == F83) {handler = F83Handler::getInstance();}
+  if (codeEnum == F41)
+  {
+    handler = F41Handler::getInstance();
+  }
+  if (codeEnum == F42)
+  {
+    handler = F42Handler::getInstance();
+  }
+  if (codeEnum == F43)
+  {
+    handler = F43Handler::getInstance();
+  }
+  if (codeEnum == F44)
+  {
+    handler = F44Handler::getInstance();
+  }
 
+  if (codeEnum == F61)
+  {
+    handler = F61Handler::getInstance();
+  }
 
-/*
-	switch(codeEnum) {
-	case G00:
-		return G00Handler::getInstance();
-	case G28:
-		return G28Handler::getInstance();
+  if (codeEnum == F81)
+  {
+    handler = F81Handler::getInstance();
+  }
+  if (codeEnum == F82)
+  {
+    handler = F82Handler::getInstance();
+  }
+  if (codeEnum == F83)
+  {
+    handler = F83Handler::getInstance();
+  }
+  if (codeEnum == F84)
+  {
+    handler = F84Handler::getInstance();
+  }
 
-	case F11:
-		return F11Handler::getInstance();
-	case F12:
-		return F12Handler::getInstance();
-	case F13:
-		return F13Handler::getInstance();
-
-	case F14:
-		return F14Handler::getInstance();
-	case F15:
-		return F15Handler::getInstance();
-	case F16:
-		return F16Handler::getInstance();
-
-	case F20:
-		return F20Handler::getInstance();
-	case F21:
-		return F21Handler::getInstance();
-	case F22:
-		return F22Handler::getInstance();
-
-	case F31:
-		return F31Handler::getInstance();
-	case F32:
-		return F32Handler::getInstance();
-
-	case F41:
-		return F41Handler::getInstance();
-	case F42:
-		return F42Handler::getInstance();
-	case F43:
-		return F43Handler::getInstance();
-	case F44:
-		return F44Handler::getInstance();
-
-	case F61:
-		return F61Handler::getInstance();
-
-	case F81:
-		return F81Handler::getInstance();
-	case F82:
-		return F82Handler::getInstance();
-	case F83:
-		return F83Handler::getInstance();
-
-	}
-*/
-
-
-	return handler;
+  return handler;
 }
-
-

@@ -16,23 +16,23 @@
 #include <stdlib.h>
 //#include "ParameterList.h"
 
-class PinGuardPin {
+class PinGuardPin
+{
 public:
+  PinGuardPin();
 
-        PinGuardPin();
+  void processTick();
+  void loadPinConfig(int pinNrParamNr, int activeStateParamNr, int timeOutParamNr);
 
-	void processTick();
-	void loadPinConfig(int pinNrParamNr, int activeStateParamNr, int timeOutParamNr);
 private:
-        //PinControlPin(PinControlPin const&);
-        ///void operator=(PinControlPin const&);
+  //PinControlPin(PinControlPin const&);
+  ///void operator=(PinControlPin const&);
 
-	int pinNr;
-	long timeOut;
-	long timeOutCount;
-	bool activeState;
-	bool currentStatePin;
-
+  int pinNr;
+  long timeOut;
+  long timeOutCount;
+  bool activeState;
+  bool currentStatePin;
 };
 
 #endif /* PINGUARDPIN_H_ */

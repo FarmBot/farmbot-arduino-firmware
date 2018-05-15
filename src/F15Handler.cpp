@@ -8,31 +8,40 @@
 
 #include "F15Handler.h"
 
+static F15Handler *instance;
 
-static F15Handler* instance;
+F15Handler *F15Handler::getInstance()
+{
+  if (!instance)
+  {
+    instance = new F15Handler();
+  };
+  return instance;
+};
 
-F15Handler * F15Handler::getInstance() {
-        if (!instance) {
-                instance = new F15Handler();
-        };
-        return instance;
+F15Handler::F15Handler()
+{
 }
-;
 
-F15Handler::F15Handler() {
-}
+int F15Handler::execute(Command *command)
+{
+  int ret = 0;
 
-int F15Handler::execute(Command* command) {
+  if (LOGGING)
+  {
+    Serial.print("R99 HOME Z\r\n");
+  }
 
-        if (LOGGING) {
-                Serial.print("R99 HOME Z\r\n");
-        }
+  ret = StepperControl::getInstance()->calibrateAxis(1);
 
-	StepperControl::getInstance()->calibrateAxis(1);
+  if (ret == 0) {
+    StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, true, false);
+  }
 
-        if (LOGGING) {
-                CurrentState::getInstance()->print();
-        }
+  if (LOGGING)
+  {
+    CurrentState::getInstance()->print();
+  }
 
-        return 0;
+  return 0;
 }

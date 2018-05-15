@@ -17,27 +17,26 @@
 #include "PinGuardPin.h"
 #include "ParameterList.h"
 
-class PinGuard {
+class PinGuard
+{
 public:
-        static PinGuard* getInstance();
+  static PinGuard *getInstance();
 
-	void loadConfig();
-	void checkPins();
+  void loadConfig();
+  void checkPins();
 
 private:
+  //long pinTimeOut[100];
+  //long pinCurrentTime[100];
+  //void checkPin;
+  //bool pinSafeState[100];
 
+  PinGuardPin pinGuardPin[5];
+  //PinGuardPin test;
 
-	//long pinTimeOut[100];
-	//long pinCurrentTime[100];
-	//void checkPin;
-	//bool pinSafeState[100];
-
-	PinGuardPin pinGuardPin[5];
-	//PinGuardPin test;
-
-        PinGuard();
-        PinGuard(PinGuard const&);
-        void operator=(PinGuard const&);
+  PinGuard();
+  PinGuard(PinGuard const &);
+  void operator=(PinGuard const &);
 };
 
 #endif /* PINGUARD_H_ */
