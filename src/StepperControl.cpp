@@ -35,6 +35,28 @@ void StepperControl::reportEncoders()
 
 }
 
+void StepperControl::getEncoderReport()
+{
+  serialBuffer += COMM_REPORT_ENCODER_SCALED;
+  serialBuffer += " X";
+  serialBuffer += (float)encoderX.currentPosition() / (float)stepsPerMm[0];
+  serialBuffer += " Y";
+  serialBuffer += (float)encoderY.currentPosition() / (float)stepsPerMm[1];
+  serialBuffer += " Z";
+  serialBuffer += (float)encoderZ.currentPosition() / (float)stepsPerMm[2];
+  serialBuffer += CurrentState::getInstance()->getQAndNewLine();
+
+  serialBuffer += COMM_REPORT_ENCODER_RAW;
+  serialBuffer += " X";
+  serialBuffer += encoderX.currentPositionRaw();
+  serialBuffer += " Y";
+  serialBuffer += encoderY.currentPositionRaw();
+  serialBuffer += " Z";
+  serialBuffer += encoderZ.currentPositionRaw();
+  serialBuffer += CurrentState::getInstance()->getQAndNewLine();
+
+}
+
 void StepperControl::reportStatus(StepperControlAxis *axis, int axisStatus)
 {  
   serialBuffer += COMM_REPORT_CMD_STATUS;
@@ -628,6 +650,9 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
         case 1:
           serialBuffer += CurrentState::getInstance()->getPosition();
           serialBuffer += CurrentState::getInstance()->getQAndNewLine();
+          #if defined(FARMDUINO_V14)
+            getEncoderReport();
+          #endif
           break;
       }
 

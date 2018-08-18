@@ -54,6 +54,7 @@ public:
   void setPositionZ(long pos);
 
   void reportEncoders();
+  void getEncoderReport();
 
   void test();
   void test2();

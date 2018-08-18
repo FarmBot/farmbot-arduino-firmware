@@ -14,6 +14,7 @@
 static char commandEndChar = 0x0A;
 static GCodeProcessor *gCodeProcessor = new GCodeProcessor();
 
+int reportingPeriod = 5000;
 unsigned long lastAction;
 unsigned long currentTime;
 unsigned long cycleCounter = 0;
@@ -245,6 +246,8 @@ void setup()
   
   #if defined(FARMDUINO_V14)
 
+    reportingPeriod = 500;
+
     pinMode(READ_ENA_PIN, INPUT_PULLUP);
     pinMode(NSS_PIN, OUTPUT);
     digitalWrite(NSS_PIN, HIGH);
@@ -468,7 +471,7 @@ void loop()
   else
   {
 
-    if ((currentTime - lastAction) > 5000)
+    if ((currentTime - lastAction) > reportingPeriod)
     {
       // After an idle time, send the idle message
 
