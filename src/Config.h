@@ -77,7 +77,7 @@
 
   const long MOVEMENT_KEEP_ACTIVE_X_DEFAULT = 0;
   const long MOVEMENT_KEEP_ACTIVE_Y_DEFAULT = 0;
-  const long MOVEMENT_KEEP_ACTIVE_Z_DEFAULT = 1;
+  const long MOVEMENT_KEEP_ACTIVE_Z_DEFAULT = 0;
 
   const long MOVEMENT_HOME_AT_BOOT_X_DEFAULT = 0;
   const long MOVEMENT_HOME_AT_BOOT_Y_DEFAULT = 0;
@@ -107,24 +107,24 @@
   const long MOVEMENT_STEP_PER_MM_Z_DEFAULT = 25;
 
   // Number of steps used for acceleration or deceleration
-  const long MOVEMENT_STEPS_ACC_DEC_X_DEFAULT = 300;
-  const long MOVEMENT_STEPS_ACC_DEC_Y_DEFAULT = 300;
-  const long MOVEMENT_STEPS_ACC_DEC_Z_DEFAULT = 300;
+  const long MOVEMENT_STEPS_ACC_DEC_X_DEFAULT = 1000;// 300;
+  const long MOVEMENT_STEPS_ACC_DEC_Y_DEFAULT = 1000;// 300;
+  const long MOVEMENT_STEPS_ACC_DEC_Z_DEFAULT = 1000;// 300;
 
   // Minimum speed in steps per second
-  const long MOVEMENT_MIN_SPD_X_DEFAULT = 50;
-  const long MOVEMENT_MIN_SPD_Y_DEFAULT = 50;
-  const long MOVEMENT_MIN_SPD_Z_DEFAULT = 50;
+  const long MOVEMENT_MIN_SPD_X_DEFAULT = 500;// 300;//  50;
+  const long MOVEMENT_MIN_SPD_Y_DEFAULT = 500;// 300;//  50;
+  const long MOVEMENT_MIN_SPD_Z_DEFAULT = 500;// 300;//  50;
 
   // Speed used for homing and calibration
-  const long MOVEMENT_HOME_SPEED_X_DEFAULT = 50;
-  const long MOVEMENT_HOME_SPEED_Y_DEFAULT = 50;
-  const long MOVEMENT_HOME_SPEED_Z_DEFAULT = 50;
+  const long MOVEMENT_HOME_SPEED_X_DEFAULT = 500;// 300;//  50;
+  const long MOVEMENT_HOME_SPEED_Y_DEFAULT = 500;// 300;//  50;
+  const long MOVEMENT_HOME_SPEED_Z_DEFAULT = 500;// 300;//  50;
 
   // Maximum speed in steps per second
-  const long MOVEMENT_MAX_SPD_X_DEFAULT = 400;
-  const long MOVEMENT_MAX_SPD_Y_DEFAULT = 400;
-  const long MOVEMENT_MAX_SPD_Z_DEFAULT = 400;
+  const long MOVEMENT_MAX_SPD_X_DEFAULT = 1000;// 400;
+  const long MOVEMENT_MAX_SPD_Y_DEFAULT = 1000;// 400;
+  const long MOVEMENT_MAX_SPD_Z_DEFAULT = 1000;// 400;
 
   // switch the end contacts from NO to NC
   const long MOVEMENT_INVERT_2_ENDPOINTS_X_DEFAULT = 0;
@@ -142,21 +142,22 @@
   const long MOVEMENT_STOP_AT_MAX_Z_DEFAULT = 0;
 
   // Use encoder (0 or 1)
-  const long ENCODER_ENABLED_X_DEFAULT = 0;
-  const long ENCODER_ENABLED_Y_DEFAULT = 0;
-  const long ENCODER_ENABLED_Z_DEFAULT = 0;
+  const long ENCODER_ENABLED_X_DEFAULT = 1;
+  const long ENCODER_ENABLED_Y_DEFAULT = 1;
+  const long ENCODER_ENABLED_Z_DEFAULT = 1;
 
-  // Type of enocder.
+  // Type of encoder.
   // 0 = non-differential encoder, channel A,B
   // 1 = differenttial encoder, channel A, A*, B, B*
-  const long ENCODER_TYPE_X_DEFAULT = 0;
-  const long ENCODER_TYPE_Y_DEFAULT = 0;
-  const long ENCODER_TYPE_Z_DEFAULT = 0;
+  // 2 = CANbus based encoder module
+  const long ENCODER_TYPE_X_DEFAULT = 2;
+  const long ENCODER_TYPE_Y_DEFAULT = 2;
+  const long ENCODER_TYPE_Z_DEFAULT = 2;
 
   // Position = encoder position * scaling / 10000
-  const long ENCODER_SCALING_X_DEFAULT = 5556;
-  const long ENCODER_SCALING_Y_DEFAULT = 5556;
-  const long ENCODER_SCALING_Z_DEFAULT = 5556;
+  const long ENCODER_SCALING_X_DEFAULT = 5000;  //5556;
+  const long ENCODER_SCALING_Y_DEFAULT = 5000;  //5556;
+  const long ENCODER_SCALING_Z_DEFAULT = 5000;  //5556;
 
   // Number of steps missed before motor is seen as not moving
   const long ENCODER_MISSED_STEPS_MAX_X_DEFAULT = 5;
@@ -170,9 +171,9 @@
   const long ENCODER_MISSED_STEPS_DECAY_Z_DEFAULT = 5;
 
   // Use the encoder for positioning
-  const long ENCODER_USE_FOR_POS_X_DEFAULT = 0;
-  const long ENCODER_USE_FOR_POS_Y_DEFAULT = 0;
-  const long ENCODER_USE_FOR_POS_Z_DEFAULT = 0;
+  const long ENCODER_USE_FOR_POS_X_DEFAULT = 1;
+  const long ENCODER_USE_FOR_POS_Y_DEFAULT = 1;
+  const long ENCODER_USE_FOR_POS_Z_DEFAULT = 1;
 
   // Invert the encoder position sign
   const long ENCODER_INVERT_X_DEFAULT = 0;
@@ -221,9 +222,28 @@ enum MdlSpiEncoders
   _MDL_Y = 0b0100,
   _MDL_Z = 0b1000,
 };
+
+// CANbus encoder module remote IDs
+#define ENC_X1_CAN_ID -1
+#define ENC_X2_CAN_ID 0x11
+#define ENC_Y_CAN_ID 0x12
+#define ENC_Z_CAN_ID 0x14
+
+enum CANbusEncoders
+{
+  ENC_X1_CAN = ENC_X1_CAN_ID,
+  ENC_X2_CAN = ENC_X2_CAN_ID,
+  ENC_Y_CAN = ENC_Y_CAN_ID,
+  ENC_Z_CAN = ENC_Z_CAN_ID,
+};
+  
 #endif /* CONFIG_H_ */
 
 #if defined(RAMPS_V14) && !defined(SOFTWARE_VERSION)
+#define SOFTWARE_VERSION "6.4.0.R\0"
+#endif
+
+#if defined(RAMPS_V14_CANBUS) && !defined(SOFTWARE_VERSION)
 #define SOFTWARE_VERSION "6.4.0.R\0"
 #endif
 

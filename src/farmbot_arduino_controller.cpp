@@ -4,12 +4,14 @@
 #include "Config.h"
 #include "StepperControl.h"
 #include "ServoControl.h"
+#include "CANbusFunctions.h"
 #include "PinGuard.h"
 #include "TimerOne.h"
 #include "MemoryFree.h"
 #include "Debug.h"
 #include "CurrentState.h"
 #include <SPI.h>
+#include <CAN.h>
 
 static char commandEndChar = 0x0A;
 static GCodeProcessor *gCodeProcessor = new GCodeProcessor();
@@ -22,6 +24,14 @@ bool previousEmergencyStop = false;
 
 unsigned long pinGuardLastCheck;
 unsigned long pinGuardCurrentTime;
+
+#if defined(RAMPS_V14_CANBUS)
+  //CANbusFunctions CANmaster;  // Preinstantiate
+  
+  //unsigned long CANbusUpdateCurrentTime = 0;
+  //unsigned long CANbusUpdateLastCheck = 0;
+  //int CANbusUpdateInterval = 400;
+#endif
 
 int lastParamChangeNr = 0;
 
@@ -93,7 +103,7 @@ void interrupt(void)
 void setup()
 {
 
-  #ifdef RAMPS_V14
+  #if defined(RAMPS_V14) || defined(RAMPS_V14_CANBUS)
 
     // Setup pin input/output settings
     pinMode(X_STEP_PIN, OUTPUT);
@@ -136,6 +146,7 @@ void setup()
     pinMode(HEATER_1_PIN, OUTPUT);
     pinMode(FAN_PIN, OUTPUT);
     pinMode(LED_PIN, OUTPUT);
+    pinMode(CANBUS_CS, OUTPUT);
 
     pinMode(UTM_C, INPUT_PULLUP);
     pinMode(UTM_D, INPUT_PULLUP);
@@ -258,7 +269,7 @@ void setup()
     SPI.begin();
 
   #endif
-  
+
   Serial.begin(115200);
 
   delay(100);
@@ -289,6 +300,34 @@ void setup()
 
   pinGuardCurrentTime = millis();
   pinGuardLastCheck = millis();
+  
+
+  #if defined(RAMPS_V14_CANBUS)
+
+    CANbusFunctions::getInstance()->CANbusUpdateCurrentTime = millis();
+    CANbusFunctions::getInstance()->CANbusUpdateLastCheck = millis();
+
+    // Define CANbus pins
+    CAN.setPins(CANBUS_CS, 0 /*CANBUS_INT*/);
+
+    // Start the CAN bus at 500 kbps
+    if (!CAN.begin(500E3)) {
+      Serial.println("Starting CAN failed! Please restart to try again.");
+      while (1);
+    }
+    else
+    {
+      //Serial.println("Starting CAN success!");
+    }
+
+    // Register the receive callback (non functional when intergrated into exisitng Farmbot firmware. Basic features have been used, though not via interrupt
+    // CAN.onReceive(CANinterrupt); // FAILED. Could not work with existing Farmbot firmware as it stands. A workaround has been made within the loop() function
+
+    // Initialise the CANbus remote modules
+    //CANmaster.CANbusInit();
+    CANbusFunctions::getInstance()->CANbusInit();
+
+  #endif
 
   if
   (
@@ -321,6 +360,7 @@ void setup()
   }
 
   Serial.print("R99 ARDUINO STARTUP COMPLETE\r\n");
+  
 }
 
 //char commandIn[100];
@@ -328,8 +368,18 @@ char commandChar[INCOMING_CMD_BUF_SIZE + 1];
 
 // The loop function is called in an endless loop
 void loop()
-{
+{  
+  #if defined(RAMPS_V14_CANBUS)
+    // Psudo CAN interrupt code
+    while(CAN.parsePacket())
+    {
+      //CANmaster.CANinterrupt(CAN.available());
+      CANbusFunctions::getInstance()->CANinterrupt(CAN.available());
+    }
 
+  #endif
+  
+  
   if (debugInterrupt)
   {
     StepperControl::getInstance()->handleMovementInterrupt();
@@ -338,6 +388,35 @@ void loop()
   #if defined(FARMDUINO_V14)
     // Check encoders out of interrupt for farmduino 1.4
     StepperControl::getInstance()->checkEncoders();
+  #endif
+
+  #if defined(RAMPS_V14_CANBUS)
+    // CANbus: Move new received message(s) into proper container (a single character or a 32bit number are the only options currently)
+    
+    //if(CANmaster.CANmessageReceived)
+    if(CANbusFunctions::getInstance()->CANmessageReceived)
+    {
+      //if(CANmaster.CANbufferIndex >= BUFFER_SIZE)
+      if((CANbusFunctions::getInstance()->CANbufferIndex) >= BUFFER_SIZE)
+      {
+        // Roll over
+        //CANmaster.CANbufferIndex = 0;
+        CANbusFunctions::getInstance()->CANbufferIndex = 0;
+      }
+      
+      //CANmaster.decodeCAN();
+      CANbusFunctions::getInstance()->decodeCAN();
+  
+      // Clear flag
+      //CANmaster.CANmessageReceived = false;
+      CANbusFunctions::getInstance()->CANmessageReceived = false;
+    }
+    
+    // Time to check encoders again?
+    if(CANbusFunctions::getInstance()->timeToCheckEncoders())
+    {
+    
+    }
   #endif
 
   pinGuardCurrentTime = millis();
