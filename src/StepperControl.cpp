@@ -186,6 +186,12 @@ void StepperControl::loadSettings()
   encoderY.loadMdlEncoderId(_MDL_Y);
   encoderZ.loadMdlEncoderId(_MDL_Z);
 
+  #ifdef RAMPS_V14_CANBUS
+    encoderX.loadCANbusEncoderId(ENC_X2_CAN);
+    encoderY.loadCANbusEncoderId(ENC_Y_CAN);
+    encoderZ.loadCANbusEncoderId(ENC_Z_CAN);
+  #endif
+
   encoderX.loadPinNumbers(X_ENCDR_A, X_ENCDR_B, X_ENCDR_A_Q, X_ENCDR_B_Q);
   encoderY.loadPinNumbers(Y_ENCDR_A, Y_ENCDR_B, Y_ENCDR_A_Q, Y_ENCDR_B_Q);
   encoderZ.loadPinNumbers(Z_ENCDR_A, Z_ENCDR_B, Z_ENCDR_A_Q, Z_ENCDR_B_Q);
@@ -411,7 +417,7 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
   while ((axisActive[0] || axisActive[1] || axisActive[2]) && !emergencyStop)
   {
 
-    #if defined(FARMDUINO_V14)
+    #if defined(FARMDUINO_V14) || defined(RAMPS_V14_CANBUS)
     checkEncoders();
     #endif
 
@@ -930,7 +936,7 @@ int StepperControl::calibrateAxis(int axis)
   while (!movementDone && error == 0)
   {
 
-    #if defined(FARMDUINO_V14)
+    #if defined(FARMDUINO_V14) || defined(RAMPS_V14_CANBUS)
       checkEncoders();
     #endif
 
@@ -1064,7 +1070,7 @@ int StepperControl::calibrateAxis(int axis)
   while (!movementDone && error == 0)
   {
 
-    #if defined(FARMDUINO_V14)
+    #if defined(FARMDUINO_V14) || defined(RAMPS_V14_CANBUS)
        checkEncoders();
     #endif
 
@@ -1572,7 +1578,7 @@ void StepperControl::handleMovementInterrupt(void)
   // No need to check the encoders for Farmduino 1.4
   #if defined(RAMPS_V14) || defined(FARMDUINO_V10)
     checkEncoders();
-  #endif
+  #endif  
 
   // handle motor timing
 
@@ -1634,7 +1640,45 @@ void StepperControl::checkEncoders()
   Serial.print(digitalRead(25));
   Serial.print("\r\n");
   */
+  
+  // Injected interrupt code for CANbus based encoders
+  #if defined(RAMPS_V14_CANBUS)
+    // Psudo CAN interrupt code
+    while(CAN.parsePacket())
+    {
+      //CANmaster.CANinterrupt(CAN.available());
+      CANbusFunctions::getInstance()->CANinterrupt(CAN.available());
+    }
 
+    // Move new received message(s) into proper container (a single character or a 32bit number are the only options currently)
+    
+    //if(CANmaster.CANmessageReceived)
+    if(CANbusFunctions::getInstance()->CANmessageReceived)
+    {
+      //if(CANmaster.CANbufferIndex >= BUFFER_SIZE)
+      if(CANbusFunctions::getInstance()->CANbufferIndex >= BUFFER_SIZE)
+      {
+        // Roll over
+        //CANmaster.CANbufferIndex = 0;
+        CANbusFunctions::getInstance()->CANbufferIndex = 0;
+      }
+      
+      //CANmaster.decodeCAN();
+      CANbusFunctions::getInstance()->decodeCAN();
+  
+      // Clear flag
+      //CANmaster.CANmessageReceived = false;
+      CANbusFunctions::getInstance()->CANmessageReceived = false;
+    }
+    
+    // Time to check encoders again?
+    //CANbusFunctions::getInstance()->timeToCheckEncoders();
+    if(CANbusFunctions::getInstance()->timeToCheckEncoders())
+    {
+      
+    }
+
+  #endif
 
   // A=16/PH1 B=17/PH0 AQ=31/PC6 BQ=33/PC4
   //encoderX.checkEncoder(PINH & 0x02, PINH & 0x01, PINC & 0x40, PINC & 0x10);

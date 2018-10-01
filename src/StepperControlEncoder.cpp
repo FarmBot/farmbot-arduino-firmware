@@ -1,4 +1,5 @@
 #include "StepperControlEncoder.h"
+#include "CANbusFunctions.h"
 
 StepperControlEncoder::StepperControlEncoder()
 {
@@ -22,6 +23,10 @@ StepperControlEncoder::StepperControlEncoder()
   readChannelBQ = false;
 
   mdlEncoder = _MDL_X1;
+  
+  #ifdef RAMPS_V14_CANBUS
+	CANbusEncoder = ENC_X2_CAN;
+  #endif
 }
 
 void StepperControlEncoder::test()
@@ -92,6 +97,36 @@ void StepperControlEncoder::setPosition(long newPosition)
       digitalWrite(NSS_PIN, HIGH);
     }
   #endif
+
+  #if defined(RAMPS_V14_CANBUS)
+
+    position = newPosition;
+    
+    //Code below is only to update remote modules with a value set by Gcode. Current Farmbot Gcode specifies only 0 can be set. The following code can be used to update a non zero value by Gcode in the future
+    /*
+    CANbusFunctions::getInstance()->encodeCAN(newPosition);
+
+    // Update remote CANbus module (remoteAddress) -> (instruction) -> (packet[], length) -> (transmit)
+    CAN.beginPacket(CANbusEncoder);
+    CAN.write('S'); // Set position
+    CAN.write(CANbusFunctions::getInstance()->CANpacket,4);
+    CAN.endPacket();
+    */
+    
+    CAN.beginPacket(CANbusEncoder);
+    CAN.write('I');
+    CAN.endPacket();
+    
+  #endif
+}
+
+void StepperControlEncoder::setPositionByCAN(long newPosition)
+{
+  #if defined(RAMPS_V14_CANBUS)
+
+    position = newPosition;
+    
+  #endif
 }
 
 long StepperControlEncoder::currentPosition()
@@ -125,7 +160,7 @@ void StepperControlEncoder::checkEncoder(bool channelA, bool channelB, bool chan
     processEncoder();
   #endif
 
-  #if defined(FARMDUINO_V14)
+  #if defined(FARMDUINO_V14) || defined(RAMPS_V14_CANBUS)
     processEncoder();
   #endif
 
@@ -184,6 +219,16 @@ void StepperControlEncoder::processEncoder()
 
     digitalWrite(NSS_PIN, HIGH);
     position = encoderVal;
+  #endif
+  
+  // If using RAMPS V1.4 with CANbus communication to remote encoder modules (CAN via SPI)
+  #if defined(RAMPS_V14_CANBUS)
+    uint8_t readSize = 4;
+
+    // Send position request code to remote axis module (remoteAddress, DLC[32bit], RTR)
+    CAN.beginPacket(CANbusEncoder, readSize, true);
+    CAN.endPacket();
+
   #endif
 
 }
@@ -251,3 +296,11 @@ void StepperControlEncoder::shiftChannels()
   prvValChannelA = curValChannelA;
   prvValChannelB = curValChannelB;
 }
+
+#if defined(RAMPS_V14_CANBUS)
+
+  void StepperControlEncoder::loadCANbusEncoderId(CANbusEncoders encoder) {
+    CANbusEncoder = encoder;
+  }
+
+#endif
