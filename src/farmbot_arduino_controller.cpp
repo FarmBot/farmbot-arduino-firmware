@@ -434,6 +434,7 @@ void loop()
   {
     StepperControl::getInstance()->disableMotorsEmergency();
     PinControl::getInstance()->resetPinsUsed();
+    ServoControl::getInstance()->detachServos();
     if (debugMessages)
     {
       Serial.print(COMM_REPORT_COMMENT);
