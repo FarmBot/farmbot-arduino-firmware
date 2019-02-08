@@ -131,7 +131,7 @@ private:
   float motorConsMissedStepsDecay[3] = { 0, 0, 0 };
   bool motorConsEncoderEnabled[3] = { false, false, false };
   int motorConsEncoderType[3] = { 0, 0, 0 };
-  int motorConsEncoderScaling[3] = { 0, 0, 0 };
+  long motorConsEncoderScaling[3] = { 0, 0, 0 };
   int motorConsEncoderUseForPos[3] = { 0, 0, 0 };
   int motorConsEncoderInvert[3] = { 0, 0, 0 };
 
