@@ -9,13 +9,7 @@ D11 D6 D5 D4
 
 static ServoControl *instance;
 
-#if defined(RAMPS_V14)
-  Servo servos[2];
-#endif
-
-#if defined(FARMDUINO_V10) || defined(FARMDUINO_V14)
-  Servo servos[4];
-#endif
+Servo servos[4];
 
 ServoControl *ServoControl::getInstance()
 {
@@ -34,20 +28,16 @@ int ServoControl::attach()
 {
   servos[0].attach(SERVO_0_PIN);
   servos[1].attach(SERVO_1_PIN);
-  #if defined(FARMDUINO_V10) || defined(FARMDUINO_V14)
-    servos[2].attach(SERVO_2_PIN);
-    servos[3].attach(SERVO_3_PIN);
-  #endif
+  servos[2].attach(SERVO_2_PIN);
+  servos[3].attach(SERVO_3_PIN);
 }
 
 void ServoControl::detachServos()
 {
   servos[0].detach();
   servos[1].detach();
-  #if defined(FARMDUINO_V10) || defined(FARMDUINO_V14)
-    servos[2].detach();
-    servos[3].detach();
-  #endif
+  servos[2].detach();
+  servos[3].detach();
 }
 
 int ServoControl::setAngle(int pin, int angle)
@@ -80,21 +70,13 @@ int ServoControl::setAngle(int pin, int angle)
     servos[1].write(angle);
     break;
   case 6:
-    #if defined(RAMPS_V14)
-      return 1;
-    #else
-      servos[2].attach(SERVO_2_PIN);
-      servos[2].write(angle);
-      break;
-    #endif
+    servos[2].attach(SERVO_2_PIN);
+    servos[2].write(angle);
+    break;
   case 11:
-    #if defined(RAMPS_V14)
-      return 1;
-    #else
-      servos[3].attach(SERVO_3_PIN);
-      servos[3].write(angle);
-      break;
-    #endif
+    servos[3].attach(SERVO_3_PIN);
+    servos[3].write(angle);
+    break;
   default:
     return 1;
   }

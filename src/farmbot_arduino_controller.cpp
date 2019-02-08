@@ -165,8 +165,11 @@ void setup()
     pinMode(AUX4_47, INPUT_PULLUP);
     pinMode(AUX4_32, INPUT_PULLUP);
 
-    //pinMode(SERVO_0_PIN , OUTPUT);
-    //pinMode(SERVO_1_PIN , OUTPUT);
+    pinMode(SERVO_0_PIN, OUTPUT);
+    pinMode(SERVO_1_PIN, OUTPUT);
+    pinMode(SERVO_2_PIN, OUTPUT);
+    pinMode(SERVO_3_PIN, OUTPUT);
+
   #endif
 
   #if defined(FARMDUINO_V10) || defined(FARMDUINO_V14)

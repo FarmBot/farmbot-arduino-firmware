@@ -65,6 +65,8 @@
 
   #define SERVO_0_PIN 4
   #define SERVO_1_PIN 5
+  #define SERVO_2_PIN 6
+  #define SERVO_3_PIN 11
 
   #define AUX1_00 0
   #define AUX1_01 1
