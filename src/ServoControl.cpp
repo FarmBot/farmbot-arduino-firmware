@@ -82,17 +82,19 @@ int ServoControl::setAngle(int pin, int angle)
   case 6:
     #if defined(RAMPS_V14)
       return 1;
+    #else
+      servos[2].attach(SERVO_2_PIN);
+      servos[2].write(angle);
+      break;
     #endif
-    servos[2].attach(SERVO_2_PIN);
-    servos[2].write(angle);
-    break;
   case 11:
     #if defined(RAMPS_V14)
       return 1;
+    #else
+      servos[3].attach(SERVO_3_PIN);
+      servos[3].write(angle);
+      break;
     #endif
-    servos[3].attach(SERVO_3_PIN);
-    servos[3].write(angle);
-    break;
   default:
     return 1;
   }
