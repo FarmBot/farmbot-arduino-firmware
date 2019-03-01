@@ -135,6 +135,12 @@
     <ClCompile Include="F09Handler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="StepperControlAxisA4988.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StepperControlAxisTMC2130.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GCodeProcessor.h">
@@ -270,6 +276,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Board.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StepperControlAxisA4988.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StepperControlAxisTMC2130.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

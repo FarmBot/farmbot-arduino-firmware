@@ -123,6 +123,8 @@
     <ClCompile Include="StatusList.cpp" />
     <ClCompile Include="StepperControl.cpp" />
     <ClCompile Include="StepperControlAxis.cpp" />
+    <ClCompile Include="StepperControlAxisA4988.cpp" />
+    <ClCompile Include="StepperControlAxisTMC2130.cpp" />
     <ClCompile Include="StepperControlEncoder.cpp" />
     <ClCompile Include="TimerOne.cpp" />
   </ItemGroup>
@@ -169,6 +171,8 @@
     <ClInclude Include="StatusList.h" />
     <ClInclude Include="StepperControl.h" />
     <ClInclude Include="StepperControlAxis.h" />
+    <ClInclude Include="StepperControlAxisA4988.h" />
+    <ClInclude Include="StepperControlAxisTMC2130.h" />
     <ClInclude Include="StepperControlEncoder.h" />
     <ClInclude Include="TimerOne.h" />
     <ClInclude Include="__vm\.src.vsarduino.h" />
