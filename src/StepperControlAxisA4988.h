@@ -77,7 +77,7 @@ public:
   void activateDebugPrint();
   void test();
 
-  char label;
+  char channelLabel;
   bool movementStarted;
 
 private:

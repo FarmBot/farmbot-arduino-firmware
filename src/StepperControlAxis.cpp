@@ -2,6 +2,11 @@
 
 StepperControlAxis::StepperControlAxis()
 {
+  init();
+}
+
+void StepperControlAxis::init()
+{
   lastCalcLog = 0;
 
   pinStep = 0;

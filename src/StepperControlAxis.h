@@ -75,12 +75,14 @@ public:
   void activateDebugPrint();
   void test();
 
-  char label;
+  char channelLabel;
   bool movementStarted;
 
-private:
+protected:
+
   int lastCalcLog = 0;
   bool debugPrint = false;
+  void init();
 
   // pin settings primary motor
   int pinStep;

@@ -20,7 +20,7 @@
 #include "Command.h"
 
 #include "StepperControlAxisA4988.h"
-#include "StepperControlAxisTMC2130.h"
+//#include "StepperControlAxisTMC2130.h"
 
 class StepperControl
 {
@@ -65,6 +65,7 @@ public:
   unsigned long i4 = 0;
 
 private:
+  /**///StepperControlAxisTMC2130 axisX = StepperControlAxisTMC2130();
   StepperControlAxis axisX;
   StepperControlAxis axisY;
   StepperControlAxis axisZ;

@@ -11,6 +11,14 @@
 #include "CurrentState.h"
 #include <SPI.h>
 
+
+
+#include <TMC2130Stepper.h>
+/**/ TMC2130Stepper stepper = TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, X_CHIP_SELECT);
+
+bool stepperInit = false;
+bool stepperFlip = false;
+
 static char commandEndChar = 0x0A;
 static GCodeProcessor *gCodeProcessor = new GCodeProcessor();
 
@@ -277,9 +285,11 @@ void setup()
   // Interrupt management code library written by Paul Stoffregen
   // The default time 100 micro seconds
 
-  Timer1.attachInterrupt(interrupt);
-  Timer1.initialize(MOVEMENT_INTERRUPT_SPEED);
-  Timer1.start();
+  #if !defined(FARMDUINO_EXP_V20)
+    Timer1.attachInterrupt(interrupt);
+    Timer1.initialize(MOVEMENT_INTERRUPT_SPEED);
+    Timer1.start();
+  #endif
 
   // Initialize the inactivity check
   lastAction = millis();
@@ -318,7 +328,15 @@ void setup()
   }
 
   Serial.print("R99 ARDUINO STARTUP COMPLETE\r\n");
+
+  stepper.begin();
+  stepper.SilentStepStick2130(600);
+  stepper.stealthChop(1);
+  stepper.shaft_dir(0);
+  digitalWrite(X_ENABLE_PIN, LOW);
+
 }
+
 
 //char commandIn[100];
 char commandChar[INCOMING_CMD_BUF_SIZE + 1];
@@ -326,6 +344,15 @@ char commandChar[INCOMING_CMD_BUF_SIZE + 1];
 // The loop function is called in an endless loop
 void loop()
 {
+
+  /**/
+
+  digitalWrite(X_STEP_PIN, stepperFlip);
+  delayMicroseconds(10);
+  stepperFlip != stepperFlip;
+  /*********************************/
+
+
 
   if (debugInterrupt)
   {
@@ -355,7 +382,6 @@ void loop()
 
   if (Serial.available())
   {
-
     // Save current time stamp for timeout actions
     lastAction = millis();
 
@@ -423,6 +449,10 @@ void loop()
 
       incomingCommandPointer = 0;
     }
+  }
+  else
+  {
+    /**/StepperControl::getInstance()->test();
   }
 
   // In case of emergency stop, disable movement and
