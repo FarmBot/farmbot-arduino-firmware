@@ -13,8 +13,10 @@
 
 
 
-#include <TMC2130Stepper.h>
-/**/ TMC2130Stepper stepper = TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, X_CHIP_SELECT);
+//#include <TMC2130Stepper.h>
+/**/ //TMC2130Stepper stepper = TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, X_CHIP_SELECT);
+//#include "StepperControlAxisTMC2130.h"
+//StepperControlAxisTMC2130 testingAxis = StepperControlAxisTMC2130();
 
 bool stepperInit = false;
 bool stepperFlip = false;
@@ -285,6 +287,7 @@ void setup()
   // Interrupt management code library written by Paul Stoffregen
   // The default time 100 micro seconds
 
+  /**/
   #if !defined(FARMDUINO_EXP_V20)
     Timer1.attachInterrupt(interrupt);
     Timer1.initialize(MOVEMENT_INTERRUPT_SPEED);
@@ -329,11 +332,14 @@ void setup()
 
   Serial.print("R99 ARDUINO STARTUP COMPLETE\r\n");
 
-  stepper.begin();
-  stepper.SilentStepStick2130(600);
-  stepper.stealthChop(1);
-  stepper.shaft_dir(0);
-  digitalWrite(X_ENABLE_PIN, LOW);
+  /**/
+  //stepper.begin();
+  //stepper.SilentStepStick2130(600);
+  //stepper.stealthChop(1);
+  //stepper.shaft_dir(0);
+
+  //digitalWrite(X_ENABLE_PIN, LOW);
+  //testingAxis.initTMC2130A();
 
 }
 
@@ -347,9 +353,20 @@ void loop()
 
   /**/
 
-  digitalWrite(X_STEP_PIN, stepperFlip);
-  delayMicroseconds(10);
-  stepperFlip != stepperFlip;
+  //StepperControl::getInstance()->test();
+
+  //digitalWrite(X_ENABLE_PIN, LOW);
+
+  //digitalWrite(X_STEP_PIN, stepperFlip);
+  //delayMicroseconds(10);
+
+  //stepperFlip != stepperFlip;
+
+
+  //testingAxis.enableMotor();
+  //testingAxis.setMotorStep();
+
+
   /*********************************/
 
 
@@ -449,10 +466,6 @@ void loop()
 
       incomingCommandPointer = 0;
     }
-  }
-  else
-  {
-    /**/StepperControl::getInstance()->test();
   }
 
   // In case of emergency stop, disable movement and

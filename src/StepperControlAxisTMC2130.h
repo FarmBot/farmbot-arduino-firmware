@@ -19,13 +19,16 @@
 
 #include "StepperControlAxis.h"
 
-#include "TMC2130Stepper.h"
+#include <TMC2130Stepper.h>
 
 class StepperControlAxisTMC2130 : public StepperControlAxis
 {
 
 public:
   StepperControlAxisTMC2130();
+
+  void initTMC2130A();
+  void initTMC2130B();
 
   void loadPinNumbers(int step, int dir, int enable, int min, int max, int step2, int dir2, int enable2);
   void loadMotorSettings(long speedMax, long speedMin, long speedHome, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, bool endStInv, bool endStInv2, long interruptSpeed, bool motor2Enbl, bool motor2Inv, bool endStEnbl, bool stopAtHome, long maxSize, bool stopAtMax);

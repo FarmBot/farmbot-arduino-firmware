@@ -287,6 +287,7 @@ void StepperControlAxis::setTicks()
 
 void StepperControlAxis::setStepAxis()
 {
+  /**/Serial.print("#");
 
   stepIsOn = true;
 

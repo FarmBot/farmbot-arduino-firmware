@@ -120,8 +120,9 @@ StepperControl::StepperControl()
 
   // Create the axis controllers
 
-  /**/ // axisX = StepperControlAxisTMC2130();
-  axisX = StepperControlAxisA4988();
+  /**/ 
+  //axisX = StepperControlAxisTMC2130();
+  //axisX = StepperControlAxisA4988();
   axisY = StepperControlAxisA4988();
   axisZ = StepperControlAxisA4988();
 
@@ -172,11 +173,18 @@ void StepperControl::loadSettings()
   encoderX.loadSettings(motorConsEncoderType[0], motorConsEncoderScaling[0], motorConsEncoderInvert[0]);
   encoderY.loadSettings(motorConsEncoderType[1], motorConsEncoderScaling[1], motorConsEncoderInvert[1]);
   encoderZ.loadSettings(motorConsEncoderType[2], motorConsEncoderScaling[2], motorConsEncoderInvert[2]);
+
+  /**/
+  #if defined(FARMDUINO_EXP_V20)
+    axisX.initTMC2130A();
+  #endif
+
 }
 
 void StepperControl::test()
 {
 
+  axisX.enableMotor();
   axisX.setMotorStep();
 
   //Serial.print("R99");
@@ -391,7 +399,9 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
   // Let the interrupt handle all the movements
   while ((axisActive[0] || axisActive[1] || axisActive[2]) && !emergencyStop)
   {
-
+    /**/ axisX.setMotorStep();
+    /**/ delayMicroseconds(10);
+    
     #if defined(FARMDUINO_V14)
     checkEncoders();
     #endif
@@ -408,6 +418,7 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
 
     if (axisX.isStepDone())
     {
+      /**/ 
       axisX.checkMovement();
       checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsEncoderLastPosition[0], &motorConsEncoderUseForPos[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
       axisX.resetStepDone();

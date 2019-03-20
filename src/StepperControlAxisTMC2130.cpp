@@ -2,25 +2,31 @@
 
 StepperControlAxisTMC2130::StepperControlAxisTMC2130()
 {
+  init();
+}
 
+
+void StepperControlAxisTMC2130::initTMC2130A()
+{
   TMC2130A.begin(); // Initiate pins and registeries
   TMC2130A.SilentStepStick2130(600); // Set stepper current to 600mA
   TMC2130A.stealthChop(1); // Enable extremely quiet stepping
+}
 
+void StepperControlAxisTMC2130::initTMC2130B()
+{
   TMC2130B.begin(); // Initiate pins and registeries
   TMC2130B.SilentStepStick2130(600); // Set stepper current to 600mA
   TMC2130B.stealthChop(1); // Enable extremely quiet stepping
-
-  init();
-
 }
+
 
 void StepperControlAxisTMC2130::test()
 {
-  Serial.print("R99");
-  Serial.print(" cur loc = ");
-  Serial.print(coordCurrentPoint);
-  Serial.print("\r\n");
+  //Serial.print("R99");
+  //Serial.print(" cur loc = ");
+  //Serial.print(coordCurrentPoint);
+  //Serial.print("\r\n");
 }
 
 void StepperControlAxisTMC2130::loadPinNumbers(int step, int dir, int enable, int min, int max, int step2, int dir2, int enable2)
@@ -131,9 +137,11 @@ void StepperControlAxisTMC2130::setMotorStep()
 
   // TMC2130 works on each edge, so instead of setting the 
   // step bit, toggle the bit here
+
+  Serial.print("*");
+
   if (!tmcStep)
   {
-    /**/Serial.print("R99 HIGH \r\n");
     digitalWrite(pinStep, HIGH);
     if (pin2Enable)
     {
@@ -142,7 +150,6 @@ void StepperControlAxisTMC2130::setMotorStep()
   }
   else
   {
-    /**/Serial.print("R99 LOW \r\n");
     digitalWrite(pinStep, LOW);
     if (pin2Enable)
     {
