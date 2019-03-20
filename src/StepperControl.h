@@ -19,9 +19,6 @@
 #include <stdlib.h>
 #include "Command.h"
 
-#include "StepperControlAxisA4988.h"
-#include "StepperControlAxisTMC2130.h"
-
 class StepperControl
 {
 public:
@@ -67,8 +64,7 @@ public:
 private:
 
   /**/
-  StepperControlAxisTMC2130 axisX = StepperControlAxisTMC2130();
-  //StepperControlAxis axisX;
+  StepperControlAxis axisX;
   StepperControlAxis axisY;
   StepperControlAxis axisZ;
 
@@ -142,6 +138,7 @@ private:
   int axisServiced = 0;
   int axisServicedNext = 0;
   bool motorMotorsEnabled = false;
+
 };
 
 #endif /* STEPPERCONTROL_H_ */

@@ -1,11 +1,14 @@
 #include "StepperControlAxis.h"
+#include <TMC2130Stepper.h>
+
+#if defined(FARMDUINO_EXP_V20)
+  TMC2130Stepper TMC2130X = TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, X_CHIP_SELECT);
+  TMC2130Stepper TMC2130Y = TMC2130Stepper(Y_ENABLE_PIN, Y_DIR_PIN, Y_STEP_PIN, Y_CHIP_SELECT);
+  TMC2130Stepper TMC2130Z = TMC2130Stepper(Z_ENABLE_PIN, Z_DIR_PIN, Z_STEP_PIN, Z_CHIP_SELECT);
+  TMC2130Stepper TMC2130E = TMC2130Stepper(E_ENABLE_PIN, E_DIR_PIN, E_STEP_PIN, E_CHIP_SELECT);
+#endif
 
 StepperControlAxis::StepperControlAxis()
-{
-  init();
-}
-
-void StepperControlAxis::init()
 {
   lastCalcLog = 0;
 
@@ -38,6 +41,20 @@ void StepperControlAxis::init()
 
   stepIsOn = false;
 
+  setMotorStepWrite = &StepperControlAxis::setMotorStepWriteDefault;
+  setMotorStepWrite2 = &StepperControlAxis::setMotorStepWriteDefault2;
+  resetMotorStepWrite = &StepperControlAxis::resetMotorStepWriteDefault;
+  resetMotorStepWrite2 = &StepperControlAxis::resetMotorStepWriteDefault2;
+
+#if defined(FARMDUINO_EXP_V20)
+  //// TMC2130 Functions
+
+  setMotorStepWrite = &StepperControlAxis::setMotorStepWriteTMC2130;
+  setMotorStepWrite2 = &StepperControlAxis::setMotorStepWriteTMC2130_2;
+  resetMotorStepWrite = &StepperControlAxis::resetMotorStepWriteTMC2130;
+  resetMotorStepWrite2 = &StepperControlAxis::resetMotorStepWriteTMC2130_2;
+#endif
+
 }
 
 void StepperControlAxis::test()
@@ -45,8 +62,42 @@ void StepperControlAxis::test()
   Serial.print("R99");
   Serial.print(" cur loc = ");
   Serial.print(coordCurrentPoint);
+  //Serial.print(" enc loc = ");
+  //Serial.print(coordEncoderPoint);
+  //Serial.print(" cons steps missed = ");
+  //Serial.print(label);
+  //Serial.print(consMissedSteps);
   Serial.print("\r\n");
 }
+
+#if defined(FARMDUINO_EXP_V20)
+void StepperControlAxis::initTMC2130A()
+{
+  /**/
+  if (channelLabel == 'X')
+  {
+    TMC2130X.begin(); // Initiate pins and registeries
+    TMC2130X.SilentStepStick2130(600); // Set stepper current to 600mA
+    TMC2130X.stealthChop(1); // Enable extremely quiet stepping
+
+    TMC2130E.begin(); // Initiate pins and registeries
+    TMC2130E.SilentStepStick2130(600); // Set stepper current to 600mA
+    TMC2130E.stealthChop(1); // Enable extremely quiet stepping
+  }
+  if (channelLabel == 'Y')
+  {
+    TMC2130X.begin(); // Initiate pins and registeries
+    TMC2130X.SilentStepStick2130(600); // Set stepper current to 600mA
+    TMC2130X.stealthChop(1); // Enable extremely quiet stepping
+  }
+  if (channelLabel == 'Z')
+  {
+    TMC2130Z.begin(); // Initiate pins and registeries
+    TMC2130Z.SilentStepStick2130(600); // Set stepper current to 600mA
+    TMC2130Z.stealthChop(1); // Enable extremely quiet stepping
+  }
+}
+#endif
 
 unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long currentPosition, long destinationPosition, long minSpeed, long maxSpeed, long stepsAccDec)
 {
@@ -64,6 +115,20 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
   movementCrawling = false;
   movementMoving = false;
 
+
+  /*
+  if (abs(sourcePosition) < abs(destinationPosition))
+  {
+    staPos = abs(sourcePosition);
+    endPos = abs(destinationPosition);
+  }
+  else
+  {
+    staPos = abs(destinationPosition);
+    endPos = abs(sourcePosition);
+  }
+  */
+
   // Set the possible negative coordinates to all positive numbers
   // so the calculation code still works after the changes
   staPos = 0;
@@ -80,13 +145,19 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
 
 
   unsigned long halfway = ((endPos - staPos) / 2) + staPos;
+  //unsigned long halfway = ((destinationPosition - sourcePosition) / 2) + sourcePosition;
 
   // Set the homing speed if the position would be out of bounds
   if (
         (curPos < staPos || curPos > endPos)
+        // || 
+        // Also limit the speed to a crawl when the move would pass the home position
+        // (sourcePosition > 0 && destinationPosition < 0) || (sourcePosition < 0 && destinationPosition > 0)
+        // (!motorHomeIsUp && currentPosition <= 0) || (motorHomeIsUp && currentPosition >= 0) ||)
      )
   {
     newSpeed = motorSpeedHome;
+    //newSpeed = minSpeed;
     movementCrawling = true;
     movementMoving = true;
   }
@@ -225,6 +296,15 @@ void StepperControlAxis::checkMovement()
       axisSpeed = calculateSpeed(coordSourcePoint, coordCurrentPoint, coordDestinationPoint,
                                  motorSpeedMin, motorSpeedMax, motorStepsAcc);
 
+//      // Set the moments when the step is set to true and false
+//      if (axisSpeed > 0)
+//      {
+
+        // Take the requested speed (steps / second) and divide by the interrupt speed (interrupts per seconde)
+        // This gives the number of interrupts (called ticks here) before the pulse needs to be set for the next step
+//        stepOnTick = moveTicks + (1000.0 * 1000.0 / motorInterruptSpeed / axisSpeed / 2);
+//        stepOffTick = moveTicks + (1000.0 * 1000.0 / motorInterruptSpeed / axisSpeed);
+//      }
     }
     else
     {
@@ -255,13 +335,19 @@ void StepperControlAxis::incrementTick()
 
 void StepperControlAxis::checkTiming()
 {
+
+  //int i;
+
+   // moveTicks++;
   if (stepIsOn)
   {
     if (moveTicks >= stepOffTick)
     {
+
       // Negative flank for the steps
       resetMotorStep();
       setTicks();
+      //stepOnTick = moveTicks + (500000.0 / motorInterruptSpeed / axisSpeed);
     }
   }
   else
@@ -270,8 +356,10 @@ void StepperControlAxis::checkTiming()
     {
       if (moveTicks >= stepOnTick)
       {
+
         // Positive flank for the steps
         setStepAxis();
+        //stepOffTick = moveTicks + (1000000.0 / motorInterruptSpeed / axisSpeed);
       }
     }
   }
@@ -287,7 +375,6 @@ void StepperControlAxis::setTicks()
 
 void StepperControlAxis::setStepAxis()
 {
-  /**/Serial.print("#");
 
   stepIsOn = true;
 
@@ -376,6 +463,32 @@ void StepperControlAxis::loadMotorSettings(
   motorStopAtHome = stopAtHome;
   motorMaxSize = maxSize;
   motorStopAtMax = stopAtMax;
+
+  if (pinStep == 54)
+  {
+    setMotorStepWrite = &StepperControlAxis::setMotorStepWrite54;
+    resetMotorStepWrite = &StepperControlAxis::resetMotorStepWrite54;
+  }
+  
+  if (pinStep == 60)
+  {
+    setMotorStepWrite = &StepperControlAxis::setMotorStepWrite60;
+    resetMotorStepWrite = &StepperControlAxis::resetMotorStepWrite60;
+  }
+  
+
+  if (pinStep == 46)
+  {
+    setMotorStepWrite = &StepperControlAxis::setMotorStepWrite46;
+    resetMotorStepWrite = &StepperControlAxis::resetMotorStepWrite46;
+  }
+
+  if (pin2Step == 26)
+  {
+    setMotorStepWrite2 = &StepperControlAxis::setMotorStepWrite26;
+    resetMotorStepWrite2 = &StepperControlAxis::resetMotorStepWrite26;
+  }
+
 }
 
 bool StepperControlAxis::loadCoordinates(long sourcePoint, long destinationPoint, bool home)
@@ -453,6 +566,7 @@ void StepperControlAxis::disableMotor()
 void StepperControlAxis::setDirectionUp()
 {
 
+#if !defined(FARMDUINO_EXP_V20)
   if (motorMotorInv)
   {
     digitalWrite(pinDirection, LOW);
@@ -470,6 +584,57 @@ void StepperControlAxis::setDirectionUp()
   {
     digitalWrite(pin2Direction, HIGH);
   }
+#endif
+
+#if defined(FARMDUINO_EXP_V20)
+
+  if (channelLabel == 'X')
+  {
+    if (motorMotorInv)
+    {
+      TMC2130X.shaft_dir(0);
+    }
+    else
+    {
+      TMC2130X.shaft_dir(1);
+    }
+
+    if (motorMotor2Enl && motorMotor2Inv)
+    {
+      TMC2130E.shaft_dir(0);
+    }
+    else
+    {
+      TMC2130E.shaft_dir(1);
+    }
+  }
+
+  if (channelLabel == 'Y')
+  {
+    if (motorMotorInv)
+    {
+      TMC2130Y.shaft_dir(0);
+    }
+    else
+    {
+      TMC2130Y.shaft_dir(1);
+    }
+  }
+
+  if (channelLabel == 'Z')
+  {
+    if (motorMotorInv)
+    {
+      TMC2130Z.shaft_dir(0);
+    }
+    else
+    {
+      TMC2130Z.shaft_dir(1);
+    }
+  }
+
+#endif
+
 }
 
 void StepperControlAxis::setDirectionDown()
@@ -550,11 +715,13 @@ bool StepperControlAxis::endStopsReached()
 
 bool StepperControlAxis::endStopMin()
 {
+  //return ((digitalRead(pinMin) == motorEndStopInv) || (digitalRead(pinMax) == motorEndStopInv));
   return ((digitalRead(pinMin) == motorEndStopInv2) && motorEndStopEnbl);
 }
 
 bool StepperControlAxis::endStopMax()
 {
+  //return ((digitalRead(pinMin) == motorEndStopInv) || (digitalRead(pinMax) == motorEndStopInv));
   return ((digitalRead(pinMax) == motorEndStopInv2) && motorEndStopEnbl);
 }
 
@@ -572,11 +739,13 @@ void StepperControlAxis::setMotorStep()
 {
   stepIsOn = true;
 
-  digitalWrite(pinStep, HIGH);
+  //digitalWrite(pinStep, HIGH);
+  (this->*setMotorStepWrite)();
 
   if (pin2Enable)
   {
-    digitalWrite(pin2Step, HIGH);
+    (this->*setMotorStepWrite2)();
+    //digitalWrite(pin2Step, HIGH);
   }
 }
 
@@ -586,10 +755,12 @@ void StepperControlAxis::resetMotorStep()
   movementStepDone = true;
 
   digitalWrite(pinStep, LOW);
+  //(this->*resetMotorStepWrite)();
 
   if (pin2Enable)
   {
     digitalWrite(pin2Step, LOW);
+    //(this->*resetMotorStepWrite2)();
   }
 }
 
@@ -690,3 +861,97 @@ void StepperControlAxis::resetMotorStepWriteDefault2()
 {
   digitalWrite(pin2Step, LOW);
 }
+
+// X step
+void StepperControlAxis::setMotorStepWrite54()
+{
+  //PF0
+  PORTF |= B00000001;
+}
+
+void StepperControlAxis::resetMotorStepWrite54()
+{
+  //PF0
+  PORTF &= B11111110;
+}
+
+
+// X step 2
+void StepperControlAxis::setMotorStepWrite26()
+{
+  //PA4
+  PORTA |= B00010000;
+}
+
+void StepperControlAxis::resetMotorStepWrite26()
+{
+  PORTA &= B11101111;
+}
+
+// Y step
+void StepperControlAxis::setMotorStepWrite60()
+{
+  //PF6
+  PORTF |= B01000000;
+}
+
+void StepperControlAxis::resetMotorStepWrite60()
+{
+  //PF6
+  PORTF &= B10111111;
+}
+
+// Z step
+void StepperControlAxis::setMotorStepWrite46()
+{
+  //PL3
+  PORTL |= B00001000;
+}
+
+void StepperControlAxis::resetMotorStepWrite46()
+{
+  //PL3
+  PORTL &= B11110111;
+}
+
+#if defined(FARMDUINO_EXP_V20)
+//// TMC2130 Functions
+
+void StepperControlAxis::setMotorStepWriteTMC2130()
+{
+  // TMC2130 works on each edge of the step pulse, 
+  // so instead of setting the step bit, 
+  // toggle the bit here
+
+  if (!tmcStep)
+  {
+    digitalWrite(pinStep, HIGH);
+  }
+  else
+  {
+    digitalWrite(pinStep, LOW);
+  }
+}
+
+void StepperControlAxis::setMotorStepWriteTMC2130_2()
+{
+  if (!tmcStep2)
+  {
+    digitalWrite(pin2Step, HIGH);
+  }
+  else
+  {
+    digitalWrite(pin2Step, LOW);
+  }
+}
+
+void StepperControlAxis::resetMotorStepWriteTMC2130()
+{
+  
+}
+
+void StepperControlAxis::resetMotorStepWriteTMC2130_2()
+{
+
+}
+#endif

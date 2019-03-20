@@ -78,11 +78,13 @@ public:
   char channelLabel;
   bool movementStarted;
 
-protected:
+#if defined(FARMDUINO_EXP_V20)
+  void initTMC2130A();
+#endif
 
+private:
   int lastCalcLog = 0;
   bool debugPrint = false;
-  void init();
 
   // pin settings primary motor
   int pinStep;
@@ -167,6 +169,16 @@ protected:
   void resetMotorStepWrite60();
   void setMotorStepWrite46();
   void resetMotorStepWrite46();
+
+  #if defined(FARMDUINO_EXP_V20)
+  void setMotorStepWriteTMC2130();
+  void setMotorStepWriteTMC2130_2();
+  void resetMotorStepWriteTMC2130();
+  void resetMotorStepWriteTMC2130_2();
+
+  bool tmcStep = true;
+  bool tmcStep2 = true;
+  #endif
 
 };
 

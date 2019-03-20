@@ -121,10 +121,9 @@ StepperControl::StepperControl()
   // Create the axis controllers
 
   /**/ 
-  //axisX = StepperControlAxisTMC2130();
-  //axisX = StepperControlAxisA4988();
-  axisY = StepperControlAxisA4988();
-  axisZ = StepperControlAxisA4988();
+  axisX = StepperControlAxis();
+  axisY = StepperControlAxis();
+  axisZ = StepperControlAxis();
 
   axisX.channelLabel = 'X';
   axisY.channelLabel = 'Y';
@@ -399,8 +398,8 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
   // Let the interrupt handle all the movements
   while ((axisActive[0] || axisActive[1] || axisActive[2]) && !emergencyStop)
   {
-    /**/ axisX.setMotorStep();
-    /**/ delayMicroseconds(10);
+    /**/ //axisX.setMotorStep();
+    /**/ //delayMicroseconds(10);
     
     #if defined(FARMDUINO_V14)
     checkEncoders();
