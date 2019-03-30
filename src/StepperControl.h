@@ -37,6 +37,11 @@ public:
   void handleMovementInterrupt();
   void checkEncoders();
 
+  #if defined(FARMDUINO_EXP_V20)
+    void initTMC2130A();
+  #endif
+
+
   int calibrateAxis(int axis);
   //void initInterrupt();
   void enableMotors();

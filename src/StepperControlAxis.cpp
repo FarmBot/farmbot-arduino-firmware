@@ -1,12 +1,14 @@
 #include "StepperControlAxis.h"
-#include <TMC2130Stepper.h>
+//#include <TMC2130Stepper.h>
+
 
 #if defined(FARMDUINO_EXP_V20)
-  TMC2130Stepper TMC2130X = TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, X_CHIP_SELECT);
-  TMC2130Stepper TMC2130Y = TMC2130Stepper(Y_ENABLE_PIN, Y_DIR_PIN, Y_STEP_PIN, Y_CHIP_SELECT);
-  TMC2130Stepper TMC2130Z = TMC2130Stepper(Z_ENABLE_PIN, Z_DIR_PIN, Z_STEP_PIN, Z_CHIP_SELECT);
-  TMC2130Stepper TMC2130E = TMC2130Stepper(E_ENABLE_PIN, E_DIR_PIN, E_STEP_PIN, E_CHIP_SELECT);
+  static TMC2130Stepper TMC2130X = TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, X_CHIP_SELECT);
+  static TMC2130Stepper TMC2130Y = TMC2130Stepper(Y_ENABLE_PIN, Y_DIR_PIN, Y_STEP_PIN, Y_CHIP_SELECT);
+  static TMC2130Stepper TMC2130Z = TMC2130Stepper(Z_ENABLE_PIN, Z_DIR_PIN, Z_STEP_PIN, Z_CHIP_SELECT);
+  static TMC2130Stepper TMC2130E = TMC2130Stepper(E_ENABLE_PIN, E_DIR_PIN, E_STEP_PIN, E_CHIP_SELECT);
 #endif
+
 
 StepperControlAxis::StepperControlAxis()
 {
@@ -46,6 +48,8 @@ StepperControlAxis::StepperControlAxis()
   resetMotorStepWrite = &StepperControlAxis::resetMotorStepWriteDefault;
   resetMotorStepWrite2 = &StepperControlAxis::resetMotorStepWriteDefault2;
 
+/**/
+/*
 #if defined(FARMDUINO_EXP_V20)
   //// TMC2130 Functions
 
@@ -54,48 +58,68 @@ StepperControlAxis::StepperControlAxis()
   resetMotorStepWrite = &StepperControlAxis::resetMotorStepWriteTMC2130;
   resetMotorStepWrite2 = &StepperControlAxis::resetMotorStepWriteTMC2130_2;
 #endif
-
+*/
 }
 
 void StepperControlAxis::test()
 {
-  Serial.print("R99");
-  Serial.print(" cur loc = ");
-  Serial.print(coordCurrentPoint);
+  //setMotorStep();
+  //setMotorStepWriteTMC2130();
+  //Serial.print("R99");
+  //Serial.print(" cur loc = ");
+  //Serial.print(coordCurrentPoint);
   //Serial.print(" enc loc = ");
   //Serial.print(coordEncoderPoint);
   //Serial.print(" cons steps missed = ");
   //Serial.print(label);
   //Serial.print(consMissedSteps);
-  Serial.print("\r\n");
+  //Serial.print("\r\n");
 }
 
 #if defined(FARMDUINO_EXP_V20)
 void StepperControlAxis::initTMC2130A()
 {
+  /*
+  TMC2130X.begin(); // Initiate pins and registeries
+  TMC2130X.SilentStepStick2130(600); // Set stepper current to 600mA
+  TMC2130X.stealthChop(1); // Enable extremely quiet stepping
+  TMC2130X.shaft_dir(0);
+  */
+
   /**/
   if (channelLabel == 'X')
   {
-    TMC2130X.begin(); // Initiate pins and registeries
-    TMC2130X.SilentStepStick2130(600); // Set stepper current to 600mA
-    TMC2130X.stealthChop(1); // Enable extremely quiet stepping
-
-    TMC2130E.begin(); // Initiate pins and registeries
-    TMC2130E.SilentStepStick2130(600); // Set stepper current to 600mA
-    TMC2130E.stealthChop(1); // Enable extremely quiet stepping
+    TMC2130A = &TMC2130X;
+    TMC2130B = &TMC2130E;
   }
   if (channelLabel == 'Y')
   {
-    TMC2130X.begin(); // Initiate pins and registeries
-    TMC2130X.SilentStepStick2130(600); // Set stepper current to 600mA
-    TMC2130X.stealthChop(1); // Enable extremely quiet stepping
+    TMC2130A = &TMC2130Y;
   }
   if (channelLabel == 'Z')
   {
-    TMC2130Z.begin(); // Initiate pins and registeries
-    TMC2130Z.SilentStepStick2130(600); // Set stepper current to 600mA
-    TMC2130Z.stealthChop(1); // Enable extremely quiet stepping
+    TMC2130A = &TMC2130Z;
   }
+
+  TMC2130A->begin(); // Initiate pins and registeries
+  TMC2130A->SilentStepStick2130(600); // Set stepper current to 600mA
+  TMC2130A->stealthChop(1); // Enable extremely quiet stepping
+  TMC2130A->shaft_dir(0);
+  TMC2130A->microsteps(0);
+
+  if (channelLabel == 'X')
+  {
+    TMC2130B->begin(); // Initiate pins and registeries
+    TMC2130B->SilentStepStick2130(600); // Set stepper current to 600mA
+    TMC2130B->stealthChop(1); // Enable extremely quiet stepping
+    TMC2130B->shaft_dir(0);
+  }
+
+  setMotorStepWrite = &StepperControlAxis::setMotorStepWriteTMC2130;
+  setMotorStepWrite2 = &StepperControlAxis::setMotorStepWriteTMC2130_2;
+  resetMotorStepWrite = &StepperControlAxis::resetMotorStepWriteTMC2130;
+  resetMotorStepWrite2 = &StepperControlAxis::resetMotorStepWriteTMC2130_2;
+
 }
 #endif
 
@@ -336,9 +360,6 @@ void StepperControlAxis::incrementTick()
 void StepperControlAxis::checkTiming()
 {
 
-  //int i;
-
-   // moveTicks++;
   if (stepIsOn)
   {
     if (moveTicks >= stepOffTick)
@@ -347,7 +368,6 @@ void StepperControlAxis::checkTiming()
       // Negative flank for the steps
       resetMotorStep();
       setTicks();
-      //stepOnTick = moveTicks + (500000.0 / motorInterruptSpeed / axisSpeed);
     }
   }
   else
@@ -359,7 +379,6 @@ void StepperControlAxis::checkTiming()
 
         // Positive flank for the steps
         setStepAxis();
-        //stepOffTick = moveTicks + (1000000.0 / motorInterruptSpeed / axisSpeed);
       }
     }
   }
@@ -586,51 +605,27 @@ void StepperControlAxis::setDirectionUp()
   }
 #endif
 
+/**/
+
 #if defined(FARMDUINO_EXP_V20)
 
-  if (channelLabel == 'X')
+  // The TMC2130 uses a command to change direction, not a pin
+  if (motorMotorInv)
   {
-    if (motorMotorInv)
-    {
-      TMC2130X.shaft_dir(0);
-    }
-    else
-    {
-      TMC2130X.shaft_dir(1);
-    }
-
-    if (motorMotor2Enl && motorMotor2Inv)
-    {
-      TMC2130E.shaft_dir(0);
-    }
-    else
-    {
-      TMC2130E.shaft_dir(1);
-    }
+    TMC2130A->shaft_dir(0);
+  }
+  else
+  {
+    TMC2130A->shaft_dir(1);
   }
 
-  if (channelLabel == 'Y')
+  if (motorMotor2Enl && motorMotor2Inv)
   {
-    if (motorMotorInv)
-    {
-      TMC2130Y.shaft_dir(0);
-    }
-    else
-    {
-      TMC2130Y.shaft_dir(1);
-    }
+    TMC2130B->shaft_dir(0);
   }
-
-  if (channelLabel == 'Z')
+  else
   {
-    if (motorMotorInv)
-    {
-      TMC2130Z.shaft_dir(0);
-    }
-    else
-    {
-      TMC2130Z.shaft_dir(1);
-    }
+    TMC2130B->shaft_dir(1);
   }
 
 #endif
@@ -639,6 +634,8 @@ void StepperControlAxis::setDirectionUp()
 
 void StepperControlAxis::setDirectionDown()
 {
+  #if !defined(FARMDUINO_EXP_V20)
+
   if (motorMotorInv)
   {
     digitalWrite(pinDirection, HIGH);
@@ -656,6 +653,34 @@ void StepperControlAxis::setDirectionDown()
   {
     digitalWrite(pin2Direction, LOW);
   }
+
+  #endif
+
+  /**/
+
+  #if defined(FARMDUINO_EXP_V20)
+
+  // The TMC2130 uses a command to change direction, not a pin
+  if (motorMotorInv)
+  {
+    TMC2130A->shaft_dir(1);
+  }
+  else
+  {
+    TMC2130A->shaft_dir(0);
+  }
+
+  if (motorMotor2Enl && motorMotor2Inv)
+  {
+    TMC2130B->shaft_dir(1);
+  }
+  else
+  {
+    TMC2130B->shaft_dir(0);
+  }
+
+  #endif
+
 }
 
 void StepperControlAxis::setMovementUp()
@@ -923,35 +948,39 @@ void StepperControlAxis::setMotorStepWriteTMC2130()
   // so instead of setting the step bit, 
   // toggle the bit here
 
-  if (!tmcStep)
+  if (tmcStep)
   {
     digitalWrite(pinStep, HIGH);
-  }
+    tmcStep = false;
+    }
   else
   {
     digitalWrite(pinStep, LOW);
+    tmcStep = true;
   }
 }
 
 void StepperControlAxis::setMotorStepWriteTMC2130_2()
 {
-  if (!tmcStep2)
+  if (tmcStep2)
   {
     digitalWrite(pin2Step, HIGH);
+    tmcStep2 = false;
   }
   else
   {
     digitalWrite(pin2Step, LOW);
+    tmcStep2 = true;
   }
 }
 
 void StepperControlAxis::resetMotorStepWriteTMC2130()
 {
-  
+  // No action needed
 }
 
 void StepperControlAxis::resetMotorStepWriteTMC2130_2()
 {
-
+  // No action needed
 }
 #endif

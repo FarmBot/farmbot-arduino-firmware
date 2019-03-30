@@ -11,6 +11,18 @@
 #include "CurrentState.h"
 #include <SPI.h>
 
+/*
+#if defined(FARMDUINO_EXP_V20)
+#include <TMC2130Stepper.h>
+TMC2130Stepper TMC2130X = TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, X_CHIP_SELECT);
+TMC2130Stepper TMC2130Y = TMC2130Stepper(Y_ENABLE_PIN, Y_DIR_PIN, Y_STEP_PIN, Y_CHIP_SELECT);
+TMC2130Stepper TMC2130Z = TMC2130Stepper(Z_ENABLE_PIN, Z_DIR_PIN, Z_STEP_PIN, Z_CHIP_SELECT);
+TMC2130Stepper TMC2130E = TMC2130Stepper(E_ENABLE_PIN, E_DIR_PIN, E_STEP_PIN, E_CHIP_SELECT);
+
+TMC2130Stepper *TMC2130A;
+
+#endif
+*/
 
 
 //#include <TMC2130Stepper.h>
@@ -72,31 +84,34 @@ void interrupt(void)
 
       interruptBusy = true;
       StepperControl::getInstance()->handleMovementInterrupt();
-
-      // Check the actions triggered once per second
-      //if (interruptSecondTimer >= 1000000 / MOVEMENT_INTERRUPT_SPEED)
-      //{
-      //  interruptSecondTimer = 0;
-      //  PinGuard::getInstance()->checkPins();
-      //  //blinkLed();
-      //}
-
-      //interruptStopTime = micros();
-
-      //if (interruptStopTime > interruptStartTime)
-      //{
-      //  interruptDuration = interruptStopTime - interruptStartTime;
-      //}
-
-      //if (interruptDuration > interruptDurationMax)
-      //{
-      //  interruptDurationMax = interruptDuration;
-      //}
-
       interruptBusy = false;
     }
   }
 }
+
+/**/
+//bool blinky = false;
+//int blinkyCounter = 0;
+
+ISR(TIMER2_OVF_vect) {
+
+  //blinkyCounter++;
+  //if (blinkyCounter > 16000) {
+  //  blinkyCounter = 0;
+  //  blinky = !blinky;
+  //}
+
+  if (!debugInterrupt)
+  {
+    if (interruptBusy == false)
+    {
+      interruptBusy = true;
+      StepperControl::getInstance()->handleMovementInterrupt();
+      interruptBusy = false;
+    }
+  }
+}
+
 
 //The setup function is called once at startup of the sketch
 void setup()
@@ -265,7 +280,7 @@ void setup()
     SPI.begin();
 
   #endif
-  
+
   Serial.begin(115200);
 
   delay(100);
@@ -287,12 +302,31 @@ void setup()
   // Interrupt management code library written by Paul Stoffregen
   // The default time 100 micro seconds
 
-  /**/
   #if !defined(FARMDUINO_EXP_V20)
     Timer1.attachInterrupt(interrupt);
     Timer1.initialize(MOVEMENT_INTERRUPT_SPEED);
     Timer1.start();
   #endif
+
+#if defined(FARMDUINO_EXP_V20)
+
+    //const int MOVEMENT_INTERRUPT_SPEED = 64; // Interrupt cycle in micro seconds
+    //microseconds = 64
+    //const unsigned long cycles = (F_CPU / 2000000) * microseconds;
+
+    //const unsigned long cycles = (F_TIMER / 2000000) * microseconds;
+    //if (cycles < TIMER1_RESOLUTION)
+
+    //clockSelectBits = 1;
+    //pwmPeriod = cycles >> 1;
+
+    TIMSK2 = (TIMSK2 & B11111110) | 0x01; // Enable timer overflow
+    TCCR2B = (TCCR2B & B11111000) | 0x01; // Set divider to 1
+    OCR2A = 4; // Set overflow to 4 for total of 64 µs    
+
+    pinMode(LED_PIN, OUTPUT);
+
+#endif
 
   // Initialize the inactivity check
   lastAction = millis();
@@ -340,7 +374,23 @@ void setup()
 
   //digitalWrite(X_ENABLE_PIN, LOW);
   //testingAxis.initTMC2130A();
+//#if defined(FARMDUINO_EXP_V20)
+  /*
+  TMC2130A = &TMC2130X;
 
+  TMC2130A->begin(); // Initiate pins and registeries
+  TMC2130A->SilentStepStick2130(600); // Set stepper current to 600mA
+  TMC2130A->stealthChop(1); // Enable extremely quiet stepping
+  TMC2130A->shaft_dir(0);
+  */
+
+  //TMC2130X.begin(); // Initiate pins and registeries
+  //TMC2130X.SilentStepStick2130(600); // Set stepper current to 600mA
+  //TMC2130X.stealthChop(1); // Enable extremely quiet stepping
+  //TMC2130X.shaft_dir(0);
+
+  StepperControl::getInstance()->initTMC2130A();
+//#endif
 }
 
 
@@ -351,15 +401,25 @@ char commandChar[INCOMING_CMD_BUF_SIZE + 1];
 void loop()
 {
 
+  //digitalWrite(LED_PIN, blinky);
   /**/
 
   //StepperControl::getInstance()->test();
 
   //digitalWrite(X_ENABLE_PIN, LOW);
 
-  //digitalWrite(X_STEP_PIN, stepperFlip);
+  //digitalWrite(X_STEP_PIN, HIGH);
+  //delayMicroseconds(10);
+  //digitalWrite(X_STEP_PIN, LOW);
   //delayMicroseconds(10);
 
+  //#if defined(FARMDUINO_EXP_V20)
+  //StepperControl::getInstance()->test();
+  //delayMicroseconds(10);
+  //#endif
+
+  //digitalWrite(X_STEP_PIN, stepperFlip);
+  //delayMicroseconds(10);
   //stepperFlip != stepperFlip;
 
 

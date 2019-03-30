@@ -173,18 +173,31 @@ void StepperControl::loadSettings()
   encoderY.loadSettings(motorConsEncoderType[1], motorConsEncoderScaling[1], motorConsEncoderInvert[1]);
   encoderZ.loadSettings(motorConsEncoderType[2], motorConsEncoderScaling[2], motorConsEncoderInvert[2]);
 
-  /**/
-  #if defined(FARMDUINO_EXP_V20)
-    axisX.initTMC2130A();
-  #endif
-
 }
+
+#if defined(FARMDUINO_EXP_V20)
+  void StepperControl::initTMC2130A()
+  {
+    /**/
+    axisX.initTMC2130A();
+    //axisY.initTMC2130A();
+    //axisZ.initTMC2130A();
+  }
+#endif
 
 void StepperControl::test()
 {
 
-  axisX.enableMotor();
-  axisX.setMotorStep();
+  //axisX.enableMotor();
+  //axisX.setMotorStep();
+
+  //digitalWrite(X_STEP_PIN, HIGH);
+  //delayMicroseconds(10);
+  //digitalWrite(X_STEP_PIN, LOW);
+  //delayMicroseconds(10);
+
+  //axisX.setMotorStepWriteTMC2130();
+  //axisX.test();
 
   //Serial.print("R99");
   //Serial.print(" mot x = ");
@@ -400,7 +413,14 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
   {
     /**/ //axisX.setMotorStep();
     /**/ //delayMicroseconds(10);
-    
+    //!@#$
+
+    //#if defined(FARMDUINO_EXP_V20)
+    //axisX.incrementTick();
+    //axisY.incrementTick();
+    //axisZ.incrementTick();
+    //#endif
+
     #if defined(FARMDUINO_V14)
     checkEncoders();
     #endif
@@ -417,7 +437,6 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
 
     if (axisX.isStepDone())
     {
-      /**/ 
       axisX.checkMovement();
       checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsEncoderLastPosition[0], &motorConsEncoderUseForPos[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
       axisX.resetStepDone();
