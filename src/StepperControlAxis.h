@@ -92,7 +92,7 @@ public:
   bool movementStarted;
 
 #if defined(FARMDUINO_EXP_V20)
-  void initTMC2130A();
+  void initTMC2130();
 #endif
 
   /**/
@@ -101,6 +101,8 @@ public:
   void setMotorStepWriteTMC2130_2();
   void resetMotorStepWriteTMC2130();
   void resetMotorStepWriteTMC2130_2();
+
+  unsigned int getLostSteps();
 
   bool tmcStep = true;
   bool tmcStep2 = true;

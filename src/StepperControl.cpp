@@ -176,12 +176,12 @@ void StepperControl::loadSettings()
 }
 
 #if defined(FARMDUINO_EXP_V20)
-  void StepperControl::initTMC2130A()
+  void StepperControl::initTMC2130()
   {
     /**/
-    axisX.initTMC2130A();
-    //axisY.initTMC2130A();
-    //axisZ.initTMC2130A();
+    axisX.initTMC2130();
+    axisY.initTMC2130();
+    axisZ.initTMC2130();
   }
 #endif
 
@@ -420,6 +420,9 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
     //axisY.incrementTick();
     //axisZ.incrementTick();
     //#endif
+
+    /**/ //axisX.test();
+    /**/ axisX.getLostSteps();
 
     #if defined(FARMDUINO_V14)
     checkEncoders();

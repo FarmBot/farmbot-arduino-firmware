@@ -61,8 +61,31 @@ StepperControlAxis::StepperControlAxis()
 */
 }
 
+unsigned int StepperControlAxis::getLostSteps()
+{
+  unsigned int lostSteps;
+  lostSteps = TMC2130A->LOST_STEPS();
+
+  if (lostSteps != 0)
+  {
+    Serial.print("R99");
+    Serial.print(" mis stp = ");
+    Serial.print(lostSteps);
+    Serial.print("\r\n");
+  }
+
+  return lostSteps;
+  //return TMC2130A->LOST_STEPS();
+}
+
 void StepperControlAxis::test()
 {
+  Serial.print("R99");
+  Serial.print(" mis stp = ");
+  Serial.print(TMC2130A->LOST_STEPS());
+  Serial.print("\r\n");
+
+
   //setMotorStep();
   //setMotorStepWriteTMC2130();
   //Serial.print("R99");
@@ -77,7 +100,7 @@ void StepperControlAxis::test()
 }
 
 #if defined(FARMDUINO_EXP_V20)
-void StepperControlAxis::initTMC2130A()
+void StepperControlAxis::initTMC2130()
 {
   /*
   TMC2130X.begin(); // Initiate pins and registeries
@@ -106,6 +129,7 @@ void StepperControlAxis::initTMC2130A()
   TMC2130A->stealthChop(1); // Enable extremely quiet stepping
   TMC2130A->shaft_dir(0);
   TMC2130A->microsteps(0);
+  TMC2130A->diag1_steps_skipped(true);
 
   if (channelLabel == 'X')
   {

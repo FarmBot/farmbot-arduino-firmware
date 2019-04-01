@@ -389,7 +389,8 @@ void setup()
   //TMC2130X.stealthChop(1); // Enable extremely quiet stepping
   //TMC2130X.shaft_dir(0);
 
-  StepperControl::getInstance()->initTMC2130A();
+  // initialise the motors
+  StepperControl::getInstance()->initTMC2130();
 //#endif
 }
 

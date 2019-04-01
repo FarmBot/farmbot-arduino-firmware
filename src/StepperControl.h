@@ -38,7 +38,7 @@ public:
   void checkEncoders();
 
   #if defined(FARMDUINO_EXP_V20)
-    void initTMC2130A();
+    void initTMC2130();
   #endif
 
 
