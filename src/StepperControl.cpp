@@ -1201,6 +1201,7 @@ int debugPrintCount = 0;
 // Check encoder to verify the motor is at the right position
 void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControlEncoder *encoder, float *missedSteps, long *lastPosition, long *encoderLastPosition, int *encoderUseForPos, float *encoderStepDecay, bool *encoderEnabled)
 {
+#if !defined(FARMDUINO_EXP_V20)
   if (*encoderEnabled)
   {
     bool stepMissed = false;
@@ -1266,6 +1267,26 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
   {
     axis->setCurrentPosition(encoder->currentPosition());
   }
+#endif
+
+#if defined(FARMDUINO_EXP_V20)
+
+  if (axis->stallDetected()) {
+    // In case of stall detection, count this as a missed step
+    (*missedSteps)++;
+    axis->setCurrentPosition(*lastPosition);
+  }
+  else {
+    // Decrease amount of missed steps if there are no missed step
+    if (*missedSteps > 0)
+    {
+      (*missedSteps) -= (*encoderStepDecay);
+    }
+    *lastPosition = axis->currentPosition();
+  }
+
+#endif
+
 }
 
 void StepperControl::loadMotorSettings()

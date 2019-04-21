@@ -124,19 +124,34 @@ void StepperControlAxis::initTMC2130()
     TMC2130A = &TMC2130Z;
   }
 
-  TMC2130A->begin(); // Initiate pins and registeries
-  TMC2130A->SilentStepStick2130(600); // Set stepper current to 600mA
-  TMC2130A->stealthChop(1); // Enable extremely quiet stepping
-  TMC2130A->shaft_dir(0);
-  TMC2130A->microsteps(0);
-  TMC2130A->diag1_steps_skipped(true);
+  TMC2130A->begin();            // Initiate pins and registeries
+
+  TMC2130A->rms_current(160);   // Set the required current in mA  
+  TMC2130A->microsteps(0);      // Minimum of micro steps needed
+  TMC2130A->chm(true);          // Set the chopper mode to classic const. off time
+  TMC2130A->diag1_stall(1);     // Activate stall diagnostics
+  TMC2130A->sgt(30);            // Set stall detection sensitivity. most -64 to +64 least
+  TMC2130A->shaft_dir(0);       // Set direction
+
+  //TMC2130A->SilentStepStick2130(600); // Set stepper current to 600mA
+  //TMC2130A->stealthChop(1); // Enable extremely quiet stepping
+  //TMC2130A->microsteps(0);
 
   if (channelLabel == 'X')
   {
     TMC2130B->begin(); // Initiate pins and registeries
-    TMC2130B->SilentStepStick2130(600); // Set stepper current to 600mA
-    TMC2130B->stealthChop(1); // Enable extremely quiet stepping
-    TMC2130B->shaft_dir(0);
+
+    TMC2130B->rms_current(160);   // Set the required current in mA  
+    TMC2130B->microsteps(0);      // Minimum of micro steps needed
+    TMC2130B->chm(true);          // Set the chopper mode to classic const. off time
+    TMC2130B->diag1_stall(1);     // Activate stall diagnostics
+    TMC2130B->sgt(30);            // Set stall detection sensitivity. most -64 to +64 least
+    TMC2130B->shaft_dir(0);       // Set direction
+
+                       
+    //TMC2130B->SilentStepStick2130(600); // Set stepper current to 600mA
+    //TMC2130B->stealthChop(1); // Enable extremely quiet stepping
+    //TMC2130B->shaft_dir(0);
   }
 
   setMotorStepWrite = &StepperControlAxis::setMotorStepWriteTMC2130;
@@ -145,6 +160,11 @@ void StepperControlAxis::initTMC2130()
   resetMotorStepWrite2 = &StepperControlAxis::resetMotorStepWriteTMC2130_2;
 
 }
+
+bool StepperControlAxis::stallDetected() {
+  return TMC2130A->stallguard();
+}
+
 #endif
 
 unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long currentPosition, long destinationPosition, long minSpeed, long maxSpeed, long stepsAccDec)
