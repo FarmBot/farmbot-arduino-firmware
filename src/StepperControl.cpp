@@ -179,9 +179,20 @@ void StepperControl::loadSettings()
   void StepperControl::initTMC2130()
   {
     /**/
-    axisX.initTMC2130();
-    axisY.initTMC2130();
-    axisZ.initTMC2130();
+    int motorCurrent;
+    int stallSensitivity;
+
+    motorCurrent      = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_X);
+    stallSensitivity  = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_X);
+    axisX.initTMC2130(motorCurrent, stallSensitivity);
+
+    motorCurrent = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_X);
+    stallSensitivity = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_X);
+    axisY.initTMC2130(motorCurrent, stallSensitivity);
+
+    motorCurrent = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_X);
+    stallSensitivity = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_X);
+    axisZ.initTMC2130(motorCurrent, stallSensitivity);
   }
 #endif
 

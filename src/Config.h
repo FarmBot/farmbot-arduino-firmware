@@ -141,6 +141,16 @@
   const long MOVEMENT_STOP_AT_MAX_Y_DEFAULT = 0;
   const long MOVEMENT_STOP_AT_MAX_Z_DEFAULT = 0;
 
+  // motor current (used with TMC2130)
+  const long MOVEMENT_MOTOR_CURRENT_X_DEFAULT = 600;
+  const long MOVEMENT_MOTOR_CURRENT_Y_DEFAULT = 600;
+  const long MOVEMENT_MOTOR_CURRENT_Z_DEFAULT = 600;
+
+  // stall sensitivity (used with TMC2130)
+  const long MOVEMENT_STALL_SENSITIVITY_X_DEFAULT = 30;
+  const long MOVEMENT_STALL_SENSITIVITY_Y_DEFAULT = 30;
+  const long MOVEMENT_STALL_SENSITIVITY_Z_DEFAULT = 30;
+
   // Use encoder (0 or 1)
   const long ENCODER_ENABLED_X_DEFAULT = 0;
   const long ENCODER_ENABLED_Y_DEFAULT = 0;

@@ -92,7 +92,7 @@ public:
   bool movementStarted;
 
 #if defined(FARMDUINO_EXP_V20)
-  void initTMC2130();
+  void initTMC2130(int motorCurrent, int  stallSensitivity);
   bool stallDetected();
 #endif
 
