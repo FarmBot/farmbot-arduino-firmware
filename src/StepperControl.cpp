@@ -178,22 +178,34 @@ void StepperControl::loadSettings()
 #if defined(FARMDUINO_EXP_V20)
   void StepperControl::initTMC2130()
   {
+    axisX.initTMC2130();
+    axisY.initTMC2130();
+    axisZ.initTMC2130();
+  }
+
+  void StepperControl::loadSettingsTMC2130()
+  {
     /**/
     int motorCurrent;
     int stallSensitivity;
-
-    motorCurrent      = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_X);
-    stallSensitivity  = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_X);
-    axisX.initTMC2130(motorCurrent, stallSensitivity);
+    int microSteps;
 
     motorCurrent = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_X);
     stallSensitivity = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_X);
-    axisY.initTMC2130(motorCurrent, stallSensitivity);
+    microSteps = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_X);
+    axisX.loadSettingsTMC2130(motorCurrent, stallSensitivity, microSteps);
 
-    motorCurrent = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_X);
-    stallSensitivity = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_X);
-    axisZ.initTMC2130(motorCurrent, stallSensitivity);
+    motorCurrent = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Y);
+    stallSensitivity = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Y);
+    microSteps = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Y);
+    axisY.loadSettingsTMC2130(motorCurrent, stallSensitivity, microSteps);
+
+    motorCurrent = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Z);
+    stallSensitivity = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Z);
+    microSteps = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Z);
+    axisZ.loadSettingsTMC2130(motorCurrent, stallSensitivity, microSteps);
   }
+
 #endif
 
 void StepperControl::test()
@@ -422,19 +434,6 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
   // Let the interrupt handle all the movements
   while ((axisActive[0] || axisActive[1] || axisActive[2]) && !emergencyStop)
   {
-    /**/ //axisX.setMotorStep();
-    /**/ //delayMicroseconds(10);
-    //!@#$
-
-    //#if defined(FARMDUINO_EXP_V20)
-    //axisX.incrementTick();
-    //axisY.incrementTick();
-    //axisZ.incrementTick();
-    //#endif
-
-    /**/ //axisX.test();
-    /**/ axisX.getLostSteps();
-
     #if defined(FARMDUINO_V14)
     checkEncoders();
     #endif
@@ -675,13 +674,38 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
           serialBuffer += CurrentState::getInstance()->getPosition();
           serialBuffer += CurrentState::getInstance()->getQAndNewLine();
           break;
+        case 2:
+          #if defined(FARMDUINO_EXP_V20)
+
+          serialBuffer += "R89";
+          serialBuffer += " X";
+          serialBuffer += axisX.getLoad();
+          serialBuffer += " Y";
+          serialBuffer += axisY.getLoad();
+          serialBuffer += " Z";
+          serialBuffer += axisZ.getLoad();
+
+          serialBuffer += CurrentState::getInstance()->getQAndNewLine();
+          #endif
+
+          break;
       }
 
       serialMessageNr++;
+
+      #if !defined(FARMDUINO_EXP_V20)
       if (serialMessageNr > 1)
       {
         serialMessageNr = 0;
       }
+      #endif
+
+      #if defined(FARMDUINO_EXP_V20)
+      if (serialMessageNr > 2)
+      {
+        serialMessageNr = 0;
+      }
+      #endif
 
       serialBufferSending = 0;
       
@@ -1282,20 +1306,22 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
 
 #if defined(FARMDUINO_EXP_V20)
 
-  if (axis->stallDetected()) {
-    // In case of stall detection, count this as a missed step
-    (*missedSteps)++;
-    axis->setCurrentPosition(*lastPosition);
-  }
-  else {
-    // Decrease amount of missed steps if there are no missed step
-    if (*missedSteps > 0)
-    {
-      (*missedSteps) -= (*encoderStepDecay);
+  //if (*encoderEnabled) {
+    if (axis->stallDetected()) {
+      // In case of stall detection, count this as a missed step
+      (*missedSteps)++;
+      axis->setCurrentPosition(*lastPosition);
     }
-    *lastPosition = axis->currentPosition();
-  }
-
+    else {
+      // Decrease amount of missed steps if there are no missed step
+      if (*missedSteps > 0)
+      {
+        (*missedSteps) -= (*encoderStepDecay);
+      }
+      *lastPosition = axis->currentPosition();
+      encoder->setPosition(axis->currentPosition());
+    }
+//  }
 #endif
 
 }
@@ -1393,6 +1419,10 @@ void StepperControl::loadMotorSettings()
   axisX.loadMotorSettings(speedMax[0], speedMin[0], speedHome[0], stepsAcc[0], timeOut[0], homeIsUp[0], motorInv[0], endStInv[0], endStInv2[0], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[0], motor2Inv[0], endStEnbl[0], motorStopAtHome[0], motorMaxSize[0] *= stepsPerMm[0], motorStopAtMax[0]);
   axisY.loadMotorSettings(speedMax[1], speedMin[1], speedHome[1], stepsAcc[1], timeOut[1], homeIsUp[1], motorInv[1], endStInv[1], endStInv2[1], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[1], motor2Inv[1], endStEnbl[1], motorStopAtHome[1], motorMaxSize[1] *= stepsPerMm[1], motorStopAtMax[1]);
   axisZ.loadMotorSettings(speedMax[2], speedMin[2], speedHome[2], stepsAcc[2], timeOut[2], homeIsUp[2], motorInv[2], endStInv[2], endStInv2[2], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[2], motor2Inv[2], endStEnbl[2], motorStopAtHome[2], motorMaxSize[2] *= stepsPerMm[2], motorStopAtMax[2]);
+
+#if defined(FARMDUINO_EXP_V20)
+  loadSettingsTMC2130();
+#endif
 
   primeMotors();
 }

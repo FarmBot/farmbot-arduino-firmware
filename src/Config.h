@@ -151,6 +151,11 @@
   const long MOVEMENT_STALL_SENSITIVITY_Y_DEFAULT = 30;
   const long MOVEMENT_STALL_SENSITIVITY_Z_DEFAULT = 30;
 
+  // micro steps setting (used with TMC2130)
+  const long MOVEMENT_MICROSTEPS_X_DEFAULT = 0;
+  const long MOVEMENT_MICROSTEPS_Y_DEFAULT = 0;
+  const long MOVEMENT_MICROSTEPS_Z_DEFAULT = 0;
+
   // Use encoder (0 or 1)
   const long ENCODER_ENABLED_X_DEFAULT = 0;
   const long ENCODER_ENABLED_Y_DEFAULT = 0;

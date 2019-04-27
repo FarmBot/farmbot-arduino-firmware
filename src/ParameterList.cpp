@@ -459,6 +459,16 @@ void ParameterList::loadDefaultValue(int id)
     paramValues[id] = MOVEMENT_STALL_SENSITIVITY_Z_DEFAULT;
     break;
 
+  case MOVEMENT_MICROSTEPS_X:
+    paramValues[id] = MOVEMENT_MICROSTEPS_X_DEFAULT;
+    break;
+  case MOVEMENT_MICROSTEPS_Y:
+    paramValues[id] = MOVEMENT_MICROSTEPS_Y_DEFAULT;
+    break;
+  case MOVEMENT_MICROSTEPS_Z:
+    paramValues[id] = MOVEMENT_MICROSTEPS_Z_DEFAULT;
+    break;
+
   case ENCODER_ENABLED_X:
     paramValues[id] = ENCODER_ENABLED_X_DEFAULT;
     break;
@@ -643,6 +653,9 @@ bool ParameterList::validParam(int id)
   case MOVEMENT_STALL_SENSITIVITY_X:
   case MOVEMENT_STALL_SENSITIVITY_Y:
   case MOVEMENT_STALL_SENSITIVITY_Z:
+  case MOVEMENT_MICROSTEPS_X:
+  case MOVEMENT_MICROSTEPS_Y:
+  case MOVEMENT_MICROSTEPS_Z:
   case ENCODER_ENABLED_X:
   case ENCODER_ENABLED_Y:
   case ENCODER_ENABLED_Z:

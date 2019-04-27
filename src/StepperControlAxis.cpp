@@ -63,29 +63,11 @@ StepperControlAxis::StepperControlAxis()
 
 unsigned int StepperControlAxis::getLostSteps()
 {
-  unsigned int lostSteps;
-  lostSteps = TMC2130A->LOST_STEPS();
-
-  if (lostSteps != 0)
-  {
-    Serial.print("R99");
-    Serial.print(" mis stp = ");
-    Serial.print(lostSteps);
-    Serial.print("\r\n");
-  }
-
-  return lostSteps;
-  //return TMC2130A->LOST_STEPS();
+  return TMC2130A->LOST_STEPS();
 }
 
 void StepperControlAxis::test()
 {
-  Serial.print("R99");
-  Serial.print(" mis stp = ");
-  Serial.print(TMC2130A->LOST_STEPS());
-  Serial.print("\r\n");
-
-
   //setMotorStep();
   //setMotorStepWriteTMC2130();
   //Serial.print("R99");
@@ -100,7 +82,7 @@ void StepperControlAxis::test()
 }
 
 #if defined(FARMDUINO_EXP_V20)
-void StepperControlAxis::initTMC2130(int motorCurrent, int  stallSensitivity)
+void StepperControlAxis::initTMC2130()
 {
   /*
   TMC2130X.begin(); // Initiate pins and registeries
@@ -126,33 +108,12 @@ void StepperControlAxis::initTMC2130(int motorCurrent, int  stallSensitivity)
 
   TMC2130A->begin();                      // Initiate pins and registeries
 
-  TMC2130A->rms_current(motorCurrent);    // Set the required current in mA  
-  TMC2130A->microsteps(0);                // Minimum of micro steps needed
-  TMC2130A->chm(true);                    // Set the chopper mode to classic const. off time
-  TMC2130A->diag1_stall(1);               // Activate stall diagnostics
-  TMC2130A->sgt(stallSensitivity);        // Set stall detection sensitivity. most -64 to +64 least
-  TMC2130A->shaft_dir(0);                 // Set direction
-
-  //TMC2130A->SilentStepStick2130(600); // Set stepper current to 600mA
-  //TMC2130A->stealthChop(1); // Enable extremely quiet stepping
-  //TMC2130A->microsteps(0);
-
   if (channelLabel == 'X')
   {
     TMC2130B->begin();                    // Initiate pins and registeries
-
-    TMC2130B->rms_current(motorCurrent);   // Set the required current in mA  
-    TMC2130B->microsteps(0);               // Minimum of micro steps needed
-    TMC2130B->chm(true);                   // Set the chopper mode to classic const. off time
-    TMC2130B->diag1_stall(1);              // Activate stall diagnostics
-    TMC2130B->sgt(stallSensitivity);       // Set stall detection sensitivity. most -64 to +64 least
-    TMC2130B->shaft_dir(0);                // Set direction
-
-                       
-    //TMC2130B->SilentStepStick2130(600); // Set stepper current to 600mA
-    //TMC2130B->stealthChop(1); // Enable extremely quiet stepping
-    //TMC2130B->shaft_dir(0);
   }
+
+  //loadSettingsTMC2130(600,60, 0);
 
   setMotorStepWrite = &StepperControlAxis::setMotorStepWriteTMC2130;
   setMotorStepWrite2 = &StepperControlAxis::setMotorStepWriteTMC2130_2;
@@ -161,8 +122,34 @@ void StepperControlAxis::initTMC2130(int motorCurrent, int  stallSensitivity)
 
 }
 
+void StepperControlAxis::loadSettingsTMC2130(int motorCurrent, int  stallSensitivity, int microSteps)
+{
+  stallSensitivity = 60;
+
+  TMC2130A->rms_current(motorCurrent);    // Set the required current in mA  
+  TMC2130A->microsteps(microSteps);                // Minimum of micro steps needed
+  TMC2130A->chm(true);                    // Set the chopper mode to classic const. off time
+  TMC2130A->diag1_stall(1);               // Activate stall diagnostics
+  TMC2130A->sgt(stallSensitivity);        // Set stall detection sensitivity. most -64 to +64 least
+  TMC2130A->shaft_dir(0);                 // Set direction
+
+  if (channelLabel == 'X')
+  {
+    TMC2130B->rms_current(motorCurrent);   // Set the required current in mA  
+    TMC2130B->microsteps(microSteps);               // Minimum of micro steps needed
+    TMC2130B->chm(true);                   // Set the chopper mode to classic const. off time
+    TMC2130B->diag1_stall(1);              // Activate stall diagnostics
+    TMC2130B->sgt(stallSensitivity);       // Set stall detection sensitivity. most -64 to +64 least
+    TMC2130B->shaft_dir(0);                // Set direction
+  }
+}
+
 bool StepperControlAxis::stallDetected() {
   return TMC2130A->stallguard();
+}
+
+uint16_t StepperControlAxis::getLoad() {
+  return TMC2130A->sg_result();
 }
 
 #endif

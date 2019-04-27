@@ -310,21 +310,9 @@ void setup()
 
 #if defined(FARMDUINO_EXP_V20)
 
-    //const int MOVEMENT_INTERRUPT_SPEED = 64; // Interrupt cycle in micro seconds
-    //microseconds = 64
-    //const unsigned long cycles = (F_CPU / 2000000) * microseconds;
-
-    //const unsigned long cycles = (F_TIMER / 2000000) * microseconds;
-    //if (cycles < TIMER1_RESOLUTION)
-
-    //clockSelectBits = 1;
-    //pwmPeriod = cycles >> 1;
-
     TIMSK2 = (TIMSK2 & B11111110) | 0x01; // Enable timer overflow
     TCCR2B = (TCCR2B & B11111000) | 0x01; // Set divider to 1
     OCR2A = 4; // Set overflow to 4 for total of 64 µs    
-
-    pinMode(LED_PIN, OUTPUT);
 
 #endif
 
@@ -367,31 +355,11 @@ void setup()
   Serial.print("R99 ARDUINO STARTUP COMPLETE\r\n");
 
   /**/
-  //stepper.begin();
-  //stepper.SilentStepStick2130(600);
-  //stepper.stealthChop(1);
-  //stepper.shaft_dir(0);
-
-  //digitalWrite(X_ENABLE_PIN, LOW);
-  //testingAxis.initTMC2130A();
-//#if defined(FARMDUINO_EXP_V20)
-  /*
-  TMC2130A = &TMC2130X;
-
-  TMC2130A->begin(); // Initiate pins and registeries
-  TMC2130A->SilentStepStick2130(600); // Set stepper current to 600mA
-  TMC2130A->stealthChop(1); // Enable extremely quiet stepping
-  TMC2130A->shaft_dir(0);
-  */
-
-  //TMC2130X.begin(); // Initiate pins and registeries
-  //TMC2130X.SilentStepStick2130(600); // Set stepper current to 600mA
-  //TMC2130X.stealthChop(1); // Enable extremely quiet stepping
-  //TMC2130X.shaft_dir(0);
-
+#if defined(FARMDUINO_EXP_V20)
   // initialise the motors
   StepperControl::getInstance()->initTMC2130();
-//#endif
+  StepperControl::getInstance()->loadSettingsTMC2130();  
+#endif
 }
 
 
