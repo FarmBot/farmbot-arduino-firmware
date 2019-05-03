@@ -98,7 +98,6 @@ public:
   uint16_t getLoad();
 #endif
 
-  /**/
 #if defined(FARMDUINO_EXP_V20)
   void setMotorStepWriteTMC2130();
   void setMotorStepWriteTMC2130_2();

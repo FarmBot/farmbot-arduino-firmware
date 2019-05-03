@@ -48,17 +48,6 @@ StepperControlAxis::StepperControlAxis()
   resetMotorStepWrite = &StepperControlAxis::resetMotorStepWriteDefault;
   resetMotorStepWrite2 = &StepperControlAxis::resetMotorStepWriteDefault2;
 
-/**/
-/*
-#if defined(FARMDUINO_EXP_V20)
-  //// TMC2130 Functions
-
-  setMotorStepWrite = &StepperControlAxis::setMotorStepWriteTMC2130;
-  setMotorStepWrite2 = &StepperControlAxis::setMotorStepWriteTMC2130_2;
-  resetMotorStepWrite = &StepperControlAxis::resetMotorStepWriteTMC2130;
-  resetMotorStepWrite2 = &StepperControlAxis::resetMotorStepWriteTMC2130_2;
-#endif
-*/
 }
 
 unsigned int StepperControlAxis::getLostSteps()
@@ -68,30 +57,12 @@ unsigned int StepperControlAxis::getLostSteps()
 
 void StepperControlAxis::test()
 {
-  //setMotorStep();
-  //setMotorStepWriteTMC2130();
-  //Serial.print("R99");
-  //Serial.print(" cur loc = ");
-  //Serial.print(coordCurrentPoint);
-  //Serial.print(" enc loc = ");
-  //Serial.print(coordEncoderPoint);
-  //Serial.print(" cons steps missed = ");
-  //Serial.print(label);
-  //Serial.print(consMissedSteps);
-  //Serial.print("\r\n");
+
 }
 
 #if defined(FARMDUINO_EXP_V20)
 void StepperControlAxis::initTMC2130()
 {
-  /*
-  TMC2130X.begin(); // Initiate pins and registeries
-  TMC2130X.SilentStepStick2130(600); // Set stepper current to 600mA
-  TMC2130X.stealthChop(1); // Enable extremely quiet stepping
-  TMC2130X.shaft_dir(0);
-  */
-
-  /**/
   if (channelLabel == 'X')
   {
     TMC2130A = &TMC2130X;
@@ -107,13 +78,13 @@ void StepperControlAxis::initTMC2130()
   }
 
   TMC2130A->begin();                      // Initiate pins and registeries
+  //TMC2130A->shaft_dir(0);                 // Set direction
 
   if (channelLabel == 'X')
   {
     TMC2130B->begin();                    // Initiate pins and registeries
+    //TMC2130B->shaft_dir(0);               // Set direction
   }
-
-  //loadSettingsTMC2130(600,60, 0);
 
   setMotorStepWrite = &StepperControlAxis::setMotorStepWriteTMC2130;
   setMotorStepWrite2 = &StepperControlAxis::setMotorStepWriteTMC2130_2;
@@ -124,10 +95,32 @@ void StepperControlAxis::initTMC2130()
 
 void StepperControlAxis::loadSettingsTMC2130(int motorCurrent, int  stallSensitivity, int microSteps)
 {
-  stallSensitivity = 60;
+  /*
+  Serial.println("loading settings");
+
+  Serial.print("channelLabel");
+  Serial.print(" = ");
+  Serial.print(channelLabel);
+  Serial.println(" ");
+
+  Serial.print("motorCurrent");
+  Serial.print(" = ");
+  Serial.print(motorCurrent);
+  Serial.println(" ");
+
+  Serial.print("microSteps");
+  Serial.print(" = ");
+  Serial.print(microSteps);
+  Serial.println(" ");
+
+  Serial.print("stallSensitivity");
+  Serial.print(" = ");
+  Serial.print(stallSensitivity);
+  Serial.println(" = ");
+  */
 
   TMC2130A->rms_current(motorCurrent);    // Set the required current in mA  
-  TMC2130A->microsteps(microSteps);                // Minimum of micro steps needed
+  TMC2130A->microsteps(microSteps);       // Minimum of micro steps needed
   TMC2130A->chm(true);                    // Set the chopper mode to classic const. off time
   TMC2130A->diag1_stall(1);               // Activate stall diagnostics
   TMC2130A->sgt(stallSensitivity);        // Set stall detection sensitivity. most -64 to +64 least
@@ -136,7 +129,7 @@ void StepperControlAxis::loadSettingsTMC2130(int motorCurrent, int  stallSensiti
   if (channelLabel == 'X')
   {
     TMC2130B->rms_current(motorCurrent);   // Set the required current in mA  
-    TMC2130B->microsteps(microSteps);               // Minimum of micro steps needed
+    TMC2130B->microsteps(microSteps);      // Minimum of micro steps needed
     TMC2130B->chm(true);                   // Set the chopper mode to classic const. off time
     TMC2130B->diag1_stall(1);              // Activate stall diagnostics
     TMC2130B->sgt(stallSensitivity);       // Set stall detection sensitivity. most -64 to +64 least
@@ -169,20 +162,6 @@ unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long curren
   movementCruising = false;
   movementCrawling = false;
   movementMoving = false;
-
-
-  /*
-  if (abs(sourcePosition) < abs(destinationPosition))
-  {
-    staPos = abs(sourcePosition);
-    endPos = abs(destinationPosition);
-  }
-  else
-  {
-    staPos = abs(destinationPosition);
-    endPos = abs(sourcePosition);
-  }
-  */
 
   // Set the possible negative coordinates to all positive numbers
   // so the calculation code still works after the changes
@@ -351,15 +330,6 @@ void StepperControlAxis::checkMovement()
       axisSpeed = calculateSpeed(coordSourcePoint, coordCurrentPoint, coordDestinationPoint,
                                  motorSpeedMin, motorSpeedMax, motorStepsAcc);
 
-//      // Set the moments when the step is set to true and false
-//      if (axisSpeed > 0)
-//      {
-
-        // Take the requested speed (steps / second) and divide by the interrupt speed (interrupts per seconde)
-        // This gives the number of interrupts (called ticks here) before the pulse needs to be set for the next step
-//        stepOnTick = moveTicks + (1000.0 * 1000.0 / motorInterruptSpeed / axisSpeed / 2);
-//        stepOffTick = moveTicks + (1000.0 * 1000.0 / motorInterruptSpeed / axisSpeed);
-//      }
     }
     else
     {
@@ -384,7 +354,6 @@ void StepperControlAxis::incrementTick()
   if (axisActive)
   {
     moveTicks++;
-    //moveTicks+=3;
   }
 }
 
@@ -636,8 +605,6 @@ void StepperControlAxis::setDirectionUp()
   }
 #endif
 
-/**/
-
 #if defined(FARMDUINO_EXP_V20)
 
   // The TMC2130 uses a command to change direction, not a pin
@@ -686,8 +653,6 @@ void StepperControlAxis::setDirectionDown()
   }
 
   #endif
-
-  /**/
 
   #if defined(FARMDUINO_EXP_V20)
 

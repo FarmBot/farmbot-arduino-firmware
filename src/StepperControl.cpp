@@ -120,7 +120,6 @@ StepperControl::StepperControl()
 
   // Create the axis controllers
 
-  /**/ 
   axisX = StepperControlAxis();
   axisY = StepperControlAxis();
   axisZ = StepperControlAxis();
@@ -185,7 +184,6 @@ void StepperControl::loadSettings()
 
   void StepperControl::loadSettingsTMC2130()
   {
-    /**/
     int motorCurrent;
     int stallSensitivity;
     int microSteps;
@@ -212,7 +210,10 @@ void StepperControl::test()
 {
 
   //axisX.enableMotor();
+  axisX.setMotorStep();
+  //delayMicroseconds(10);
   //axisX.setMotorStep();
+  //delayMicroseconds(10);
 
   //digitalWrite(X_STEP_PIN, HIGH);
   //delayMicroseconds(10);
@@ -258,8 +259,10 @@ void StepperControl::test()
 
 void StepperControl::test2()
 {
-  CurrentState::getInstance()->printPosition();
-  encoderX.test();
+  axisX.enableMotor();
+
+  //CurrentState::getInstance()->printPosition();
+  //encoderX.test();
   //encoderY.test();
   //encoderZ.test();
 }
@@ -442,8 +445,6 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
     checkAxisSubStatus(&axisY, &axisSubStep[1]);
     checkAxisSubStatus(&axisZ, &axisSubStep[2]);
 
-    //checkEncoders();
-
     axisX.checkTiming();
     axisY.checkTiming();
     axisZ.checkTiming();
@@ -468,46 +469,6 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
       checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &motorConsEncoderLastPosition[2], &motorConsEncoderUseForPos[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
       axisZ.resetStepDone();
     }
-
-
-    //if (debugInterrupt)
-    //{
-    //  delayMicroseconds(100);
-    //  handleMovementInterrupt();
-    //}
-    //else
-    //{
-    //  delay(1);
-    //}
-
-    /*
-    if ((int)motorConsMissedSteps[0] != motorConsMissedStepsPrev[0])
-    {
-      motorConsMissedStepsPrev[0] = (int) motorConsMissedSteps[0];
-      Serial.print("R99");
-      Serial.print(" missed steps X = ");
-      Serial.print(motorConsMissedStepsPrev[0]);
-      Serial.print("\r\n");
-    }
-
-    if ((int)motorConsMissedSteps[1] != motorConsMissedStepsPrev[1])
-    {
-      motorConsMissedStepsPrev[1] = (int)motorConsMissedSteps[1];
-      Serial.print("R99");
-      Serial.print(" missed steps Y = ");
-      Serial.print(motorConsMissedStepsPrev[1]);
-      Serial.print("\r\n");
-    }
-
-    if ((int)motorConsMissedSteps[2] != motorConsMissedStepsPrev[2])
-    {
-      motorConsMissedStepsPrev[2] = (int)motorConsMissedSteps[2];
-      Serial.print("R99");
-      Serial.print(" missed steps Z = ");
-      Serial.print(motorConsMissedStepsPrev[2]);
-      Serial.print("\r\n");
-    }
-    */
 
     if (axisX.isAxisActive() && motorConsMissedSteps[0] > motorConsMissedStepsMax[0])
     {
@@ -674,9 +635,10 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
           serialBuffer += CurrentState::getInstance()->getPosition();
           serialBuffer += CurrentState::getInstance()->getQAndNewLine();
           break;
-        case 2:
-          #if defined(FARMDUINO_EXP_V20)
 
+        case 2:
+
+          #if defined(FARMDUINO_EXP_V20)
           serialBuffer += "R89";
           serialBuffer += " X";
           serialBuffer += axisX.getLoad();
@@ -684,11 +646,10 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
           serialBuffer += axisY.getLoad();
           serialBuffer += " Z";
           serialBuffer += axisZ.getLoad();
-
           serialBuffer += CurrentState::getInstance()->getQAndNewLine();
           #endif
-
           break;
+
       }
 
       serialMessageNr++;
@@ -701,6 +662,7 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
       #endif
 
       #if defined(FARMDUINO_EXP_V20)
+      
       if (serialMessageNr > 2)
       {
         serialMessageNr = 0;
@@ -1306,7 +1268,7 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
 
 #if defined(FARMDUINO_EXP_V20)
 
-  //if (*encoderEnabled) {
+  if (*encoderEnabled) {
     if (axis->stallDetected()) {
       // In case of stall detection, count this as a missed step
       (*missedSteps)++;
@@ -1321,7 +1283,7 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
       *lastPosition = axis->currentPosition();
       encoder->setPosition(axis->currentPosition());
     }
-//  }
+  }
 #endif
 
 }
@@ -1572,6 +1534,7 @@ bool StepperControl::endStopsReached()
 void StepperControl::storePosition()
 {
 
+#if !defined(FARMDUINO_EXP_V20)
   if (motorConsEncoderEnabled[0])
   {
     CurrentState::getInstance()->setX(encoderX.currentPosition());
@@ -1598,6 +1561,14 @@ void StepperControl::storePosition()
   {
     CurrentState::getInstance()->setZ(axisZ.currentPosition());
   }
+#endif
+
+#if defined(FARMDUINO_EXP_V20)
+  CurrentState::getInstance()->setX(axisX.currentPosition());
+  CurrentState::getInstance()->setY(axisY.currentPosition());
+  CurrentState::getInstance()->setZ(axisZ.currentPosition());
+#endif
+
 }
 
 void StepperControl::reportEndStops()
@@ -1636,11 +1607,6 @@ void StepperControl::setPositionZ(long pos)
 // Handle movement by checking each axis
 void StepperControl::handleMovementInterrupt(void)
 {
-  //if (debugMessages) 
-  //{
-  //  i1 = micros();
-  //}
-
   // No need to check the encoders for Farmduino 1.4
   #if defined(RAMPS_V14) || defined(FARMDUINO_V10)
     checkEncoders();
@@ -1652,37 +1618,6 @@ void StepperControl::handleMovementInterrupt(void)
   axisY.incrementTick();
   axisZ.incrementTick();
 
-  /*
-  axisServiced = axisServicedNext;
-  switch (axisServiced)
-  {
-    case 0:
-      axisX.incrementTick();
-      axisX.checkTiming();
-      axisServicedNext=1;
-      break;
-    case 1:
-      axisY.incrementTick();
-      axisY.checkTiming();
-      axisServicedNext=2;
-      break;
-    case 2:
-      axisZ.incrementTick();
-      axisZ.checkTiming();
-      axisServicedNext=0;
-      break;
-  }
-  */
-
-  //if (debugMessages)
-  //{
-  //  i2 = micros();
-  //  i3 = i2 - i1;
-  //  if (i3 > i4)
-  //  {
-  //    i4 = i3;
-  //  }
-  //}
 }
 
 void StepperControl::checkEncoders()
@@ -1690,56 +1625,24 @@ void StepperControl::checkEncoders()
   // read encoder pins using the arduino IN registers instead of digital in
   // because it used much fewer cpu cycles
 
-  //encoderX.shiftChannels();
-  //encoderY.shiftChannels();
-  //encoderZ.shiftChannels();
-
-  /*
-  Serial.print("R99");
-  Serial.print(" PINA ");
-  Serial.print(PINA);
-  Serial.print(" ");
-  Serial.print((bool)(PINA & 0x02));
-  Serial.print((bool)(PINA & 0x08));
-  Serial.print(" Y ");
-  Serial.print(digitalRead(23));
-  Serial.print(digitalRead(25));
-  Serial.print("\r\n");
-  */
-
-
   // A=16/PH1 B=17/PH0 AQ=31/PC6 BQ=33/PC4
-  //encoderX.checkEncoder(PINH & 0x02, PINH & 0x01, PINC & 0x40, PINC & 0x10);
-  //encoderX.setChannels(PINH & 0x02, PINH & 0x01, PINC & 0x40, PINC & 0x10);
   encoderX.checkEncoder(
     ENC_X_A_PORT   & ENC_X_A_BYTE,
     ENC_X_B_PORT   & ENC_X_B_BYTE,
     ENC_X_A_Q_PORT & ENC_X_A_Q_BYTE,
     ENC_X_B_Q_PORT & ENC_X_B_Q_BYTE);
 
-
   // A=23/PA1 B=25/PA3 AQ=35/PC2 BQ=37/PC0
-  //encoderY.checkEncoder(PINA & 0x02, PINA & 0x08, PINC & 0x04, PINC & 0x01);
-  //encoderY.setChannels(PINA & 0x02, PINA & 0x08, PINC & 0x04, PINC & 0x01);
   encoderY.checkEncoder(
     ENC_Y_A_PORT   & ENC_Y_A_BYTE,
     ENC_Y_B_PORT   & ENC_Y_B_BYTE,
     ENC_Y_A_Q_PORT & ENC_Y_A_Q_BYTE,
     ENC_Y_B_Q_PORT & ENC_Y_B_Q_BYTE);
 
-
   // A=27/PA5 B=29/PA7 AQ=39/PG2 BQ=41/PG0
-  //encoderZ.checkEncoder(PINA & 0x20, PINA & 0x80, PING & 0x04, PING & 0x01);
-  //encoderZ.setChannels(PINA & 0x20, PINA & 0x80, PING & 0x04, PING & 0x01);
   encoderZ.checkEncoder(
     ENC_Z_A_PORT   & ENC_Z_A_BYTE,
     ENC_Z_B_PORT   & ENC_Z_B_BYTE,
     ENC_Z_A_Q_PORT & ENC_Z_A_Q_BYTE,
     ENC_Z_B_Q_PORT & ENC_Z_B_Q_BYTE);
-
-
-  //encoderX.processEncoder();
-  //encoderY.processEncoder();
-  //encoderZ.processEncoder();
-
 }

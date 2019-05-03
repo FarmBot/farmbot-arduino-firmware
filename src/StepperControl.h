@@ -69,7 +69,6 @@ public:
 
 private:
 
-  /**/
   StepperControlAxis axisX;
   StepperControlAxis axisY;
   StepperControlAxis axisZ;

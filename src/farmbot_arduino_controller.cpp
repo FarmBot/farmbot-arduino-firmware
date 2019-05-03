@@ -5,30 +5,14 @@
 #include "StepperControl.h"
 #include "ServoControl.h"
 #include "PinGuard.h"
-#include "TimerOne.h"
 #include "MemoryFree.h"
 #include "Debug.h"
 #include "CurrentState.h"
 #include <SPI.h>
 
-/*
-#if defined(FARMDUINO_EXP_V20)
-#include <TMC2130Stepper.h>
-TMC2130Stepper TMC2130X = TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, X_CHIP_SELECT);
-TMC2130Stepper TMC2130Y = TMC2130Stepper(Y_ENABLE_PIN, Y_DIR_PIN, Y_STEP_PIN, Y_CHIP_SELECT);
-TMC2130Stepper TMC2130Z = TMC2130Stepper(Z_ENABLE_PIN, Z_DIR_PIN, Z_STEP_PIN, Z_CHIP_SELECT);
-TMC2130Stepper TMC2130E = TMC2130Stepper(E_ENABLE_PIN, E_DIR_PIN, E_STEP_PIN, E_CHIP_SELECT);
-
-TMC2130Stepper *TMC2130A;
-
+#if !defined(FARMDUINO_EXP_V20)
+#include "TimerOne.h"
 #endif
-*/
-
-
-//#include <TMC2130Stepper.h>
-/**/ //TMC2130Stepper stepper = TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, X_CHIP_SELECT);
-//#include "StepperControlAxisTMC2130.h"
-//StepperControlAxisTMC2130 testingAxis = StepperControlAxisTMC2130();
 
 bool stepperInit = false;
 bool stepperFlip = false;
@@ -72,6 +56,8 @@ unsigned long interruptDurationMax = 0;
 
 bool interruptBusy = false;
 int interruptSecondTimer = 0;
+
+#if !defined(FARMDUINO_EXP_V20)
 void interrupt(void)
 {
   if (!debugInterrupt)
@@ -88,30 +74,20 @@ void interrupt(void)
     }
   }
 }
+#endif
 
-/**/
-//bool blinky = false;
-//int blinkyCounter = 0;
+#if defined(FARMDUINO_EXP_V20)
 
 ISR(TIMER2_OVF_vect) {
 
-  //blinkyCounter++;
-  //if (blinkyCounter > 16000) {
-  //  blinkyCounter = 0;
-  //  blinky = !blinky;
-  //}
-
-  if (!debugInterrupt)
+  if (interruptBusy == false)
   {
-    if (interruptBusy == false)
-    {
-      interruptBusy = true;
-      StepperControl::getInstance()->handleMovementInterrupt();
-      interruptBusy = false;
-    }
+    interruptBusy = true;
+    StepperControl::getInstance()->handleMovementInterrupt();
+    interruptBusy = false;
   }
 }
-
+#endif
 
 //The setup function is called once at startup of the sketch
 void setup()
@@ -309,7 +285,6 @@ void setup()
   #endif
 
 #if defined(FARMDUINO_EXP_V20)
-
     TIMSK2 = (TIMSK2 & B11111110) | 0x01; // Enable timer overflow
     TCCR2B = (TCCR2B & B11111000) | 0x01; // Set divider to 1
     OCR2A = 4; // Set overflow to 4 for total of 64 µs    
@@ -352,53 +327,33 @@ void setup()
     StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, true, false, false);
   }
 
-  Serial.print("R99 ARDUINO STARTUP COMPLETE\r\n");
 
-  /**/
 #if defined(FARMDUINO_EXP_V20)
   // initialise the motors
   StepperControl::getInstance()->initTMC2130();
-  StepperControl::getInstance()->loadSettingsTMC2130();  
+  StepperControl::getInstance()->loadSettingsTMC2130();
+
 #endif
+
+  Serial.print("R99 ARDUINO STARTUP COMPLETE\r\n");
+
+  //StepperControl::getInstance()->test2();
 }
 
 
-//char commandIn[100];
 char commandChar[INCOMING_CMD_BUF_SIZE + 1];
 
 // The loop function is called in an endless loop
 void loop()
 {
 
-  //digitalWrite(LED_PIN, blinky);
-  /**/
-
   //StepperControl::getInstance()->test();
+  //delayMicroseconds(100);
 
-  //digitalWrite(X_ENABLE_PIN, LOW);
-
-  //digitalWrite(X_STEP_PIN, HIGH);
-  //delayMicroseconds(10);
-  //digitalWrite(X_STEP_PIN, LOW);
-  //delayMicroseconds(10);
-
-  //#if defined(FARMDUINO_EXP_V20)
-  //StepperControl::getInstance()->test();
-  //delayMicroseconds(10);
-  //#endif
-
-  //digitalWrite(X_STEP_PIN, stepperFlip);
-  //delayMicroseconds(10);
-  //stepperFlip != stepperFlip;
-
-
-  //testingAxis.enableMotor();
-  //testingAxis.setMotorStep();
-
-
-  /*********************************/
-
-
+  //digitalWrite(LED_PIN, true);
+  //delay(250);
+  //digitalWrite(LED_PIN, false);
+  //delay(250);
 
   if (debugInterrupt)
   {
@@ -475,11 +430,7 @@ void loop()
         Serial.print("\r\n");
 
         // Create a command and let it execute
-        //Command* command = new Command(commandString);
         Command *command = new Command(commandChar);
-
-        //strcpy()
-        //commandEcho
 
         // Log the values if needed for debugging
         if (LOGGING || debugMessages)
@@ -512,7 +463,7 @@ void loop()
   }
   previousEmergencyStop = CurrentState::getInstance()->isEmergencyStop();
 
-  // Check if parameters are changes, and if so load the new settings
+  // Check if parameters are changed, and if so load the new settings
   if (lastParamChangeNr != ParameterList::getInstance()->paramChangeNumber())
   {
     lastParamChangeNr = ParameterList::getInstance()->paramChangeNumber();
@@ -583,29 +534,6 @@ void loop()
         Serial.print(" MAX ");
         Serial.print(interruptDurationMax);
         CurrentState::getInstance()->printQAndNewLine();
-
-        //StepperControl::getInstance()->checkEncoders();
-        //Serial.print(COMM_REPORT_COMMENT);
-        //Serial.print(" Cycle ");
-        //Serial.print(cycleCounter);
-        //CurrentState::getInstance()->printQAndNewLine();
-
-
-//        Serial.print(COMM_REPORT_COMMENT);
-//        Serial.print(" 16 ");
-//        Serial.print(PORTH & 0x02);
-//        Serial.print(PH4);
-//        Serial.print(" ");
-//        Serial.print(PINH);
-//        Serial.print(" ");
-//        Serial.print(digitalRead(16));
-//        Serial.print(" ");
-//        Serial.print(" 17 ");
-//        Serial.print(PORTH & 0x01);
-//        Serial.print(PH5);
-//        Serial.print(" ");
-//        Serial.print(digitalRead(17));
-//        CurrentState::getInstance()->printQAndNewLine();
 
         StepperControl::getInstance()->test();
       }
