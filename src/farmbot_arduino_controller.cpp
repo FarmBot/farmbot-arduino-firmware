@@ -77,7 +77,6 @@ void interrupt(void)
 #endif
 
 #if defined(FARMDUINO_EXP_V20)
-
 ISR(TIMER2_OVF_vect) {
 
   if (interruptBusy == false)
@@ -92,7 +91,6 @@ ISR(TIMER2_OVF_vect) {
 //The setup function is called once at startup of the sketch
 void setup()
 {
-
   #ifdef RAMPS_V14
 
     // Setup pin input/output settings
@@ -239,11 +237,6 @@ void setup()
 
   #endif
 
-  digitalWrite(X_ENABLE_PIN, HIGH);
-  digitalWrite(E_ENABLE_PIN, HIGH);
-  digitalWrite(Y_ENABLE_PIN, HIGH);
-  digitalWrite(Z_ENABLE_PIN, HIGH);
-  
   #if defined(FARMDUINO_V14)
 
     pinMode(READ_ENA_PIN, INPUT_PULLUP);
@@ -257,8 +250,60 @@ void setup()
 
   #endif
 
-  Serial.begin(115200);
+  #if defined(FARMDUINO_EXP_V20)
 
+    // Motor step, directio and pin is setup using the control chip library
+    // This board also does not use encoders
+
+    pinMode(X_ENABLE_PIN, OUTPUT);
+    pinMode(X_MIN_PIN, INPUT_PULLUP);
+    pinMode(X_MAX_PIN, INPUT_PULLUP);
+
+    pinMode(E_ENABLE_PIN, OUTPUT);
+
+    pinMode(Y_ENABLE_PIN, OUTPUT);
+    pinMode(Y_MIN_PIN, INPUT_PULLUP);
+    pinMode(Y_MAX_PIN, INPUT_PULLUP);
+
+    pinMode(Z_ENABLE_PIN, OUTPUT);
+    pinMode(Z_MIN_PIN, INPUT_PULLUP);
+    pinMode(Z_MAX_PIN, INPUT_PULLUP);
+
+    pinMode(AUX_STEP_PIN, OUTPUT);
+    pinMode(AUX_DIR_PIN, OUTPUT);
+    pinMode(AUX_ENABLE_PIN, OUTPUT);
+
+    pinMode(LED_PIN, OUTPUT);
+    pinMode(VACUUM_PIN, OUTPUT);
+    pinMode(WATER_PIN, OUTPUT);
+    pinMode(LIGHTING_PIN, OUTPUT);
+    pinMode(PERIPHERAL_4_PIN, OUTPUT);
+    pinMode(PERIPHERAL_5_PIN, OUTPUT);
+
+    pinMode(UTM_C, INPUT_PULLUP);
+    pinMode(UTM_D, INPUT_PULLUP);
+    if (UTM_E > 0) { pinMode(UTM_E, INPUT_PULLUP); };
+    if (UTM_F > 0) { pinMode(UTM_F, INPUT_PULLUP); };
+    if (UTM_G > 0) { pinMode(UTM_G, INPUT_PULLUP); };
+    if (UTM_H > 0) { pinMode(UTM_H, INPUT_PULLUP); };
+    if (UTM_I > 0) { pinMode(UTM_I, INPUT_PULLUP); };
+    if (UTM_J > 0) { pinMode(UTM_J, INPUT_PULLUP); };
+    if (UTM_K > 0) { pinMode(UTM_K, INPUT_PULLUP); };
+    if (UTM_L > 0) { pinMode(UTM_L, INPUT_PULLUP); };
+
+    pinMode(SERVO_0_PIN, OUTPUT);
+    pinMode(SERVO_1_PIN, OUTPUT);
+    pinMode(SERVO_2_PIN, OUTPUT);
+    pinMode(SERVO_3_PIN, OUTPUT);
+
+  #endif
+
+  digitalWrite(X_ENABLE_PIN, HIGH);
+  digitalWrite(E_ENABLE_PIN, HIGH);
+  digitalWrite(Y_ENABLE_PIN, HIGH);
+  digitalWrite(Z_ENABLE_PIN, HIGH);
+
+  Serial.begin(115200);
   delay(100);
 
   // Start the motor handling
@@ -284,12 +329,11 @@ void setup()
     Timer1.start();
   #endif
 
-#if defined(FARMDUINO_EXP_V20)
+  #if defined(FARMDUINO_EXP_V20)
     TIMSK2 = (TIMSK2 & B11111110) | 0x01; // Enable timer overflow
     TCCR2B = (TCCR2B & B11111000) | 0x01; // Set divider to 1
     OCR2A = 4; // Set overflow to 4 for total of 64 µs    
-
-#endif
+  #endif
 
   // Initialize the inactivity check
   lastAction = millis();
@@ -328,24 +372,26 @@ void setup()
   }
 
 
-#if defined(FARMDUINO_EXP_V20)
-  // initialise the motors
-  StepperControl::getInstance()->initTMC2130();
-  StepperControl::getInstance()->loadSettingsTMC2130();
-
-#endif
+  #if defined(FARMDUINO_EXP_V20)
+    // initialise the motors
+    StepperControl::getInstance()->initTMC2130();
+    StepperControl::getInstance()->loadSettingsTMC2130();
+  #endif
 
   Serial.print("R99 ARDUINO STARTUP COMPLETE\r\n");
 
   //StepperControl::getInstance()->test2();
 }
 
-
 char commandChar[INCOMING_CMD_BUF_SIZE + 1];
 
 // The loop function is called in an endless loop
 void loop()
 {
+
+  //Serial.print(millis());
+  //Serial.print("\r\n");
+  //delay(1000);
 
   //StepperControl::getInstance()->test();
   //delayMicroseconds(100);
@@ -548,4 +594,5 @@ void loop()
       lastAction = millis();
     }
   }
+
 }
