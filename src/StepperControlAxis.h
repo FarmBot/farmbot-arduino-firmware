@@ -16,16 +16,10 @@
 #include "Config.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <TMC2130Stepper.h>
-
-/*
 #if defined(FARMDUINO_EXP_V20)
-static TMC2130Stepper TMC2130X = TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, X_CHIP_SELECT);
-static TMC2130Stepper TMC2130Y = TMC2130Stepper(Y_ENABLE_PIN, Y_DIR_PIN, Y_STEP_PIN, Y_CHIP_SELECT);
-static TMC2130Stepper TMC2130Z = TMC2130Stepper(Z_ENABLE_PIN, Z_DIR_PIN, Z_STEP_PIN, Z_CHIP_SELECT);
-static TMC2130Stepper TMC2130E = TMC2130Stepper(E_ENABLE_PIN, E_DIR_PIN, E_STEP_PIN, E_CHIP_SELECT);
+#include "TMC2130Stepper.h"
 #endif
-*/
+
 
 class StepperControlAxis
 {
@@ -33,8 +27,10 @@ class StepperControlAxis
 public:
   StepperControlAxis();
 
+#if defined(FARMDUINO_EXP_V20)
   TMC2130Stepper *TMC2130A;
   TMC2130Stepper *TMC2130B;
+#endif
 
   void loadPinNumbers(int step, int dir, int enable, int min, int max, int step2, int dir2, int enable2);
   void loadMotorSettings(long speedMax, long speedMin, long speedHome, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, bool endStInv, bool endStInv2, long interruptSpeed, bool motor2Enbl, bool motor2Inv, bool endStEnbl, bool stopAtHome, long maxSize, bool stopAtMax);
