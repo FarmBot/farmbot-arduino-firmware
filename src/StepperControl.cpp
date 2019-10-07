@@ -918,7 +918,11 @@ int StepperControl::calibrateAxis(int axis)
 
   // Move towards home
   calibAxis->enableMotor();
-  calibAxis->setDirectionHome();
+  
+  /**/
+  //calibAxis->setDirectionHome();
+  calibAxis->setDirectionAway();
+
   calibAxis->setCurrentPosition(calibEncoder->currentPosition());
 
   stepsCount = 0;
@@ -958,7 +962,11 @@ int StepperControl::calibrateAxis(int axis)
       }
     }
 
-    // Move until the end stop for home position is reached, either by end stop or motor skipping
+    // Move until any end stop is reached or the motor is skipping. That end should be the far end stop. First, ram the end at high speed.
+
+    /**/
+    //if (((!invertEndStops && !calibAxis->endStopMax()) || (invertEndStops && !calibAxis->endStopMin())) && !movementDone && (*missedSteps < *missedStepsMax))
+    //if ((!calibAxis->endStopMin() && !calibAxis->endStopMax()) && !movementDone && (*missedSteps < *missedStepsMax))
     if ((!calibAxis->endStopMin() && !calibAxis->endStopMax()) && !movementDone && (*missedSteps < *missedStepsMax))
     {
 
@@ -1003,7 +1011,7 @@ int StepperControl::calibrateAxis(int axis)
       Serial.print("R99 movement done\r\n");
 
       // If end stop for home is active, set the position to zero
-      if (calibAxis->endStopMax())
+      if (calibAxis->endStopMin())
       {
         invertEndStops = true;
       }
@@ -1058,7 +1066,11 @@ int StepperControl::calibrateAxis(int axis)
   stepsCount = 0;
   movementDone = false;
   *missedSteps = 0;
-  calibAxis->setDirectionAway();
+
+  /**/
+  //calibAxis->setDirectionAway();
+  calibAxis->setDirectionHome();
+
   calibAxis->setCurrentPosition(calibEncoder->currentPosition());
 
   motorConsMissedSteps[0] = 0;
@@ -1098,8 +1110,12 @@ int StepperControl::calibrateAxis(int axis)
       *missedSteps = 0;
     }
 
-    // Move until the end stop at the other side of the axis is reached
-    if (((!invertEndStops && !calibAxis->endStopMax()) || (invertEndStops && !calibAxis->endStopMin())) && !movementDone && (*missedSteps < *missedStepsMax))
+    // Move until the end stop is at the home position by detecting the other end stop or missed steps are detected
+    /**/
+    //if ((!calibAxis->endStopMin() && !calibAxis->endStopMax()) && !movementDone && (*missedSteps < *missedStepsMax))
+    //if (((!invertEndStops && !calibAxis->endStopMax()) || (invertEndStops && !calibAxis->endStopMin())) && !movementDone && (*missedSteps < *missedStepsMax))
+    if (((!invertEndStops && !calibAxis->endStopMin()) || (invertEndStops && !calibAxis->endStopMax())) && !movementDone && (*missedSteps < *missedStepsMax))
+
     {
 
       calibAxis->setStepAxis();

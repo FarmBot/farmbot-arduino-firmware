@@ -33,6 +33,41 @@ int F13Handler::execute(Command *command)
 
   StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, false, true);
 
+  int homeIsUp = ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_X);
+  int moveAwayCoord = 10;
+  int execution;
+  bool emergencyStop;
+
+  if (homeIsUp == 1)
+  {
+    moveAwayCoord = -moveAwayCoord;
+  }
+
+  int stepNr;
+
+  // Move to home position. Then 3 times move away and move to home again.
+  for (int stepNr = 0; stepNr < 7; stepNr++)
+  {
+    switch (stepNr)
+    {
+    case 0: StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, false, true); break;
+    case 1: StepperControl::getInstance()->moveToCoords(0, 0, moveAwayCoord, 0, 0, 0, false, false, false); break;
+    case 2: StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, false, true); break;
+    case 3: StepperControl::getInstance()->moveToCoords(0, 0, moveAwayCoord, 0, 0, 0, false, false, false); break;
+    case 4: StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, false, true); break;
+    case 5: StepperControl::getInstance()->moveToCoords(0, 0, moveAwayCoord, 0, 0, 0, false, false, false); break;
+    case 6: StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, false, true); break;
+    }
+
+    execution = CurrentState::getInstance()->getLastError();
+    emergencyStop = CurrentState::getInstance()->isEmergencyStop();
+
+    if (emergencyStop || execution != 0)
+    {
+      break;
+    }
+  }
+
   if (LOGGING)
   {
     CurrentState::getInstance()->print();

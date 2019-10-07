@@ -50,17 +50,18 @@ StepperControlAxis::StepperControlAxis()
 
 }
 
-unsigned int StepperControlAxis::getLostSteps()
-{
-  return TMC2130A->LOST_STEPS();
-}
-
 void StepperControlAxis::test()
 {
 
 }
 
 #if defined(FARMDUINO_EXP_V20)
+
+unsigned int StepperControlAxis::getLostSteps()
+{
+  return TMC2130A->LOST_STEPS();
+}
+
 void StepperControlAxis::initTMC2130()
 {
   if (channelLabel == 'X')

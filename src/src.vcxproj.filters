@@ -311,5 +311,8 @@
     <ClInclude Include="SW_SPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="__vm\.farmbot-arduino-controller.vsarduino.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
