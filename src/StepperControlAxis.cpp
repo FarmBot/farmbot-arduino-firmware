@@ -1,6 +1,4 @@
 #include "StepperControlAxis.h"
-//#include <TMC2130Stepper.h>
-
 
 #if defined(FARMDUINO_EXP_V20)
   static TMC2130Stepper TMC2130X = TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, X_CHIP_SELECT);

@@ -63,7 +63,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src;$(ProjectDir)..\..\..\..\Users\Bro\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.19\libraries\SPI\src;$(ProjectDir)..\..\..\..\Users\Bro\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.19\libraries\EEPROM\src;$(ProjectDir)..\..\..\..\Program Files (x86)\Arduino\libraries\Servo\src;$(ProjectDir)..\..\..\..\Users\Bro\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.19\cores\arduino;$(ProjectDir)..\..\..\..\Users\Bro\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.19\variants\mega;$(ProjectDir)..\..\..\..\Users\Bro\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\avr\include;$(ProjectDir)..\..\..\..\Users\Bro\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\avr\include\avr;$(ProjectDir)..\..\..\..\Users\Bro\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\lib\gcc\avr\4.8.1\include;$(ProjectDir)..\..\..\..\Users\Bro\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\lib\gcc\avr\4.9.2\include;$(ProjectDir)..\..\..\..\Users\Bro\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\lib\gcc\avr\4.9.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\src;$(ProjectDir)..\..\..\..\Users\Bro\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.19\libraries\SPI\src;$(ProjectDir)..\..\..\..\Users\Bro\Documents\Arduino\libraries\TMC2130Stepper\src;$(ProjectDir)..\..\..\..\Users\Bro\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.19\libraries\EEPROM\src;$(ProjectDir)..\..\..\..\Program Files (x86)\Arduino\libraries\Servo\src;$(ProjectDir)..\..\..\..\Users\Bro\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.19\cores\arduino;$(ProjectDir)..\..\..\..\Users\Bro\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.19\variants\mega;$(ProjectDir)..\..\..\..\Users\Bro\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\avr\include;$(ProjectDir)..\..\..\..\Users\Bro\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\avr\include\avr;$(ProjectDir)..\..\..\..\Users\Bro\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\lib\gcc\avr\4.8.1\include;$(ProjectDir)..\..\..\..\Users\Bro\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\lib\gcc\avr\4.9.2\include;$(ProjectDir)..\..\..\..\Users\Bro\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\lib\gcc\avr\4.9.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(ProjectDir)__vm\.farmbot-arduino-controller.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <PreprocessorDefinitions>__AVR_atmega2560__;__AVR_ATmega2560__;F_CPU=16000000L;ARDUINO=10802;ARDUINO_AVR_MEGA2560;ARDUINO_ARCH_AVR;__cplusplus=201103L;_VMICRO_INTELLISENSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -124,15 +124,7 @@
     <ClCompile Include="StepperControl.cpp" />
     <ClCompile Include="StepperControlAxis.cpp" />
     <ClCompile Include="StepperControlEncoder.cpp" />
-    <ClCompile Include="SW_SPI.cpp" />
     <ClCompile Include="TimerOne.cpp" />
-    <ClCompile Include="TMC2130Stepper.cpp" />
-    <ClCompile Include="TMC2130Stepper_CHOPCONF.cpp" />
-    <ClCompile Include="TMC2130Stepper_COOLCONF.cpp" />
-    <ClCompile Include="TMC2130Stepper_DRV_STATUS.cpp" />
-    <ClCompile Include="TMC2130Stepper_GCONF.cpp" />
-    <ClCompile Include="TMC2130Stepper_IHOLD_IRUN.cpp" />
-    <ClCompile Include="TMC2130Stepper_PWMCONF.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h" />
@@ -178,12 +170,7 @@
     <ClInclude Include="StepperControl.h" />
     <ClInclude Include="StepperControlAxis.h" />
     <ClInclude Include="StepperControlEncoder.h" />
-    <ClInclude Include="SW_SPI.h" />
     <ClInclude Include="TimerOne.h" />
-    <ClInclude Include="TMC2130Stepper.h" />
-    <ClInclude Include="TMC2130Stepper_MACROS.h" />
-    <ClInclude Include="TMC2130Stepper_REGDEFS.h" />
-    <ClInclude Include="TMC2130Stepper_UTILITY.h" />
     <ClInclude Include="__vm\.farmbot-arduino-controller.vsarduino.h" />
     <ClInclude Include="__vm\.src.vsarduino.h" />
   </ItemGroup>
@@ -192,7 +179,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties custom_mega_atmega2560_vm.programmer_name="" vm.programmer_name="avrisp" custom_mega_atmega2560_vm.upload.useprogrammer="0" arduino.upload.port="COM3" />
+      <UserProperties custom_mega_atmega2560_vm.programmer_name="" vm.programmer_name="avrisp" custom_mega_atmega2560_vm.upload.useprogrammer="0" arduino.upload.port="COM4" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
