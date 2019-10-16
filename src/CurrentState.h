@@ -10,6 +10,18 @@
 #include "Arduino.h"
 #include "pins.h"
 
+enum ErrorListEnum
+{
+  ERR_NO_ERROR = 0,
+  ERR_EMERGENCY_STOP = 1,
+  ERR_TIMEOUT = 2,
+  ERR_STALL_DETECTED = 3,
+
+  ERR_INVALID_COMMAND = 14,
+  ERR_PARAMS_NOT_OK = 15,
+
+};
+
 class CurrentState
 {
 public:
@@ -53,6 +65,8 @@ private:
   long stepsPerMmX;
   long stepsPerMmY;
   long stepsPerMmZ;
+
+  int errorCode = 0;
 
   bool emergencyStop = false;
 };

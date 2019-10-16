@@ -484,7 +484,7 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
       }
       else
       {
-        error = 1;
+        error = ERR_STALL_DETECTED;
       }
     }
 
@@ -502,7 +502,7 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
       }
       else
       {
-        error = 1;
+        error = ERR_STALL_DETECTED;
       }
     }
 
@@ -521,7 +521,7 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
       }
       else
       {
-        error = 1;
+        error = ERR_STALL_DETECTED;
       }
     }
 
@@ -563,21 +563,21 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
       serialBuffer += COMM_REPORT_TIMEOUT_X;
       serialBuffer += "\r\n";
       serialBuffer += "R99 timeout X axis\r\n";
-      error = 2;
+      error = ERR_TIMEOUT;
     }
     if (axisActive[1] == true && ((millis() >= timeStart && millis() - timeStart > timeOut[1] * 1000) || (millis() < timeStart && millis() > timeOut[1] * 1000)))
     {
       serialBuffer += COMM_REPORT_TIMEOUT_Y;
       serialBuffer += "\r\n";
       serialBuffer += "R99 timeout Y axis\r\n";
-      error = 2;
+      error = ERR_TIMEOUT;
     }
     if (axisActive[2] == true && ((millis() >= timeStart && millis() - timeStart > timeOut[2] * 1000) || (millis() < timeStart && millis() > timeOut[2] * 1000)))
     {
       serialBuffer += COMM_REPORT_TIMEOUT_Z;
       serialBuffer += "\r\n";
       serialBuffer += "R99 timeout Z axis\r\n";
-      error = 2;
+      error = ERR_TIMEOUT;
     }
 
     // Check if there is an emergency stop command
@@ -601,7 +601,7 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
         axisActive[1] = false;
         axisActive[2] = false;
 
-        error = 1;
+        error = ERR_EMERGENCY_STOP;
       }
     }
 
@@ -751,6 +751,7 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
   if (emergencyStop)
   {
     CurrentState::getInstance()->setEmergencyStop();
+    error = ERR_EMERGENCY_STOP;
   }
 
   Serial.print("R99 error ");
