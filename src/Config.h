@@ -11,7 +11,7 @@
 
   const int LOGGING = 0;
 
-  const int INCOMING_CMD_BUF_SIZE = 50;
+  const int INCOMING_CMD_BUF_SIZE = 100;
 
   const char COMM_REPORT_CMD_IDLE[4] = {'R', '0', '0', '\0'};
   const char COMM_REPORT_CMD_START[4] = {'R', '0', '1', '\0'};
