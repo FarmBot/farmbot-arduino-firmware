@@ -106,9 +106,11 @@ long StepperControlEncoder::currentPosition()
   else
   {
     #if defined(FARMDUINO_V14)
-      return position * scalingFactor / 40000 * encoderInvert;
+      floatScalingFactor = scalingFactor / 40000.0;
+      return position * floatScalingFactor * encoderInvert;
     #endif
-    return position * scalingFactor / 10000 * encoderInvert;
+    floatScalingFactor = scalingFactor / 10000.0;
+    return position * floatScalingFactor * encoderInvert;
   }
 }
 

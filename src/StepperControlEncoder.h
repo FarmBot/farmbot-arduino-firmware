@@ -61,6 +61,7 @@ private:
   // encoder
   long position;
   long scalingFactor;
+  float floatScalingFactor;
   int encoderType;
   int encoderInvert;
 
