@@ -52,7 +52,7 @@ public:
   bool isCruising();
   bool isCrawling();
   bool isMotorActive();
-  bool isMoving();
+  //bool isMoving();
 
   bool endStopMin();
   bool endStopMax();
@@ -75,6 +75,9 @@ public:
 
   void setMovementUp();
   void setMovementDown();
+
+  long getLastPosition();
+  void setLastPosition(long position);
 
   bool movingToHome();
   bool movingUp();
@@ -150,6 +153,8 @@ private:
   long coordCurrentPoint;
   long coordDestinationPoint;
   bool coordHomeAxis; // homing command
+
+  long axisLastPosition = 0;
 
   // movement handling
   unsigned long movementLength;

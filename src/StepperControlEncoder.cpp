@@ -248,3 +248,77 @@ void StepperControlEncoder::shiftChannels()
   prvValChannelA = curValChannelA;
   prvValChannelB = curValChannelB;
 }
+
+
+void StepperControlEncoder::setEnable(bool enable)
+{
+  encoderEnabled = enable;
+}
+
+void StepperControlEncoder::setStepDecay(float stepDecay)
+{
+  encoderStepDecay = stepDecay;
+}
+
+void StepperControlEncoder::setMovementDirection(bool up)
+{
+  encoderMovementUp = up;
+}
+
+float StepperControlEncoder::getMissedSteps()
+{
+  return missedSteps;
+}
+
+void StepperControlEncoder::checkMissedSteps()
+{
+  #if !defined(FARMDUINO_EXP_V20)
+    if (encoderEnabled)
+    {
+      bool stepMissed = false;
+
+      // Decrease amount of missed steps if there are no missed step
+      if (missedSteps > 0)
+      {
+        (missedSteps) -= (encoderStepDecay);
+      }
+
+      // Check if the encoder goes in the wrong direction or nothing moved
+      if ((encoderMovementUp && encoderLastPosition > currentPositionRaw()) ||
+        (!encoderMovementUp && encoderLastPosition < currentPositionRaw()))
+      {
+        stepMissed = true;
+      }
+
+      if (stepMissed && missedSteps < 32000)
+      {
+        (missedSteps)++;
+      }
+
+      encoderLastPosition = currentPositionRaw();
+      //axis->setLastPosition(axis->currentPosition());
+   }
+
+  #endif
+
+  #if defined(FARMDUINO_EXP_V20)
+
+    if (encoderEnabled) {
+      if (axis->stallDetected()) {
+        // In case of stall detection, count this as a missed step
+        (*missedSteps)++;
+        axis->setCurrentPosition(*lastPosition);
+      }
+      else {
+        // Decrease amount of missed steps if there are no missed step
+        if (missedSteps > 0)
+        {
+          (missedSteps) -= (encoderStepDecay);
+        }
+        encoder->setPosition(axis->currentPosition());
+        //axis->setLastPosition(axis->currentPosition());
+      }
+    }
+  #endif
+
+}

@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SPI.h>
+#include "StepperControlAxis.h"
 
 class StepperControlEncoder
 {
@@ -40,6 +41,13 @@ public:
   void shiftChannels();
   void test();
 
+  void setMovementDirection(bool up);
+  void setEnable(bool enable);
+  void setStepDecay(float stepDecay);
+  float getMissedSteps();
+
+  void checkMissedSteps();
+
 private:
   // pin settings
   int pinChannelA;
@@ -63,6 +71,13 @@ private:
   int scalingFactor;
   int encoderType;
   int encoderInvert;
+
+
+  float missedSteps;
+  long encoderLastPosition;
+  float encoderStepDecay;
+  bool encoderEnabled;
+  bool encoderMovementUp;
 
   MdlSpiEncoders mdlEncoder = _MDL_X1;
 

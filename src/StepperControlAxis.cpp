@@ -146,6 +146,16 @@ uint16_t StepperControlAxis::getLoad() {
 
 #endif
 
+long StepperControlAxis::getLastPosition()
+{
+  return axisLastPosition;
+}
+
+void StepperControlAxis::setLastPosition(long position)
+{
+  axisLastPosition = position;
+}
+
 unsigned int StepperControlAxis::calculateSpeed(long sourcePosition, long currentPosition, long destinationPosition, long minSpeed, long maxSpeed, long stepsAccDec)
 {
 
