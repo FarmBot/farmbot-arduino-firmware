@@ -391,7 +391,7 @@ void setup()
 
 char commandChar[INCOMING_CMD_BUF_SIZE + 1];
 
-/**/ int cycleCountTest = 0;
+/**/ //int cycleCountTest = 0;
 
 // The loop function is called in an endless loop
 void loop()
@@ -576,11 +576,11 @@ void loop()
       CurrentState::getInstance()->storeEndStops();
       CurrentState::getInstance()->printEndStops();
 
-      /**/ cycleCountTest++;
-      /**/ Serial.print("R99 TST Cycle count ");
-      /**/ Serial.print(cycleCountTest);
-      /**/ Serial.print(" ");
-      /**/ CurrentState::getInstance()->printQAndNewLine();
+      /**/ //cycleCountTest++;
+      /**/ //Serial.print("R99 TST Cycle count ");
+      /**/ //Serial.print(cycleCountTest);
+      /**/ //Serial.print(" ");
+      /**/ //CurrentState::getInstance()->printQAndNewLine();
 
 
       if (debugMessages)

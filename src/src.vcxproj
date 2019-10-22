@@ -179,7 +179,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties custom_mega_atmega2560_vm.programmer_name="" vm.programmer_name="avrisp" custom_mega_atmega2560_vm.upload.useprogrammer="0" arduino.upload.port="COM4" />
+      <UserProperties custom_mega_atmega2560_vm.programmer_name="" vm.programmer_name="avrisp" custom_mega_atmega2560_vm.upload.useprogrammer="0" arduino.upload.port="COM3" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
