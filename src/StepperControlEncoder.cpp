@@ -306,13 +306,14 @@ void StepperControlEncoder::checkMissedSteps()
 
   #endif
 
+/*
   #if defined(FARMDUINO_EXP_V20)
 
     if (encoderEnabled) {
       if (axis->stallDetected()) {
         // In case of stall detection, count this as a missed step
         (*missedSteps)++;
-        axis->setCurrentPosition(*lastPosition);
+        //axis->setCurrentPosition(*lastPosition);
       }
       else {
         // Decrease amount of missed steps if there are no missed step
@@ -320,10 +321,10 @@ void StepperControlEncoder::checkMissedSteps()
         {
           (missedSteps) -= (encoderStepDecay);
         }
-        encoder->setPosition(axis->currentPosition());
+        setPosition(axis->currentPosition());
         //axis->setLastPosition(axis->currentPosition());
       }
     }
   #endif
-
+*/
 }
