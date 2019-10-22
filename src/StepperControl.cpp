@@ -35,6 +35,28 @@ void StepperControl::reportEncoders()
 
 }
 
+void StepperControl::getEncoderReport()
+{
+  serialBuffer += COMM_REPORT_ENCODER_SCALED;
+  serialBuffer += " X";
+  serialBuffer += (float)encoderX.currentPosition() / (float)stepsPerMm[0];
+  serialBuffer += " Y";
+  serialBuffer += (float)encoderY.currentPosition() / (float)stepsPerMm[1];
+  serialBuffer += " Z";
+  serialBuffer += (float)encoderZ.currentPosition() / (float)stepsPerMm[2];
+  serialBuffer += CurrentState::getInstance()->getQAndNewLine();
+
+  serialBuffer += COMM_REPORT_ENCODER_RAW;
+  serialBuffer += " X";
+  serialBuffer += encoderX.currentPositionRaw();
+  serialBuffer += " Y";
+  serialBuffer += encoderY.currentPositionRaw();
+  serialBuffer += " Z";
+  serialBuffer += encoderZ.currentPositionRaw();
+  serialBuffer += CurrentState::getInstance()->getQAndNewLine();
+
+}
+
 void StepperControl::reportStatus(StepperControlAxis *axis, int axisStatus)
 {  
   serialBuffer += COMM_REPORT_CMD_STATUS;
@@ -634,6 +656,9 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
         case 1:
           serialBuffer += CurrentState::getInstance()->getPosition();
           serialBuffer += CurrentState::getInstance()->getQAndNewLine();
+          #if defined(FARMDUINO_V14)
+            getEncoderReport();
+          #endif
           break;
 
         case 2:
@@ -1275,11 +1300,11 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
     *lastPosition = axis->currentPosition();
 
     //axis->resetStepDone();
-  }
 
-  if (*encoderUseForPos)
-  {
-    axis->setCurrentPosition(encoder->currentPosition());
+    if (*encoderUseForPos)
+    {
+      axis->setCurrentPosition(encoder->currentPosition());
+    }
   }
 #endif
 
@@ -1395,9 +1420,9 @@ void StepperControl::loadMotorSettings()
 
   CurrentState::getInstance()->setStepsPerMm(stepsPerMm[0], stepsPerMm[1], stepsPerMm[2]);
 
-  axisX.loadMotorSettings(speedMax[0], speedMin[0], speedHome[0], stepsAcc[0], timeOut[0], homeIsUp[0], motorInv[0], endStInv[0], endStInv2[0], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[0], motor2Inv[0], endStEnbl[0], motorStopAtHome[0], motorMaxSize[0] *= stepsPerMm[0], motorStopAtMax[0]);
-  axisY.loadMotorSettings(speedMax[1], speedMin[1], speedHome[1], stepsAcc[1], timeOut[1], homeIsUp[1], motorInv[1], endStInv[1], endStInv2[1], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[1], motor2Inv[1], endStEnbl[1], motorStopAtHome[1], motorMaxSize[1] *= stepsPerMm[1], motorStopAtMax[1]);
-  axisZ.loadMotorSettings(speedMax[2], speedMin[2], speedHome[2], stepsAcc[2], timeOut[2], homeIsUp[2], motorInv[2], endStInv[2], endStInv2[2], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[2], motor2Inv[2], endStEnbl[2], motorStopAtHome[2], motorMaxSize[2] *= stepsPerMm[2], motorStopAtMax[2]);
+  axisX.loadMotorSettings(speedMax[0], speedMin[0], speedHome[0], stepsAcc[0], timeOut[0], homeIsUp[0], motorInv[0], endStInv[0], endStInv2[0], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[0], motor2Inv[0], endStEnbl[0], motorStopAtHome[0], motorMaxSize[0], motorStopAtMax[0]);
+  axisY.loadMotorSettings(speedMax[1], speedMin[1], speedHome[1], stepsAcc[1], timeOut[1], homeIsUp[1], motorInv[1], endStInv[1], endStInv2[1], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[1], motor2Inv[1], endStEnbl[1], motorStopAtHome[1], motorMaxSize[1], motorStopAtMax[1]);
+  axisZ.loadMotorSettings(speedMax[2], speedMin[2], speedHome[2], stepsAcc[2], timeOut[2], homeIsUp[2], motorInv[2], endStInv[2], endStInv2[2], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[2], motor2Inv[2], endStEnbl[2], motorStopAtHome[2], motorMaxSize[2], motorStopAtMax[2]);
 
 #if defined(FARMDUINO_EXP_V20)
   loadSettingsTMC2130();

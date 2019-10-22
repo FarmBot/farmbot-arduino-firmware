@@ -20,6 +20,7 @@ public:
   static ServoControl *getInstance();
 
   int attach();
+  void detachServos();
   int setAngle(int pin, int angle);
 
 private:
