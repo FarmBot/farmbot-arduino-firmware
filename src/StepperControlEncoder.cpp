@@ -53,7 +53,7 @@ void StepperControlEncoder::loadPinNumbers(int channelA, int channelB, int chann
   shiftChannels();
 }
 
-void StepperControlEncoder::loadSettings(int encType, int scaling, int invert)
+void StepperControlEncoder::loadSettings(int encType, long scaling, int invert)
 {
   encoderType = encType;
   scalingFactor = scaling;
@@ -105,7 +105,12 @@ long StepperControlEncoder::currentPosition()
   }
   else
   {
-    return position * scalingFactor / 10000 * encoderInvert;
+    #if defined(FARMDUINO_V14)
+      floatScalingFactor = scalingFactor / 40000.0;
+      return position * floatScalingFactor * encoderInvert;
+    #endif
+    floatScalingFactor = scalingFactor / 10000.0;
+    return position * floatScalingFactor * encoderInvert;
   }
 }
 

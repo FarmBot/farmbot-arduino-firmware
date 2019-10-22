@@ -3,6 +3,7 @@
 *.lo
 *.o
 *.obj
+*.d
 
 # Compiled Dynamic libraries
 *.so
@@ -34,3 +35,5 @@
 # Setting files
 Debug.h
 /__vm
+_build
+bin

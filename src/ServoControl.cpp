@@ -9,7 +9,7 @@ D11 D6 D5 D4
 
 static ServoControl *instance;
 
-Servo servos[2];
+Servo servos[4];
 
 ServoControl *ServoControl::getInstance()
 {
@@ -28,6 +28,16 @@ int ServoControl::attach()
 {
   servos[0].attach(SERVO_0_PIN);
   servos[1].attach(SERVO_1_PIN);
+  servos[2].attach(SERVO_2_PIN);
+  servos[3].attach(SERVO_3_PIN);
+}
+
+void ServoControl::detachServos()
+{
+  servos[0].detach();
+  servos[1].detach();
+  servos[2].detach();
+  servos[3].detach();
 }
 
 int ServoControl::setAngle(int pin, int angle)
@@ -52,10 +62,20 @@ int ServoControl::setAngle(int pin, int angle)
   switch (pin)
   {
   case 4:
+    servos[0].attach(SERVO_0_PIN);
     servos[0].write(angle);
     break;
   case 5:
+    servos[1].attach(SERVO_1_PIN);
     servos[1].write(angle);
+    break;
+  case 6:
+    servos[2].attach(SERVO_2_PIN);
+    servos[2].write(angle);
+    break;
+  case 11:
+    servos[3].attach(SERVO_3_PIN);
+    servos[3].write(angle);
     break;
   default:
     return 1;

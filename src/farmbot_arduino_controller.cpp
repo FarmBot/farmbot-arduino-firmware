@@ -20,6 +20,7 @@ bool stepperFlip = false;
 static char commandEndChar = 0x0A;
 static GCodeProcessor *gCodeProcessor = new GCodeProcessor();
 
+int reportingPeriod = 5000;
 unsigned long lastAction;
 unsigned long currentTime;
 unsigned long cycleCounter = 0;
@@ -163,8 +164,11 @@ void setup()
     pinMode(AUX4_47, INPUT_PULLUP);
     pinMode(AUX4_32, INPUT_PULLUP);
 
-    //pinMode(SERVO_0_PIN , OUTPUT);
-    //pinMode(SERVO_1_PIN , OUTPUT);
+    pinMode(SERVO_0_PIN, OUTPUT);
+    pinMode(SERVO_1_PIN, OUTPUT);
+    pinMode(SERVO_2_PIN, OUTPUT);
+    pinMode(SERVO_3_PIN, OUTPUT);
+
   #endif
 
   #if defined(FARMDUINO_V10) || defined(FARMDUINO_V14)
@@ -238,6 +242,8 @@ void setup()
   #endif
 
   #if defined(FARMDUINO_V14)
+
+    reportingPeriod = 500;
 
     pinMode(READ_ENA_PIN, INPUT_PULLUP);
     pinMode(NSS_PIN, OUTPUT);
@@ -502,6 +508,7 @@ void loop()
   {
     StepperControl::getInstance()->disableMotorsEmergency();
     PinControl::getInstance()->resetPinsUsed();
+    ServoControl::getInstance()->detachServos();
     if (debugMessages)
     {
       Serial.print(COMM_REPORT_COMMENT);
@@ -539,7 +546,7 @@ void loop()
   else
   {
 
-    if ((currentTime - lastAction) > 5000)
+    if ((currentTime - lastAction) > reportingPeriod)
     {
       // After an idle time, send the idle message
 

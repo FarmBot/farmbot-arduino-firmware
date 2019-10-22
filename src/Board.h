@@ -10,6 +10,7 @@
   #undef RAMPS_V14
   #undef FARMDUINO_V10
   #undef FARMDUINO_V14
+  #undef FARMDUINO_EXP_V20
 
   #if FARMBOT_BOARD_ID == 0
     #define RAMPS_V14

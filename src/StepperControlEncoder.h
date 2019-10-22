@@ -24,7 +24,7 @@ public:
   StepperControlEncoder();
 
   void loadPinNumbers(int channelA, int channelB, int channelAQ, int channelBQ);
-  void loadSettings(int encType, int scaling, int invert);
+  void loadSettings(int encType, long scaling, int invert);
 
   // Load the id for the motor dynamics lab encoder
   void loadMdlEncoderId(MdlSpiEncoders encoder);
@@ -60,7 +60,8 @@ private:
 
   // encoder
   long position;
-  int scalingFactor;
+  long scalingFactor;
+  float floatScalingFactor;
   int encoderType;
   int encoderInvert;
 
