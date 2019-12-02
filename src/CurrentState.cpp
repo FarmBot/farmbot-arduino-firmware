@@ -136,7 +136,6 @@ String CurrentState::getPosition()
   output += (float)y / (float)stepsPerMmY * 1.0;
   output += " Z";
   output += (float)z / (float)stepsPerMmZ * 1.0;
-  //output += getQAndNewLine();
 
   return output;
 }

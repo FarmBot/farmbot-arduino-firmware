@@ -1,32 +1,32 @@
 /*
- * StepperControlAxis.h
+ * MovementAxis.h
  *
  *  Created on: 18 juli 2015
  *      Author: Tim Evers
  */
 
-#ifndef STEPPERCONTROLAXIS_H_
-#define STEPPERCONTROLAXIS_H_
+#ifndef MovementAXIS_H_
+#define MovementAXIS_H_
 
 #include "Arduino.h"
 #include "CurrentState.h"
 #include "ParameterList.h"
 #include "pins.h"
-#include "StepperControlEncoder.h"
+#include "MovementEncoder.h"
 #include "Config.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 #if defined(FARMDUINO_EXP_V20)
-  #include <TMC2130Stepper.h>
+  #include "TMC2130.h"
 #endif
 
 
-class StepperControlAxis
+class MovementAxis
 {
 
 public:
-  StepperControlAxis();
+  MovementAxis();
 
 #if defined(FARMDUINO_EXP_V20)
   TMC2130Stepper *TMC2130A;
@@ -134,47 +134,48 @@ private:
   bool motorEndStopEnbl; // enable the use of the end stops
 
   // motor settings
-  long motorSpeedMax;       // maximum speed in steps per second
-  long motorSpeedMin;       // minimum speed in steps per second
-  long motorSpeedHome;      // homing speed in steps per second
-  long motorStepsAcc;       // number of steps used for acceleration
-  long motorTimeOut;        // timeout in seconds
-  bool motorHomeIsUp;       // direction to move when reached 0 on axis but no end stop detected while homing
-  bool motorMotorInv;       // invert motor direction
-  bool motorMotor2Enl;      // enable secondary motor
-  bool motorMotor2Inv;      // invert secondary motor direction
-  long motorInterruptSpeed; // period of interrupt in micro seconds
-  bool motorStopAtHome;     // stop at home position or also use other side of the axis
-  long motorMaxSize;        // maximum size of the axis in steps
-  bool motorStopAtMax;      // stop at the maximum size
+  long motorSpeedMax        = 300;    // maximum speed in steps per second
+  long motorSpeedMin        = 50;     // minimum speed in steps per second
+  long motorSpeedHome       = 50;     // homing speed in steps per second
+  long motorStepsAcc        = 300;    // number of steps used for acceleration
+  long motorTimeOut         = 120;    // timeout in seconds
+  bool motorHomeIsUp        = false;  // direction to move when reached 0 on axis but no end stop detected while homing
+  bool motorMotorInv        = false;  // invert motor direction
+  bool motorMotor2Enl       = false;  // enable secondary motor
+  bool motorMotor2Inv       = false;  // invert secondary motor direction
+  long motorInterruptSpeed  = 100;    // period of interrupt in micro seconds
+  bool motorStopAtHome      = false;  // stop at home position or also use other side of the axis
+  long motorMaxSize         = 0;      // maximum size of the axis in steps
+  bool motorStopAtMax       = false;  // stop at the maximum size
 
   // coordinates
-  long coordSourcePoint; // all coordinated in steps
-  long coordCurrentPoint;
-  long coordDestinationPoint;
-  bool coordHomeAxis; // homing command
+  long coordSourcePoint     = 0;      // all coordinated in steps
+  long coordCurrentPoint    = 0;
+  long coordDestinationPoint = 0;
+  bool coordHomeAxis        = false; // homing command
 
-  long axisLastPosition = 0;
+  long axisLastPosition     = 0;
 
   // movement handling
-  unsigned long movementLength;
-  unsigned long maxLenth;
-  unsigned long moveTicks;
-  unsigned long stepOnTick;
-  unsigned long stepOffTick;
-  unsigned long axisSpeed;
+  unsigned long movementLength  = 0;
+  unsigned long maxLenth        = 0;
+  unsigned long moveTicks       = 0;
+  unsigned long stepOnTick      = 0;
+  unsigned long stepOffTick     = 0;
+  unsigned long axisSpeed       = 0;
 
-  bool axisActive;
-  bool movementUp;
-  bool movementToHome;
-  bool movementStepDone;
-  bool movementAccelerating;
-  bool movementDecelerating;
-  bool movementCruising;
-  bool movementCrawling;
-  bool movementMotorActive;
-  bool movementMoving;
-  bool stepIsOn;
+  bool axisActive           = false;
+  bool movementUp           = false;
+  bool movementToHome       = false;
+  bool movementStepDone     = false;
+  bool movementAccelerating = false;
+  bool movementDecelerating = false;
+  bool movementCruising     = false;
+  bool movementCrawling     = false;
+  bool movementMotorActive  = false;
+  bool movementMoving       = false;
+  bool stepIsOn             = false;
+
   void step(long &currentPoint, unsigned long steps, long destinationPoint);
   bool pointReached(long currentPoint, long destinationPoint);
   unsigned int calculateSpeed(long sourcePosition, long currentPosition, long destinationPosition, long minSpeed, long maxSpeed, long stepsAccDec);
@@ -182,10 +183,10 @@ private:
   void checkAxisDirection();
 
 
-  void (StepperControlAxis::*setMotorStepWrite)();
-  void (StepperControlAxis::*setMotorStepWrite2)();
-  void (StepperControlAxis::*resetMotorStepWrite)();
-  void (StepperControlAxis::*resetMotorStepWrite2)();
+  void (MovementAxis::*setMotorStepWrite)();
+  void (MovementAxis::*setMotorStepWrite2)();
+  void (MovementAxis::*resetMotorStepWrite)();
+  void (MovementAxis::*resetMotorStepWrite2)();
 
   void setMotorStepWriteDefault();
   void setMotorStepWriteDefault2();
@@ -202,4 +203,4 @@ private:
 
 };
 
-#endif /* STEPPERCONTROLAXIS_H_ */
+#endif /* MovementAXIS_H_ */

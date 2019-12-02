@@ -1,19 +1,19 @@
-#include "StepperControl.h"
+#include "Movement.h"
 #include "Debug.h"
 #include "Config.h"
 
-static StepperControl *instance;
+static Movement *instance;
 
-StepperControl *StepperControl::getInstance()
+Movement *Movement::getInstance()
 {
   if (!instance)
   {
-    instance = new StepperControl();
+    instance = new Movement();
   };
   return instance;
 };
 
-void StepperControl::reportEncoders()
+void Movement::reportEncoders()
 {
   Serial.print(COMM_REPORT_ENCODER_SCALED);
   Serial.print(" X");
@@ -35,7 +35,7 @@ void StepperControl::reportEncoders()
 
 }
 
-void StepperControl::getEncoderReport()
+void Movement::getEncoderReport()
 {
   serialBuffer += COMM_REPORT_ENCODER_SCALED;
   serialBuffer += " X";
@@ -57,7 +57,7 @@ void StepperControl::getEncoderReport()
 
 }
 
-void StepperControl::reportStatus(StepperControlAxis *axis, int axisStatus)
+void Movement::reportStatus(MovementAxis *axis, int axisStatus)
 {  
   serialBuffer += COMM_REPORT_CMD_STATUS;
   serialBuffer += " ";
@@ -72,7 +72,7 @@ void StepperControl::reportStatus(StepperControlAxis *axis, int axisStatus)
   //CurrentState::getInstance()->printQAndNewLine();
 }
 
-void StepperControl::reportCalib(StepperControlAxis *axis, int calibStatus)
+void Movement::reportCalib(MovementAxis *axis, int calibStatus)
 {
   Serial.print(COMM_REPORT_CALIB_STATUS);
   Serial.print(" ");
@@ -81,7 +81,7 @@ void StepperControl::reportCalib(StepperControlAxis *axis, int calibStatus)
   CurrentState::getInstance()->printQAndNewLine();
 }
 
-void StepperControl::checkAxisSubStatus(StepperControlAxis *axis, int *axisSubStatus)
+void Movement::checkAxisSubStatus(MovementAxis *axis, int *axisSubStatus)
 {
   int newStatus = 0;
   bool statusChanged = false;
@@ -121,7 +121,7 @@ void StepperControl::checkAxisSubStatus(StepperControlAxis *axis, int *axisSubSt
 
 //const int MOVEMENT_INTERRUPT_SPEED = 100; // Interrupt cycle in micro seconds
 
-StepperControl::StepperControl()
+Movement::Movement()
 {
 
   // Initialize some variables for testing
@@ -142,9 +142,9 @@ StepperControl::StepperControl()
 
   // Create the axis controllers
 
-  axisX = StepperControlAxis();
-  axisY = StepperControlAxis();
-  axisZ = StepperControlAxis();
+  axisX = MovementAxis();
+  axisY = MovementAxis();
+  axisZ = MovementAxis();
 
   axisX.channelLabel = 'X';
   axisY.channelLabel = 'Y';
@@ -152,9 +152,9 @@ StepperControl::StepperControl()
 
   // Create the encoder controller
 
-  encoderX = StepperControlEncoder();
-  encoderY = StepperControlEncoder();
-  encoderZ = StepperControlEncoder();
+  encoderX = MovementEncoder();
+  encoderY = MovementEncoder();
+  encoderZ = MovementEncoder();
 
   // Load settings
 
@@ -163,8 +163,10 @@ StepperControl::StepperControl()
   motorMotorsEnabled = false;
 }
 
-void StepperControl::loadSettings()
+void Movement::loadSettings()
 {
+
+  /**/ //Serial.println("== load pin numbers ==");
 
   // Load motor settings
 
@@ -176,19 +178,29 @@ void StepperControl::loadSettings()
   axisSubStep[1] = COMM_REPORT_MOVE_STATUS_IDLE;
   axisSubStep[2] = COMM_REPORT_MOVE_STATUS_IDLE;
 
+  /**/ //Serial.println("== load motor settings ==");
+
   loadMotorSettings();
 
   // Load encoder settings
 
+  /**/ //Serial.println("== load encoder settings ==");
+
   loadEncoderSettings();
+
+  /**/ //Serial.println("== load mdl encoder settings ==");
 
   encoderX.loadMdlEncoderId(_MDL_X1);
   encoderY.loadMdlEncoderId(_MDL_Y);
   encoderZ.loadMdlEncoderId(_MDL_Z);
 
+  /**/ //Serial.println("== load encoder pin numbers ==");
+
   encoderX.loadPinNumbers(X_ENCDR_A, X_ENCDR_B, X_ENCDR_A_Q, X_ENCDR_B_Q);
   encoderY.loadPinNumbers(Y_ENCDR_A, Y_ENCDR_B, Y_ENCDR_A_Q, Y_ENCDR_B_Q);
   encoderZ.loadPinNumbers(Z_ENCDR_A, Z_ENCDR_B, Z_ENCDR_A_Q, Z_ENCDR_B_Q);
+
+  /**/ //Serial.println("== load encoder load settings 2 ==");
 
   encoderX.loadSettings(motorConsEncoderType[0], motorConsEncoderScaling[0], motorConsEncoderInvert[0]);
   encoderY.loadSettings(motorConsEncoderType[1], motorConsEncoderScaling[1], motorConsEncoderInvert[1]);
@@ -197,42 +209,131 @@ void StepperControl::loadSettings()
 }
 
 #if defined(FARMDUINO_EXP_V20)
-  void StepperControl::initTMC2130()
+  void Movement::initTMC2130()
   {
     axisX.initTMC2130();
     axisY.initTMC2130();
     axisZ.initTMC2130();
   }
 
-  void StepperControl::loadSettingsTMC2130()
+  void Movement::loadSettingsTMC2130()
   {
-    int motorCurrent;
-    int stallSensitivity;
-    int microSteps;
+    /**/
+    int motorCurrentX;
+    int stallSensitivityX;
+    int microStepsX;
 
-    motorCurrent = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_X);
-    stallSensitivity = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_X);
-    microSteps = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_X);
-    axisX.loadSettingsTMC2130(motorCurrent, stallSensitivity, microSteps);
+    int motorCurrentY;
+    int stallSensitivityY;
+    int microStepsY;
 
-    motorCurrent = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Y);
-    stallSensitivity = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Y);
-    microSteps = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Y);
-    axisY.loadSettingsTMC2130(motorCurrent, stallSensitivity, microSteps);
+    int motorCurrentZ;
+    int stallSensitivityZ;
+    int microStepsZ;
 
-    motorCurrent = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Z);
-    stallSensitivity = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Z);
-    microSteps = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Z);
-    axisZ.loadSettingsTMC2130(motorCurrent, stallSensitivity, microSteps);
+    motorCurrentX = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_X);
+    stallSensitivityX = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_X);
+    microStepsX = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_X);
+    //axisX.loadSettingsTMC2130(motorCurrent, stallSensitivity, microSteps);
+
+    motorCurrentY = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Y);
+    stallSensitivityY = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Y);
+    microStepsY = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Y);
+    //axisY.loadSettingsTMC2130(motorCurrent, stallSensitivity, microSteps);
+
+    motorCurrentZ = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Z);
+    stallSensitivityZ = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Z);
+    microStepsX = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Z);
+    //axisZ.loadSettingsTMC2130(motorCurrent, stallSensitivity, microSteps);
+
+    motorCurrentX = 600;
+    stallSensitivityX = 0;
+    microStepsX = 0;
+
+    motorCurrentY = 600;
+    stallSensitivityY = 0;
+    microStepsY = 0;
+
+    motorCurrentZ = 600;
+    stallSensitivityZ = 0;
+    microStepsZ = 0;
+
+    TMC2130X->push();
+    TMC2130X->toff(3);
+    TMC2130X->tbl(1);
+    TMC2130X->hysteresis_start(4);
+    TMC2130X->hysteresis_end(-2);
+    TMC2130X->rms_current(motorCurrentX); // mA
+    TMC2130X->microsteps(microStepsX);
+    TMC2130X->diag1_stall(1);
+    TMC2130X->diag1_active_high(1);
+    TMC2130X->coolstep_min_speed(0xFFFFF); // 20bit max
+    TMC2130X->THIGH(0);
+    TMC2130X->semin(5);
+    TMC2130X->semax(2);
+    TMC2130X->sedn(0b01);
+    TMC2130X->sg_stall_value(stallSensitivityX);
+
+    TMC2130Y->push();
+    TMC2130Y->toff(3);
+    TMC2130Y->tbl(1);
+    TMC2130Y->hysteresis_start(4);
+    TMC2130Y->hysteresis_end(-2);
+    TMC2130Y->rms_current(motorCurrentY); // mA
+    TMC2130Y->microsteps(microStepsY);
+    TMC2130Y->diag1_stall(1);
+    TMC2130Y->diag1_active_high(1);
+    TMC2130Y->coolstep_min_speed(0xFFFFF); // 20bit max
+    TMC2130Y->THIGH(0);
+    TMC2130Y->semin(5);
+    TMC2130Y->semax(2);
+    TMC2130Y->sedn(0b01);
+    TMC2130Y->sg_stall_value(stallSensitivityY);
+
+    TMC2130Z->push();
+    TMC2130Z->toff(3);
+    TMC2130Z->tbl(1);
+    TMC2130Z->hysteresis_start(4);
+    TMC2130Z->hysteresis_end(-2);
+    TMC2130Z->rms_current(motorCurrentZ); // mA
+    TMC2130Z->microsteps(microStepsZ);
+    TMC2130Z->diag1_stall(1);
+    TMC2130Z->diag1_active_high(1);
+    TMC2130Z->coolstep_min_speed(0xFFFFF); // 20bit max
+    TMC2130Z->THIGH(0);
+    TMC2130Z->semin(5);
+    TMC2130Z->semax(2);
+    TMC2130Z->sedn(0b01);
+    TMC2130Z->sg_stall_value(stallSensitivityZ);
+
+    TMC2130E->push();
+    TMC2130E->toff(3);
+    TMC2130E->tbl(1);
+    TMC2130E->hysteresis_start(4);
+    TMC2130E->hysteresis_end(-2);
+    TMC2130E->rms_current(600); // mA
+    TMC2130E->microsteps(0);
+    TMC2130E->diag1_stall(1);
+    TMC2130E->diag1_active_high(1);
+    TMC2130E->coolstep_min_speed(0xFFFFF); // 20bit max
+    TMC2130E->THIGH(0);
+    TMC2130E->semin(5);
+    TMC2130E->semax(2);
+    TMC2130E->sedn(0b01);
+    TMC2130E->sg_stall_value(0);
+
   }
 
 #endif
 
-void StepperControl::test()
+void Movement::test()
 {
+  axisX.enableMotor();
+
+  //axisY.test();
 
   //axisX.enableMotor();
-  axisX.setMotorStep();
+  //axisX.setMotorStep();
   //delayMicroseconds(10);
   //axisX.setMotorStep();
   //delayMicroseconds(10);
@@ -279,10 +380,10 @@ void StepperControl::test()
   //Serial.print("\r\n");
 }
 
-void StepperControl::test2()
+void Movement::test2()
 {
-  axisX.enableMotor();
-
+  
+  axisX.setMotorStep();
   //CurrentState::getInstance()->printPosition();
   //encoderX.test();
   //encoderY.test();
@@ -296,10 +397,13 @@ void StepperControl::test2()
  * maxStepsPerSecond - maximum number of steps per second
  * maxAccelerationStepsPerSecond - maximum number of acceleration in steps per second
  */
-int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double zDestScaled,
+int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestScaled,
                                  unsigned int xMaxSpd, unsigned int yMaxSpd, unsigned int zMaxSpd,
                                  bool xHome, bool yHome, bool zHome)
 {
+
+  /**/ //Serial.println("AAA");
+  /**/ //test();
 
   long xDest = xDestScaled * stepsPerMm[0];
   long yDest = yDestScaled * stepsPerMm[1];
@@ -404,6 +508,7 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
     Serial.print(axisZ.destinationPosition() / stepsPerMm[2]);
     CurrentState::getInstance()->printQAndNewLine();
   }
+
   // Prepare for movement
 
   axisX.movementStarted = false;
@@ -456,12 +561,35 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
 
   emergencyStop = CurrentState::getInstance()->isEmergencyStop();
 
+  unsigned long loopCounts = 0;
+
   // Let the interrupt handle all the movements
   while ((axisActive[0] || axisActive[1] || axisActive[2]) && !emergencyStop)
   {
     #if defined(FARMDUINO_V14)
     checkEncoders();
     #endif
+
+    /**/
+    if (loopCounts % 1000 == 0)
+    {
+
+      //Serial.print("R99");
+      //Serial.print(" missed step ");
+      //Serial.print(motorConsMissedSteps[1]);
+      //Serial.print(" axis pos ");
+      //Serial.print(axisY.currentPosition());
+      //Serial.print("\r\n");
+
+      //Serial.print("X - ");
+      //axisX.test();
+
+      //Serial.print("Y - ");
+      //axisY.test();
+
+    }
+    loopCounts++;
+    
 
     checkAxisSubStatus(&axisX, &axisSubStep[0]);
     checkAxisSubStatus(&axisY, &axisSubStep[1]);
@@ -474,21 +602,21 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
     if (axisX.isStepDone())
     {
       axisX.checkMovement();
-      checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsEncoderLastPosition[0], &motorConsEncoderUseForPos[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
+      //checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsEncoderLastPosition[0], &motorConsEncoderUseForPos[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
       axisX.resetStepDone();
     }
 
     if (axisY.isStepDone())
     {
       axisY.checkMovement();
-      checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &motorConsEncoderLastPosition[1], &motorConsEncoderUseForPos[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
+      //checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &motorConsEncoderLastPosition[1], &motorConsEncoderUseForPos[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
       axisY.resetStepDone();
     }
 
     if (axisZ.isStepDone())
     {
       axisZ.checkMovement();
-      checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &motorConsEncoderLastPosition[2], &motorConsEncoderUseForPos[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
+      //checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &motorConsEncoderLastPosition[2], &motorConsEncoderUseForPos[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
       axisZ.resetStepDone();
     }
 
@@ -645,6 +773,10 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
 
     if (serialMessageDelay > 300 && serialBuffer.length() == 0 && serialBufferSending == 0)
     {
+
+      //Serial.print("Y-");
+      //axisY.test();/**/
+
       serialMessageDelay = 0;
 
       switch(serialMessageNr)
@@ -662,8 +794,8 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
           break;
 
         case 2:
-
           #if defined(FARMDUINO_EXP_V20)
+          
           serialBuffer += "R89";
           serialBuffer += " X";
           serialBuffer += axisX.getLoad();
@@ -672,9 +804,12 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
           serialBuffer += " Z";
           serialBuffer += axisZ.getLoad();
           serialBuffer += CurrentState::getInstance()->getQAndNewLine();
+          
           #endif
           break;
 
+        default:
+          break;
       }
 
       serialMessageNr++;
@@ -790,7 +925,7 @@ int StepperControl::moveToCoords(double xDestScaled, double yDestScaled, double 
   return error;
 }
 
-void StepperControl::serialBufferEmpty()
+void Movement::serialBufferEmpty()
 {
   while (serialBuffer.length() > 0)
   {
@@ -798,7 +933,7 @@ void StepperControl::serialBufferEmpty()
   }
 }
 
-void StepperControl::serialBufferSendNext()
+void Movement::serialBufferSendNext()
 {
   // Send the next char in the serialBuffer
   if (serialBuffer.length() > 0)
@@ -834,7 +969,7 @@ void StepperControl::serialBufferSendNext()
 // Calibration
 //
 
-int StepperControl::calibrateAxis(int axis)
+int Movement::calibrateAxis(int axis)
 {
 
   // Load motor and encoder settings
@@ -869,8 +1004,8 @@ int StepperControl::calibrateAxis(int axis)
   reportEndStops();
 
   // Select the right axis
-  StepperControlAxis *calibAxis;
-  StepperControlEncoder *calibEncoder;
+  MovementAxis *calibAxis;
+  MovementEncoder *calibEncoder;
 
   switch (axis)
   {
@@ -1238,7 +1373,7 @@ int StepperControl::calibrateAxis(int axis)
 int debugPrintCount = 0;
 
 // Check encoder to verify the motor is at the right position
-void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControlEncoder *encoder, float *missedSteps, long *lastPosition, long *encoderLastPosition, int *encoderUseForPos, float *encoderStepDecay, bool *encoderEnabled)
+void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, float *missedSteps, long *lastPosition, long *encoderLastPosition, int *encoderUseForPos, float *encoderStepDecay, bool *encoderEnabled)
 {
 #if !defined(FARMDUINO_EXP_V20)
   if (*encoderEnabled)
@@ -1310,6 +1445,16 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
 
 #if defined(FARMDUINO_EXP_V20)
 
+  /**/
+  /*
+  Serial.print("R99");
+  Serial.print(" XXX ");
+  Serial.print(" cur pos ");
+  Serial.print(axis->currentPosition());
+  Serial.print(" last pos ");
+  Serial.print(*lastPosition);
+  */
+
   if (*encoderEnabled) {
     if (axis->stallDetected()) {
       // In case of stall detection, count this as a missed step
@@ -1326,11 +1471,19 @@ void StepperControl::checkAxisVsEncoder(StepperControlAxis *axis, StepperControl
       encoder->setPosition(axis->currentPosition());
     }
   }
+
+  //Serial.print(" new last pos ");
+  //Serial.print(*lastPosition);
+  //Serial.print(" en pos ");
+  //Serial.print(encoder->currentPosition());
+  //Serial.print("\r\n");
+
+
 #endif
 
 }
 
-void StepperControl::loadMotorSettings()
+void Movement::loadMotorSettings()
 {
 
   // Load settings
@@ -1424,14 +1577,17 @@ void StepperControl::loadMotorSettings()
   axisY.loadMotorSettings(speedMax[1], speedMin[1], speedHome[1], stepsAcc[1], timeOut[1], homeIsUp[1], motorInv[1], endStInv[1], endStInv2[1], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[1], motor2Inv[1], endStEnbl[1], motorStopAtHome[1], motorMaxSize[1], motorStopAtMax[1]);
   axisZ.loadMotorSettings(speedMax[2], speedMin[2], speedHome[2], stepsAcc[2], timeOut[2], homeIsUp[2], motorInv[2], endStInv[2], endStInv2[2], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[2], motor2Inv[2], endStEnbl[2], motorStopAtHome[2], motorMaxSize[2], motorStopAtMax[2]);
 
+  /**/
+
+/*
 #if defined(FARMDUINO_EXP_V20)
   loadSettingsTMC2130();
 #endif
-
+*/
   primeMotors();
 }
 
-bool StepperControl::intToBool(int value)
+bool Movement::intToBool(int value)
 {
   if (value == 1)
   {
@@ -1440,7 +1596,7 @@ bool StepperControl::intToBool(int value)
   return false;
 }
 
-void StepperControl::loadEncoderSettings()
+void Movement::loadEncoderSettings()
 {
 
   // Load encoder settings
@@ -1505,7 +1661,7 @@ void StepperControl::loadEncoderSettings()
   }
 }
 
-unsigned long StepperControl::getMaxLength(unsigned long lengths[3])
+unsigned long Movement::getMaxLength(unsigned long lengths[3])
 {
   unsigned long max = lengths[0];
   for (int i = 1; i < 3; i++)
@@ -1518,7 +1674,7 @@ unsigned long StepperControl::getMaxLength(unsigned long lengths[3])
   return max;
 }
 
-void StepperControl::enableMotors()
+void Movement::enableMotors()
 {
   motorMotorsEnabled = true;
 
@@ -1529,7 +1685,7 @@ void StepperControl::enableMotors()
   delay(100);
 }
 
-void StepperControl::disableMotorsEmergency()
+void Movement::disableMotorsEmergency()
 {
   motorMotorsEnabled = false;
 
@@ -1538,7 +1694,7 @@ void StepperControl::disableMotorsEmergency()
   axisZ.disableMotor();
 }
 
-void StepperControl::disableMotors()
+void Movement::disableMotors()
 {
   motorMotorsEnabled = false;
 
@@ -1549,19 +1705,19 @@ void StepperControl::disableMotors()
   delay(100);
 }
 
-void StepperControl::primeMotors()
+void Movement::primeMotors()
 {
   if (motorKeepActive[0] == 1) { axisX.enableMotor(); } else { axisX.disableMotor(); }
   if (motorKeepActive[1] == 1) { axisY.enableMotor(); } else { axisY.disableMotor(); }
   if (motorKeepActive[2] == 1) { axisZ.enableMotor(); } else { axisZ.disableMotor(); }
 }
 
-bool StepperControl::motorsEnabled()
+bool Movement::motorsEnabled()
 {
   return motorMotorsEnabled;
 }
 
-bool StepperControl::endStopsReached()
+bool Movement::endStopsReached()
 {
 
   if (axisX.endStopsReached() ||
@@ -1573,7 +1729,7 @@ bool StepperControl::endStopsReached()
   return false;
 }
 
-void StepperControl::storePosition()
+void Movement::storePosition()
 {
 
 #if !defined(FARMDUINO_EXP_V20)
@@ -1613,41 +1769,41 @@ void StepperControl::storePosition()
 
 }
 
-void StepperControl::reportEndStops()
+void Movement::reportEndStops()
 {
   CurrentState::getInstance()->printEndStops();
 }
 
-void StepperControl::reportPosition()
+void Movement::reportPosition()
 {
   CurrentState::getInstance()->printPosition();
 }
 
-void StepperControl::storeEndStops()
+void Movement::storeEndStops()
 {
   CurrentState::getInstance()->storeEndStops();
 }
 
-void StepperControl::setPositionX(long pos)
+void Movement::setPositionX(long pos)
 {
   axisX.setCurrentPosition(pos);
   encoderX.setPosition(pos);
 }
 
-void StepperControl::setPositionY(long pos)
+void Movement::setPositionY(long pos)
 {
   axisY.setCurrentPosition(pos);
   encoderY.setPosition(pos);
 }
 
-void StepperControl::setPositionZ(long pos)
+void Movement::setPositionZ(long pos)
 {
   axisZ.setCurrentPosition(pos);
   encoderZ.setPosition(pos);
 }
 
 // Handle movement by checking each axis
-void StepperControl::handleMovementInterrupt(void)
+void Movement::handleMovementInterrupt(void)
 {
   // No need to check the encoders for Farmduino 1.4
   #if defined(RAMPS_V14) || defined(FARMDUINO_V10)
@@ -1662,7 +1818,7 @@ void StepperControl::handleMovementInterrupt(void)
 
 }
 
-void StepperControl::checkEncoders()
+void Movement::checkEncoders()
 {
   // read encoder pins using the arduino IN registers instead of digital in
   // because it used much fewer cpu cycles

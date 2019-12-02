@@ -48,13 +48,13 @@ int F12Handler::execute(Command *command)
   {
     switch (stepNr)
     {
-    case 0: StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, true, false); break;
-    case 1: StepperControl::getInstance()->moveToCoords(0, moveAwayCoord, 0, 0, 0, 0, false, false, false); break;
-    case 2: StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, true, false); break;
-    case 3: StepperControl::getInstance()->moveToCoords(0, moveAwayCoord, 0, 0, 0, 0, false, false, false); break;
-    case 4: StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, true, false); break;
-    case 5: StepperControl::getInstance()->moveToCoords(0, moveAwayCoord, 0, 0, 0, 0, false, false, false); break;
-    case 6: StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, true, false); break;
+    case 0: Movement::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, true, false); break;
+    case 1: Movement::getInstance()->moveToCoords(0, moveAwayCoord, 0, 0, 0, 0, false, false, false); break;
+    case 2: Movement::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, true, false); break;
+    case 3: Movement::getInstance()->moveToCoords(0, moveAwayCoord, 0, 0, 0, 0, false, false, false); break;
+    case 4: Movement::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, true, false); break;
+    case 5: Movement::getInstance()->moveToCoords(0, moveAwayCoord, 0, 0, 0, 0, false, false, false); break;
+    case 6: Movement::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, true, false); break;
     }
 
     execution = CurrentState::getInstance()->getLastError();

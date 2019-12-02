@@ -1,25 +1,15 @@
 #include "TMC2130Stepper.h"
 #include "TMC2130Stepper_MACROS.h"
 #include <SPI.h>
-#include "SW_SPI.h"
 
-TMC2130Stepper::TMC2130Stepper(uint16_t pinCS) : _pinCS(pinCS), uses_sw_spi(false) {}
+TMC2130Stepper::TMC2130Stepper(uint16_t pinCS) : _pinCS(pinCS) {}
 
 TMC2130Stepper::TMC2130Stepper(uint16_t pinEN, uint16_t pinDIR, uint16_t pinStep, uint16_t pinCS) :
 	_pinEN(pinEN),
 	_pinSTEP(pinStep),
 	_pinCS(pinCS),
-	_pinDIR(pinDIR),
-	uses_sw_spi(false)
+	_pinDIR(pinDIR)
 	{}
-
-TMC2130Stepper::TMC2130Stepper(uint16_t pinEN, uint16_t pinDIR, uint16_t pinStep, uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
-	_pinEN(pinEN),
-	_pinSTEP(pinStep),
-	_pinCS(pinCS),
-	_pinDIR(pinDIR),
-	uses_sw_spi(true)
-	{ TMC_SW_SPI.setPins(pinMOSI, pinMISO, pinSCK); }
 
 void TMC2130Stepper::begin() {
 #ifdef TMC2130DEBUG
@@ -51,8 +41,6 @@ void TMC2130Stepper::begin() {
 	pinMode(_pinCS, OUTPUT);
 	digitalWrite(_pinCS, HIGH);
 
-	if (uses_sw_spi) TMC_SW_SPI.init();
-
 	// Reset registers
 	push();
 
@@ -61,68 +49,39 @@ void TMC2130Stepper::begin() {
 }
 
 void TMC2130Stepper::send2130(uint8_t addressByte, uint32_t *config) {
-	if (uses_sw_spi) {
+
+  SPI.begin();
+	SPI.beginTransaction(SPISettings(16000000/8, MSBFIRST, SPI_MODE3));
+	digitalWrite(_pinCS, LOW);
+
+	status_response = SPI.transfer(addressByte & 0xFF); // s =
+
+	if (addressByte >> 7) { // Check if WRITE command
+		//*config &= ~mask; // Clear bits being set
+		//*config |= (value & mask); // Set new values
+		SPI.transfer((*config >> 24) & 0xFF);
+		SPI.transfer((*config >> 16) & 0xFF);
+		SPI.transfer((*config >>  8) & 0xFF);
+		SPI.transfer(*config & 0xFF);
+	} else { // READ command
+		SPI.transfer16(0x0000); // Clear SPI
+		SPI.transfer16(0x0000);
+		digitalWrite(_pinCS, HIGH);
 		digitalWrite(_pinCS, LOW);
 
-		status_response = TMC_SW_SPI.transfer(addressByte & 0xFF); // s =
-
-		if (addressByte >> 7) { // Check if WRITE command
-			//*config &= ~mask; // Clear bits being set
-			//*config |= (value & mask); // Set new values
-			TMC_SW_SPI.transfer((*config >> 24) & 0xFF);
-			TMC_SW_SPI.transfer((*config >> 16) & 0xFF);
-			TMC_SW_SPI.transfer((*config >>  8) & 0xFF);
-			TMC_SW_SPI.transfer(*config & 0xFF);
-		} else { // READ command
-			TMC_SW_SPI.transfer16(0x0000); // Clear SPI
-			TMC_SW_SPI.transfer16(0x0000);
-			digitalWrite(_pinCS, HIGH);
-			digitalWrite(_pinCS, LOW);
-
-			TMC_SW_SPI.transfer(addressByte & 0xFF); // Send the address byte again
-			*config = TMC_SW_SPI.transfer(0x00);
-			*config <<= 8;
-			*config|= TMC_SW_SPI.transfer(0x00);
-			*config <<= 8;
-			*config|= TMC_SW_SPI.transfer(0x00);
-			*config <<= 8;
-			*config|= TMC_SW_SPI.transfer(0x00);
-		}
-
-		digitalWrite(_pinCS, HIGH);
-	} else {
-		SPI.begin();
-		SPI.beginTransaction(SPISettings(16000000/8, MSBFIRST, SPI_MODE3));
-		digitalWrite(_pinCS, LOW);
-
-		status_response = SPI.transfer(addressByte & 0xFF); // s =
-
-		if (addressByte >> 7) { // Check if WRITE command
-			//*config &= ~mask; // Clear bits being set
-			//*config |= (value & mask); // Set new values
-			SPI.transfer((*config >> 24) & 0xFF);
-			SPI.transfer((*config >> 16) & 0xFF);
-			SPI.transfer((*config >>  8) & 0xFF);
-			SPI.transfer(*config & 0xFF);
-		} else { // READ command
-			SPI.transfer16(0x0000); // Clear SPI
-			SPI.transfer16(0x0000);
-			digitalWrite(_pinCS, HIGH);
-			digitalWrite(_pinCS, LOW);
-
-			SPI.transfer(addressByte & 0xFF); // Send the address byte again
-			*config = SPI.transfer(0x00);
-			*config <<= 8;
-			*config|= SPI.transfer(0x00);
-			*config <<= 8;
-			*config|= SPI.transfer(0x00);
-			*config <<= 8;
-			*config|= SPI.transfer(0x00);
-		}
-
-		digitalWrite(_pinCS, HIGH);
-		SPI.endTransaction();
+		SPI.transfer(addressByte & 0xFF); // Send the address byte again
+		*config = SPI.transfer(0x00);
+		*config <<= 8;
+		*config|= SPI.transfer(0x00);
+		*config <<= 8;
+		*config|= SPI.transfer(0x00);
+		*config <<= 8;
+		*config|= SPI.transfer(0x00);
 	}
+
+	digitalWrite(_pinCS, HIGH);
+	SPI.endTransaction();
+
 }
 
 bool TMC2130Stepper::checkOT() {

@@ -62,9 +62,9 @@ private:
   CurrentState(CurrentState const &);
   void operator=(CurrentState const &);
 
-  long stepsPerMmX;
-  long stepsPerMmY;
-  long stepsPerMmZ;
+  long stepsPerMmX = 1;
+  long stepsPerMmY = 1;
+  long stepsPerMmZ = 1;
 
   int errorCode = 0;
 
