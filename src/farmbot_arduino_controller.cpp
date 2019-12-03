@@ -496,24 +496,20 @@ void setPinInputOutput()
   Serial.print(SPACE);
   Serial.print("Set input/output");
   Serial.print(CRLF);
-}
-#endif
 
 #if defined(FARMDUINO_V14)
-void setPinInputOutput()
-{
 
-  reportingPeriod = 500;
+    reportingPeriod = 500;
 
-  pinMode(READ_ENA_PIN, INPUT_PULLUP);
-  pinMode(NSS_PIN, OUTPUT);
-  digitalWrite(NSS_PIN, HIGH);
+    pinMode(READ_ENA_PIN, INPUT_PULLUP);
+    pinMode(NSS_PIN, OUTPUT);
+    digitalWrite(NSS_PIN, HIGH);
 
-  SPI.setBitOrder(MSBFIRST);
-  SPI.setDataMode(SPI_MODE0);
-  SPI.setClockDivider(SPI_CLOCK_DIV4);
-  SPI.begin();
-
+    SPI.setBitOrder(MSBFIRST);
+    SPI.setDataMode(SPI_MODE0);
+    SPI.setClockDivider(SPI_CLOCK_DIV4);
+    SPI.begin();
+#endif
 }
 #endif
 
