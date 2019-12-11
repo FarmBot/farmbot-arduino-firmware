@@ -117,22 +117,46 @@
     <ClCompile Include="ServoControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StepperControlAxis.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StepperControlEncoder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TimerOne.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StatusList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StepperControl.cpp">
+    <ClCompile Include="F09Handler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="F09Handler.cpp">
+    <ClCompile Include="TMC2130.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Movement.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MovementAxis.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MovementEncoder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TMC2130\TMC2130Stepper_CHOPCONF.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TMC2130\TMC2130Stepper_COOLCONF.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TMC2130\TMC2130Stepper_DRV_STATUS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TMC2130\TMC2130Stepper_GCONF.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TMC2130\TMC2130Stepper_IHOLD_IRUN.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TMC2130\TMC2130Stepper_PWMCONF.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TMC2130\TMC2130Stepper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -245,19 +269,10 @@
     <ClInclude Include="ServoControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StepperControlAxis.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StepperControlEncoder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TimerOne.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StatusList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StepperControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="__vm\.src.vsarduino.h">
@@ -270,6 +285,36 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Board.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="__vm\.farmbot-arduino-controller.vsarduino.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMC2130.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Movement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MovementAxis.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MovementEncoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMC2130\TMC2130Stepper_MACROS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMC2130\TMC2130Stepper_REGDEFS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMC2130\TMC2130Stepper_UTILITY.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMC2130\TMC2130Stepper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="__vm\.farmbot-arduino-firmware.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -43,7 +43,7 @@ int G00Handler::execute(Command *command)
   	Serial.print("\r\n");*/
   
 
-  StepperControl::getInstance()->moveToCoords(
+  Movement::getInstance()->moveToCoords(
       command->getX(), command->getY(), command->getZ(),
       command->getA(), command->getB(), command->getC(),
       false, false, false);

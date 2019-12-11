@@ -16,7 +16,7 @@
 
 #include "TimerOne.h"
 
-TimerOne Timer1; // preinstatiate
+TimerOne Timer1; // preinstantiate
 
 unsigned short TimerOne::pwmPeriod = 0;
 unsigned char TimerOne::clockSelectBits = 0;

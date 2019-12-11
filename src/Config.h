@@ -13,6 +13,8 @@
 
   const int INCOMING_CMD_BUF_SIZE = 100;
 
+  const char SPACE[2] = { ' ', '\0' };
+  const char CRLF[3] = { '\r', '\n', '\0' };
   const char COMM_REPORT_CMD_IDLE[4] = {'R', '0', '0', '\0'};
   const char COMM_REPORT_CMD_START[4] = {'R', '0', '1', '\0'};
   const char COMM_REPORT_CMD_DONE[4] = {'R', '0', '2', '\0'};
@@ -141,6 +143,21 @@
   const long MOVEMENT_STOP_AT_MAX_Y_DEFAULT = 0;
   const long MOVEMENT_STOP_AT_MAX_Z_DEFAULT = 0;
 
+  // motor current (used with TMC2130)
+  const long MOVEMENT_MOTOR_CURRENT_X_DEFAULT = 600;
+  const long MOVEMENT_MOTOR_CURRENT_Y_DEFAULT = 600;
+  const long MOVEMENT_MOTOR_CURRENT_Z_DEFAULT = 600;
+
+  // stall sensitivity (used with TMC2130)
+  const long MOVEMENT_STALL_SENSITIVITY_X_DEFAULT = 30;
+  const long MOVEMENT_STALL_SENSITIVITY_Y_DEFAULT = 30;
+  const long MOVEMENT_STALL_SENSITIVITY_Z_DEFAULT = 30;
+
+  // micro steps setting (used with TMC2130)
+  const long MOVEMENT_MICROSTEPS_X_DEFAULT = 0;
+  const long MOVEMENT_MICROSTEPS_Y_DEFAULT = 0;
+  const long MOVEMENT_MICROSTEPS_Z_DEFAULT = 0;
+
   // Use encoder (0 or 1)
   const long ENCODER_ENABLED_X_DEFAULT = 0;
   const long ENCODER_ENABLED_Y_DEFAULT = 0;
@@ -233,4 +250,8 @@ enum MdlSpiEncoders
 
 #if defined(FARMDUINO_V14) && !defined(SOFTWARE_VERSION)
 #define SOFTWARE_VERSION "6.4.2.G\0"
+#endif
+
+#if defined(FARMDUINO_EXP_V20) && !defined(SOFTWARE_VERSION)
+#define SOFTWARE_VERSION "6.4.2.E\0"
 #endif

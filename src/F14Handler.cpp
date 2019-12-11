@@ -33,11 +33,11 @@ int F14Handler::execute(Command *command)
     Serial.print("R99 CALIBRATE X\r\n");
   }
 
-  ret = StepperControl::getInstance()->calibrateAxis(0);
+  ret = Movement::getInstance()->calibrateAxis(0);
 
   
 	if (ret == 0) {
-		StepperControl::getInstance()->moveToCoords(0,0,0, 0,0,0, true, false, false);
+    Movement::getInstance()->moveToCoords(0,0,0, 0,0,0, true, false, false);
 	}
 	
 

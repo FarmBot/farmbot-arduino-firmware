@@ -29,9 +29,11 @@
 # Visual Studio files
 /.vs
 /src/Debug
+/src/Release
 /src/__vm
 
 # Setting files
 Debug.h
+/__vm
 _build
 bin

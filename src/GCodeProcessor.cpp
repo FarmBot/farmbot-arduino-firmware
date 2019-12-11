@@ -84,6 +84,7 @@ int GCodeProcessor::execute(Command *command)
     {
       Serial.print(COMM_REPORT_NO_CONFIG);
       CurrentState::getInstance()->printQAndNewLine();
+      CurrentState::getInstance()->setLastError(ERR_PARAMS_NOT_OK);
       return -1;
     }
   }
@@ -95,6 +96,7 @@ int GCodeProcessor::execute(Command *command)
 
     Serial.print(COMM_REPORT_BAD_CMD);
     CurrentState::getInstance()->printQAndNewLine();
+    CurrentState::getInstance()->setLastError(ERR_INVALID_COMMAND);
 
     if (LOGGING)
     {
@@ -107,6 +109,7 @@ int GCodeProcessor::execute(Command *command)
   {
     Serial.print(COMM_REPORT_BAD_CMD);
     CurrentState::getInstance()->printQAndNewLine();
+    CurrentState::getInstance()->setLastError(ERR_INVALID_COMMAND);
 
     if (LOGGING)
     {
@@ -123,6 +126,7 @@ int GCodeProcessor::execute(Command *command)
   {
     Serial.print(COMM_REPORT_BAD_CMD);
     CurrentState::getInstance()->printQAndNewLine();
+    CurrentState::getInstance()->setLastError(ERR_INVALID_COMMAND);
 
     Serial.println("R99 handler == NULL\r\n");
     return -1;
@@ -197,6 +201,8 @@ int GCodeProcessor::execute(Command *command)
   else
   {
     Serial.print(COMM_REPORT_CMD_ERROR);
+    Serial.print(" V");
+    Serial.print(CurrentState::getInstance()->getLastError());
     CurrentState::getInstance()->printQAndNewLine();
   }
 
