@@ -174,7 +174,7 @@ _R_      |      |                 |_Report messages_
 R        |00    |                 |Idle
 R        |01    |                 |Current command started
 R        |02    |                 |Current command finished successfully
-R        |03    |                 |Current command finished with error
+R        |03    |V                |Current command finished with error
 R        |04    |                 |Current command running
 R        |05    |X Y Z            |Report motor/axis state
 R        |06    |X Y Z            |Report calibration state during execution
@@ -203,6 +203,18 @@ R        |85    |X Y Z            |Report encoder position raw
 R        |87    |                 |Emergency lock
 R        |88    |                 |No config (see [configuration approval](#important))
 R        |99    |                 |Debug message
+
+Error codes (R03)
+-----------------
+
+Value |Description
+------|------------
+0     |No error
+1     |Emergency stop
+2     |Timeout
+3     |Stall detected
+14    |Invalid command
+15    |No config 
 
 Axis states (R05)
 -----------------
@@ -310,6 +322,15 @@ ID   | Name
 75   | MOVEMENT_INVERT_2_ENDPOINTS_X
 76   | MOVEMENT_INVERT_2_ENDPOINTS_Y
 77   | MOVEMENT_INVERT_2_ENDPOINTS_Z
+81   | MOVEMENT_MOTOR_CURRENT_X
+82   | MOVEMENT_MOTOR_CURRENT_Y
+83   | MOVEMENT_MOTOR_CURRENT_Z
+85   | MOVEMENT_STALL_SENSITIVITY_X
+86   | MOVEMENT_STALL_SENSITIVITY_Y
+87   | MOVEMENT_STALL_SENSITIVITY_Z
+91   | MOVEMENT_MICROSTEPS_X
+92   | MOVEMENT_MICROSTEPS_Y
+93   | MOVEMENT_MICROSTEPS_Z
 101  | ENCODER_ENABLED_X
 102  | ENCODER_ENABLED_Y
 103  | ENCODER_ENABLED_Z
