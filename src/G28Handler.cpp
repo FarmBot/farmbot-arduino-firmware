@@ -39,9 +39,9 @@ int G28Handler::execute(Command *command)
   currentPoint[0] = sourcePoint[0] / (float)stepsPerMm[0];
   currentPoint[1] = sourcePoint[1] / (float)stepsPerMm[1];
 
-  StepperControl::getInstance()->moveToCoords(currentPoint[0], currentPoint[1], 0, 0, 0, 0, false, false, false);
-  StepperControl::getInstance()->moveToCoords(currentPoint[0], 0, 0, 0, 0, 0, false, false, false);
-  StepperControl::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, false, false);
+  Movement::getInstance()->moveToCoords(currentPoint[0], currentPoint[1], 0, 0, 0, 0, false, false, false);
+  Movement::getInstance()->moveToCoords(currentPoint[0], 0, 0, 0, 0, 0, false, false, false);
+  Movement::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, false, false);
 
   if (LOGGING)
   {

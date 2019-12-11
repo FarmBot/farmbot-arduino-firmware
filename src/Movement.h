@@ -1,33 +1,32 @@
 /*
- * StepperControl.h
+ * Movement.h
  *
  *  Created on: 16 maj 2014
  *      Author: MattLech
  */
 
-#ifndef STEPPERCONTROL_H_
-#define STEPPERCONTROL_H_
+#ifndef MOVEMENT_H_
+#define MOVEMENT_H_
 
 #include "Arduino.h"
 #include "CurrentState.h"
 #include "ParameterList.h"
-#include "StepperControlAxis.h"
-#include "StepperControlEncoder.h"
+#include "MovementAxis.h"
+#include "MovementEncoder.h"
 #include "pins.h"
 #include "Config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "Command.h"
 
-
-class StepperControl
+class Movement
 {
 public:
-  StepperControl();
-  StepperControl(StepperControl const &);
-  void operator=(StepperControl const &);
+  Movement();
+  Movement(Movement const &);
+  void operator=(Movement const &);
 
-  static StepperControl *getInstance();
+  static Movement *getInstance();
   //int moveAbsolute(	long xDest, long yDest,long zDest,
   //			unsigned int maxStepsPerSecond,
   //			unsigned int maxAccelerationStepsPerSecond);
@@ -37,6 +36,12 @@ public:
 
   void handleMovementInterrupt();
   void checkEncoders();
+
+  #if defined(FARMDUINO_EXP_V20)
+    void initTMC2130();
+    void loadSettingsTMC2130();
+  #endif
+
 
   int calibrateAxis(int axis);
   //void initInterrupt();
@@ -64,13 +69,14 @@ public:
   unsigned long i4 = 0;
 
 private:
-  StepperControlAxis axisX;
-  StepperControlAxis axisY;
-  StepperControlAxis axisZ;
 
-  StepperControlEncoder encoderX;
-  StepperControlEncoder encoderY;
-  StepperControlEncoder encoderZ;
+  MovementAxis axisX;
+  MovementAxis axisY;
+  MovementAxis axisZ;
+
+  MovementEncoder encoderX;
+  MovementEncoder encoderY;
+  MovementEncoder encoderZ;
 
   //char serialBuffer[100];
   String serialBuffer;
@@ -82,8 +88,8 @@ private:
   void serialBufferSendNext();
   void serialBufferEmpty();
 
-  void checkAxisVsEncoder(StepperControlAxis *axis, StepperControlEncoder *encoder, float *missedSteps, long *lastPosition, long *encoderLastPosition, int *encoderUseForPos, float *encoderStepDecay, bool *encoderEnabled);
-  void checkAxisSubStatus(StepperControlAxis *axis, int *axisSubStatus);
+  void checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, float *missedSteps, long *lastPosition, long *encoderLastPosition, int *encoderUseForPos, float *encoderStepDecay, bool *encoderEnabled);
+  void checkAxisSubStatus(MovementAxis *axis, int *axisSubStatus);
 
   bool axisActive[3] = { false, false, false };
   int axisSubStep[3] = { 0, 0, 0 };
@@ -97,8 +103,8 @@ private:
 
   void storeEndStops();
   void reportEndStops();
-  void reportStatus(StepperControlAxis *axis, int axisSubStatus);
-  void reportCalib(StepperControlAxis *axis, int calibStatus);
+  void reportStatus(MovementAxis *axis, int axisSubStatus);
+  void reportCalib(MovementAxis *axis, int calibStatus);
 
   unsigned long getMaxLength(unsigned long lengths[3]);
   bool endStopsReached();
@@ -138,6 +144,7 @@ private:
   int axisServiced = 0;
   int axisServicedNext = 0;
   bool motorMotorsEnabled = false;
+
 };
 
-#endif /* STEPPERCONTROL_H_ */
+#endif /* MOVEMENT_H_ */

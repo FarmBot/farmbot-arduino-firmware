@@ -439,6 +439,36 @@ void ParameterList::loadDefaultValue(int id)
     paramValues[id] = MOVEMENT_STOP_AT_MAX_Z_DEFAULT;
     break;
 
+  case MOVEMENT_MOTOR_CURRENT_X:
+    paramValues[id] = MOVEMENT_MOTOR_CURRENT_X_DEFAULT;
+    break;
+  case MOVEMENT_MOTOR_CURRENT_Y:
+    paramValues[id] = MOVEMENT_MOTOR_CURRENT_Y_DEFAULT;
+    break;
+  case MOVEMENT_MOTOR_CURRENT_Z:
+    paramValues[id] = MOVEMENT_MOTOR_CURRENT_Z_DEFAULT;
+    break;
+
+  case MOVEMENT_STALL_SENSITIVITY_X:
+    paramValues[id] = MOVEMENT_STALL_SENSITIVITY_X_DEFAULT;
+    break;
+  case MOVEMENT_STALL_SENSITIVITY_Y:
+    paramValues[id] = MOVEMENT_STALL_SENSITIVITY_Y_DEFAULT;
+    break;
+  case MOVEMENT_STALL_SENSITIVITY_Z:
+    paramValues[id] = MOVEMENT_STALL_SENSITIVITY_Z_DEFAULT;
+    break;
+
+  case MOVEMENT_MICROSTEPS_X:
+    paramValues[id] = MOVEMENT_MICROSTEPS_X_DEFAULT;
+    break;
+  case MOVEMENT_MICROSTEPS_Y:
+    paramValues[id] = MOVEMENT_MICROSTEPS_Y_DEFAULT;
+    break;
+  case MOVEMENT_MICROSTEPS_Z:
+    paramValues[id] = MOVEMENT_MICROSTEPS_Z_DEFAULT;
+    break;
+
   case ENCODER_ENABLED_X:
     paramValues[id] = ENCODER_ENABLED_X_DEFAULT;
     break;
@@ -620,6 +650,15 @@ bool ParameterList::validParam(int id)
   case MOVEMENT_MAX_SPD_X:
   case MOVEMENT_MAX_SPD_Y:
   case MOVEMENT_MAX_SPD_Z:
+  case MOVEMENT_MOTOR_CURRENT_X:
+  case MOVEMENT_MOTOR_CURRENT_Y:
+  case MOVEMENT_MOTOR_CURRENT_Z:
+  case MOVEMENT_STALL_SENSITIVITY_X:
+  case MOVEMENT_STALL_SENSITIVITY_Y:
+  case MOVEMENT_STALL_SENSITIVITY_Z:
+  case MOVEMENT_MICROSTEPS_X:
+  case MOVEMENT_MICROSTEPS_Y:
+  case MOVEMENT_MICROSTEPS_Z:
   case ENCODER_ENABLED_X:
   case ENCODER_ENABLED_Y:
   case ENCODER_ENABLED_Z:
