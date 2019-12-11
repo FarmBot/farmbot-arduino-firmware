@@ -314,5 +314,8 @@
     <ClInclude Include="TMC2130\TMC2130Stepper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="__vm\.farmbot-arduino-firmware.vsarduino.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
