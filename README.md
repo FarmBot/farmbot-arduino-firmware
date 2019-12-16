@@ -202,6 +202,7 @@ R        |84    |X Y Z            |Report encoder position scaled
 R        |85    |X Y Z            |Report encoder position raw
 R        |87    |                 |Emergency lock
 R        |88    |                 |No config (see [configuration approval](#important))
+R        |89    |X Y Z            |Report axis motor load (TMC2130)
 R        |99    |                 |Debug message
 
 Error codes (R03)
