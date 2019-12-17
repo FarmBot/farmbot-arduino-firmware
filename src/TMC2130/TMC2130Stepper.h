@@ -12,7 +12,8 @@ class TMC2130Stepper {
 		TMC2130Stepper(uint16_t pinCS);
 		TMC2130Stepper(uint16_t pinEN, uint16_t pinDIR, uint16_t pinStep, uint16_t pinCS);
 		TMC2130Stepper(uint16_t pinEN, uint16_t pinDIR, uint16_t pinStep, uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
-		void begin();
+    void changeChipSelect(uint16_t pinCS);
+    void begin();
 		void checkStatus();
 		void rms_current(uint16_t mA, float multiplier=0.5, float RS=0.11);
 		uint16_t rms_current();

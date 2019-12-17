@@ -602,21 +602,21 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
     if (axisX.isStepDone())
     {
       axisX.checkMovement();
-      //checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsEncoderLastPosition[0], &motorConsEncoderUseForPos[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
+      checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsEncoderLastPosition[0], &motorConsEncoderUseForPos[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
       axisX.resetStepDone();
     }
 
     if (axisY.isStepDone())
     {
       axisY.checkMovement();
-      //checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &motorConsEncoderLastPosition[1], &motorConsEncoderUseForPos[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
+      checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &motorConsEncoderLastPosition[1], &motorConsEncoderUseForPos[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
       axisY.resetStepDone();
     }
 
     if (axisZ.isStepDone())
     {
       axisZ.checkMovement();
-      //checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &motorConsEncoderLastPosition[2], &motorConsEncoderUseForPos[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
+      checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &motorConsEncoderLastPosition[2], &motorConsEncoderUseForPos[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
       axisZ.resetStepDone();
     }
 
@@ -1443,43 +1443,43 @@ void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, 
   }
 #endif
 
-#if defined(FARMDUINO_EXP_V20)
-
-  /**/
-  /*
-  Serial.print("R99");
-  Serial.print(" XXX ");
-  Serial.print(" cur pos ");
-  Serial.print(axis->currentPosition());
-  Serial.print(" last pos ");
-  Serial.print(*lastPosition);
-  */
-
-  if (*encoderEnabled) {
-    if (axis->stallDetected()) {
-      // In case of stall detection, count this as a missed step
-      (*missedSteps)++;
-      axis->setCurrentPosition(*lastPosition);
-    }
-    else {
-      // Decrease amount of missed steps if there are no missed step
-      if (*missedSteps > 0)
-      {
-        (*missedSteps) -= (*encoderStepDecay);
-      }
-      *lastPosition = axis->currentPosition();
-      encoder->setPosition(axis->currentPosition());
-    }
-  }
-
-  //Serial.print(" new last pos ");
-  //Serial.print(*lastPosition);
-  //Serial.print(" en pos ");
-  //Serial.print(encoder->currentPosition());
-  //Serial.print("\r\n");
-
-
-#endif
+//#if defined(FARMDUINO_EXP_V20)
+//
+//  /**/
+//  /*
+//  Serial.print("R99");
+//  Serial.print(" XXX ");
+//  Serial.print(" cur pos ");
+//  Serial.print(axis->currentPosition());
+//  Serial.print(" last pos ");
+//  Serial.print(*lastPosition);
+//  */
+//
+//  if (*encoderEnabled) {
+//    if (axis->stallDetected()) {
+//      // In case of stall detection, count this as a missed step
+//      (*missedSteps)++;
+//      axis->setCurrentPosition(*lastPosition);
+//    }
+//    else {
+//      // Decrease amount of missed steps if there are no missed step
+//      if (*missedSteps > 0)
+//      {
+//        (*missedSteps) -= (*encoderStepDecay);
+//      }
+//      *lastPosition = axis->currentPosition();
+//      encoder->setPosition(axis->currentPosition());
+//    }
+//  }
+//
+//  //Serial.print(" new last pos ");
+//  //Serial.print(*lastPosition);
+//  //Serial.print(" en pos ");
+//  //Serial.print(encoder->currentPosition());
+//  //Serial.print("\r\n");
+//
+//
+//#endif
 
 }
 

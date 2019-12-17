@@ -11,6 +11,8 @@ TMC2130Stepper::TMC2130Stepper(uint16_t pinEN, uint16_t pinDIR, uint16_t pinStep
 	_pinDIR(pinDIR)
 	{}
 
+
+
 void TMC2130Stepper::begin() {
 #ifdef TMC2130DEBUG
 	Serial.println("TMC2130 Stepper driver library");
