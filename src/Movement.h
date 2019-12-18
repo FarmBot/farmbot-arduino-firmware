@@ -126,7 +126,7 @@ private:
   bool endStInv2[3] = { false, false, false };
   bool endStEnbl[3] = { false, false, false };
   long timeOut[3] = { 0, 0, 0 };
-  long stepsPerMm[3] = { 1.0, 1.0, 1.0 };
+  double stepsPerMm[3] = { 1.0, 1.0, 1.0 };
 
   float motorConsMissedSteps[3] = { 0, 0, 0 };
   int motorConsMissedStepsPrev[3] = { 0, 0, 0 };

@@ -996,7 +996,7 @@ int Movement::calibrateAxis(int axis)
   float *encoderStepDecay;
   bool *encoderEnabled;
   int *axisStatus;
-  long *axisStepsPerMm;
+  double *axisStepsPerMm;
 
   // Prepare for movement
 

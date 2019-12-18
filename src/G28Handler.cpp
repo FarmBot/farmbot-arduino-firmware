@@ -31,7 +31,7 @@ int G28Handler::execute(Command *command)
   stepsPerMm[0] = ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_X);
   stepsPerMm[1] = ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_Y);
 
-  long sourcePoint[2] = {0.0, 0.0};
+  double sourcePoint[2] = {0.0, 0.0};
   sourcePoint[0] = CurrentState::getInstance()->getX();
   sourcePoint[1] = CurrentState::getInstance()->getY();
 
