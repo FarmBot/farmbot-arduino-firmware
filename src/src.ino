@@ -15,8 +15,8 @@ void setup()
 
 #if defined(FARMDUINO_EXP_V20)
   loadTMC2130drivers();
-  //loadTMC2130parameters();
   startupTmc();
+  loadTMC2130parameters();
 #endif
 
   loadMovementSetting();

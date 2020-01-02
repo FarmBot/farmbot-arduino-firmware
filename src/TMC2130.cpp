@@ -7,68 +7,36 @@
 
 #include "TMC2130.h"
 
-/*
-static TMC2130Stepper *TMC2130X;
-static TMC2130Stepper *TMC2130Y;
-static TMC2130Stepper *TMC2130Z;
-static TMC2130Stepper *TMC2130E;
-*/
-
-/*
-static TMC2130Stepper TMC2130_X = TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, X_CHIP_SELECT);
-static TMC2130Stepper TMC2130_Y = TMC2130Stepper(Y_ENABLE_PIN, Y_DIR_PIN, Y_STEP_PIN, Y_CHIP_SELECT);
-static TMC2130Stepper TMC2130_Z = TMC2130Stepper(Z_ENABLE_PIN, Z_DIR_PIN, Z_STEP_PIN, Z_CHIP_SELECT);
-static TMC2130Stepper TMC2130_E = TMC2130Stepper(E_ENABLE_PIN, E_DIR_PIN, E_STEP_PIN, E_CHIP_SELECT);
-*/
-
-/*
-static TMC2130Holder *instance;
-
-TMC2130Holder *TMC2130Holder::getInstance()
+void loadTMC2130ParametersMotor(Trinamic_TMC2130 *myStepper, int microsteps, int current, int sensitivity)
 {
-  if (!instance)
+  // stepper
+  //myStepper->init();
+  myStepper->set_mres(microsteps); // ({1,2,4,8,16,32,64,128,256}) number of microsteps
+  //myStepper->set_IHOLD_IRUN(31, 31, 5); // ([0-31],[0-31],[0-5]) sets all currents to maximum
+  myStepper->set_I_scale_analog(1); // ({0,1}) 0: I_REF internal, 1: sets I_REF to AIN
+
   {
-    instance = new TMC2130Holder();
-  };
-  return instance;
-};
+    uint16_t mA = current;
+    float multiplier = 0.5;
+    float RS = 0.11;
+    uint8_t CS = 32.0*1.41421*mA / 1000.0*(RS + 0.02) / 0.325 - 1;
+    // If Current Scale is too low, turn on high sensitivity R_sense and calculate again
+    if (CS < 16) {
+      CS = 32.0*1.41421*mA / 1000.0*(RS + 0.02) / 0.180 - 1;
+    }
+    myStepper->set_IHOLD_IRUN(CS, CS, 16);
+  }
 
-TMC2130Holder::TMC2130Holder()
-{
+  myStepper->set_toff(3); // ([0-15]) 0: driver disable, 1: use only with TBL>2, 2-15: off time setting during slow decay phase
+  myStepper->set_tbl(1); // ([0-3]) set comparator blank time to 16, 24, 36 or 54 clocks, 1 or 2 is recommended
+
+  myStepper->set_diag1_stall(1);
+  myStepper->set_diag1_onstate(1);
+  myStepper->set_TCOOLTHRS(0xFFFFF);
+  myStepper->set_THIGH(0);
+  myStepper->set_semin(5);
+  myStepper->set_semax(2);
+  myStepper->set_sedn(0b01);
+  myStepper->set_sgt(sensitivity);
+
 }
-
-void TMC2130Holder::loadDrivers()
-{
-  TMC2130Stepper TMC2130X = new TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, X_CHIP_SELECT);
-  TMC2130Stepper TMC2130Y = new TMC2130Stepper(Y_ENABLE_PIN, Y_DIR_PIN, Y_STEP_PIN, Y_CHIP_SELECT);
-  TMC2130Stepper TMC2130Z = new TMC2130Stepper(Z_ENABLE_PIN, Z_DIR_PIN, Z_STEP_PIN, Z_CHIP_SELECT);
-  TMC2130Stepper TMC2130E = new TMC2130Stepper(E_ENABLE_PIN, E_DIR_PIN, E_STEP_PIN, E_CHIP_SELECT);
-
-  tmcTMC2130X = &TMC2130X;
-  tmcTMC2130Y = &TMC2130Y;
-  tmcTMC2130Z = &TMC2130Z;
-  tmcTMC2130E = &TMC2130E;
-
-}
-
-
-TMC2130Stepper* TMC2130Holder::TMC2130X()
-{
-  return tmcTMC2130X;
-}
-
-TMC2130Stepper* TMC2130Holder::TMC2130Y()
-{
-  return tmcTMC2130Y;
-}
-
-TMC2130Stepper* TMC2130Holder::TMC2130Z()
-{
-  return tmcTMC2130Z;
-}
-c
-TMC2130Stepper* TMC2130Holder::TMC2130E()
-{
-  return tmcTMC213EZ;
-}
-*/

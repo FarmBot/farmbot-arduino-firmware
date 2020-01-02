@@ -234,7 +234,6 @@ void Movement::loadSettings()
     motorCurrentX = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_X);
     stallSensitivityX = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_X);
     microStepsX = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_X);
-    //axisX.loadSettingsTMC2130(motorCurrent, stallSensitivity, microSteps);
 
     motorCurrentY = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Y);
     stallSensitivityY = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Y);
@@ -245,6 +244,8 @@ void Movement::loadSettings()
     stallSensitivityZ = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Z);
     microStepsX = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Z);
     //axisZ.loadSettingsTMC2130(motorCurrent, stallSensitivity, microSteps);
+
+    /**/
 
     motorCurrentX = 600;
     stallSensitivityX = 0;
@@ -258,70 +259,9 @@ void Movement::loadSettings()
     stallSensitivityZ = 0;
     microStepsZ = 0;
 
-    TMC2130X->push();
-    TMC2130X->toff(3);
-    TMC2130X->tbl(1);
-    TMC2130X->hysteresis_start(4);
-    TMC2130X->hysteresis_end(-2);
-    TMC2130X->rms_current(motorCurrentX); // mA
-    TMC2130X->microsteps(microStepsX);
-    TMC2130X->diag1_stall(1);
-    TMC2130X->diag1_active_high(1);
-    TMC2130X->coolstep_min_speed(0xFFFFF); // 20bit max
-    TMC2130X->THIGH(0);
-    TMC2130X->semin(5);
-    TMC2130X->semax(2);
-    TMC2130X->sedn(0b01);
-    TMC2130X->sg_stall_value(stallSensitivityX);
-
-    TMC2130Y->push();
-    TMC2130Y->toff(3);
-    TMC2130Y->tbl(1);
-    TMC2130Y->hysteresis_start(4);
-    TMC2130Y->hysteresis_end(-2);
-    TMC2130Y->rms_current(motorCurrentY); // mA
-    TMC2130Y->microsteps(microStepsY);
-    TMC2130Y->diag1_stall(1);
-    TMC2130Y->diag1_active_high(1);
-    TMC2130Y->coolstep_min_speed(0xFFFFF); // 20bit max
-    TMC2130Y->THIGH(0);
-    TMC2130Y->semin(5);
-    TMC2130Y->semax(2);
-    TMC2130Y->sedn(0b01);
-    TMC2130Y->sg_stall_value(stallSensitivityY);
-
-    TMC2130Z->push();
-    TMC2130Z->toff(3);
-    TMC2130Z->tbl(1);
-    TMC2130Z->hysteresis_start(4);
-    TMC2130Z->hysteresis_end(-2);
-    TMC2130Z->rms_current(motorCurrentZ); // mA
-    TMC2130Z->microsteps(microStepsZ);
-    TMC2130Z->diag1_stall(1);
-    TMC2130Z->diag1_active_high(1);
-    TMC2130Z->coolstep_min_speed(0xFFFFF); // 20bit max
-    TMC2130Z->THIGH(0);
-    TMC2130Z->semin(5);
-    TMC2130Z->semax(2);
-    TMC2130Z->sedn(0b01);
-    TMC2130Z->sg_stall_value(stallSensitivityZ);
-
-    TMC2130E->push();
-    TMC2130E->toff(3);
-    TMC2130E->tbl(1);
-    TMC2130E->hysteresis_start(4);
-    TMC2130E->hysteresis_end(-2);
-    TMC2130E->rms_current(600); // mA
-    TMC2130E->microsteps(0);
-    TMC2130E->diag1_stall(1);
-    TMC2130E->diag1_active_high(1);
-    TMC2130E->coolstep_min_speed(0xFFFFF); // 20bit max
-    TMC2130E->THIGH(0);
-    TMC2130E->semin(5);
-    TMC2130E->semax(2);
-    TMC2130E->sedn(0b01);
-    TMC2130E->sg_stall_value(0);
-
+    axisX.loadSettingsTMC2130(motorCurrentX, stallSensitivityX, microStepsX);
+    axisY.loadSettingsTMC2130(motorCurrentX, stallSensitivityX, microStepsX);
+    axisZ.loadSettingsTMC2130(motorCurrentX, stallSensitivityX, microStepsX);
   }
 
 #endif
