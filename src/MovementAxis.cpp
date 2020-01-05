@@ -92,16 +92,16 @@ void MovementAxis::initTMC2130()
 
   if (channelLabel == 'X')
   {
-    TMC2130A = TMC2130X;
-    TMC2130B = TMC2130E;
+    TMC2130A = &TMC2130X;
+    TMC2130B = &TMC2130E;
   }
   if (channelLabel == 'Y')
   {
-    TMC2130A = TMC2130Y;
+    TMC2130A = &TMC2130Y;
   }
   if (channelLabel == 'Z')
   {
-    TMC2130A = TMC2130Z;
+    TMC2130A = &TMC2130Z;
   }
 
   setMotorStepWrite = &MovementAxis::setMotorStepWriteTMC2130;
@@ -120,11 +120,11 @@ void MovementAxis::initTMC2130()
 void MovementAxis::loadSettingsTMC2130(int motorCurrent, int  stallSensitivity, int microSteps)
 {
 
-  loadTMC2130ParametersMotor(TMC2130A, microSteps, stallSensitivity, microSteps);
+  loadTMC2130ParametersMotor(TMC2130A, microSteps, motorCurrent, stallSensitivity);
 
   if (channelLabel == 'X')
   {
-    loadTMC2130ParametersMotor(TMC2130B, microSteps, stallSensitivity, microSteps);
+    loadTMC2130ParametersMotor(TMC2130B, microSteps, motorCurrent, stallSensitivity);
   }
 }
 

@@ -61,6 +61,7 @@ void setup();
   void startServo();
   void startInterrupt();
   void homeOnBoot();
+  void setupTestForDebug();
   void runTestForDebug();
   void checkEncoders();
   void checkPinGuard();

@@ -302,39 +302,6 @@ void checkEncoders()
   
 }
 
-void runTestForDebug()
-{
-
-  //Serial.print("* ");
-  //Serial.print(intrCounter / 1000);
-  //Serial.print("\r\n");
-  //delay(500);
-
-  //Serial.print("z");
-  //blinkLed();
-  //delay(500);
-
-  //Serial.print(millis());
-  //Serial.print("X");
-  //Serial.print("\r\n");
-  //delay(1000);
-
-  //blinkLed();
-
-  //Movement::getInstance()->test();
-  //delayMicroseconds(100);
-
-  //digitalWrite(LED_PIN, true);
-  //delay(250);
-  //digitalWrite(LED_PIN, false);
-  //delay(250);
-
-  //if (debugInterrupt)
-  //{
-  //  Movement::getInstance()->handleMovementInterrupt();
-  //}
-}
-
 // Set pins input output
 #ifdef RAMPS_V14
 void setPinInputOutput()
@@ -516,23 +483,51 @@ void setPinInputOutput()
 #if defined(FARMDUINO_EXP_V20)
 void setPinInputOutput()
 {
+  Serial.print(COMM_REPORT_COMMENT);
+  Serial.print(SPACE);
+  Serial.print("Set input/output farmbot express");
+  Serial.print(CRLF);
 
   // Motor step, direction and pin is set up using the control chip library
   // This board also does not use encoders
 
   pinMode(X_ENABLE_PIN, OUTPUT);
+  pinMode(X_DIR_PIN, OUTPUT);
+  pinMode(X_STEP_PIN, OUTPUT);
   pinMode(X_MIN_PIN, INPUT_PULLUP);
   pinMode(X_MAX_PIN, INPUT_PULLUP);
 
-  pinMode(E_ENABLE_PIN, OUTPUT);
+  digitalWrite(X_ENABLE_PIN, HIGH);
+  digitalWrite(X_DIR_PIN, LOW);
+  digitalWrite(X_STEP_PIN, LOW);
 
   pinMode(Y_ENABLE_PIN, OUTPUT);
+  pinMode(Y_DIR_PIN, OUTPUT);
+  pinMode(Y_STEP_PIN, OUTPUT);
   pinMode(Y_MIN_PIN, INPUT_PULLUP);
   pinMode(Y_MAX_PIN, INPUT_PULLUP);
 
+  digitalWrite(Y_ENABLE_PIN, HIGH);
+  digitalWrite(Y_DIR_PIN, LOW);
+  digitalWrite(Y_STEP_PIN, LOW);
+
   pinMode(Z_ENABLE_PIN, OUTPUT);
+  pinMode(Z_DIR_PIN, OUTPUT);
+  pinMode(Z_STEP_PIN, OUTPUT);
   pinMode(Z_MIN_PIN, INPUT_PULLUP);
   pinMode(Z_MAX_PIN, INPUT_PULLUP);
+
+  digitalWrite(Z_ENABLE_PIN, HIGH);
+  digitalWrite(Z_DIR_PIN, LOW);
+  digitalWrite(Z_STEP_PIN, LOW);
+
+  pinMode(E_ENABLE_PIN, OUTPUT);
+  pinMode(E_DIR_PIN, OUTPUT);
+  pinMode(E_STEP_PIN, OUTPUT);
+
+  digitalWrite(E_ENABLE_PIN, HIGH);
+  digitalWrite(E_DIR_PIN, LOW);
+  digitalWrite(E_STEP_PIN, LOW);
 
   pinMode(AUX_STEP_PIN, OUTPUT);
   pinMode(AUX_DIR_PIN, OUTPUT);
@@ -561,10 +556,6 @@ void setPinInputOutput()
   pinMode(SERVO_2_PIN, OUTPUT);
   pinMode(SERVO_3_PIN, OUTPUT);
 
-  Serial.print(COMM_REPORT_COMMENT);
-  Serial.print(SPACE);
-  Serial.print("Set input/output");
-  Serial.print(CRLF);
 }
 #endif
 
@@ -710,10 +701,10 @@ void startServo()
 #if defined(FARMDUINO_EXP_V20)
 
 /**/
-//Trinamic_TMC2130 controllerTMC2130_X(X_CHIP_SELECT);
-//Trinamic_TMC2130 controllerTMC2130_Y(Y_CHIP_SELECT);
-//Trinamic_TMC2130 controllerTMC2130_Z(Z_CHIP_SELECT);
-//Trinamic_TMC2130 controllerTMC2130_E(E_CHIP_SELECT);
+//static Trinamic_TMC2130 controllerTMC2130_X(X_CHIP_SELECT);
+//static Trinamic_TMC2130 controllerTMC2130_Y(Y_CHIP_SELECT);
+//static Trinamic_TMC2130 controllerTMC2130_Z(Z_CHIP_SELECT);
+//static Trinamic_TMC2130 controllerTMC2130_E(E_CHIP_SELECT);
 
 void loadTMC2130drivers()
 {
@@ -728,19 +719,25 @@ void loadTMC2130drivers()
   //TMC2130Z.init();
   //TMC2130E.init();
 
-  Trinamic_TMC2130 controllerTMC2130_X = Trinamic_TMC2130(X_CHIP_SELECT);
-  Trinamic_TMC2130 controllerTMC2130_Y = Trinamic_TMC2130(Y_CHIP_SELECT);
-  Trinamic_TMC2130 controllerTMC2130_Z = Trinamic_TMC2130(Z_CHIP_SELECT);
-  Trinamic_TMC2130 controllerTMC2130_E = Trinamic_TMC2130(E_CHIP_SELECT);
+  //Trinamic_TMC2130 controllerTMC2130_X = Trinamic_TMC2130(X_CHIP_SELECT);
+  //Trinamic_TMC2130 controllerTMC2130_Y = Trinamic_TMC2130(Y_CHIP_SELECT);
+  //Trinamic_TMC2130 controllerTMC2130_Z = Trinamic_TMC2130(Z_CHIP_SELECT);
+  //Trinamic_TMC2130 controllerTMC2130_E = Trinamic_TMC2130(E_CHIP_SELECT);
 
-  TMC2130X = &controllerTMC2130_X;
-  TMC2130Y = &controllerTMC2130_Y;
-  TMC2130Z = &controllerTMC2130_Z;
-  TMC2130E = &controllerTMC2130_E;
+  //TMC2130X = &controllerTMC2130_X;
+  //TMC2130Y = &controllerTMC2130_Y;
+  //TMC2130Z = &controllerTMC2130_Z;
+  //TMC2130E = &controllerTMC2130_E;
 }
 
 void loadTMC2130parameters()
 {
+  // Initialize the drivers
+  Serial.print(COMM_REPORT_COMMENT);
+  Serial.print(SPACE);
+  Serial.print("Load TMC2130 parameters");
+  Serial.print(CRLF);
+
   Movement::getInstance()->loadSettingsTMC2130();
 }
 
@@ -754,6 +751,15 @@ void startupTmc()
   Serial.print(CRLF);
 
   Movement::getInstance()->initTMC2130();
+
+  //loadTMC2130parameters();
+
+  //TMC2130X.init();
+  //TMC2130Y.init();
+  //TMC2130Z.init();
+  //TMC2130E.init();
+
+  //Movement::getInstance()->initTMC2130();
 }
 #endif
 
@@ -761,4 +767,114 @@ void initLastAction()
 {
   // Initialize the inactivity check
   lastAction = millis();
+}
+
+void setupTestForDebug()
+{
+
+  Serial.print(COMM_REPORT_COMMENT);
+  Serial.print(SPACE);
+  Serial.print("Setup Debug");
+  Serial.print(CRLF);
+
+  digitalWrite(X_ENABLE_PIN, LOW);
+  digitalWrite(Y_ENABLE_PIN, LOW);
+  digitalWrite(Z_ENABLE_PIN, LOW);
+  digitalWrite(E_ENABLE_PIN, LOW);
+
+  //digitalWrite(X_STEP_PIN, false);
+  //digitalWrite(Y_STEP_PIN, false);
+  //digitalWrite(Z_STEP_PIN, false);
+  //digitalWrite(E_STEP_PIN, false);
+
+  //digitalWrite(X_DIR_PIN, false);
+  //digitalWrite(Y_DIR_PIN, false);
+  //digitalWrite(Z_DIR_PIN, false);
+  //digitalWrite(E_DIR_PIN, false);
+
+  //digitalWrite(X_ENABLE_PIN, true);
+  //digitalWrite(Y_ENABLE_PIN, true);
+  //digitalWrite(Z_ENABLE_PIN, true);
+  //digitalWrite(E_ENABLE_PIN, true);
+
+  //loadTMC2130ParametersMotor(&controllerTMC2130_X, 8, 500, 0);  delay(100);
+  //loadTMC2130ParametersMotor(&controllerTMC2130_Y, 8, 500, 0);  delay(100);
+  //loadTMC2130ParametersMotor(&controllerTMC2130_Z, 8, 500, 0);  delay(100);
+  //loadTMC2130ParametersMotor(&controllerTMC2130_E, 8, 500, 0);  delay(100);
+
+
+}
+
+
+bool left = false;
+
+void runTestForDebug()
+{
+
+  currentTime = millis();
+  if (currentTime < lastAction)
+  {
+
+    // If the device timer overruns, reset the idle counter
+    lastAction = millis();
+  }
+  else
+  {
+
+    if ((currentTime - lastAction) > reportingPeriod)
+    {
+      blinkLed();
+      Serial.print(".");
+      lastAction = currentTime;
+
+      if (left) {
+        left = false;
+        digitalWrite(X_DIR_PIN, LOW);
+        digitalWrite(Y_DIR_PIN, LOW);
+        digitalWrite(Z_DIR_PIN, LOW);
+        digitalWrite(E_DIR_PIN, LOW);
+      }
+      else {
+        left = true;
+        digitalWrite(X_DIR_PIN, HIGH);
+        digitalWrite(Y_DIR_PIN, HIGH);
+        digitalWrite(Z_DIR_PIN, HIGH);
+        digitalWrite(E_DIR_PIN, HIGH);
+      }
+
+    }
+  }
+
+  // make a step
+  digitalWrite(X_STEP_PIN, HIGH);
+  digitalWrite(Y_STEP_PIN, HIGH);
+  digitalWrite(Z_STEP_PIN, HIGH);
+  digitalWrite(E_STEP_PIN, HIGH);
+  delayMicroseconds(100);
+
+  digitalWrite(X_STEP_PIN, LOW);
+  digitalWrite(Y_STEP_PIN, LOW);
+  digitalWrite(Z_STEP_PIN, LOW);
+  digitalWrite(E_STEP_PIN, LOW);
+  delayMicroseconds(100);
+  
+
+
+  /*
+  digitalWrite(X_STEP_PIN, HIGH);
+  digitalWrite(E_STEP_PIN, HIGH);
+  delayMicroseconds(100);
+
+  digitalWrite(X_STEP_PIN, LOW);
+  digitalWrite(E_STEP_PIN, LOW);
+  delayMicroseconds(100);
+  */
+
+  //Movement::getInstance()->test();
+  //delayMicroseconds(100);
+
+  //if (debugInterrupt)
+  //{
+  //  Movement::getInstance()->handleMovementInterrupt();
+  //}
 }

@@ -13,15 +13,16 @@
 #include "Trinamic\Trinamic_TMC2130.h"
 #include "pins.h"
 
-static Trinamic_TMC2130 *TMC2130X;
-static Trinamic_TMC2130 *TMC2130Y;
-static Trinamic_TMC2130 *TMC2130Z;
-static Trinamic_TMC2130 *TMC2130E;
+//static Trinamic_TMC2130 *TMC2130X;
+//static Trinamic_TMC2130 *TMC2130Y;
+//static Trinamic_TMC2130 *TMC2130Z;
+//static Trinamic_TMC2130 *TMC2130E;
 
-//Trinamic_TMC2130 TMC2130X(X_CHIP_SELECT);
-//Trinamic_TMC2130 TMC2130Y(Y_CHIP_SELECT);
-//Trinamic_TMC2130 TMC2130Z(Z_CHIP_SELECT);
-//Trinamic_TMC2130 TMC2130E(E_CHIP_SELECT);
+
+static Trinamic_TMC2130 TMC2130X(X_CHIP_SELECT);
+static Trinamic_TMC2130 TMC2130Y(Y_CHIP_SELECT);
+static Trinamic_TMC2130 TMC2130Z(Z_CHIP_SELECT);
+static Trinamic_TMC2130 TMC2130E(E_CHIP_SELECT);
 
 void loadTMC2130ParametersMotor(Trinamic_TMC2130 *myStepper, int microsteps, int current, int sensitivity);
 

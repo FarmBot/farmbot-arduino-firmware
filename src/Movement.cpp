@@ -247,17 +247,17 @@ void Movement::loadSettings()
 
     /**/
 
-    motorCurrentX = 600;
+    motorCurrentX = 300;
     stallSensitivityX = 0;
-    microStepsX = 0;
+    microStepsX = 8;
 
-    motorCurrentY = 600;
+    motorCurrentY = 300;
     stallSensitivityY = 0;
-    microStepsY = 0;
+    microStepsY = 8;
 
-    motorCurrentZ = 600;
+    motorCurrentZ = 300;
     stallSensitivityZ = 0;
-    microStepsZ = 0;
+    microStepsZ = 8;
 
     axisX.loadSettingsTMC2130(motorCurrentX, stallSensitivityX, microStepsX);
     axisY.loadSettingsTMC2130(motorCurrentX, stallSensitivityX, microStepsX);
