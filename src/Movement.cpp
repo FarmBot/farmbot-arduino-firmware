@@ -238,26 +238,18 @@ void Movement::loadSettings()
     motorCurrentY = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Y);
     stallSensitivityY = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Y);
     microStepsY = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Y);
-    //axisY.loadSettingsTMC2130(motorCurrent, stallSensitivity, microSteps);
 
     motorCurrentZ = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Z);
     stallSensitivityZ = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Z);
     microStepsX = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Z);
-    //axisZ.loadSettingsTMC2130(motorCurrent, stallSensitivity, microSteps);
 
-    /**/
-
-    motorCurrentX = 300;
-    stallSensitivityX = 0;
-    microStepsX = 8;
-
-    motorCurrentY = 300;
+    stallSensitivityX = 0;    
     stallSensitivityY = 0;
-    microStepsY = 8;
-
-    motorCurrentZ = 300;
     stallSensitivityZ = 0;
-    microStepsZ = 8;
+
+    if (microStepsX <= 0) { microStepsX = 1; }
+    if (microStepsY <= 0) { microStepsY = 1; }
+    if (microStepsZ <= 0) { microStepsZ = 1; }
 
     axisX.loadSettingsTMC2130(motorCurrentX, stallSensitivityX, microStepsX);
     axisY.loadSettingsTMC2130(motorCurrentX, stallSensitivityX, microStepsX);

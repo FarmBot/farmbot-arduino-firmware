@@ -858,6 +858,27 @@ void runTestForDebug()
   digitalWrite(E_STEP_PIN, LOW);
   delayMicroseconds(100);
   
+  /*
+  TMC2130X.read_STAT();
+  if (TMC2130X.isStandstill() || TMC2130X.isStallguard()) {
+    Serial.print("X");
+  }
+
+  TMC2130Y.read_STAT();
+  if (TMC2130Y.isStandstill() || TMC2130Y.isStallguard()) {
+    Serial.print("Y");
+  }
+
+  TMC2130Z.read_STAT();
+  if (TMC2130Z.isStandstill() || TMC2130Z.isStallguard()) {
+    Serial.print("Z");
+  }
+
+  TMC2130E.read_STAT();
+  if (TMC2130E.isStandstill() || TMC2130E.isStallguard()) {
+    Serial.print("E");
+  }
+  */
 
 
   /*

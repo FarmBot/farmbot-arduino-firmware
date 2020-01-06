@@ -36,12 +36,12 @@ void setup()
   initLastAction();
   homeOnBoot();
 
-  setupTestForDebug();
+  //setupTestForDebug();
 
-  //Serial.print(COMM_REPORT_COMMENT);
-  //Serial.print(SPACE);
-  //Serial.print("ARDUINO STARTUP COMPLETE");
-  //Serial.print(CRLF);
+  Serial.print(COMM_REPORT_COMMENT);
+  Serial.print(SPACE);
+  Serial.print("ARDUINO STARTUP COMPLETE");
+  Serial.print(CRLF);
 
   /*
   Serial.begin(115200); //init serial port and set baudrate
@@ -133,12 +133,12 @@ void setup()
   //loadTMC2130ParametersMotor(&TMC2130E, 8, 200, 0);
 
 
-  Serial.println("Enable pins");
+  //Serial.println("Enable pins");
 
-  digitalWrite(X_ENABLE_PIN, LOW); // enable driver
-  digitalWrite(Y_ENABLE_PIN, LOW); // enable driver
-  digitalWrite(Z_ENABLE_PIN, LOW); // enable driver
-  digitalWrite(E_ENABLE_PIN, LOW); // enable driver
+  //digitalWrite(X_ENABLE_PIN, LOW); // enable driver
+  //digitalWrite(Y_ENABLE_PIN, LOW); // enable driver
+  //digitalWrite(Z_ENABLE_PIN, LOW); // enable driver
+  //digitalWrite(E_ENABLE_PIN, LOW); // enable driver
 
   //Serial.println("Enable");
 
@@ -147,52 +147,13 @@ void setup()
 // the loop function runs over and over again until power down or reset
 void loop()
 {
-  runTestForDebug();
+  //runTestForDebug();
 
-  //checkEncoders();
-  //checkPinGuard();
-  //checkSerialInputs();
-  //checkEmergencyStop();
-  //checkParamsChanged();
-  //periodicChecksAndReport();
+  checkEncoders();
+  checkPinGuard();
+  checkSerialInputs();
+  checkEmergencyStop();
+  checkParamsChanged();
+  periodicChecksAndReport();
 
-  //static uint32_t last_time = 0;
-  //uint32_t ms = millis();
-
-  /*
-  // make a step
-  digitalWrite(X_STEP_PIN, HIGH);
-  digitalWrite(Y_STEP_PIN, HIGH);
-  digitalWrite(Z_STEP_PIN, HIGH);
-  digitalWrite(E_STEP_PIN, HIGH);
-  delayMicroseconds(100);
-
-  digitalWrite(X_STEP_PIN, LOW);
-  digitalWrite(Y_STEP_PIN, LOW);
-  digitalWrite(Z_STEP_PIN, LOW);
-  digitalWrite(E_STEP_PIN, LOW);
-  delayMicroseconds(100);
-  */
-
-  /*
-  TMC2130X.read_STAT();
-  if (TMC2130X.isStandstill() || TMC2130X.isStallguard()) {
-    Serial.print("X");
-  }
-
-  TMC2130Y.read_STAT();
-  if (TMC2130Y.isStandstill() || TMC2130Y.isStallguard()) {
-    Serial.print("Y");
-  }
-
-  TMC2130Z.read_STAT();
-  if (TMC2130Z.isStandstill() || TMC2130Z.isStallguard()) {
-    Serial.print("Z");
-  }
-
-  TMC2130E.read_STAT();
-  if (TMC2130E.isStandstill() || TMC2130E.isStallguard()) {
-    Serial.print("E");
-  }
-  */
 }
