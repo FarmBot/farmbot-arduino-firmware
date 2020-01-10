@@ -4,6 +4,7 @@
  Author:	Tim Evers
 */
 
+#include "TMC2130_Basics.h"
 #include "farmbot_arduino_controller.h"
 //#include <SPI.h>
 //#include "Trinamic\Trinamic_TMC2130.h"

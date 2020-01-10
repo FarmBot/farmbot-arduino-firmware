@@ -84,7 +84,9 @@ void MovementAxis::test()
 
 unsigned int MovementAxis::getLostSteps()
 {
-  return TMC2130A->get_MSCNT();
+  /**/
+  //return TMC2130A->get_MSCNT();
+  return false;
 }
 
 void MovementAxis::initTMC2130()
@@ -129,7 +131,12 @@ void MovementAxis::loadSettingsTMC2130(int motorCurrent, int  stallSensitivity, 
 }
 
 bool MovementAxis::stallDetected() {
-  return (TMC2130A->isStandstill() || TMC2130A->isStallguard());
+/**/
+  bool stallGuard = TMC2130A->getStatus() & TMC_SPISTATUS_STALLGUARD_MASK ? true : false;
+  bool standStill = TMC2130A->getStatus() & TMC_SPISTATUS_STANDSTILL_MASK ? true : false;
+
+  //return (TMC2130A->isStandstill() || TMC2130A->isStallguard());
+  return stallGuard || standStill;
 }
 
 uint16_t MovementAxis::getLoad() {

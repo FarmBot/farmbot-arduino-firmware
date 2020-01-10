@@ -141,6 +141,9 @@
     <ClCompile Include="Trinamic\Trinamic_TMC2130.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TMC2130_Basics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GCodeProcessor.h">
@@ -288,6 +291,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Trinamic\Trinamic_TMC2130_registers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMC2130_Basics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMC2130_Basics_Reg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

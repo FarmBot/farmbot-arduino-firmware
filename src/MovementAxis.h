@@ -29,8 +29,10 @@ public:
   MovementAxis();
 
 #if defined(FARMDUINO_EXP_V20)
-  Trinamic_TMC2130 *TMC2130A;
-  Trinamic_TMC2130 *TMC2130B;
+  //Trinamic_TMC2130 *TMC2130A;
+  //Trinamic_TMC2130 *TMC2130B;
+  TMC2130_Basics *TMC2130A;
+  TMC2130_Basics *TMC2130B;
 #endif
 
   void loadPinNumbers(int step, int dir, int enable, int min, int max, int step2, int dir2, int enable2);
