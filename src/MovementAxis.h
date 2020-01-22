@@ -16,10 +16,11 @@
 #include "Config.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "Board.h"
 
-#if defined(FARMDUINO_EXP_V20)
+//#if defined(FARMDUINO_EXP_V20)
   #include "TMC2130.h"
-#endif
+//#endif
 
 
 class MovementAxis
@@ -29,8 +30,8 @@ public:
   MovementAxis();
 
 #if defined(FARMDUINO_EXP_V20)
-  TMC2130Stepper *TMC2130A;
-  TMC2130Stepper *TMC2130B;
+  TMC2130_Basics *TMC2130A;
+  TMC2130_Basics *TMC2130B;
 #endif
 
   void loadPinNumbers(int step, int dir, int enable, int min, int max, int step2, int dir2, int enable2);

@@ -7,15 +7,6 @@
 
 #include "MovementAxis.h"
 
-/*
-#if defined(FARMDUINO_EXP_V20)
-  static TMC2130Stepper TMC2130X = TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, X_CHIP_SELECT);
-  static TMC2130Stepper TMC2130Y = TMC2130Stepper(Y_ENABLE_PIN, Y_DIR_PIN, Y_STEP_PIN, Y_CHIP_SELECT);
-  static TMC2130Stepper TMC2130Z = TMC2130Stepper(Z_ENABLE_PIN, Z_DIR_PIN, Z_STEP_PIN, Z_CHIP_SELECT);
-  static TMC2130Stepper TMC2130E = TMC2130Stepper(E_ENABLE_PIN, E_DIR_PIN, E_STEP_PIN, E_CHIP_SELECT);
-#endif
-*/
-
 MovementAxis::MovementAxis()
 {
   lastCalcLog = 0;
@@ -84,7 +75,9 @@ void MovementAxis::test()
 
 unsigned int MovementAxis::getLostSteps()
 {
-  return TMC2130A->LOST_STEPS();
+  /**/
+  //return TMC2130A->get_MSCNT();
+  return 0;
 }
 
 void MovementAxis::initTMC2130()
@@ -92,25 +85,16 @@ void MovementAxis::initTMC2130()
 
   if (channelLabel == 'X')
   {
-    TMC2130A = TMC2130X;
-    TMC2130B = TMC2130E;
+    TMC2130A = &TMC2130X;
+    TMC2130B = &TMC2130E;
   }
   if (channelLabel == 'Y')
   {
-    TMC2130A = TMC2130Y;
+    TMC2130A = &TMC2130Y;
   }
   if (channelLabel == 'Z')
   {
-    TMC2130A = TMC2130Z;
-  }
-
-  //TMC2130A->begin();                      // Initiate pins and registeries
-  //TMC2130A->shaft_dir(0);                 // Set direction
-
-  if (channelLabel == 'X')
-  {
-    //TMC2130B->begin();                    // Initiate pins and registeries
-    //TMC2130B->shaft_dir(0);               // Set direction
+    TMC2130A = &TMC2130Z;
   }
 
   setMotorStepWrite = &MovementAxis::setMotorStepWriteTMC2130;
@@ -118,113 +102,32 @@ void MovementAxis::initTMC2130()
   resetMotorStepWrite = &MovementAxis::resetMotorStepWriteTMC2130;
   resetMotorStepWrite2 = &MovementAxis::resetMotorStepWriteTMC2130_2;
 
+  TMC2130A->init();
+
+  if (channelLabel == 'X')
+  {
+    TMC2130B->init();
+  }
 }
 
 void MovementAxis::loadSettingsTMC2130(int motorCurrent, int  stallSensitivity, int microSteps)
 {
-  /**/
-  /*
-  Serial.println("loading settings");
-
-  Serial.print("channelLabel");
-  Serial.print(" = ");
-  Serial.print(channelLabel);
-  Serial.println(" ");
-
-  Serial.print("motorCurrent");
-  Serial.print(" = ");
-  Serial.print(motorCurrent);
-  Serial.println(" ");
-
-  Serial.print("microSteps");
-  Serial.print(" = ");
-  Serial.print(microSteps);
-  Serial.println(" ");
-
-  Serial.print("stallSensitivity");
-  Serial.print(" = ");
-  Serial.print(stallSensitivity);
-  Serial.println(" = ");
-  */
-
-/*
-  TMC2130A->rms_current(motorCurrent);    // Set the required current in mA  
-  TMC2130A->microsteps(microSteps);       // Minimum of micro steps needed
-  TMC2130A->chm(true);                    // Set the chopper mode to classic const. off time
-  TMC2130A->diag1_stall(1);               // Activate stall diagnostics
-  TMC2130A->sgt(stallSensitivity);        // Set stall detection sensitivity. most -64 to +64 least
-  //TMC2130A->shaft_dir(0);                 // Set direction
-*/
-
-  /*
-  TMC2130A->push();
-  TMC2130A->toff(3);
-  TMC2130A->tbl(1);
-  TMC2130A->hysteresis_start(4);
-  TMC2130A->hysteresis_end(-2);
-  TMC2130A->rms_current(motorCurrent); // mA
-  TMC2130A->microsteps(microSteps);
-  TMC2130A->diag1_stall(1);
-  TMC2130A->diag1_active_high(1);
-  TMC2130A->coolstep_min_speed(0xFFFFF); // 20bit max
-  TMC2130A->THIGH(0);
-  TMC2130A->semin(5);
-  TMC2130A->semax(2);
-  TMC2130A->sedn(0b01);
-  TMC2130A->sg_stall_value(stallSensitivity);
-
-
-  /*
-  TMC2130A->push();
-  TMC2130A->toff(3);
-  TMC2130A->tbl(1);
-  TMC2130A->hysteresis_start(4);
-  TMC2130A->hysteresis_end(-2);
-  TMC2130A->rms_current(600); // mA
-  TMC2130A->microsteps(16);
-  TMC2130A->diag1_stall(1);
-  TMC2130A->diag1_active_high(1);
-  TMC2130A->coolstep_min_speed(0xFFFFF); // 20bit max
-  TMC2130A->THIGH(0);
-  TMC2130A->semin(5);
-  TMC2130A->semax(2);
-  TMC2130A->sedn(0b01);
-  TMC2130A->sg_stall_value(0);
-  */
+  loadTMC2130ParametersMotor(TMC2130A, microSteps, motorCurrent, stallSensitivity);
 
   if (channelLabel == 'X')
   {
-    /*
-    TMC2130B->rms_current(motorCurrent);   // Set the required current in mA  
-    TMC2130B->microsteps(microSteps);      // Minimum of micro steps needed
-    TMC2130B->chm(true);                   // Set the chopper mode to classic const. off time
-    TMC2130B->diag1_stall(1);              // Activate stall diagnostics
-    TMC2130B->sgt(stallSensitivity);       // Set stall detection sensitivity. most -64 to +64 least
-    TMC2130B->shaft_dir(0);                // Set direction
-    */
-
-    /*
-    TMC2130B->push();
-    TMC2130B->toff(3);
-    TMC2130B->tbl(1);
-    TMC2130B->hysteresis_start(4);
-    TMC2130B->hysteresis_end(-2);
-    TMC2130B->rms_current(motorCurrent); // mA
-    TMC2130B->microsteps(microSteps);
-    TMC2130B->diag1_stall(1);
-    TMC2130B->diag1_active_high(1);
-    TMC2130B->coolstep_min_speed(0xFFFFF); // 20bit max
-    TMC2130B->THIGH(0);
-    TMC2130B->semin(5);
-    TMC2130B->semax(2);
-    TMC2130B->sedn(0b01);
-    TMC2130B->sg_stall_value(stallSensitivity);
-    */
+    loadTMC2130ParametersMotor(TMC2130B, microSteps, motorCurrent, stallSensitivity);
   }
 }
 
 bool MovementAxis::stallDetected() {
-  return TMC2130A->stallguard();
+/**/
+  bool stallGuard = TMC2130A->getStatus() & FB_TMC_SPISTATUS_STALLGUARD_MASK ? true : false;
+  bool standStill = TMC2130A->getStatus() & FB_TMC_SPISTATUS_STANDSTILL_MASK ? true : false;
+
+  //return (TMC2130A->isStandstill() || TMC2130A->isStallguard());
+  //return stallGuard || standStill;
+  return false;
 }
 
 uint16_t MovementAxis::getLoad() {

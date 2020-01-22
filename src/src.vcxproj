@@ -126,13 +126,7 @@
     <ClCompile Include="StatusList.cpp" />
     <ClCompile Include="TimerOne.cpp" />
     <ClCompile Include="TMC2130.cpp" />
-    <ClCompile Include="TMC2130\TMC2130Stepper.cpp" />
-    <ClCompile Include="TMC2130\TMC2130Stepper_CHOPCONF.cpp" />
-    <ClCompile Include="TMC2130\TMC2130Stepper_COOLCONF.cpp" />
-    <ClCompile Include="TMC2130\TMC2130Stepper_DRV_STATUS.cpp" />
-    <ClCompile Include="TMC2130\TMC2130Stepper_GCONF.cpp" />
-    <ClCompile Include="TMC2130\TMC2130Stepper_IHOLD_IRUN.cpp" />
-    <ClCompile Include="TMC2130\TMC2130Stepper_PWMCONF.cpp" />
+    <ClCompile Include="TMC2130_Basics.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h" />
@@ -180,10 +174,8 @@
     <ClInclude Include="StatusList.h" />
     <ClInclude Include="TimerOne.h" />
     <ClInclude Include="TMC2130.h" />
-    <ClInclude Include="TMC2130\TMC2130Stepper.h" />
-    <ClInclude Include="TMC2130\TMC2130Stepper_MACROS.h" />
-    <ClInclude Include="TMC2130\TMC2130Stepper_REGDEFS.h" />
-    <ClInclude Include="TMC2130\TMC2130Stepper_UTILITY.h" />
+    <ClInclude Include="TMC2130_Basics.h" />
+    <ClInclude Include="TMC2130_Basics_Reg.h" />
     <ClInclude Include="__vm\.farmbot-arduino-controller.vsarduino.h" />
     <ClInclude Include="__vm\.farmbot-arduino-firmware.vsarduino.h" />
     <ClInclude Include="__vm\.src.vsarduino.h" />

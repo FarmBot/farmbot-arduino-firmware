@@ -9,70 +9,20 @@
 #ifndef TMC2130_H_
 #define TMC2130_H_
 
-//#include <TMC2130Stepper.h>
-//#include <TMC2130Stepper_REGDEFS.h>
-
-#include "TMC2130/TMC2130Stepper.h"
-#include "TMC2130/TMC2130Stepper_REGDEFS.h"
+#include <SPI.h>
 
 #include "pins.h"
-
-static TMC2130Stepper *TMC2130X;
-static TMC2130Stepper *TMC2130Y;
-static TMC2130Stepper *TMC2130Z;
-static TMC2130Stepper *TMC2130E;
-
-
-//static TMC2130Stepper TMC2130_X = TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, X_CHIP_SELECT);
-//static TMC2130Stepper TMC2130_Y = TMC2130Stepper(Y_ENABLE_PIN, Y_DIR_PIN, Y_STEP_PIN, Y_CHIP_SELECT);
-//static TMC2130Stepper TMC2130_Z = TMC2130Stepper(Z_ENABLE_PIN, Z_DIR_PIN, Z_STEP_PIN, Z_CHIP_SELECT);
-//static TMC2130Stepper TMC2130_E = TMC2130Stepper(E_ENABLE_PIN, E_DIR_PIN, E_STEP_PIN, E_CHIP_SELECT);
-
-//static TMC2130Stepper TMC2130X = TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, X_CHIP_SELECT);
-//static TMC2130Stepper TMC2130Y = TMC2130Stepper(Y_ENABLE_PIN, Y_DIR_PIN, Y_STEP_PIN, Y_CHIP_SELECT);
-//static TMC2130Stepper TMC2130Z = TMC2130Stepper(Z_ENABLE_PIN, Z_DIR_PIN, Z_STEP_PIN, Z_CHIP_SELECT);
-//static TMC2130Stepper TMC2130E = TMC2130Stepper(E_ENABLE_PIN, E_DIR_PIN, E_STEP_PIN, E_CHIP_SELECT);
-
-#endif /* TMC2130_H_ */
-
-
-
-/*
+#include "Board.h"
 
 #if defined(FARMDUINO_EXP_V20)
-  #include <TMC2130Stepper.h>
-  //#include "TMC2130Stepper.h"
+  #include "TMC2130_Basics.h"
+
+  static TMC2130_Basics TMC2130X(X_CHIP_SELECT);
+  static TMC2130_Basics TMC2130Y(Y_CHIP_SELECT);
+  static TMC2130_Basics TMC2130Z(Z_CHIP_SELECT);
+  static TMC2130_Basics TMC2130E(E_CHIP_SELECT);
+
+  void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current, int sensitivity);
 #endif
 
-#ifndef TMC2130Holder_H_
-#define TMC2130Holder_H_
-
-class TMC2130Holder
-{
-public:
-  TMC2130Holder();
-  TMC2130Holder(TMC2130Holder const &);
-  void operator=(TMC2130Holder const &);
-
-  static TMC2130Holder *getInstance();
-
-  void loadDrivers();
-
-  TMC2130Stepper* TMC2130X();
-  TMC2130Stepper* TMC2130Y();
-  TMC2130Stepper* TMC2130Z();
-  TMC2130Stepper* TMC2130E();
-
-private:
-
-  static TMC2130Stepper *tmcTMC2130X;
-  static TMC2130Stepper *tmcTMC2130Y;
-  static TMC2130Stepper *tmcTMC2130Z;
-  static TMC2130Stepper *tmcTMC2130E;
-
-};
-
-#endif 
-*/
-
-/* TMC2130Holder_H_ */
+#endif /* TMC2130_H_ */

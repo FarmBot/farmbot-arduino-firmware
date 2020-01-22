@@ -5,70 +5,108 @@
  *      Author: Tim Evers
  */
 
+
 #include "TMC2130.h"
 
-/*
-static TMC2130Stepper *TMC2130X;
-static TMC2130Stepper *TMC2130Y;
-static TMC2130Stepper *TMC2130Z;
-static TMC2130Stepper *TMC2130E;
-*/
+#if defined(FARMDUINO_EXP_V20)
 
-/*
-static TMC2130Stepper TMC2130_X = TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, X_CHIP_SELECT);
-static TMC2130Stepper TMC2130_Y = TMC2130Stepper(Y_ENABLE_PIN, Y_DIR_PIN, Y_STEP_PIN, Y_CHIP_SELECT);
-static TMC2130Stepper TMC2130_Z = TMC2130Stepper(Z_ENABLE_PIN, Z_DIR_PIN, Z_STEP_PIN, Z_CHIP_SELECT);
-static TMC2130Stepper TMC2130_E = TMC2130Stepper(E_ENABLE_PIN, E_DIR_PIN, E_STEP_PIN, E_CHIP_SELECT);
-*/
-
-/*
-static TMC2130Holder *instance;
-
-TMC2130Holder *TMC2130Holder::getInstance()
+//void loadTMC2130ParametersMotor(Trinamic_TMC2130 *myStepper, int microsteps, int current, int sensitivity)
+void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current, int sensitivity)
 {
-  if (!instance)
+
+  //Serial.print("==>");
+  //Serial.print(" ");
+  //Serial.print(microsteps);
+  //Serial.print(" ");
+  //Serial.print(current);
+  //Serial.print(" ");
+  //Serial.print(sensitivity);
+  //Serial.println(" ");
+
+  /**/
+  tb->init();
+
+  uint8_t data = 0;
+
+  switch (microsteps) {
+  case 1:
+    data = 8;
+    break;
+  case 2:
+    data = 7;
+    break;
+  case 4:
+    data = 6;
+    break;
+  case 8:
+    data = 5;
+    break;
+  case 16:
+    data = 4;
+    break;
+  case 32:
+    data = 3;
+    break;
+  case 64:
+    data = 2;
+    break;
+  case 128:
+    data = 1;
+    break;
+  }
+  tb->alter_REG(FB_TMC_REG_CHOPCONF, uint32_t(data) << FB_TMC_CHOPCONF_MRES, FB_TMC_CHOPCONF_MASKS[FB_TMC_CHOPCONF_MRES] << FB_TMC_CHOPCONF_MRES);
+
+  tb->set_GCONF(FB_TMC_GCONF_I_SCALE_ANALOG, 1);
+
+  // load drive current for motors
   {
-    instance = new TMC2130Holder();
-  };
-  return instance;
-};
+    uint16_t mA = current;
+    float multiplier = 0.5;
+    float RS = 0.11;
+    uint8_t CS = 32.0*1.41421*mA / 1000.0*(RS + 0.02) / 0.325 - 1;
+    // If Current Scale is too low, turn on high sensitivity R_sense and calculate again
+    if (CS < 16) {
+      CS = 32.0*1.41421*mA / 1000.0*(RS + 0.02) / 0.180 - 1;
+    }
+    {
+      uint32_t data;
+      // adding ihold
+      data = ((uint32_t(CS)&FB_TMC_IHOLD_MASK) << FB_TMC_IHOLD);
+      // adding irun
+      data |= ((uint32_t(CS)&FB_TMC_IRUN_MASK) << FB_TMC_IRUN);
+      // adding iholddelay
+      data |= ((uint32_t(16)&FB_TMC_IHOLDDELAY_MASK) << FB_TMC_IHOLDDELAY);
 
-TMC2130Holder::TMC2130Holder()
-{
+      // writing data
+      tb->write_REG(FB_TMC_REG_IHOLD_IRUN, data);
+    }
+  }
+
+  tb->set_CHOPCONF(FB_TMC_CHOPCONF_TOFF, 3);
+  tb->set_CHOPCONF(FB_TMC_CHOPCONF_TBL, 1);
+  tb->set_GCONF(FB_TMC_GCONF_DIAG1_STALL, 1);
+  tb->set_GCONF(FB_TMC_GCONF_DIAG1_ONSTATE, 1);
+  {
+    uint32_t data;
+
+    data = 0xFFFFF & FB_TMC_TCOOLTHRS_MASK;
+
+    tb->write_REG(FB_TMC_REG_TCOOLTHRS, data);
+  }
+  {
+    uint32_t data;
+
+    data = 0 & FB_TMC_THIGH_MASK;
+
+    tb->write_REG(FB_TMC_REG_THIGH, data);
+  }
+  {
+    tb->set_CHOPCONF(FB_TMC_COOLCONF_SEMIN, 5);
+  }
+  tb->set_CHOPCONF(FB_TMC_COOLCONF_SEMAX, 2);
+  tb->set_CHOPCONF(FB_TMC_COOLCONF_SEMAX, 0b01);
+  tb->set_CHOPCONF(FB_TMC_COOLCONF_SGT, sensitivity);
+
 }
 
-void TMC2130Holder::loadDrivers()
-{
-  TMC2130Stepper TMC2130X = new TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, X_CHIP_SELECT);
-  TMC2130Stepper TMC2130Y = new TMC2130Stepper(Y_ENABLE_PIN, Y_DIR_PIN, Y_STEP_PIN, Y_CHIP_SELECT);
-  TMC2130Stepper TMC2130Z = new TMC2130Stepper(Z_ENABLE_PIN, Z_DIR_PIN, Z_STEP_PIN, Z_CHIP_SELECT);
-  TMC2130Stepper TMC2130E = new TMC2130Stepper(E_ENABLE_PIN, E_DIR_PIN, E_STEP_PIN, E_CHIP_SELECT);
-
-  tmcTMC2130X = &TMC2130X;
-  tmcTMC2130Y = &TMC2130Y;
-  tmcTMC2130Z = &TMC2130Z;
-  tmcTMC2130E = &TMC2130E;
-
-}
-
-
-TMC2130Stepper* TMC2130Holder::TMC2130X()
-{
-  return tmcTMC2130X;
-}
-
-TMC2130Stepper* TMC2130Holder::TMC2130Y()
-{
-  return tmcTMC2130Y;
-}
-
-TMC2130Stepper* TMC2130Holder::TMC2130Z()
-{
-  return tmcTMC2130Z;
-}
-c
-TMC2130Stepper* TMC2130Holder::TMC2130E()
-{
-  return tmcTMC213EZ;
-}
-*/
+#endif

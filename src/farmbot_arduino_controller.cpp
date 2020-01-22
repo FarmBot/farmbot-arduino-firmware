@@ -302,39 +302,6 @@ void checkEncoders()
   
 }
 
-void runTestForDebug()
-{
-
-  //Serial.print("* ");
-  //Serial.print(intrCounter / 1000);
-  //Serial.print("\r\n");
-  //delay(500);
-
-  //Serial.print("z");
-  //blinkLed();
-  //delay(500);
-
-  //Serial.print(millis());
-  //Serial.print("X");
-  //Serial.print("\r\n");
-  //delay(1000);
-
-  //blinkLed();
-
-  //Movement::getInstance()->test();
-  //delayMicroseconds(100);
-
-  //digitalWrite(LED_PIN, true);
-  //delay(250);
-  //digitalWrite(LED_PIN, false);
-  //delay(250);
-
-  //if (debugInterrupt)
-  //{
-  //  Movement::getInstance()->handleMovementInterrupt();
-  //}
-}
-
 // Set pins input output
 #ifdef RAMPS_V14
 void setPinInputOutput()
@@ -516,23 +483,51 @@ void setPinInputOutput()
 #if defined(FARMDUINO_EXP_V20)
 void setPinInputOutput()
 {
+  Serial.print(COMM_REPORT_COMMENT);
+  Serial.print(SPACE);
+  Serial.print("Set input/output farmbot express");
+  Serial.print(CRLF);
 
   // Motor step, direction and pin is set up using the control chip library
   // This board also does not use encoders
 
   pinMode(X_ENABLE_PIN, OUTPUT);
+  pinMode(X_DIR_PIN, OUTPUT);
+  pinMode(X_STEP_PIN, OUTPUT);
   pinMode(X_MIN_PIN, INPUT_PULLUP);
   pinMode(X_MAX_PIN, INPUT_PULLUP);
 
-  pinMode(E_ENABLE_PIN, OUTPUT);
+  digitalWrite(X_ENABLE_PIN, HIGH);
+  digitalWrite(X_DIR_PIN, LOW);
+  digitalWrite(X_STEP_PIN, LOW);
 
   pinMode(Y_ENABLE_PIN, OUTPUT);
+  pinMode(Y_DIR_PIN, OUTPUT);
+  pinMode(Y_STEP_PIN, OUTPUT);
   pinMode(Y_MIN_PIN, INPUT_PULLUP);
   pinMode(Y_MAX_PIN, INPUT_PULLUP);
 
+  digitalWrite(Y_ENABLE_PIN, HIGH);
+  digitalWrite(Y_DIR_PIN, LOW);
+  digitalWrite(Y_STEP_PIN, LOW);
+
   pinMode(Z_ENABLE_PIN, OUTPUT);
+  pinMode(Z_DIR_PIN, OUTPUT);
+  pinMode(Z_STEP_PIN, OUTPUT);
   pinMode(Z_MIN_PIN, INPUT_PULLUP);
   pinMode(Z_MAX_PIN, INPUT_PULLUP);
+
+  digitalWrite(Z_ENABLE_PIN, HIGH);
+  digitalWrite(Z_DIR_PIN, LOW);
+  digitalWrite(Z_STEP_PIN, LOW);
+
+  pinMode(E_ENABLE_PIN, OUTPUT);
+  pinMode(E_DIR_PIN, OUTPUT);
+  pinMode(E_STEP_PIN, OUTPUT);
+
+  digitalWrite(E_ENABLE_PIN, HIGH);
+  digitalWrite(E_DIR_PIN, LOW);
+  digitalWrite(E_STEP_PIN, LOW);
 
   pinMode(AUX_STEP_PIN, OUTPUT);
   pinMode(AUX_DIR_PIN, OUTPUT);
@@ -561,10 +556,6 @@ void setPinInputOutput()
   pinMode(SERVO_2_PIN, OUTPUT);
   pinMode(SERVO_3_PIN, OUTPUT);
 
-  Serial.print(COMM_REPORT_COMMENT);
-  Serial.print(SPACE);
-  Serial.print("Set input/output");
-  Serial.print(CRLF);
 }
 #endif
 
@@ -580,46 +571,6 @@ void startSerial()
   Serial.print("Serial connection started");
   Serial.print(CRLF);
 }
-
-
-#if defined(FARMDUINO_EXP_V20)
-void startupTmc()
-{
-
-  // Initialize the drivers
-  Serial.print(COMM_REPORT_COMMENT);
-  Serial.print(SPACE);
-  Serial.print("Init TMC2130 drivers");
-  Serial.print(CRLF);
-
-  TMC2130X->begin();
-  TMC2130Y->begin();
-  TMC2130Z->begin();
-  TMC2130E->begin();
-
-  // Load the motor parameters
-  Serial.print(COMM_REPORT_COMMENT);
-  Serial.print(SPACE);
-  Serial.print("Load TMC2130 parameters");
-  Serial.print(CRLF);
-
-  Movement::getInstance()->initTMC2130();
-  Movement::getInstance()->loadSettingsTMC2130();
-
-
-  /*
-  Serial.print(COMM_REPORT_COMMENT);
-  Serial.print(SPACE);
-  Serial.print("Set shaft dir");
-  Serial.print(CRLF);
-
-  TMC2130X->shaft_dir(0);
-  TMC2130Y->shaft_dir(0);
-  TMC2130Z->shaft_dir(0);
-  TMC2130E->shaft_dir(0);
-  */
-}
-#endif
 
 void startInterrupt()
 {
@@ -748,6 +699,13 @@ void startServo()
 }
 
 #if defined(FARMDUINO_EXP_V20)
+
+/**/
+//static Trinamic_TMC2130 controllerTMC2130_X(X_CHIP_SELECT);
+//static Trinamic_TMC2130 controllerTMC2130_Y(Y_CHIP_SELECT);
+//static Trinamic_TMC2130 controllerTMC2130_Z(Z_CHIP_SELECT);
+//static Trinamic_TMC2130 controllerTMC2130_E(E_CHIP_SELECT);
+
 void loadTMC2130drivers()
 {
   Serial.print(COMM_REPORT_COMMENT);
@@ -755,150 +713,53 @@ void loadTMC2130drivers()
   Serial.print("Load TMC drivers");
   Serial.print(CRLF);
 
-  TMC2130Stepper controllerTMC2130_X = TMC2130Stepper(X_CHIP_SELECT);
-  TMC2130Stepper controllerTMC2130_Y = TMC2130Stepper(Y_CHIP_SELECT);
-  TMC2130Stepper controllerTMC2130_Z = TMC2130Stepper(Z_CHIP_SELECT);
-  TMC2130Stepper controllerTMC2130_E = TMC2130Stepper(E_CHIP_SELECT);
+  /**/
+  //TMC2130X.init();
+  //TMC2130Y.init();
+  //TMC2130Z.init();
+  //TMC2130E.init();
 
-  TMC2130X = &controllerTMC2130_X;
-  TMC2130Y = &controllerTMC2130_Y;
-  TMC2130Z = &controllerTMC2130_Z;
-  TMC2130E = &controllerTMC2130_E;
+  //Trinamic_TMC2130 controllerTMC2130_X = Trinamic_TMC2130(X_CHIP_SELECT);
+  //Trinamic_TMC2130 controllerTMC2130_Y = Trinamic_TMC2130(Y_CHIP_SELECT);
+  //Trinamic_TMC2130 controllerTMC2130_Z = Trinamic_TMC2130(Z_CHIP_SELECT);
+  //Trinamic_TMC2130 controllerTMC2130_E = Trinamic_TMC2130(E_CHIP_SELECT);
 
-  int motorCurrentX;
-  int stallSensitivityX;
-  int microStepsX;
-
-  int motorCurrentY;
-  int stallSensitivityY;
-  int microStepsY;
-
-  int motorCurrentZ;
-  int stallSensitivityZ;
-  int microStepsZ;
-
-  motorCurrentX = 600;
-  stallSensitivityX = 0;
-  microStepsX = 0;
-
-  motorCurrentY = 600;
-  stallSensitivityY = 0;
-  microStepsY = 0;
-
-  motorCurrentZ = 600;
-  stallSensitivityZ = 0;
-  microStepsZ = 0;
-
-  motorCurrentX = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_X);
-  stallSensitivityX = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_X);
-  microStepsX = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_X);
-
-  motorCurrentY = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Y);
-  stallSensitivityY = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Y);
-  microStepsY = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Y);
-
-  motorCurrentZ = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Z);
-  stallSensitivityZ = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Z);
-  microStepsX = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Z);
-
-/*
-  TMC2130X->push();
-  TMC2130X->toff(3);
-  TMC2130X->tbl(1);
-  TMC2130X->hysteresis_start(4);
-  TMC2130X->hysteresis_end(-2);
-  TMC2130X->rms_current(motorCurrentX); // mA
-  TMC2130X->microsteps(microStepsX);
-  TMC2130X->diag1_stall(1);
-  TMC2130X->diag1_active_high(1);
-  TMC2130X->coolstep_min_speed(0xFFFFF); // 20bit max
-  TMC2130X->THIGH(0);
-  TMC2130X->semin(5);
-  TMC2130X->semax(2);
-  TMC2130X->sedn(0b01);
-  TMC2130X->sg_stall_value(stallSensitivityX);
-
-  TMC2130Y->push();
-  TMC2130Y->toff(3);
-  TMC2130Y->tbl(1);
-  TMC2130Y->hysteresis_start(4);
-  TMC2130Y->hysteresis_end(-2);
-  TMC2130Y->rms_current(motorCurrentY); // mA
-  TMC2130Y->microsteps(microStepsY);
-  TMC2130Y->diag1_stall(1);
-  TMC2130Y->diag1_active_high(1);
-  TMC2130Y->coolstep_min_speed(0xFFFFF); // 20bit max
-  TMC2130Y->THIGH(0);
-  TMC2130Y->semin(5);
-  TMC2130Y->semax(2);
-  TMC2130Y->sedn(0b01);
-  TMC2130Y->sg_stall_value(stallSensitivityY);
-
-  TMC2130Z->push();
-  TMC2130Z->toff(3);
-  TMC2130Z->tbl(1);
-  TMC2130Z->hysteresis_start(4);
-  TMC2130Z->hysteresis_end(-2);
-  TMC2130Z->rms_current(motorCurrentZ); // mA
-  TMC2130Z->microsteps(microStepsZ);
-  TMC2130Z->diag1_stall(1);
-  TMC2130Z->diag1_active_high(1);
-  TMC2130Z->coolstep_min_speed(0xFFFFF); // 20bit max
-  TMC2130Z->THIGH(0);
-  TMC2130Z->semin(5);
-  TMC2130Z->semax(2);
-  TMC2130Z->sedn(0b01);
-  TMC2130Z->sg_stall_value(stallSensitivityZ);
-
-  TMC2130E->push();
-  TMC2130E->toff(3);
-  TMC2130E->tbl(1);
-  TMC2130E->hysteresis_start(4);
-  TMC2130E->hysteresis_end(-2);
-  TMC2130E->rms_current(motorCurrentX); // mA
-  TMC2130E->microsteps(microStepsX);
-  TMC2130E->diag1_stall(1);
-  TMC2130E->diag1_active_high(1);
-  TMC2130E->coolstep_min_speed(0xFFFFF); // 20bit max
-  TMC2130E->THIGH(0);
-  TMC2130E->semin(5);
-  TMC2130E->semax(2);
-  TMC2130E->sedn(0b01);
-  TMC2130E->sg_stall_value(stallSensitivityX);
-*/
-
-
-  TMC2130X->rms_current(motorCurrentX);   // Set the required current in mA  
-  TMC2130X->microsteps(microStepsX);      // Minimum of micro steps needed
-  TMC2130X->chm(true);                    // Set the chopper mode to classic const. off time
-  TMC2130X->diag1_stall(1);               // Activate stall diagnostics
-  TMC2130X->sgt(stallSensitivityX);       // Set stall detection sensitivity. most -64 to +64 least
-  TMC2130X->shaft_dir(0);                 // Set direction
-
-  TMC2130Y->rms_current(motorCurrentX);   // Set the required current in mA  
-  TMC2130Y->microsteps(microStepsX);      // Minimum of micro steps needed
-  TMC2130Y->chm(true);                    // Set the chopper mode to classic const. off time
-  TMC2130Y->diag1_stall(1);               // Activate stall diagnostics
-  TMC2130Y->sgt(stallSensitivityX);       // Set stall detection sensitivity. most -64 to +64 least
-  TMC2130Y->shaft_dir(0);                 // Set direction
-
-  TMC2130Z->rms_current(motorCurrentX);   // Set the required current in mA  
-  TMC2130Z->microsteps(microStepsX);      // Minimum of micro steps needed
-  TMC2130Z->chm(true);                    // Set the chopper mode to classic const. off time
-  TMC2130Z->diag1_stall(1);               // Activate stall diagnostics
-  TMC2130Z->sgt(stallSensitivityX);       // Set stall detection sensitivity. most -64 to +64 least
-  TMC2130Z->shaft_dir(0);                 // Set direction
-
-  TMC2130E->rms_current(motorCurrentX);   // Set the required current in mA  
-  TMC2130E->microsteps(microStepsX);      // Minimum of micro steps needed
-  TMC2130E->chm(true);                    // Set the chopper mode to classic const. off time
-  TMC2130E->diag1_stall(1);               // Activate stall diagnostics
-  TMC2130E->sgt(stallSensitivityX);       // Set stall detection sensitivity. most -64 to +64 least
-  TMC2130E->shaft_dir(0);                 // Set direction
+  //TMC2130X = &controllerTMC2130_X;
+  //TMC2130Y = &controllerTMC2130_Y;
+  //TMC2130Z = &controllerTMC2130_Z;
+  //TMC2130E = &controllerTMC2130_E;
 }
 
 void loadTMC2130parameters()
 {
+  // Initialize the drivers
+  Serial.print(COMM_REPORT_COMMENT);
+  Serial.print(SPACE);
+  Serial.print("Load TMC2130 parameters");
+  Serial.print(CRLF);
+
+  Movement::getInstance()->loadSettingsTMC2130();
+}
+
+void startupTmc()
+{
+
+  // Initialize the drivers
+  Serial.print(COMM_REPORT_COMMENT);
+  Serial.print(SPACE);
+  Serial.print("Init TMC2130 drivers");
+  Serial.print(CRLF);
+
+  Movement::getInstance()->initTMC2130();
+
+  //loadTMC2130parameters();
+
+  //TMC2130X.init();
+  //TMC2130Y.init();
+  //TMC2130Z.init();
+  //TMC2130E.init();
+
+  //Movement::getInstance()->initTMC2130();
 }
 #endif
 
@@ -906,4 +767,135 @@ void initLastAction()
 {
   // Initialize the inactivity check
   lastAction = millis();
+}
+
+void setupTestForDebug()
+{
+
+  Serial.print(COMM_REPORT_COMMENT);
+  Serial.print(SPACE);
+  Serial.print("Setup Debug");
+  Serial.print(CRLF);
+
+  digitalWrite(X_ENABLE_PIN, LOW);
+  digitalWrite(Y_ENABLE_PIN, LOW);
+  digitalWrite(Z_ENABLE_PIN, LOW);
+  digitalWrite(E_ENABLE_PIN, LOW);
+
+  //digitalWrite(X_STEP_PIN, false);
+  //digitalWrite(Y_STEP_PIN, false);
+  //digitalWrite(Z_STEP_PIN, false);
+  //digitalWrite(E_STEP_PIN, false);
+
+  //digitalWrite(X_DIR_PIN, false);
+  //digitalWrite(Y_DIR_PIN, false);
+  //digitalWrite(Z_DIR_PIN, false);
+  //digitalWrite(E_DIR_PIN, false);
+
+  //digitalWrite(X_ENABLE_PIN, true);
+  //digitalWrite(Y_ENABLE_PIN, true);
+  //digitalWrite(Z_ENABLE_PIN, true);
+  //digitalWrite(E_ENABLE_PIN, true);
+
+  //loadTMC2130ParametersMotor(&controllerTMC2130_X, 8, 500, 0);  delay(100);
+  //loadTMC2130ParametersMotor(&controllerTMC2130_Y, 8, 500, 0);  delay(100);
+  //loadTMC2130ParametersMotor(&controllerTMC2130_Z, 8, 500, 0);  delay(100);
+  //loadTMC2130ParametersMotor(&controllerTMC2130_E, 8, 500, 0);  delay(100);
+
+
+}
+
+
+bool left = false;
+
+void runTestForDebug()
+{
+
+  currentTime = millis();
+  if (currentTime < lastAction)
+  {
+
+    // If the device timer overruns, reset the idle counter
+    lastAction = millis();
+  }
+  else
+  {
+
+    if ((currentTime - lastAction) > reportingPeriod)
+    {
+      blinkLed();
+      Serial.print(".");
+      lastAction = currentTime;
+
+      if (left) {
+        left = false;
+        digitalWrite(X_DIR_PIN, LOW);
+        digitalWrite(Y_DIR_PIN, LOW);
+        digitalWrite(Z_DIR_PIN, LOW);
+        digitalWrite(E_DIR_PIN, LOW);
+      }
+      else {
+        left = true;
+        digitalWrite(X_DIR_PIN, HIGH);
+        digitalWrite(Y_DIR_PIN, HIGH);
+        digitalWrite(Z_DIR_PIN, HIGH);
+        digitalWrite(E_DIR_PIN, HIGH);
+      }
+
+    }
+  }
+
+  // make a step
+  digitalWrite(X_STEP_PIN, HIGH);
+  digitalWrite(Y_STEP_PIN, HIGH);
+  digitalWrite(Z_STEP_PIN, HIGH);
+  digitalWrite(E_STEP_PIN, HIGH);
+  delayMicroseconds(100);
+
+  digitalWrite(X_STEP_PIN, LOW);
+  digitalWrite(Y_STEP_PIN, LOW);
+  digitalWrite(Z_STEP_PIN, LOW);
+  digitalWrite(E_STEP_PIN, LOW);
+  delayMicroseconds(100);
+  
+  /*
+  TMC2130X.read_STAT();
+  if (TMC2130X.isStandstill() || TMC2130X.isStallguard()) {
+    Serial.print("X");
+  }
+
+  TMC2130Y.read_STAT();
+  if (TMC2130Y.isStandstill() || TMC2130Y.isStallguard()) {
+    Serial.print("Y");
+  }
+
+  TMC2130Z.read_STAT();
+  if (TMC2130Z.isStandstill() || TMC2130Z.isStallguard()) {
+    Serial.print("Z");
+  }
+
+  TMC2130E.read_STAT();
+  if (TMC2130E.isStandstill() || TMC2130E.isStallguard()) {
+    Serial.print("E");
+  }
+  */
+
+
+  /*
+  digitalWrite(X_STEP_PIN, HIGH);
+  digitalWrite(E_STEP_PIN, HIGH);
+  delayMicroseconds(100);
+
+  digitalWrite(X_STEP_PIN, LOW);
+  digitalWrite(E_STEP_PIN, LOW);
+  delayMicroseconds(100);
+  */
+
+  //Movement::getInstance()->test();
+  //delayMicroseconds(100);
+
+  //if (debugInterrupt)
+  //{
+  //  Movement::getInstance()->handleMovementInterrupt();
+  //}
 }

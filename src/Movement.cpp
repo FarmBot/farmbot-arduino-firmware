@@ -234,94 +234,26 @@ void Movement::loadSettings()
     motorCurrentX = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_X);
     stallSensitivityX = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_X);
     microStepsX = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_X);
-    //axisX.loadSettingsTMC2130(motorCurrent, stallSensitivity, microSteps);
 
     motorCurrentY = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Y);
     stallSensitivityY = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Y);
     microStepsY = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Y);
-    //axisY.loadSettingsTMC2130(motorCurrent, stallSensitivity, microSteps);
 
     motorCurrentZ = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Z);
     stallSensitivityZ = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Z);
     microStepsX = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Z);
-    //axisZ.loadSettingsTMC2130(motorCurrent, stallSensitivity, microSteps);
 
-    motorCurrentX = 600;
-    stallSensitivityX = 0;
-    microStepsX = 0;
-
-    motorCurrentY = 600;
+    stallSensitivityX = 0;    
     stallSensitivityY = 0;
-    microStepsY = 0;
-
-    motorCurrentZ = 600;
     stallSensitivityZ = 0;
-    microStepsZ = 0;
 
-    TMC2130X->push();
-    TMC2130X->toff(3);
-    TMC2130X->tbl(1);
-    TMC2130X->hysteresis_start(4);
-    TMC2130X->hysteresis_end(-2);
-    TMC2130X->rms_current(motorCurrentX); // mA
-    TMC2130X->microsteps(microStepsX);
-    TMC2130X->diag1_stall(1);
-    TMC2130X->diag1_active_high(1);
-    TMC2130X->coolstep_min_speed(0xFFFFF); // 20bit max
-    TMC2130X->THIGH(0);
-    TMC2130X->semin(5);
-    TMC2130X->semax(2);
-    TMC2130X->sedn(0b01);
-    TMC2130X->sg_stall_value(stallSensitivityX);
+    if (microStepsX <= 0) { microStepsX = 1; }
+    if (microStepsY <= 0) { microStepsY = 1; }
+    if (microStepsZ <= 0) { microStepsZ = 1; }
 
-    TMC2130Y->push();
-    TMC2130Y->toff(3);
-    TMC2130Y->tbl(1);
-    TMC2130Y->hysteresis_start(4);
-    TMC2130Y->hysteresis_end(-2);
-    TMC2130Y->rms_current(motorCurrentY); // mA
-    TMC2130Y->microsteps(microStepsY);
-    TMC2130Y->diag1_stall(1);
-    TMC2130Y->diag1_active_high(1);
-    TMC2130Y->coolstep_min_speed(0xFFFFF); // 20bit max
-    TMC2130Y->THIGH(0);
-    TMC2130Y->semin(5);
-    TMC2130Y->semax(2);
-    TMC2130Y->sedn(0b01);
-    TMC2130Y->sg_stall_value(stallSensitivityY);
-
-    TMC2130Z->push();
-    TMC2130Z->toff(3);
-    TMC2130Z->tbl(1);
-    TMC2130Z->hysteresis_start(4);
-    TMC2130Z->hysteresis_end(-2);
-    TMC2130Z->rms_current(motorCurrentZ); // mA
-    TMC2130Z->microsteps(microStepsZ);
-    TMC2130Z->diag1_stall(1);
-    TMC2130Z->diag1_active_high(1);
-    TMC2130Z->coolstep_min_speed(0xFFFFF); // 20bit max
-    TMC2130Z->THIGH(0);
-    TMC2130Z->semin(5);
-    TMC2130Z->semax(2);
-    TMC2130Z->sedn(0b01);
-    TMC2130Z->sg_stall_value(stallSensitivityZ);
-
-    TMC2130E->push();
-    TMC2130E->toff(3);
-    TMC2130E->tbl(1);
-    TMC2130E->hysteresis_start(4);
-    TMC2130E->hysteresis_end(-2);
-    TMC2130E->rms_current(600); // mA
-    TMC2130E->microsteps(0);
-    TMC2130E->diag1_stall(1);
-    TMC2130E->diag1_active_high(1);
-    TMC2130E->coolstep_min_speed(0xFFFFF); // 20bit max
-    TMC2130E->THIGH(0);
-    TMC2130E->semin(5);
-    TMC2130E->semax(2);
-    TMC2130E->sedn(0b01);
-    TMC2130E->sg_stall_value(0);
-
+    axisX.loadSettingsTMC2130(motorCurrentX, stallSensitivityX, microStepsX);
+    axisY.loadSettingsTMC2130(motorCurrentX, stallSensitivityX, microStepsX);
+    axisZ.loadSettingsTMC2130(motorCurrentX, stallSensitivityX, microStepsX);
   }
 
 #endif
@@ -1373,9 +1305,9 @@ int Movement::calibrateAxis(int axis)
 int debugPrintCount = 0;
 
 // Check encoder to verify the motor is at the right position
+#if !defined(FARMDUINO_EXP_V20)
 void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, float *missedSteps, long *lastPosition, long *encoderLastPosition, int *encoderUseForPos, float *encoderStepDecay, bool *encoderEnabled)
 {
-#if !defined(FARMDUINO_EXP_V20)
   if (*encoderEnabled)
   {
     bool stepMissed = false;
@@ -1441,47 +1373,50 @@ void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, 
       axis->setCurrentPosition(encoder->currentPosition());
     }
   }
+}
 #endif
 
-//#if defined(FARMDUINO_EXP_V20)
-//
-//  /**/
-//  /*
-//  Serial.print("R99");
-//  Serial.print(" XXX ");
-//  Serial.print(" cur pos ");
-//  Serial.print(axis->currentPosition());
-//  Serial.print(" last pos ");
-//  Serial.print(*lastPosition);
-//  */
-//
-//  if (*encoderEnabled) {
-//    if (axis->stallDetected()) {
-//      // In case of stall detection, count this as a missed step
-//      (*missedSteps)++;
-//      axis->setCurrentPosition(*lastPosition);
-//    }
-//    else {
-//      // Decrease amount of missed steps if there are no missed step
-//      if (*missedSteps > 0)
-//      {
-//        (*missedSteps) -= (*encoderStepDecay);
-//      }
-//      *lastPosition = axis->currentPosition();
-//      encoder->setPosition(axis->currentPosition());
-//    }
-//  }
-//
-//  //Serial.print(" new last pos ");
-//  //Serial.print(*lastPosition);
-//  //Serial.print(" en pos ");
-//  //Serial.print(encoder->currentPosition());
-//  //Serial.print("\r\n");
-//
-//
-//#endif
+#if defined(FARMDUINO_EXP_V20)
+void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, float *missedSteps, long *lastPosition, long *encoderLastPosition, int *encoderUseForPos, float *encoderStepDecay, bool *encoderEnabled)
+{
 
+  //
+  //  /**/
+  //  /*
+  //  Serial.print("R99");
+  //  Serial.print(" XXX ");
+  //  Serial.print(" cur pos ");
+  //  Serial.print(axis->currentPosition());
+  //  Serial.print(" last pos ");
+  //  Serial.print(*lastPosition);
+  //  */
+  //
+  //  if (*encoderEnabled) {
+  //    if (axis->stallDetected()) {
+  //      // In case of stall detection, count this as a missed step
+  //      (*missedSteps)++;
+  //      axis->setCurrentPosition(*lastPosition);
+  //    }
+  //    else {
+  //      // Decrease amount of missed steps if there are no missed step
+  //      if (*missedSteps > 0)
+  //      {
+  //        (*missedSteps) -= (*encoderStepDecay);
+  //      }
+  //      *lastPosition = axis->currentPosition();
+  //      encoder->setPosition(axis->currentPosition());
+  //    }
+  //  }
+  //
+  //  //Serial.print(" new last pos ");
+  //  //Serial.print(*lastPosition);
+  //  //Serial.print(" en pos ");
+  //  //Serial.print(encoder->currentPosition());
+  //  //Serial.print("\r\n");
+  //
+  //
 }
+#endif
 
 void Movement::loadMotorSettings()
 {
