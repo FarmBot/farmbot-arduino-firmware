@@ -16,9 +16,10 @@
 #include "MemoryFree.h"
 #include "Debug.h"
 
-#include "TMC2130.h"
+#if defined(FARMDUINO_EXP_V20)
+  #include "TMC2130.h"
+#endif
 
-/**/
 #include "Movement.h"
 #include "ServoControl.h"
 #include "PinGuard.h"

@@ -5,26 +5,27 @@
  *      Author: Tim Evers
  */
 
+
 #include "TMC2130.h"
+
+#if defined(FARMDUINO_EXP_V20)
 
 //void loadTMC2130ParametersMotor(Trinamic_TMC2130 *myStepper, int microsteps, int current, int sensitivity)
 void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current, int sensitivity)
 {
 
-  Serial.print("==>");
-  Serial.print(" ");
-  Serial.print(microsteps);
-  Serial.print(" ");
-  Serial.print(current);
-  Serial.print(" ");
-  Serial.print(sensitivity);
-  Serial.println(" ");
+  //Serial.print("==>");
+  //Serial.print(" ");
+  //Serial.print(microsteps);
+  //Serial.print(" ");
+  //Serial.print(current);
+  //Serial.print(" ");
+  //Serial.print(sensitivity);
+  //Serial.println(" ");
 
   /**/
-  //myStepper->init();
   tb->init();
 
-  //myStepper->set_mres(microsteps); // ({1,2,4,8,16,32,64,128,256}) number of microsteps
   uint8_t data = 0;
 
   switch (microsteps) {
@@ -55,7 +56,6 @@ void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current,
   }
   tb->alter_REG(FB_TMC_REG_CHOPCONF, uint32_t(data) << FB_TMC_CHOPCONF_MRES, FB_TMC_CHOPCONF_MASKS[FB_TMC_CHOPCONF_MRES] << FB_TMC_CHOPCONF_MRES);
 
-  //myStepper->set_I_scale_analog(1); // ({0,1}) 0: I_REF internal, 1: sets I_REF to AIN
   tb->set_GCONF(FB_TMC_GCONF_I_SCALE_ANALOG, 1);
 
   // load drive current for motors
@@ -80,23 +80,12 @@ void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current,
       // writing data
       tb->write_REG(FB_TMC_REG_IHOLD_IRUN, data);
     }
-    //myStepper->set_IHOLD_IRUN(CS, CS, 16);
   }
 
-  //myStepper->set_toff(3); // ([0-15]) 0: driver disable, 1: use only with TBL>2, 2-15: off time setting during slow decay phase
   tb->set_CHOPCONF(FB_TMC_CHOPCONF_TOFF, 3);
-
-  //myStepper->set_tbl(1); // ([0-3]) set comparator blank time to 16, 24, 36 or 54 clocks, 1 or 2 is recommended
   tb->set_CHOPCONF(FB_TMC_CHOPCONF_TBL, 1);
-
-  // load settings needed for enabling stall guard
-  //myStepper->set_diag1_stall(1);
   tb->set_GCONF(FB_TMC_GCONF_DIAG1_STALL, 1);
-
-  //myStepper->set_diag1_onstate(1);
   tb->set_GCONF(FB_TMC_GCONF_DIAG1_ONSTATE, 1);
-
-  //myStepper->set_TCOOLTHRS(0xFFFFF);
   {
     uint32_t data;
 
@@ -104,8 +93,6 @@ void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current,
 
     tb->write_REG(FB_TMC_REG_TCOOLTHRS, data);
   }
-
-  //myStepper->set_THIGH(0);
   {
     uint32_t data;
 
@@ -113,23 +100,13 @@ void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current,
 
     tb->write_REG(FB_TMC_REG_THIGH, data);
   }
-
-  //myStepper->set_semin(5);
   {
     tb->set_CHOPCONF(FB_TMC_COOLCONF_SEMIN, 5);
   }
-
-  //myStepper->set_semax(2);
   tb->set_CHOPCONF(FB_TMC_COOLCONF_SEMAX, 2);
-
-  //myStepper->set_sedn(0b01);
   tb->set_CHOPCONF(FB_TMC_COOLCONF_SEMAX, 0b01);
-
-  //myStepper->set_sgt(sensitivity);
   tb->set_CHOPCONF(FB_TMC_COOLCONF_SGT, sensitivity);
 
 }
 
-
-
-
+#endif

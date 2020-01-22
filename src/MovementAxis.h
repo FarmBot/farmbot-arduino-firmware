@@ -16,10 +16,11 @@
 #include "Config.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "Board.h"
 
-#if defined(FARMDUINO_EXP_V20)
+//#if defined(FARMDUINO_EXP_V20)
   #include "TMC2130.h"
-#endif
+//#endif
 
 
 class MovementAxis
@@ -29,8 +30,6 @@ public:
   MovementAxis();
 
 #if defined(FARMDUINO_EXP_V20)
-  //Trinamic_TMC2130 *TMC2130A;
-  //Trinamic_TMC2130 *TMC2130B;
   TMC2130_Basics *TMC2130A;
   TMC2130_Basics *TMC2130B;
 #endif

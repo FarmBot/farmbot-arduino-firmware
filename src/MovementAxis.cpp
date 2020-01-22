@@ -7,15 +7,6 @@
 
 #include "MovementAxis.h"
 
-/*
-#if defined(FARMDUINO_EXP_V20)
-  static TMC2130Stepper TMC2130X = TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, X_CHIP_SELECT);
-  static TMC2130Stepper TMC2130Y = TMC2130Stepper(Y_ENABLE_PIN, Y_DIR_PIN, Y_STEP_PIN, Y_CHIP_SELECT);
-  static TMC2130Stepper TMC2130Z = TMC2130Stepper(Z_ENABLE_PIN, Z_DIR_PIN, Z_STEP_PIN, Z_CHIP_SELECT);
-  static TMC2130Stepper TMC2130E = TMC2130Stepper(E_ENABLE_PIN, E_DIR_PIN, E_STEP_PIN, E_CHIP_SELECT);
-#endif
-*/
-
 MovementAxis::MovementAxis()
 {
   lastCalcLog = 0;
@@ -86,7 +77,7 @@ unsigned int MovementAxis::getLostSteps()
 {
   /**/
   //return TMC2130A->get_MSCNT();
-  return false;
+  return 0;
 }
 
 void MovementAxis::initTMC2130()
@@ -121,7 +112,6 @@ void MovementAxis::initTMC2130()
 
 void MovementAxis::loadSettingsTMC2130(int motorCurrent, int  stallSensitivity, int microSteps)
 {
-
   loadTMC2130ParametersMotor(TMC2130A, microSteps, motorCurrent, stallSensitivity);
 
   if (channelLabel == 'X')
@@ -132,11 +122,12 @@ void MovementAxis::loadSettingsTMC2130(int motorCurrent, int  stallSensitivity, 
 
 bool MovementAxis::stallDetected() {
 /**/
-  bool stallGuard = TMC2130A->getStatus() & TMC_SPISTATUS_STALLGUARD_MASK ? true : false;
-  bool standStill = TMC2130A->getStatus() & TMC_SPISTATUS_STANDSTILL_MASK ? true : false;
+  bool stallGuard = TMC2130A->getStatus() & FB_TMC_SPISTATUS_STALLGUARD_MASK ? true : false;
+  bool standStill = TMC2130A->getStatus() & FB_TMC_SPISTATUS_STANDSTILL_MASK ? true : false;
 
   //return (TMC2130A->isStandstill() || TMC2130A->isStallguard());
-  return stallGuard || standStill;
+  //return stallGuard || standStill;
+  return false;
 }
 
 uint16_t MovementAxis::getLoad() {

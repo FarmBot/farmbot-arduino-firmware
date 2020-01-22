@@ -1,7 +1,3 @@
-// 
-// 
-// 
-
 #include "TMC2130_Basics.h"
 
 TMC2130_Basics::TMC2130_Basics(uint8_t csPin)
@@ -134,6 +130,3 @@ uint8_t TMC2130_Basics::getStatus()
 {
   return _status;
 }
-
-
-

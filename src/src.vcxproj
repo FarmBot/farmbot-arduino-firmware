@@ -127,7 +127,6 @@
     <ClCompile Include="TimerOne.cpp" />
     <ClCompile Include="TMC2130.cpp" />
     <ClCompile Include="TMC2130_Basics.cpp" />
-    <ClCompile Include="Trinamic\Trinamic_TMC2130.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h" />
@@ -177,8 +176,6 @@
     <ClInclude Include="TMC2130.h" />
     <ClInclude Include="TMC2130_Basics.h" />
     <ClInclude Include="TMC2130_Basics_Reg.h" />
-    <ClInclude Include="Trinamic\Trinamic_TMC2130.h" />
-    <ClInclude Include="Trinamic\Trinamic_TMC2130_registers.h" />
     <ClInclude Include="__vm\.farmbot-arduino-controller.vsarduino.h" />
     <ClInclude Include="__vm\.src.vsarduino.h" />
   </ItemGroup>

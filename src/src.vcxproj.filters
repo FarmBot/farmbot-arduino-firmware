@@ -138,9 +138,6 @@
     <ClCompile Include="MovementEncoder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Trinamic\Trinamic_TMC2130.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TMC2130_Basics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -285,12 +282,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MovementEncoder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Trinamic\Trinamic_TMC2130.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Trinamic\Trinamic_TMC2130_registers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TMC2130_Basics.h">

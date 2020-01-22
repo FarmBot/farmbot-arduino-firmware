@@ -1305,9 +1305,9 @@ int Movement::calibrateAxis(int axis)
 int debugPrintCount = 0;
 
 // Check encoder to verify the motor is at the right position
+#if !defined(FARMDUINO_EXP_V20)
 void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, float *missedSteps, long *lastPosition, long *encoderLastPosition, int *encoderUseForPos, float *encoderStepDecay, bool *encoderEnabled)
 {
-#if !defined(FARMDUINO_EXP_V20)
   if (*encoderEnabled)
   {
     bool stepMissed = false;
@@ -1373,47 +1373,50 @@ void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, 
       axis->setCurrentPosition(encoder->currentPosition());
     }
   }
+}
 #endif
 
-//#if defined(FARMDUINO_EXP_V20)
-//
-//  /**/
-//  /*
-//  Serial.print("R99");
-//  Serial.print(" XXX ");
-//  Serial.print(" cur pos ");
-//  Serial.print(axis->currentPosition());
-//  Serial.print(" last pos ");
-//  Serial.print(*lastPosition);
-//  */
-//
-//  if (*encoderEnabled) {
-//    if (axis->stallDetected()) {
-//      // In case of stall detection, count this as a missed step
-//      (*missedSteps)++;
-//      axis->setCurrentPosition(*lastPosition);
-//    }
-//    else {
-//      // Decrease amount of missed steps if there are no missed step
-//      if (*missedSteps > 0)
-//      {
-//        (*missedSteps) -= (*encoderStepDecay);
-//      }
-//      *lastPosition = axis->currentPosition();
-//      encoder->setPosition(axis->currentPosition());
-//    }
-//  }
-//
-//  //Serial.print(" new last pos ");
-//  //Serial.print(*lastPosition);
-//  //Serial.print(" en pos ");
-//  //Serial.print(encoder->currentPosition());
-//  //Serial.print("\r\n");
-//
-//
-//#endif
+#if defined(FARMDUINO_EXP_V20)
+void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, float *missedSteps, long *lastPosition, long *encoderLastPosition, int *encoderUseForPos, float *encoderStepDecay, bool *encoderEnabled)
+{
 
+  //
+  //  /**/
+  //  /*
+  //  Serial.print("R99");
+  //  Serial.print(" XXX ");
+  //  Serial.print(" cur pos ");
+  //  Serial.print(axis->currentPosition());
+  //  Serial.print(" last pos ");
+  //  Serial.print(*lastPosition);
+  //  */
+  //
+  //  if (*encoderEnabled) {
+  //    if (axis->stallDetected()) {
+  //      // In case of stall detection, count this as a missed step
+  //      (*missedSteps)++;
+  //      axis->setCurrentPosition(*lastPosition);
+  //    }
+  //    else {
+  //      // Decrease amount of missed steps if there are no missed step
+  //      if (*missedSteps > 0)
+  //      {
+  //        (*missedSteps) -= (*encoderStepDecay);
+  //      }
+  //      *lastPosition = axis->currentPosition();
+  //      encoder->setPosition(axis->currentPosition());
+  //    }
+  //  }
+  //
+  //  //Serial.print(" new last pos ");
+  //  //Serial.print(*lastPosition);
+  //  //Serial.print(" en pos ");
+  //  //Serial.print(encoder->currentPosition());
+  //  //Serial.print("\r\n");
+  //
+  //
 }
+#endif
 
 void Movement::loadMotorSettings()
 {
