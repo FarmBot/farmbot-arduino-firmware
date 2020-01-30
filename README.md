@@ -1,4 +1,4 @@
-farmbot-arduino-controller
+farmbot-arduino-firmware
 ==========================
 This software is responsible for receiving G-Codes from the Raspberry Pi, executing them, and reporting back the results.
 
@@ -9,6 +9,10 @@ Created with eclipseArduino V2 - For more details see http://www.baeyens.it/ecli
 
 Compile and upload
 ==========================
+
+**This firmware is automatically bundled into [FarmBot OS](https://github.com/FarmBot/farmbot_os).
+The following instructions are for isolated Arduino development only.**
+
 **NOTE:** We tag releases when they are stable. The latest version (on master) is not guaranteed to be stable.
 
 See [releases](https://github.com/FarmBot/farmbot-arduino-firmware/releases) to find a stable release.
@@ -19,24 +23,31 @@ See [releases](https://github.com/FarmBot/farmbot-arduino-firmware/releases) to 
 git clone  https://github.com/FarmBot/farmbot-arduino-firmware
 ```
 
-**OPTION B:** For stable release v6.0.1:
+**OPTION B:** For stable release v6.4.2:
 
 ```
-git clone -b 'v6.0.1' --single-branch  https://github.com/FarmBot/farmbot-arduino-firmware
+git clone -b 'v6.4.2' --single-branch  https://github.com/FarmBot/farmbot-arduino-firmware
 ```
 
 Options for compiling and uploading:
  * [Arduino IDE](https://www.arduino.cc/en/main/software):
    * Open `farmbot-arduino-firmware/src/src.ino`.
+   * Select the `Mega 2560` board in _Tools_ > _Board_.
+   * Uncomment only the desired board in `src/Board.h`.
    * To compile and flash the firmware onto the device:
      * Connect a device via USB.
-     * Select the MEGA 2560 board in _Tools_ > _Board_.
-     * Uncomment the desired board in `src/Board.h`.
-     * Click _upload_.
+     * Select _Sketch_ > _Upload_ or click the _upload_ button.
    * To compile without flashing:
-     * Uncomment the desired board in `src/Board.h`.
-     * Select _Sketch_ > _Export compiled binary_
+     * Select _Sketch_ > _Export compiled binary_.
      * The `.hex` file will save to the `src` directory.
+ * Make
+   * `cd farmbot-arduino-firmware`
+   * `make`
+ * VSCode
+   * Set Arduino path and board type.
+   * To compile and flash the firmware onto the device:
+     * Connect a device via USB.
+     * Select _Arduino: Upload_.
 
 Software overview
 =================
