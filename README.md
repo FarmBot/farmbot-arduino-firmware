@@ -7,7 +7,7 @@ Technicals
 Created with eclipseArduino V2 - For more details see http://www.baeyens.it/eclipse/
 
 
-Compile and upload
+Development build instructions
 ==========================
 
 **This firmware is automatically bundled into [FarmBot OS](https://github.com/FarmBot/farmbot_os).
@@ -40,9 +40,12 @@ Options for compiling and uploading:
    * To compile without flashing:
      * Select _Sketch_ > _Export compiled binary_.
      * The `.hex` file will save to the `src` directory.
- * Make
+ * Make (Linux)
+   * [Download the Arduino 1.8.5 IDE](https://www.arduino.cc/download_handler.php?f=/arduino-1.8.5-linux64.tar.xz) and unpack to the `/home` directory.
    * `cd farmbot-arduino-firmware`
-   * `make`
+   * To compile:
+     * `make`
+     * `.hex` files for each board type will save to the `bin` directory.
  * VSCode
    * Set Arduino path and board type.
    * To compile and flash the firmware onto the device:
