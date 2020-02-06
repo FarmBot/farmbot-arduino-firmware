@@ -19,14 +19,15 @@ void TMC2130_Basics::init() {
 void TMC2130_Basics::init_SPI() {
   SPI.setDataMode(FB_TMC_SPI_DATA_MODE);
   SPI.setBitOrder(FB_TMC_SPI_BIT_ORDER);
-  SPI.setClockDivider(FB_TMC_SPI_CLOCK_DIVIDER);
+  //SPI.setClockDivider(FB_TMC_SPI_CLOCK_DIVIDER);/**
+  SPI.setClockDivider(SPI_CLOCK_DIV4);
   SPI.begin();
 }
 
 // read status
 uint8_t TMC2130_Basics::read_STAT()
 {
-  init_SPI();
+  //init_SPI();
   digitalWrite(_csPin, LOW);
 
   // read address
@@ -110,6 +111,20 @@ uint8_t TMC2130_Basics::alter_REG(uint8_t address, uint32_t data, uint32_t mask)
   return _status;
 }
 
+
+// check the stallguard status
+boolean TMC2130_Basics::isStallguard()
+{
+  return _status & FB_TMC_SPISTATUS_STALLGUARD_MASK ? true : false;
+}
+
+// check the standstill status
+boolean TMC2130_Basics::isStandstill()
+{
+  return _status & FB_TMC_SPISTATUS_STANDSTILL_MASK ? true : false;
+}
+
+
 // set single bits in the GCONF register
 uint8_t TMC2130_Basics::set_GCONF(uint8_t position, uint8_t value)
 {
@@ -130,3 +145,4 @@ uint8_t TMC2130_Basics::getStatus()
 {
   return _status;
 }
+

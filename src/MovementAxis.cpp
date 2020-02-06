@@ -97,10 +97,18 @@ void MovementAxis::initTMC2130()
     TMC2130A = &TMC2130Z;
   }
 
-  setMotorStepWrite = &MovementAxis::setMotorStepWriteTMC2130;
-  setMotorStepWrite2 = &MovementAxis::setMotorStepWriteTMC2130_2;
-  resetMotorStepWrite = &MovementAxis::resetMotorStepWriteTMC2130;
-  resetMotorStepWrite2 = &MovementAxis::resetMotorStepWriteTMC2130_2;
+  setMotorStepWrite = &MovementAxis::setMotorStepWriteDefault;
+  setMotorStepWrite2 = &MovementAxis::setMotorStepWriteDefault2;
+  resetMotorStepWrite = &MovementAxis::resetMotorStepWriteDefault;
+  resetMotorStepWrite2 = &MovementAxis::resetMotorStepWriteDefault2;
+
+  /**/ // Not using the edge driving now, only standard pulse driving
+  // as edge driving causes issues with stall detection routines
+
+  //setMotorStepWrite = &MovementAxis::setMotorStepWriteTMC2130;
+  //setMotorStepWrite2 = &MovementAxis::setMotorStepWriteTMC2130_2;
+  //resetMotorStepWrite = &MovementAxis::resetMotorStepWriteTMC2130;
+  //resetMotorStepWrite2 = &MovementAxis::resetMotorStepWriteTMC2130_2;
 
   TMC2130A->init();
 
@@ -120,14 +128,9 @@ void MovementAxis::loadSettingsTMC2130(int motorCurrent, int  stallSensitivity, 
   }
 }
 
-bool MovementAxis::stallDetected() {
-/**/
-  bool stallGuard = TMC2130A->getStatus() & FB_TMC_SPISTATUS_STALLGUARD_MASK ? true : false;
-  bool standStill = TMC2130A->getStatus() & FB_TMC_SPISTATUS_STANDSTILL_MASK ? true : false;
-
-  //return (TMC2130A->isStandstill() || TMC2130A->isStallguard());
-  //return stallGuard || standStill;
-  return false;
+uint8_t MovementAxis::getStatus() {
+  return TMC2130X.read_STAT();
+  //return TMC2130A->getStatus();
 }
 
 uint16_t MovementAxis::getLoad() {
