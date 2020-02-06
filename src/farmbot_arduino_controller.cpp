@@ -1,9 +1,10 @@
 // Do not remove the include below
 #include "farmbot_arduino_controller.h"
 
-#if !defined(FARMDUINO_EXP_V20)
+/**/
+//#if !defined(FARMDUINO_EXP_V20)
 #include "TimerOne.h"
-#endif
+//#endif
 
 bool stepperInit = false;
 bool stepperFlip = false;
@@ -51,7 +52,7 @@ unsigned long interruptDurationMax = 0;
 bool interruptBusy = false;
 int interruptSecondTimer = 0;
 
-#if !defined(FARMDUINO_EXP_V20)
+//#if !defined(FARMDUINO_EXP_V20)
 void interrupt(void)
 {
   if (!debugInterrupt)
@@ -68,11 +69,11 @@ void interrupt(void)
     }
   }
 }
-#endif
+//#endif
 
 /**/ // unsigned long intrCounter = 0;
 
-#if defined(FARMDUINO_EXP_V20)
+#if defined(FARMDUINO_EXP_V20xxx)
 ISR(TIMER2_OVF_vect) {
 
   if (interruptBusy == false)
@@ -121,6 +122,7 @@ void periodicChecksAndReport()
     if ((currentTime - lastAction) > reportingPeriod)
     {
       // After an idle time, send the idle message
+      //Movement::getInstance()->test2();
 
       if (CurrentState::getInstance()->isEmergencyStop())
       {
@@ -281,11 +283,10 @@ void checkParamsChanged()
       CurrentState::getInstance()->printQAndNewLine();
     }
 
-    /*
+
     #if defined(FARMDUINO_EXP_V20)
-    loadTMC2130paraeters();
+      Movement::getInstance()->loadSettingsTMC2130();
     #endif
-    */
 
     Movement::getInstance()->loadSettings();
     PinGuard::getInstance()->loadConfig();
@@ -584,18 +585,18 @@ void startInterrupt()
   // Interrupt management code library written by Paul Stoffregen
   // The default time 100 micro seconds
 
-  #if !defined(FARMDUINO_EXP_V20)
+  //#if !defined(FARMDUINO_EXP_V20)
     Timer1.attachInterrupt(interrupt);
     Timer1.initialize(MOVEMENT_INTERRUPT_SPEED);
     Timer1.start();
-  #endif
+  //#endif
 
-  #if defined(FARMDUINO_EXP_V20)
-    Serial.println("set timer");
-        TIMSK2 = (TIMSK2 & B11111110) | 0x01; // Enable timer overflow
-        TCCR2B = (TCCR2B & B11111000) | 0x01; // Set divider to 1
-        OCR2A = 4; // Set overflow to 4 for total of 64 µs
-  #endif
+  //#if defined(FARMDUINO_EXP_V20)
+  //  Serial.println("set timer");
+  //      TIMSK2 = (TIMSK2 & B11111110) | 0x01; // Enable timer overflow
+  //      TCCR2B = (TCCR2B & B11111000) | 0x01; // Set divider to 1
+  //      OCR2A = 4; // Set overflow to 4 for total of 64 µs
+  //#endif
 }
 
 void homeOnBoot()
@@ -802,15 +803,28 @@ void setupTestForDebug()
   //loadTMC2130ParametersMotor(&controllerTMC2130_Z, 8, 500, 0);  delay(100);
   //loadTMC2130ParametersMotor(&controllerTMC2130_E, 8, 500, 0);  delay(100);
 
+/*
+  Serial.println("Init");
+
+  loadTMC2130ParametersMotor(&TMC2130X, 8, 200, 0);
+  loadTMC2130ParametersMotor(&TMC2130Y, 8, 200, 0);
+  loadTMC2130ParametersMotor(&TMC2130Z, 8, 200, 0);
+  loadTMC2130ParametersMotor(&TMC2130E, 8, 200, 0);
+  */
 
 }
 
 
 bool left = false;
+int missedX = 0;
+int missedY = 0;
+int missedZ = 0;
+int missedE = 0;
 
 void runTestForDebug()
 {
 
+  /*
   currentTime = millis();
   if (currentTime < lastAction)
   {
@@ -824,27 +838,40 @@ void runTestForDebug()
     if ((currentTime - lastAction) > reportingPeriod)
     {
       blinkLed();
-      Serial.print(".");
+      //Serial.print(".");
       lastAction = currentTime;
+
+      Serial.print(">");
+      Serial.print(" X = ");
+      Serial.print(missedX);   
+      Serial.print(" Y = ");
+      Serial.print(missedY);
+      Serial.print(" Z = ");
+      Serial.print(missedZ);
+      Serial.print(" E = ");
+      Serial.print(missedE);
+      Serial.print(CRLF);
 
       if (left) {
         left = false;
-        digitalWrite(X_DIR_PIN, LOW);
-        digitalWrite(Y_DIR_PIN, LOW);
-        digitalWrite(Z_DIR_PIN, LOW);
-        digitalWrite(E_DIR_PIN, LOW);
+        //digitalWrite(X_DIR_PIN, LOW);
+        //digitalWrite(Y_DIR_PIN, LOW);
+        //digitalWrite(Z_DIR_PIN, LOW);
+        //digitalWrite(E_DIR_PIN, LOW);
       }
       else {
         left = true;
-        digitalWrite(X_DIR_PIN, HIGH);
-        digitalWrite(Y_DIR_PIN, HIGH);
-        digitalWrite(Z_DIR_PIN, HIGH);
-        digitalWrite(E_DIR_PIN, HIGH);
+        //digitalWrite(X_DIR_PIN, HIGH);
+        //digitalWrite(Y_DIR_PIN, HIGH);
+        //digitalWrite(Z_DIR_PIN, HIGH);
+        //digitalWrite(E_DIR_PIN, HIGH);
       }
 
     }
   }
+  */
 
+  /*
   // make a step
   digitalWrite(X_STEP_PIN, HIGH);
   digitalWrite(Y_STEP_PIN, HIGH);
@@ -858,38 +885,44 @@ void runTestForDebug()
   digitalWrite(E_STEP_PIN, LOW);
   delayMicroseconds(100);
   
-  /*
+  bool stallGuard = false;
+  bool standStill = false;
+  uint8_t status = 0;
+  */
+
+  Movement::getInstance()->test();
+
+/*
   TMC2130X.read_STAT();
-  if (TMC2130X.isStandstill() || TMC2130X.isStallguard()) {
-    Serial.print("X");
-  }
-
   TMC2130Y.read_STAT();
-  if (TMC2130Y.isStandstill() || TMC2130Y.isStallguard()) {
-    Serial.print("Y");
-  }
-
   TMC2130Z.read_STAT();
-  if (TMC2130Z.isStandstill() || TMC2130Z.isStallguard()) {
-    Serial.print("Z");
-  }
-
   TMC2130E.read_STAT();
-  if (TMC2130E.isStandstill() || TMC2130E.isStallguard()) {
-    Serial.print("E");
-  }
-  */
 
+  status = TMC2130X.getStatus(); 
+  stallGuard = status & FB_TMC_SPISTATUS_STALLGUARD_MASK ? true : false;
+  standStill = status & FB_TMC_SPISTATUS_STANDSTILL_MASK ? true : false;
+  if (stallGuard || standStill) { missedX++;}
 
-  /*
-  digitalWrite(X_STEP_PIN, HIGH);
-  digitalWrite(E_STEP_PIN, HIGH);
-  delayMicroseconds(100);
+  status = TMC2130Y.getStatus();
+  stallGuard = status & FB_TMC_SPISTATUS_STALLGUARD_MASK ? true : false;
+  standStill = status & FB_TMC_SPISTATUS_STANDSTILL_MASK ? true : false;
+  if (stallGuard || standStill) { missedY++; }
 
-  digitalWrite(X_STEP_PIN, LOW);
-  digitalWrite(E_STEP_PIN, LOW);
-  delayMicroseconds(100);
-  */
+  status = TMC2130Z.getStatus();
+  stallGuard = status & FB_TMC_SPISTATUS_STALLGUARD_MASK ? true : false;
+  standStill = status & FB_TMC_SPISTATUS_STANDSTILL_MASK ? true : false;
+  if (stallGuard || standStill) { missedZ++; }
+
+  status = TMC2130E.getStatus();
+  stallGuard = status & FB_TMC_SPISTATUS_STALLGUARD_MASK ? true : false;
+  standStill = status & FB_TMC_SPISTATUS_STANDSTILL_MASK ? true : false;
+  if (stallGuard || standStill) { missedE++; }
+*/
+
+  //if (TMC2130X.isStandstill() || TMC2130X.isStallguard()) {missedX++;}
+  //if (TMC2130Y.isStandstill() || TMC2130Y.isStallguard()) {missedY++;}
+  //if (TMC2130Z.isStandstill() || TMC2130Z.isStallguard()) {missedZ++;}
+  //if (TMC2130E.isStandstill() || TMC2130E.isStallguard()) {missedE++;}  
 
   //Movement::getInstance()->test();
   //delayMicroseconds(100);

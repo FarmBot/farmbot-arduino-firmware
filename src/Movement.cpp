@@ -241,85 +241,107 @@ void Movement::loadSettings()
 
     motorCurrentZ = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Z);
     stallSensitivityZ = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Z);
-    microStepsX = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Z);
+    microStepsZ = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Z);
 
-    stallSensitivityX = 0;    
-    stallSensitivityY = 0;
-    stallSensitivityZ = 0;
+    /**/
+    
+    //Serial.print("=X=>");
+    //Serial.print(" ");
+    //Serial.print(microStepsX);
+    //Serial.print(" ");
+    //Serial.print(motorCurrentX);
+    //Serial.print(" ");
+    //Serial.print(stallSensitivityX);
+    //Serial.println(" ");
+
+    //Serial.print("=Y=>");
+    //Serial.print(" ");
+    //Serial.print(microStepsY);
+    //Serial.print(" ");
+    //Serial.print(motorCurrentY);
+    //Serial.print(" ");
+    //Serial.print(stallSensitivityY);
+    //Serial.println(" ");
+
+    //Serial.print("=Z=>");
+    //Serial.print(" ");
+    //Serial.print(microStepsZ);
+    //Serial.print(" ");
+    //Serial.print(motorCurrentZ);
+    //Serial.print(" ");
+    //Serial.print(stallSensitivityZ);
+    //Serial.println(" ");
+    
 
     if (microStepsX <= 0) { microStepsX = 1; }
     if (microStepsY <= 0) { microStepsY = 1; }
     if (microStepsZ <= 0) { microStepsZ = 1; }
 
+
     axisX.loadSettingsTMC2130(motorCurrentX, stallSensitivityX, microStepsX);
-    axisY.loadSettingsTMC2130(motorCurrentX, stallSensitivityX, microStepsX);
-    axisZ.loadSettingsTMC2130(motorCurrentX, stallSensitivityX, microStepsX);
+    axisY.loadSettingsTMC2130(motorCurrentY, stallSensitivityY, microStepsY);
+    axisZ.loadSettingsTMC2130(motorCurrentZ, stallSensitivityZ, microStepsZ);
   }
 
 #endif
 
+  static int missedCount = 0;
+
 void Movement::test()
 {
-  axisX.enableMotor();
-
-  //axisY.test();
-
   //axisX.enableMotor();
   //axisX.setMotorStep();
-  //delayMicroseconds(10);
-  //axisX.setMotorStep();
-  //delayMicroseconds(10);
+  //delayMicroseconds(500);
+  //TMC2130X.read_STAT();
+  //delayMicroseconds(500);
+  //if (axisX.stallDetected()) { testA++; }
+  //testB++;
 
+  bool stallGuard = false;
+  bool standStill = false;
+  uint8_t status_x = 0;
+
+  //digitalWrite(X_ENABLE_PIN, LOW);
+  axisX.enableMotor();
   //digitalWrite(X_STEP_PIN, HIGH);
-  //delayMicroseconds(10);
+  axisX.setMotorStep();
+
+  delayMicroseconds(500);
+
   //digitalWrite(X_STEP_PIN, LOW);
-  //delayMicroseconds(10);
+  axisX.resetMotorStep();
 
-  //axisX.setMotorStepWriteTMC2130();
-  //axisX.test();
+  TMC2130X.read_STAT();
 
-  //Serial.print("R99");
-  //Serial.print(" mot x = ");
-  //Serial.print(axisX.currentPosition());
-  //Serial.print(" enc x = ");
-  //Serial.print(encoderX.currentPosition());
-  //Serial.print("\r\n");
+  status_x = TMC2130X.getStatus();
+  stallGuard = status_x & FB_TMC_SPISTATUS_STALLGUARD_MASK ? true : false;
+  standStill = status_x & FB_TMC_SPISTATUS_STANDSTILL_MASK ? true : false;
+  if (stallGuard || standStill) {
+    testA++;
+  }
 
-  //Serial.print("R99");
-  //Serial.print(" mot y = ");
-  //Serial.print(axisY.currentPosition());
-  //Serial.print(" enc y = ");
-  //Serial.print(encoderY.currentPosition());
-  //Serial.print("\r\n");
+  //if (axisX.stallDetected()) {
+  //  testA++;
+  //}
 
-  //Serial.print("R99");
-  //Serial.print(" mot z = ");
-  //Serial.print(axisZ.currentPosition());
-  //Serial.print(" enc z = ");
-  //Serial.print(encoderZ.currentPosition());
-  //Serial.print("\r\n");
 
-  // read changes in encoder
-  //encoderX.readEncoder();
-  //encoderY.readEncoder();
-  //encoderZ.readEncoder();
-  //reportPosition();
+  testB++;
 
-  //bool test = axisX.endStopMin();
-  //Serial.print("R99");
-  //Serial.print(" test = ");
-  //Serial.print(test);
-  //Serial.print("\r\n");
+  delayMicroseconds(500);
+
+
+
 }
 
 void Movement::test2()
 {
-  
-  axisX.setMotorStep();
-  //CurrentState::getInstance()->printPosition();
-  //encoderX.test();
-  //encoderY.test();
-  //encoderZ.test();
+  Serial.print("*");
+  Serial.print(testA);
+  Serial.print("/");
+  Serial.print(testB);
+  Serial.println();
+
+  //testA = 0;
 }
 
 /**
@@ -503,25 +525,22 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
     #endif
 
     /**/
-    if (loopCounts % 1000 == 0)
-    {
+    //if (loopCounts % 1000 == 0)
+    //{
+    //  Serial.print("R99");
+    //  Serial.print(" missed step ");
+    //  Serial.print(motorConsMissedSteps[1]);
+    //  Serial.print(" axis pos ");
+    //  Serial.print(axisY.currentPosition());
+    //  Serial.print("\r\n");
 
-      //Serial.print("R99");
-      //Serial.print(" missed step ");
-      //Serial.print(motorConsMissedSteps[1]);
-      //Serial.print(" axis pos ");
-      //Serial.print(axisY.currentPosition());
-      //Serial.print("\r\n");
+    //  Serial.print("X - ");
+    //  axisX.test();
 
-      //Serial.print("X - ");
-      //axisX.test();
-
-      //Serial.print("Y - ");
-      //axisY.test();
-
-    }
-    loopCounts++;
-    
+    //  Serial.print("Y - ");
+    //  axisY.test();
+    //}
+    //loopCounts++;    
 
     checkAxisSubStatus(&axisX, &axisSubStep[0]);
     checkAxisSubStatus(&axisY, &axisSubStep[1]);
@@ -1391,22 +1410,56 @@ void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, 
   //  Serial.print(*lastPosition);
   //  */
   //
-  //  if (*encoderEnabled) {
-  //    if (axis->stallDetected()) {
-  //      // In case of stall detection, count this as a missed step
-  //      (*missedSteps)++;
-  //      axis->setCurrentPosition(*lastPosition);
-  //    }
-  //    else {
-  //      // Decrease amount of missed steps if there are no missed step
-  //      if (*missedSteps > 0)
-  //      {
-  //        (*missedSteps) -= (*encoderStepDecay);
-  //      }
-  //      *lastPosition = axis->currentPosition();
-  //      encoder->setPosition(axis->currentPosition());
-  //    }
-  //  }
+
+  //if (axis->stallDetected()) {
+  //  Serial.print("X");
+  //}
+  //else
+  //{
+  //  Serial.print(".");
+  //}
+
+  /**/
+  bool stallGuard = false;
+  bool standStill = false;
+  uint8_t status = 0;
+
+  if (*encoderEnabled) {    
+
+    //TMC2130X.read_STAT();
+
+    status = axis->getStatus();
+
+    stallGuard = status & FB_TMC_SPISTATUS_STALLGUARD_MASK ? true : false;
+    standStill = status & FB_TMC_SPISTATUS_STANDSTILL_MASK ? true : false;
+
+    if (stallGuard || standStill) {
+      //Serial.print(".");
+      // In case of stall detection, count this as a missed step
+      (*missedSteps)++;
+      axis->setCurrentPosition(*lastPosition);
+
+
+      //if (int(*missedSteps) % 10 == 0) {
+      //  Serial.println();
+      //  Serial.print(*missedSteps);
+      //  Serial.print("/");
+      //  Serial.print(axis->currentPosition());
+      //  Serial.println();
+      //}
+
+    }
+    else {
+      // Decrease amount of missed steps if there are no missed step
+      if (*missedSteps > 0)
+      {
+        (*missedSteps) -= (*encoderStepDecay);
+      }
+      *lastPosition = axis->currentPosition();
+      encoder->setPosition(axis->currentPosition());
+    }
+  }
+
   //
   //  //Serial.print(" new last pos ");
   //  //Serial.print(*lastPosition);

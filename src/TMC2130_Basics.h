@@ -29,8 +29,9 @@ public:
 
   //boolean isReset();
   //boolean isError();
-  //boolean isStallguard();
-  //boolean isStandstill();
+  boolean isStallguard();
+  boolean isStandstill();
+
   //String debug();
 
 private:

@@ -145,6 +145,11 @@ private:
   int axisServicedNext = 0;
   bool motorMotorsEnabled = false;
 
+
+  int testA = 0;
+  int testB = 0;
+
+
 };
 
 #endif /* MOVEMENT_H_ */
