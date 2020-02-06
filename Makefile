@@ -6,9 +6,10 @@ FBARDUINO_FIRMWARE_SRC_DIR ?= src
 FBARDUINO_FIRMWARE_BUILD_DIR ?= $(BUILD_DIR)/sketch
 FBARDUINO_FIRMWARE_LIB_BUILD_DIR ?= $(BUILD_DIR)/libraries
 
-ARDUINO_INSTALL_DIR ?= $(HOME)/arduino-1.8.5
+ARDUINO_INSTALL_DIR ?= $(HOME)/arduino-1.8.11
 
 # Files to be tracked for make to know to rebuild.
+COPY_INO := $(shell cp $(FBARDUINO_FIRMWARE_SRC_DIR)/src.ino $(FBARDUINO_FIRMWARE_SRC_DIR)/src.ino.cpp)
 CXX_SRC := $(wildcard $(FBARDUINO_FIRMWARE_SRC_DIR)/*.cpp)
 SRC := $(CXX_SRC)
 SRC_DEPS := $(SRC) $(wildcard $(FBARDUINO_FIRMWARE_SRC_DIR)/*.h)
@@ -38,9 +39,10 @@ include lib/EEPROM.Makefile
 include lib/targets/ramps_v14.Makefile
 include lib/targets/farmduino_v10.Makefile
 include lib/targets/farmduino_k14.Makefile
+include lib/targets/farmduino_k15.Makefile
 include lib/targets/express_k10.Makefile
 
-.PHONY: all clean \
+.PHONY: all clean force_clean remove_ino_copy \
 	dep_core dep_core_clean \
 	dep_Servo dep_Servo_clean \
 	dep_SPI dep_SPI_clean \
@@ -48,28 +50,34 @@ include lib/targets/express_k10.Makefile
 	target_ramps_v14 target_ramps_v14_clean \
 	target_farmduino_v10 target_farmduino_v10_clean \
 	target_farmduino_k14 target_farmduino_k14_clean \
+	target_farmduino_k15 target_farmduino_k15_clean \
 	target_express_k10 target_express_k10_clean
 
 DEPS := $(DEP_CORE) $(DEP_SPI) $(DEP_Servo) $(DEP_EEPROM)
 DEPS_OBJ := $(DEP_SPI_OBJ) $(DEP_Servo_OBJ) $(DEP_EEPROM_OBJ)
 DEPS_CFLAGS := $(DEP_CORE_CFLAGS) $(DEP_SPI_CFLAGS) $(DEP_Servo_CFLAGS) $(DEP_EEPROM_CFLAGS)
 
-all: $(BIN_DIR) $(DEPS) target_ramps_v14 target_farmduino_v10 target_farmduino_k14 target_express_k10
+all: $(BIN_DIR) $(DEPS) target_ramps_v14 target_farmduino_v10 target_farmduino_k14 target_farmduino_k15 target_express_k10 remove_ino_copy
 
-clean: target_ramps_v14_clean target_farmduino_v10_clean target_farmduino_k14_clean target_express_k10_clean
+clean: remove_ino_copy target_ramps_v14_clean target_farmduino_v10_clean target_farmduino_k14_clean target_farmduino_k15_clean target_express_k10_clean
 
 strings_test: all
 	$(OBJ_COPY) -I ihex $(TARGET_ramps_v14_HEX)     -O binary $(TARGET_ramps_v14_HEX).bin
 	$(OBJ_COPY) -I ihex $(TARGET_farmduino_v10_HEX) -O binary $(TARGET_farmduino_v10_HEX).bin
 	$(OBJ_COPY) -I ihex $(TARGET_farmduino_k14_HEX) -O binary $(TARGET_farmduino_k14_HEX).bin
+	$(OBJ_COPY) -I ihex $(TARGET_farmduino_k15_HEX) -O binary $(TARGET_farmduino_k15_HEX).bin
 	$(OBJ_COPY) -I ihex $(TARGET_express_k10_HEX) -O binary $(TARGET_express_k10_HEX).bin
-	@strings $(TARGET_ramps_v14_HEX).bin | grep -q "6.4.0.R"
-	@strings $(TARGET_farmduino_v10_HEX).bin | grep -q "6.4.0.F"
-	@strings $(TARGET_farmduino_k14_HEX).bin | grep -q "6.4.0.G"
-	@strings $(TARGET_express_k10_HEX).bin | grep -q "6.4.0.E"
+	@strings $(TARGET_ramps_v14_HEX).bin | grep -q "6.5.0.R"
+	@strings $(TARGET_farmduino_v10_HEX).bin | grep -q "6.5.0.F"
+	@strings $(TARGET_farmduino_k14_HEX).bin | grep -q "6.5.0.G"
+	@strings $(TARGET_farmduino_k15_HEX).bin | grep -q "6.5.0.H"
+	@strings $(TARGET_express_k10_HEX).bin | grep -q "6.5.0.E"
 
-force_clean:
+force_clean: remove_ino_copy
 	$(RM) -r $(BUILD_DIR) $(BIN_DIR)
 
 $(BIN_DIR):
 	$(MKDIR_P) $(BIN_DIR)
+
+remove_ino_copy:
+	$(RM) $(FBARDUINO_FIRMWARE_SRC_DIR)/src.ino.cpp

@@ -41,7 +41,7 @@ Options for compiling and uploading:
      * Select _Sketch_ > _Export compiled binary_.
      * The `.hex` file will save to the `src` directory.
  * Make (Linux)
-   * [Download the Arduino 1.8.5 IDE](https://www.arduino.cc/download_handler.php?f=/arduino-1.8.5-linux64.tar.xz) and unpack to the `/home` directory.
+   * [Download the Arduino 1.8.11 IDE](https://www.arduino.cc/download_handler.php?f=/arduino-1.8.11-linux64.tar.xz) and unpack to the `/home` directory.
    * `cd farmbot-arduino-firmware`
    * To compile:
      * `make`
@@ -222,7 +222,7 @@ Value |Description
 2     |Timeout
 3     |Stall detected
 14    |Invalid command
-15    |No config 
+15    |No config
 
 Axis states (R05)
 -----------------
