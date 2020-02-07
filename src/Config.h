@@ -241,17 +241,21 @@ enum MdlSpiEncoders
 #endif /* CONFIG_H_ */
 
 #if defined(RAMPS_V14) && !defined(SOFTWARE_VERSION)
-#define SOFTWARE_VERSION "6.4.2.R\0"
+#define SOFTWARE_VERSION "6.5.0.R\0"
 #endif
 
 #if defined(FARMDUINO_V10) && !defined(SOFTWARE_VERSION)
-#define SOFTWARE_VERSION "6.4.2.F\0"
+#define SOFTWARE_VERSION "6.5.0.F\0"
 #endif
 
 #if defined(FARMDUINO_V14) && !defined(SOFTWARE_VERSION)
-#define SOFTWARE_VERSION "6.4.2.G\0"
+#define SOFTWARE_VERSION "6.5.0.G\0"
+#endif
+
+#if defined(FARMDUINO_V30) && !defined(SOFTWARE_VERSION)
+#define SOFTWARE_VERSION "6.5.0.H\0"
 #endif
 
 #if defined(FARMDUINO_EXP_V20) && !defined(SOFTWARE_VERSION)
-#define SOFTWARE_VERSION "6.4.2.E\0"
+#define SOFTWARE_VERSION "6.5.0.E\0"
 #endif

@@ -290,5 +290,8 @@
     <ClInclude Include="TMC2130_Basics_Reg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="__vm\.farmbot-arduino-firmware.vsarduino.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

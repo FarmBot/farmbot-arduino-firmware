@@ -289,6 +289,7 @@ void Movement::loadSettings()
 
 void Movement::test()
 {
+  #if defined(FARMDUINO_EXP_V20)
   //axisX.enableMotor();
   //axisX.setMotorStep();
   //delayMicroseconds(500);
@@ -331,6 +332,7 @@ void Movement::test()
 
 
 
+  #endif
 }
 
 void Movement::test2()
