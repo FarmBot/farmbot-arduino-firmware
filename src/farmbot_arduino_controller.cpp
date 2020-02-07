@@ -533,12 +533,23 @@ void setPinInputOutput()
   pinMode(AUX_DIR_PIN, OUTPUT);
   pinMode(AUX_ENABLE_PIN, OUTPUT);
 
+  digitalWrite(AUX_STEP_PIN, LOW);
+  digitalWrite(AUX_DIR_PIN, LOW);
+  digitalWrite(AUX_ENABLE_PIN, LOW);
+
   pinMode(LED_PIN, OUTPUT);
   pinMode(VACUUM_PIN, OUTPUT);
   pinMode(WATER_PIN, OUTPUT);
   pinMode(LIGHTING_PIN, OUTPUT);
   pinMode(PERIPHERAL_4_PIN, OUTPUT);
   pinMode(PERIPHERAL_5_PIN, OUTPUT);
+
+  digitalWrite(LED_PIN, LOW);
+  digitalWrite(VACUUM_PIN, LOW);
+  digitalWrite(WATER_PIN, LOW);
+  digitalWrite(LIGHTING_PIN, LOW);
+  digitalWrite(PERIPHERAL_4_PIN, LOW);
+  digitalWrite(PERIPHERAL_5_PIN, LOW);
 
   pinMode(UTM_C, INPUT_PULLUP);
   pinMode(UTM_D, INPUT_PULLUP);
@@ -556,6 +567,10 @@ void setPinInputOutput()
   pinMode(SERVO_2_PIN, OUTPUT);
   pinMode(SERVO_3_PIN, OUTPUT);
 
+  digitalWrite(SERVO_0_PIN, LOW);
+  digitalWrite(SERVO_1_PIN, LOW);
+  digitalWrite(SERVO_2_PIN, LOW);
+  digitalWrite(SERVO_3_PIN, LOW);
 }
 #endif
 
