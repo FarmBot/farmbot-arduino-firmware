@@ -95,8 +95,8 @@ public:
 #if defined(FARMDUINO_EXP_V20)
   void initTMC2130();
   void loadSettingsTMC2130(int motorCurrent, int  stallSensitivity, int microSteps);
-  bool stallDetected();
   uint16_t getLoad();
+
 #endif
 
 #if defined(FARMDUINO_EXP_V20)
@@ -104,6 +104,8 @@ public:
   void setMotorStepWriteTMC2130_2();
   void resetMotorStepWriteTMC2130();
   void resetMotorStepWriteTMC2130_2();
+
+  uint8_t getStatus();
 
   unsigned int getLostSteps();
 

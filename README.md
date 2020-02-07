@@ -1,4 +1,4 @@
-farmbot-arduino-controller
+farmbot-arduino-firmware
 ==========================
 This software is responsible for receiving G-Codes from the Raspberry Pi, executing them, and reporting back the results.
 
@@ -6,24 +6,13 @@ Technicals
 ==========================
 Created with eclipseArduino V2 - For more details see http://www.baeyens.it/eclipse/
 
-Command line flash tool installation
+
+Development build instructions
 ==========================
 
-```
-sudo apt-get install arduino gcc-avr avr-libc avrdude python-configobj python-jinja2 python-serial
-mkdir tmp
-cd tmp
-git clone https://github.com/miracle2k/python-glob2
-cd python-glob2
-wget https://bootstrap.pypa.io/ez_setup.py -O - | sudo python
-sudo python setup.py install
-git clone git://github.com/amperka/ino.git
-cd ino
-sudo make install
-```
+**This firmware is automatically bundled into [FarmBot OS](https://github.com/FarmBot/farmbot_os).
+The following instructions are for isolated Arduino development only.**
 
-Command line flash tool use
-==========================
 **NOTE:** We tag releases when they are stable. The latest version (on master) is not guaranteed to be stable.
 
 See [releases](https://github.com/FarmBot/farmbot-arduino-firmware/releases) to find a stable release.
@@ -34,18 +23,34 @@ See [releases](https://github.com/FarmBot/farmbot-arduino-firmware/releases) to 
 git clone  https://github.com/FarmBot/farmbot-arduino-firmware
 ```
 
-**OPTION B:** For stable release 1.0:
+**OPTION B:** For stable release v6.4.2:
 
 ```
-git clone -b 'alpha-1.0' --single-branch  https://github.com/FarmBot/farmbot-arduino-firmware
+git clone -b 'v6.4.2' --single-branch  https://github.com/FarmBot/farmbot-arduino-firmware
 ```
-To flash the firmware onto the device, run this:
 
-```
-cd farmbot-arduino-firmware
-ino build
-ino upload
-```
+Options for compiling and uploading:
+ * [Arduino IDE](https://www.arduino.cc/en/main/software):
+   * Open `farmbot-arduino-firmware/src/src.ino`.
+   * Select the `Mega 2560` board in _Tools_ > _Board_.
+   * Uncomment only the desired board in `src/Board.h`.
+   * To compile and flash the firmware onto the device:
+     * Connect a device via USB.
+     * Select _Sketch_ > _Upload_ or click the _upload_ button.
+   * To compile without flashing:
+     * Select _Sketch_ > _Export compiled binary_.
+     * The `.hex` file will save to the `src` directory.
+ * Make (Linux)
+   * [Download the Arduino 1.8.11 IDE](https://www.arduino.cc/download_handler.php?f=/arduino-1.8.11-linux64.tar.xz) and unpack to the `/home` directory.
+   * `cd farmbot-arduino-firmware`
+   * To compile:
+     * `make`
+     * `.hex` files for each board type will save to the `bin` directory.
+ * VSCode
+   * Set Arduino path and board type.
+   * To compile and flash the firmware onto the device:
+     * Connect a device via USB.
+     * Select _Arduino: Upload_.
 
 Software overview
 =================
@@ -71,11 +76,11 @@ Farmbot_arduino_controller contains the setup() and main(). This is the main seq
      |***Handler                |
      +-------+-----------+------+
              |           |
-             |           +---+
-             v               v
-     +--------------+   +-----------+
-     |StepperControl|   | PinControl|
-     +--------------+   +-----------+
+             |           |
+             v           v
+      +--------+   +-----------+
+      |Movement|   | PinControl|
+      +--------+   +-----------+
 
 ```
 
@@ -122,6 +127,8 @@ HEATER_0_PIN     |  10  | RAMPS board heating pin 0
 HEATER_1_PIN     |   8  | RAMPS board heating pin 1
 SERVO_0_PIN      |   4  | Servo motor 0 signal pin
 SERVO_1_PIN      |   5  | Servo motor 1 signal pin
+SERVO_2_PIN      |   6  | Servo motor 2 signal pin
+SERVO_3_PIN      |  11  | Servo motor 3 signal pin
 
 
 G-Codes
@@ -133,7 +140,7 @@ Code type|Number|Parameters|Function
 ---------|------|----------|--------
 _G_      |      |          |_G-Code, the codes working the same as a 3D printer_
 G        |00    |X Y Z S   |Move to location at given speed for axis (don't have to be a straight line), in absolute coordinates
-G        |01    |X Y Z S   |Move to location on a straight line
+G        |01    |X Y Z S   |Move to location on a straight line (not implemented)
 G        |28    |          |Move home all axis
 _F_      |      |          |_Farm commands, commands specially added for FarmBot_
 F        |01    |T         |Dose amount of water using time in millisecond (not implemented)
@@ -157,7 +164,7 @@ F        |43    |P M       |Set the I/O mode M (input=0/output=1) of a pin P in 
 F        |44    |P V W T M |Set the value V on an arduino pin P, wait for time T in milliseconds, set value W on the arduino pin P in mode M (digital=0/analog=1)
 F        |51    |E P V     |Set a value on the tool mount with I2C (not implemented)
 F        |52    |E P       |Read value from the tool mount with I2C (not implemented)
-F        |61    |P V       |Set the servo on the pin P (only pin 4 and 5) to the requested angle V
+F        |61    |P V       |Set the servo on the pin P (only pins 4, 5, 6, and 11) to the requested angle V
 F        |81    |          |Report end stop
 F        |82    |          |Report current position
 F        |83    |          |Report software version
@@ -215,7 +222,7 @@ Value |Description
 2     |Timeout
 3     |Stall detected
 14    |Invalid command
-15    |No config 
+15    |No config
 
 Axis states (R05)
 -----------------

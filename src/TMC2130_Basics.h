@@ -4,7 +4,7 @@
 #define _TMC2130_BASICS_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
-	#include "arduino.h"
+	#include "Arduino.h"
 #else
 	#include "WProgram.h"
 #endif
@@ -29,8 +29,9 @@ public:
 
   //boolean isReset();
   //boolean isError();
-  //boolean isStallguard();
-  //boolean isStandstill();
+  boolean isStallguard();
+  boolean isStandstill();
+
   //String debug();
 
 private:
