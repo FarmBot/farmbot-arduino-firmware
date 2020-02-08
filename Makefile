@@ -67,11 +67,11 @@ strings_test: all
 	$(OBJ_COPY) -I ihex $(TARGET_farmduino_k14_HEX) -O binary $(TARGET_farmduino_k14_HEX).bin
 	$(OBJ_COPY) -I ihex $(TARGET_farmduino_k15_HEX) -O binary $(TARGET_farmduino_k15_HEX).bin
 	$(OBJ_COPY) -I ihex $(TARGET_express_k10_HEX) -O binary $(TARGET_express_k10_HEX).bin
-	@strings $(TARGET_ramps_v14_HEX).bin | grep -q "6.5.0.R"
-	@strings $(TARGET_farmduino_v10_HEX).bin | grep -q "6.5.0.F"
-	@strings $(TARGET_farmduino_k14_HEX).bin | grep -q "6.5.0.G"
-	@strings $(TARGET_farmduino_k15_HEX).bin | grep -q "6.5.0.H"
-	@strings $(TARGET_express_k10_HEX).bin | grep -q "6.5.0.E"
+	@strings $(TARGET_ramps_v14_HEX).bin | grep -q "6.5.0.R.genesisK12"
+	@strings $(TARGET_farmduino_v10_HEX).bin | grep -q "6.5.0.F.genesisK13"
+	@strings $(TARGET_farmduino_k14_HEX).bin | grep -q "6.5.0.G.genesisK14"
+	@strings $(TARGET_farmduino_k15_HEX).bin | grep -q "6.5.0.H.genesisK15"
+	@strings $(TARGET_express_k10_HEX).bin | grep -q "6.5.0.E.expressK10"
 
 force_clean: remove_ino_copy
 	$(RM) -r $(BUILD_DIR) $(BIN_DIR)
