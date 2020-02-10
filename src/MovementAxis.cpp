@@ -129,8 +129,8 @@ void MovementAxis::loadSettingsTMC2130(int motorCurrent, int  stallSensitivity, 
 }
 
 uint8_t MovementAxis::getStatus() {
-  return TMC2130X.read_STAT();
-  //return TMC2130A->getStatus();
+  //return TMC2130X.read_STAT();
+  return TMC2130A->read_STAT();
 }
 
 uint16_t MovementAxis::getLoad() {

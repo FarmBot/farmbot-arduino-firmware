@@ -350,6 +350,11 @@ void setPinInputOutput()
   pinMode(FAN_PIN, OUTPUT);
   pinMode(LED_PIN, OUTPUT);
 
+  digitalWrite(HEATER_0_PIN, LOW);
+  digitalWrite(HEATER_1_PIN, LOW);
+  digitalWrite(FAN_PIN, LOW);
+  digitalWrite(LED_PIN, LOW);
+
   pinMode(UTM_C, INPUT_PULLUP);
   pinMode(UTM_D, INPUT_PULLUP);
   pinMode(UTM_E, INPUT_PULLUP);
@@ -382,6 +387,11 @@ void setPinInputOutput()
   pinMode(SERVO_1_PIN, OUTPUT);
   pinMode(SERVO_2_PIN, OUTPUT);
   pinMode(SERVO_3_PIN, OUTPUT);
+
+  digitalWrite(SERVO_0_PIN, LOW);
+  digitalWrite(SERVO_1_PIN, LOW);
+  digitalWrite(SERVO_2_PIN, LOW);
+  digitalWrite(SERVO_3_PIN, LOW);
 
   Serial.print(COMM_REPORT_COMMENT);
   Serial.print(SPACE);
@@ -444,6 +454,13 @@ void setPinInputOutput()
   pinMode(PERIPHERAL_4_PIN, OUTPUT);
   pinMode(PERIPHERAL_5_PIN, OUTPUT);
 
+  digitalWrite(LED_PIN, LOW);
+  digitalWrite(VACUUM_PIN, LOW);
+  digitalWrite(WATER_PIN, LOW);
+  digitalWrite(LIGHTING_PIN, LOW);
+  digitalWrite(PERIPHERAL_4_PIN, LOW);
+  digitalWrite(PERIPHERAL_5_PIN, LOW);
+
   pinMode(UTM_C, INPUT_PULLUP);
   pinMode(UTM_D, INPUT_PULLUP);
   if (UTM_E > 0) { pinMode(UTM_E, INPUT_PULLUP); };
@@ -459,6 +476,11 @@ void setPinInputOutput()
   pinMode(SERVO_1_PIN, OUTPUT);
   pinMode(SERVO_2_PIN, OUTPUT);
   pinMode(SERVO_3_PIN, OUTPUT);
+
+  digitalWrite(SERVO_0_PIN, LOW);
+  digitalWrite(SERVO_1_PIN, LOW);
+  digitalWrite(SERVO_2_PIN, LOW);
+  digitalWrite(SERVO_3_PIN, LOW);
 
   Serial.print(COMM_REPORT_COMMENT);
   Serial.print(SPACE);
@@ -594,7 +616,6 @@ void startInterrupt()
   Serial.print(SPACE);
   Serial.print("Start interrupt");
   Serial.print(CRLF);
-
 
   // Start the interrupt used for moving
   // Interrupt management code library written by Paul Stoffregen
