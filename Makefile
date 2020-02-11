@@ -12,7 +12,7 @@ ARDUINO_INSTALL_DIR ?= $(HOME)/arduino-1.8.11
 COPY_INO := $(shell cp $(FBARDUINO_FIRMWARE_SRC_DIR)/src.ino $(FBARDUINO_FIRMWARE_SRC_DIR)/src.ino.cpp)
 CXX_SRC := $(wildcard $(FBARDUINO_FIRMWARE_SRC_DIR)/*.cpp)
 SRC := $(CXX_SRC)
-SRC_DEPS := $(SRC) $(wildcard $(FBARDUINO_FIRMWARE_SRC_DIR)/*.h)
+HEADERS := $(wildcard $(FBARDUINO_FIRMWARE_SRC_DIR)/*.h)
 
 # Object files and Dependency files That will eventually be built.
 CXX_OBJ := $(CXX_SRC:.cpp=.o)
@@ -67,11 +67,11 @@ strings_test: all
 	$(OBJ_COPY) -I ihex $(TARGET_farmduino_k14_HEX) -O binary $(TARGET_farmduino_k14_HEX).bin
 	$(OBJ_COPY) -I ihex $(TARGET_farmduino_k15_HEX) -O binary $(TARGET_farmduino_k15_HEX).bin
 	$(OBJ_COPY) -I ihex $(TARGET_express_k10_HEX) -O binary $(TARGET_express_k10_HEX).bin
-	@strings $(TARGET_ramps_v14_HEX).bin | grep -q "6.5.0.R.genesisK12"
-	@strings $(TARGET_farmduino_v10_HEX).bin | grep -q "6.5.0.F.genesisK13"
-	@strings $(TARGET_farmduino_k14_HEX).bin | grep -q "6.5.0.G.genesisK14"
-	@strings $(TARGET_farmduino_k15_HEX).bin | grep -q "6.5.0.H.genesisK15"
-	@strings $(TARGET_express_k10_HEX).bin | grep -q "6.5.0.E.expressK10"
+	@strings $(TARGET_ramps_v14_HEX).bin | grep -q ".R.genesisK12"
+	@strings $(TARGET_farmduino_v10_HEX).bin | grep -q ".F.genesisK13"
+	@strings $(TARGET_farmduino_k14_HEX).bin | grep -q ".G.genesisK14"
+	@strings $(TARGET_farmduino_k15_HEX).bin | grep -q ".H.genesisK15"
+	@strings $(TARGET_express_k10_HEX).bin | grep -q ".E.expressK10"
 
 force_clean: remove_ino_copy
 	$(RM) -r $(BUILD_DIR) $(BIN_DIR)

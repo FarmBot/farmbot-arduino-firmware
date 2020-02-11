@@ -34,6 +34,7 @@ int F83Handler::execute(Command *command)
 
   Serial.print("R83 ");
   Serial.print(SOFTWARE_VERSION);
+  Serial.print(SOFTWARE_VERSION_SUFFIX);
   //Serial.print("\r\n");
   CurrentState::getInstance()->printQAndNewLine();
 

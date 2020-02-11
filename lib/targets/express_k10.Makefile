@@ -12,7 +12,7 @@ $(TARGET_express_k10_BUILD_DIR)/express_k10.eep: $(TARGET_express_k10_BUILD_DIR)
 $(TARGET_express_k10_BUILD_DIR)/express_k10.elf: $(TARGET_express_k10_OBJ)
 	$(CC) -w -Os -g -flto -fuse-linker-plugin -Wl,--gc-sections,--relax -mmcu=atmega2560 -o $@ $(TARGET_express_k10_OBJ) $(DEPS_OBJ) $(DEP_CORE_LDFLAGS)
 
-$(TARGET_express_k10_BUILD_DIR)/%.o: $(FBARDUINO_FIRMWARE_SRC_DIR)/%.cpp
+$(TARGET_express_k10_BUILD_DIR)/%.o: $(FBARDUINO_FIRMWARE_SRC_DIR)/%.cpp $(HEADERS)
 	$(CXX) $(CXX_FLAGS) -DFARMBOT_BOARD_ID=3 $(DEPS_CFLAGS) $< -o $@
 
 $(TARGET_express_k10_BUILD_DIR):
