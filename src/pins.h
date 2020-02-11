@@ -334,7 +334,7 @@
   #define SERVO_0_PIN 4
   #define SERVO_1_PIN 5
   #define SERVO_2_PIN 6
-  #define SERVO_3_PIN -1
+  #define SERVO_3_PIN 11
 
     // Encoder X channel A: pin 16, port H1
   #define ENC_X_A_PORT PINH
