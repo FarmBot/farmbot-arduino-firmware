@@ -37,7 +37,7 @@ public:
   void handleMovementInterrupt();
   void checkEncoders();
 
-  #if defined(FARMDUINO_EXP_V20)
+  #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
     void initTMC2130();
     void loadSettingsTMC2130();
   #endif

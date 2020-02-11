@@ -257,7 +257,7 @@
 
 #endif
 
-#if defined(FARMDUINO_EXP_V20)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
 
     // X1-AXIS
   #define X_STEP_PIN 26     // X1_STEP_PIN

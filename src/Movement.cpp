@@ -208,7 +208,7 @@ void Movement::loadSettings()
 
 }
 
-#if defined(FARMDUINO_EXP_V20)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
   void Movement::initTMC2130()
   {
     axisX.initTMC2130();
@@ -289,7 +289,7 @@ void Movement::loadSettings()
 
 void Movement::test()
 {
-  #if defined(FARMDUINO_EXP_V20)
+  #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
   //axisX.enableMotor();
   //axisX.setMotorStep();
   //delayMicroseconds(500);
@@ -747,18 +747,16 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
           break;
 
         case 2:
-          #if defined(FARMDUINO_EXP_V20)
-          
-          serialBuffer += "R89";
-          serialBuffer += " X";
-          serialBuffer += axisX.getLoad();
-          serialBuffer += " Y";
-          serialBuffer += axisY.getLoad();
-          serialBuffer += " Z";
-          serialBuffer += axisZ.getLoad();
-          serialBuffer += CurrentState::getInstance()->getQAndNewLine();
-          
-          #endif
+          //#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)          
+          //serialBuffer += "R89";
+          //serialBuffer += " X";
+          //serialBuffer += axisX.getLoad();
+          //serialBuffer += " Y";
+          //serialBuffer += axisY.getLoad();
+          //serialBuffer += " Z";
+          //serialBuffer += axisZ.getLoad();
+          //serialBuffer += CurrentState::getInstance()->getQAndNewLine();          
+          //#endif
           break;
 
         default:
@@ -767,14 +765,14 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
 
       serialMessageNr++;
 
-      #if !defined(FARMDUINO_EXP_V20)
+      #if !defined(FARMDUINO_EXP_V20) && !defined(FARMDUINO_V30)
       if (serialMessageNr > 1)
       {
         serialMessageNr = 0;
       }
       #endif
 
-      #if defined(FARMDUINO_EXP_V20)
+      #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
       
       if (serialMessageNr > 2)
       {
@@ -1400,27 +1398,6 @@ void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, 
 #if defined(FARMDUINO_EXP_V20)
 void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, float *missedSteps, long *lastPosition, long *encoderLastPosition, int *encoderUseForPos, float *encoderStepDecay, bool *encoderEnabled)
 {
-
-  //
-  //  /**/
-  //  /*
-  //  Serial.print("R99");
-  //  Serial.print(" XXX ");
-  //  Serial.print(" cur pos ");
-  //  Serial.print(axis->currentPosition());
-  //  Serial.print(" last pos ");
-  //  Serial.print(*lastPosition);
-  //  */
-  //
-
-  //if (axis->stallDetected()) {
-  //  Serial.print("X");
-  //}
-  //else
-  //{
-  //  Serial.print(".");
-  //}
-
   /**/
   bool stallGuard = false;
   bool standStill = false;
@@ -1428,28 +1405,15 @@ void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, 
 
   if (*encoderEnabled) {    
 
-    //TMC2130X.read_STAT();
-
     status = axis->getStatus();
 
     stallGuard = status & FB_TMC_SPISTATUS_STALLGUARD_MASK ? true : false;
     standStill = status & FB_TMC_SPISTATUS_STANDSTILL_MASK ? true : false;
 
     if (stallGuard || standStill) {
-      //Serial.print(".");
       // In case of stall detection, count this as a missed step
       (*missedSteps)++;
       axis->setCurrentPosition(*lastPosition);
-
-
-      //if (int(*missedSteps) % 10 == 0) {
-      //  Serial.println();
-      //  Serial.print(*missedSteps);
-      //  Serial.print("/");
-      //  Serial.print(axis->currentPosition());
-      //  Serial.println();
-      //}
-
     }
     else {
       // Decrease amount of missed steps if there are no missed step
@@ -1570,7 +1534,7 @@ void Movement::loadMotorSettings()
   /**/
 
 /*
-#if defined(FARMDUINO_EXP_V20)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
   loadSettingsTMC2130();
 #endif
 */
@@ -1722,7 +1686,7 @@ bool Movement::endStopsReached()
 void Movement::storePosition()
 {
 
-#if !defined(FARMDUINO_EXP_V20)
+#if !defined(FARMDUINO_EXP_V20) &&  !defined(FARMDUINO_V30)
   if (motorConsEncoderEnabled[0])
   {
     CurrentState::getInstance()->setX(encoderX.currentPosition());
@@ -1751,7 +1715,7 @@ void Movement::storePosition()
   }
 #endif
 
-#if defined(FARMDUINO_EXP_V20)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
   CurrentState::getInstance()->setX(axisX.currentPosition());
   CurrentState::getInstance()->setY(axisY.currentPosition());
   CurrentState::getInstance()->setZ(axisZ.currentPosition());
