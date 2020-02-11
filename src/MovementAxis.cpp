@@ -71,7 +71,7 @@ void MovementAxis::test()
 
 }
 
-#if defined(FARMDUINO_EXP_V20)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
 
 unsigned int MovementAxis::getLostSteps()
 {
@@ -611,7 +611,7 @@ void MovementAxis::setDirectionUp()
 //#endif
 
 /*
-#if defined(FARMDUINO_EXP_V20)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
 
   // The TMC2130 uses a command to change direction, not a pin
   if (motorMotorInv)
@@ -660,7 +660,7 @@ void MovementAxis::setDirectionDown()
 
   //#endif
 /*
-  #if defined(FARMDUINO_EXP_V20)
+  #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
 
   // The TMC2130 uses a command to change direction, not a pin
   if (motorMotorInv)
@@ -941,7 +941,7 @@ void MovementAxis::resetMotorStepWrite46()
   PORTL &= B11110111;
 }
 
-#if defined(FARMDUINO_EXP_V20)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
 //// TMC2130 Functions
 
 void MovementAxis::setMotorStepWriteTMC2130()

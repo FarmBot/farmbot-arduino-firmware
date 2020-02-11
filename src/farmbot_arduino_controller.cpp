@@ -2,7 +2,7 @@
 #include "farmbot_arduino_controller.h"
 
 /**/
-//#if !defined(FARMDUINO_EXP_V20)
+//#if !defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
 #include "TimerOne.h"
 //#endif
 
@@ -52,7 +52,7 @@ unsigned long interruptDurationMax = 0;
 bool interruptBusy = false;
 int interruptSecondTimer = 0;
 
-//#if !defined(FARMDUINO_EXP_V20)
+//#if !defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
 void interrupt(void)
 {
   if (!debugInterrupt)
@@ -284,7 +284,7 @@ void checkParamsChanged()
     }
 
 
-    #if defined(FARMDUINO_EXP_V20)
+    #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
       Movement::getInstance()->loadSettingsTMC2130();
     #endif
 
@@ -503,7 +503,7 @@ void setPinInputOutput()
 }
 #endif
 
-#if defined(FARMDUINO_EXP_V20)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
 void setPinInputOutput()
 {
   Serial.print(COMM_REPORT_COMMENT);
@@ -621,13 +621,13 @@ void startInterrupt()
   // Interrupt management code library written by Paul Stoffregen
   // The default time 100 micro seconds
 
-  //#if !defined(FARMDUINO_EXP_V20)
+  //#if !defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
     Timer1.attachInterrupt(interrupt);
     Timer1.initialize(MOVEMENT_INTERRUPT_SPEED);
     Timer1.start();
   //#endif
 
-  //#if defined(FARMDUINO_EXP_V20)
+  //#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
   //  Serial.println("set timer");
   //      TIMSK2 = (TIMSK2 & B11111110) | 0x01; // Enable timer overflow
   //      TCCR2B = (TCCR2B & B11111000) | 0x01; // Set divider to 1
@@ -735,7 +735,7 @@ void startServo()
   ServoControl::getInstance()->attach();
 }
 
-#if defined(FARMDUINO_EXP_V20)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
 
 /**/
 //static Trinamic_TMC2130 controllerTMC2130_X(X_CHIP_SELECT);

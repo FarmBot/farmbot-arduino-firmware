@@ -76,7 +76,7 @@ void MovementEncoder::loadMdlEncoderId(MdlSpiEncoders encoder)
 
 void MovementEncoder::setPosition(long newPosition)
 {
-  #if defined(RAMPS_V14) || defined(FARMDUINO_V10)
+  #if defined(RAMPS_V14) || defined(FARMDUINO_V10) || defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
     position = newPosition;
   #endif
 
@@ -277,7 +277,7 @@ float MovementEncoder::getMissedSteps()
 
 void MovementEncoder::checkMissedSteps()
 {
-  #if !defined(FARMDUINO_EXP_V20)
+  #if !defined(FARMDUINO_EXP_V20) && !defined(FARMDUINO_V30)
     if (encoderEnabled)
     {
       bool stepMissed = false;
@@ -307,7 +307,7 @@ void MovementEncoder::checkMissedSteps()
   #endif
 
 /*
-  #if defined(FARMDUINO_EXP_V20)
+  #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
 
     if (encoderEnabled) {
       if (axis->stallDetected()) {

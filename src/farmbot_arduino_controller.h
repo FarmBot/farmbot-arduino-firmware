@@ -16,7 +16,7 @@
 #include "MemoryFree.h"
 #include "Debug.h"
 
-#if defined(FARMDUINO_EXP_V20)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
   #include "TMC2130.h"
 #endif
 
@@ -49,7 +49,7 @@ void setup();
   void setPinInputOutput();
   void startSerial();
 
-  #if defined(FARMDUINO_EXP_V20)
+  #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
   void loadTMC2130drivers();
   void loadTMC2130parameters();
   void startupTmc();
