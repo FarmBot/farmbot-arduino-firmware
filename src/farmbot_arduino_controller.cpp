@@ -388,11 +388,6 @@ void setPinInputOutput()
   pinMode(SERVO_2_PIN, OUTPUT);
   pinMode(SERVO_3_PIN, OUTPUT);
 
-  digitalWrite(SERVO_0_PIN, LOW);
-  digitalWrite(SERVO_1_PIN, LOW);
-  digitalWrite(SERVO_2_PIN, LOW);
-  digitalWrite(SERVO_3_PIN, LOW);
-
   Serial.print(COMM_REPORT_COMMENT);
   Serial.print(SPACE);
   Serial.print("Set input/output");
@@ -476,11 +471,6 @@ void setPinInputOutput()
   pinMode(SERVO_1_PIN, OUTPUT);
   pinMode(SERVO_2_PIN, OUTPUT);
   pinMode(SERVO_3_PIN, OUTPUT);
-
-  digitalWrite(SERVO_0_PIN, LOW);
-  digitalWrite(SERVO_1_PIN, LOW);
-  digitalWrite(SERVO_2_PIN, LOW);
-  digitalWrite(SERVO_3_PIN, LOW);
 
   Serial.print(COMM_REPORT_COMMENT);
   Serial.print(SPACE);
@@ -589,11 +579,6 @@ void setPinInputOutput()
   pinMode(SERVO_1_PIN, OUTPUT);
   pinMode(SERVO_2_PIN, OUTPUT);
   pinMode(SERVO_3_PIN, OUTPUT);
-
-  digitalWrite(SERVO_0_PIN, LOW);
-  digitalWrite(SERVO_1_PIN, LOW);
-  digitalWrite(SERVO_2_PIN, LOW);
-  digitalWrite(SERVO_3_PIN, LOW);
 }
 #endif
 
@@ -631,7 +616,7 @@ void startInterrupt()
   //  Serial.println("set timer");
   //      TIMSK2 = (TIMSK2 & B11111110) | 0x01; // Enable timer overflow
   //      TCCR2B = (TCCR2B & B11111000) | 0x01; // Set divider to 1
-  //      OCR2A = 4; // Set overflow to 4 for total of 64 µs
+  //      OCR2A = 4; // Set overflow to 4 for total of 64 Âµs
   //#endif
 }
 
