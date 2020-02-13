@@ -221,6 +221,7 @@ Value |Description
 1     |Emergency stop
 2     |Timeout
 3     |Stall detected
+4     |Calibration error
 14    |Invalid command
 15    |No config
 
