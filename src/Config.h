@@ -259,3 +259,9 @@ enum MdlSpiEncoders
 #if defined(FARMDUINO_EXP_V20) && !defined(SOFTWARE_VERSION_SUFFIX)
 #define SOFTWARE_VERSION_SUFFIX ".E.expressK10\0"
 #endif
+
+#ifndef FARMBOT_BOARD_ID
+#define SOFTWARE_COMMIT ""
+#else
+#include "CommitSHA.h"
+#endif

@@ -36,8 +36,11 @@ jobs:
           command: |
             export SOFTWARE_VERSION=$(cat src/Config.h | grep -w SOFTWARE_VERSION | cut -d'"' -f 2 | cut -d'\' -f 1)
             strings bin/arduino_firmware.hex.bin | grep $SOFTWARE_VERSION
-            mkdir bin/$SOFTWARE_VERSION
+            export SHORT_COMMIT_SHA=$(echo $CIRCLE_SHA1 | cut -c1-8)
+            export COMMIT_SUFFIX=$(strings bin/arduino_firmware.hex.bin | grep $SHORT_COMMIT_SHA)
+            export NEW_FW_DIR=bin/$SOFTWARE_VERSION$COMMIT_SUFFIX
+            mkdir $NEW_FW_DIR
             rm bin/*.bin
-            mv bin/*.hex bin/$SOFTWARE_VERSION
+            mv bin/*.hex $NEW_FW_DIR
       - store_artifacts:
           path: bin
