@@ -192,7 +192,6 @@ void MovementEncoder::processEncoder()
 
     digitalWrite(NSS_PIN, HIGH);
     SPI.endTransaction();
-    delay(10);
     position = encoderVal;
   #endif
 
