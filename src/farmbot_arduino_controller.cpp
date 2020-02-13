@@ -388,6 +388,11 @@ void setPinInputOutput()
   pinMode(SERVO_2_PIN, OUTPUT);
   pinMode(SERVO_3_PIN, OUTPUT);
 
+  digitalWrite(SERVO_0_PIN, LOW);
+  digitalWrite(SERVO_1_PIN, LOW);
+  digitalWrite(SERVO_2_PIN, LOW);
+  digitalWrite(SERVO_3_PIN, LOW);
+
   Serial.print(COMM_REPORT_COMMENT);
   Serial.print(SPACE);
   Serial.print("Set input/output");
@@ -471,6 +476,11 @@ void setPinInputOutput()
   pinMode(SERVO_1_PIN, OUTPUT);
   pinMode(SERVO_2_PIN, OUTPUT);
   pinMode(SERVO_3_PIN, OUTPUT);
+
+  digitalWrite(SERVO_0_PIN, LOW);
+  digitalWrite(SERVO_1_PIN, LOW);
+  digitalWrite(SERVO_2_PIN, LOW);
+  digitalWrite(SERVO_3_PIN, LOW);
 
   Serial.print(COMM_REPORT_COMMENT);
   Serial.print(SPACE);
@@ -579,6 +589,11 @@ void setPinInputOutput()
   pinMode(SERVO_1_PIN, OUTPUT);
   pinMode(SERVO_2_PIN, OUTPUT);
   pinMode(SERVO_3_PIN, OUTPUT);
+
+  digitalWrite(SERVO_0_PIN, LOW);
+  digitalWrite(SERVO_1_PIN, LOW);
+  digitalWrite(SERVO_2_PIN, LOW);
+  digitalWrite(SERVO_3_PIN, LOW);
 }
 #endif
 
