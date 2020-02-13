@@ -522,7 +522,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
   // Let the interrupt handle all the movements
   while ((axisActive[0] || axisActive[1] || axisActive[2]) && !emergencyStop)
   {
-    #if defined(FARMDUINO_V14)
+    #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
     checkEncoders();
     #endif
 
@@ -741,7 +741,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
         case 1:
           serialBuffer += CurrentState::getInstance()->getPosition();
           serialBuffer += CurrentState::getInstance()->getQAndNewLine();
-          #if defined(FARMDUINO_V14)
+          #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
             getEncoderReport();
           #endif
           break;
@@ -765,14 +765,14 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
 
       serialMessageNr++;
 
-      #if !defined(FARMDUINO_EXP_V20) && !defined(FARMDUINO_V30)
+      #if !defined(FARMDUINO_EXP_V20)
       if (serialMessageNr > 1)
       {
         serialMessageNr = 0;
       }
       #endif
 
-      #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+      #if defined(FARMDUINO_EXP_V20)
       
       if (serialMessageNr > 2)
       {
@@ -1053,7 +1053,7 @@ int Movement::calibrateAxis(int axis)
   while (!movementDone && error == 0)
   {
 
-    #if defined(FARMDUINO_V14)
+    #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
       checkEncoders();
     #endif
 
@@ -1232,7 +1232,7 @@ int Movement::calibrateAxis(int axis)
   while (!movementDone && error == 0)
   {
 
-    #if defined(FARMDUINO_V14)
+    #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
        checkEncoders();
     #endif
 
@@ -1758,7 +1758,7 @@ bool Movement::endStopsReached()
 void Movement::storePosition()
 {
 
-#if !defined(FARMDUINO_EXP_V20) &&  !defined(FARMDUINO_V30)
+#if !defined(FARMDUINO_EXP_V20)
   if (motorConsEncoderEnabled[0])
   {
     CurrentState::getInstance()->setX(encoderX.currentPosition());
@@ -1787,7 +1787,7 @@ void Movement::storePosition()
   }
 #endif
 
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+#if defined(FARMDUINO_EXP_V20)
   CurrentState::getInstance()->setX(axisX.currentPosition());
   CurrentState::getInstance()->setY(axisY.currentPosition());
   CurrentState::getInstance()->setZ(axisZ.currentPosition());

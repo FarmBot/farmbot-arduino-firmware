@@ -76,20 +76,24 @@ void MovementEncoder::loadMdlEncoderId(MdlSpiEncoders encoder)
 
 void MovementEncoder::setPosition(long newPosition)
 {
-  #if defined(RAMPS_V14) || defined(FARMDUINO_V10) || defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+  #if defined(RAMPS_V14) || defined(FARMDUINO_V10) || defined(FARMDUINO_EXP_V20)
     position = newPosition;
   #endif
 
-  #if defined(FARMDUINO_V14)
+  #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
     if (newPosition == 0)
     {
       position = newPosition;
 
       const byte reset_cmd = 0x00;
 
+      SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV4, MSBFIRST, SPI_MODE0));
       digitalWrite(NSS_PIN, LOW);
+      delayMicroseconds(2);
       SPI.transfer(reset_cmd | (mdlEncoder << mdl_spi_encoder_offset));
+      delayMicroseconds(5);
       digitalWrite(NSS_PIN, HIGH);
+      SPI.endTransaction();
     }
   #endif
 }
@@ -105,7 +109,7 @@ long MovementEncoder::currentPosition()
   }
   else
   {
-    #if defined(FARMDUINO_V14)
+    #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
       floatScalingFactor = scalingFactor / 40000.0;
       return position * floatScalingFactor * encoderInvert;
     #endif
@@ -127,7 +131,7 @@ void MovementEncoder::checkEncoder(bool channelA, bool channelB, bool channelAQ,
     processEncoder();
   #endif
 
-  #if defined(FARMDUINO_V14)
+  #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
     processEncoder();
   #endif
 
@@ -169,14 +173,16 @@ void MovementEncoder::processEncoder()
   #endif
 
   // If using farmduino, revision 1.4, use the SPI interface to read from the Motor Dynamics Lab chip
-  #if defined(FARMDUINO_V14)
+  #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
     const byte read_cmd = 0x0F;
     int readSize = 4;
     long encoderVal = 0;
 
+    SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV4, MSBFIRST, SPI_MODE0));
     digitalWrite(NSS_PIN, LOW);
+    delayMicroseconds(2);
     SPI.transfer(read_cmd | (mdlEncoder << mdl_spi_encoder_offset));
-    delayMicroseconds(10);
+    delayMicroseconds(5);
 
     for (int i = 0; i < readSize; ++i)
     {
@@ -185,6 +191,8 @@ void MovementEncoder::processEncoder()
     }
 
     digitalWrite(NSS_PIN, HIGH);
+    SPI.endTransaction();
+    delay(10);
     position = encoderVal;
   #endif
 
@@ -277,7 +285,7 @@ float MovementEncoder::getMissedSteps()
 
 void MovementEncoder::checkMissedSteps()
 {
-  #if !defined(FARMDUINO_EXP_V20) && !defined(FARMDUINO_V30)
+  #if !defined(FARMDUINO_EXP_V20)
     if (encoderEnabled)
     {
       bool stepMissed = false;
