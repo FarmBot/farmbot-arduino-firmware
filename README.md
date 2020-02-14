@@ -57,7 +57,7 @@ Software overview
 
 All files are in `/src`
 
-Farmbot_arduino_controller contains the setup() and main(). This is the main sequence:
+`src.ino` contains the setup() and main loop(). This is the main sequence:
 
 ```
      +--------------------------+
@@ -84,52 +84,26 @@ Farmbot_arduino_controller contains the setup() and main(). This is the main seq
 
 ```
 
+Board Feature Overview
+======================
+| board             | kit          | pin encoders | SPI encoders | SPI motors | SPI stall detection |
+|:----------------- |:------------ |:------------:|:------------:|:----------:|:-------------------:|
+| RAMPS_V14         | Genesis v1.2 |      x       |              |            |                     |
+| FARMDUINO_V10     | Genesis v1.3 |      x       |              |            |                     |
+| FARMDUINO_V14     | Genesis v1.4 |              |      x       |            |                     |
+| FARMDUINO_V30     | Genesis v1.5 |              |      x       |     x      |                     |
+| FARMDUINO_EXP_V20 | Express v1.0 |              |              |     x      |          x          |
+
 Codes used for communication
 ============================
 
-Pin Numbering
--------------
+IMPORTANT
+---------
 
-### RAMPS 1.4 (for other boards, see [/src/pins.h](/src/pins.h))
+Farmbot will NOT move until the configuration has been approved.
+To approve manually, send 'F22 P2 V1 Q0'
 
-Tag              |Pin Nr|Comment
------------------|------|-------
-X_STEP_PIN       |  54  | X axis step signal
-X_DIR_PIN        |  55  | X axis direction choice
-X_ENABLE_PIN     |  38  | X axis enable
-X_MIN_PIN        |   3  | X axis end stop at home position
-X_MAX_PIN        |   2  | X axis end stop at far position
-X_ENCDR_A        |  16  | X axis encoder A channel
-X_ENCDR_B        |  17  | X axis encoder B channel
-X_ENCDR_A_Q      |  31  | X axis encoder A channel for quarature (not implemented)
-X_ENCDR_B_Q      |  33  | X axis encoder B channel for quarature (not implemented)
-Y_STEP_PIN       |  60  | Y axis step signal
-Y_DIR_PIN        |  61  | Y axis direction choice
-Y_ENABLE_PIN     |  56  | Y axis enable
-Y_MIN_PIN        |  14  | Y axis end stop at home position
-Y_MAX_PIN        |  15  | Y axis end stop at far position
-Y_ENCDR_A        |  23  | Y axis encoder A channel
-Y_ENCDR_B        |  25  | Y axis encoder B channel
-Y_ENCDR_A_Q      |  35  | Y axis encoder A channel for quarature (not implemented)
-Y_ENCDR_B_Q      |  37  | Y axis encoder B channel for quarature (not implemented)
-Z_STEP_PIN       |  46  | Z axis step signal
-Z_DIR_PIN        |  48  | Z axis direction choice
-Z_ENABLE_PIN     |  62  | Z axis enable
-Z_MIN_PIN        |  18  | Z axis end stop at home position
-Z_MAX_PIN        |  19  | Z axis end stop at far position
-Z_ENCDR_A        |  27  | Z axis encoder A channel
-Z_ENCDR_B        |  29  | Z axis encoder B channel
-Z_ENCDR_A_Q      |  39  | Z axis encoder A channel for quarature (not implemented)
-Z_ENCDR_B_Q      |  41  | Z axis encoder B channel for quarature (not implemented)
-LED_PIN          |  13  | on board LED
-FAN_PIN          |   9  | RAMPS board fan pin
-HEATER_0_PIN     |  10  | RAMPS board heating pin 0
-HEATER_1_PIN     |   8  | RAMPS board heating pin 1
-SERVO_0_PIN      |   4  | Servo motor 0 signal pin
-SERVO_1_PIN      |   5  | Servo motor 1 signal pin
-SERVO_2_PIN      |   6  | Servo motor 2 signal pin
-SERVO_3_PIN      |  11  | Servo motor 3 signal pin
-
+To move, use the command 'G00 X0 Y0 Z0 Q0' where you type in the coordinates just after X, Y and Z.
 
 G-Codes
 -------
@@ -221,6 +195,7 @@ Value |Description
 1     |Emergency stop
 2     |Timeout
 3     |Stall detected
+4     |Calibration error
 14    |Invalid command
 15    |No config
 
@@ -280,112 +255,147 @@ ZB        |End stop 2 on z axis   |0/1
 Arduino parameter numbers
 ------------------------
 
-ID   | Name
------|----------------------------
-2    | PARAM_CONFIG_OK
-3    | PARAM_USE_EEPROM
-4    | PARAM_E_STOP_ON_MOV_ERR
-5    | PARAM_MOV_NR_RETRY
-11   | MOVEMENT_TIMEOUT_X
-12   | MOVEMENT_TIMEOUT_Y
-13   | MOVEMENT_TIMEOUT_Z
-15   | MOVEMENT_KEEP_ACTIVE_X
-16   | MOVEMENT_KEEP_ACTIVE_Y
-17   | MOVEMENT_KEEP_ACTIVE_Z
-18   | MOVEMENT_HOME_AT_BOOT_X
-19   | MOVEMENT_HOME_AT_BOOT_Y
-20   | MOVEMENT_HOME_AT_BOOT_Z
-21   | MOVEMENT_INVERT_ENDPOINTS_X
-22   | MOVEMENT_INVERT_ENDPOINTS_Y
-23   | MOVEMENT_INVERT_ENDPOINTS_Z
-25   | MOVEMENT_ENABLE_ENDPOINTS_X
-26   | MOVEMENT_ENABLE_ENDPOINTS_Y
-27   | MOVEMENT_ENABLE_ENDPOINTS_Z
-31   | MOVEMENT_INVERT_MOTOR_X
-32   | MOVEMENT_INVERT_MOTOR_Y
-33   | MOVEMENT_INVERT_MOTOR_Z
-36   | MOVEMENT_SECONDARY_MOTOR_X
-37   | MOVEMENT_SECONDARY_MOTOR_INVERT_X
-41   | MOVEMENT_STEPS_ACC_DEC_X
-42   | MOVEMENT_STEPS_ACC_DEC_Y
-43   | MOVEMENT_STEPS_ACC_DEC_Z
-45   | MOVEMENT_STOP_AT_HOME_X
-46   | MOVEMENT_STOP_AT_HOME_Y
-47   | MOVEMENT_STOP_AT_HOME_Z
-51   | MOVEMENT_HOME_UP_X
-52   | MOVEMENT_HOME_UP_Y
-53   | MOVEMENT_HOME_UP_Z
-55   | MOVEMENT_STEP_PER_MM_X
-56   | MOVEMENT_STEP_PER_MM_Y
-57   | MOVEMENT_STEP_PER_MM_Z
-61   | MOVEMENT_MIN_SPD_X
-62   | MOVEMENT_MIN_SPD_Y
-63   | MOVEMENT_MIN_SPD_Z
-65   | MOVEMENT_HOME_SPD_X
-66   | MOVEMENT_HOME_SPD_Y
-67   | MOVEMENT_HOME_SPD_Z
-71   | MOVEMENT_MAX_SPD_X
-72   | MOVEMENT_MAX_SPD_Y
-73   | MOVEMENT_MAX_SPD_Z
-75   | MOVEMENT_INVERT_2_ENDPOINTS_X
-76   | MOVEMENT_INVERT_2_ENDPOINTS_Y
-77   | MOVEMENT_INVERT_2_ENDPOINTS_Z
-81   | MOVEMENT_MOTOR_CURRENT_X
-82   | MOVEMENT_MOTOR_CURRENT_Y
-83   | MOVEMENT_MOTOR_CURRENT_Z
-85   | MOVEMENT_STALL_SENSITIVITY_X
-86   | MOVEMENT_STALL_SENSITIVITY_Y
-87   | MOVEMENT_STALL_SENSITIVITY_Z
-91   | MOVEMENT_MICROSTEPS_X
-92   | MOVEMENT_MICROSTEPS_Y
-93   | MOVEMENT_MICROSTEPS_Z
-101  | ENCODER_ENABLED_X
-102  | ENCODER_ENABLED_Y
-103  | ENCODER_ENABLED_Z
-105  | ENCODER_TYPE_X
-106  | ENCODER_TYPE_Y
-107  | ENCODER_TYPE_Z
-111  | ENCODER_MISSED_STEPS_MAX_X
-112  | ENCODER_MISSED_STEPS_MAX_Y
-113  | ENCODER_MISSED_STEPS_MAX_Z
-115  | ENCODER_SCALING_X
-116  | ENCODER_SCALING_Y
-117  | ENCODER_SCALING_Z
-121  | ENCODER_MISSED_STEPS_DECAY_X
-122  | ENCODER_MISSED_STEPS_DECAY_Y
-123  | ENCODER_MISSED_STEPS_DECAY_Z
-125  | ENCODER_USE_FOR_POS_X
-126  | ENCODER_USE_FOR_POS_Y
-127  | ENCODER_USE_FOR_POS_Z
-131  | ENCODER_INVERT_X
-132  | ENCODER_INVERT_Y
-133  | ENCODER_INVERT_Z
-141  | MOVEMENT_AXIS_NR_STEPS_X
-142  | MOVEMENT_AXIS_NR_STEPS_Y
-143  | MOVEMENT_AXIS_NR_STEPS_Z
-145  | MOVEMENT_STOP_AT_MAX_X
-146  | MOVEMENT_STOP_AT_MAX_Y
-147  | MOVEMENT_STOP_AT_MAX_Z
-201  | PIN_GUARD_1_PIN_NR
-202  | PIN_GUARD_1_TIME_OUT
-203  | PIN_GUARD_1_ACTIVE_STATE
-205  | PIN_GUARD_2_PIN_NR
-206  | PIN_GUARD_2_TIME_OUT
-207  | PIN_GUARD_2_ACTIVE_STATE
-211  | PIN_GUARD_3_PIN_NR
-212  | PIN_GUARD_3_TIME_OUT
-213  | PIN_GUARD_3_ACTIVE_STATE
-215  | PIN_GUARD_4_PIN_NR
-216  | PIN_GUARD_4_TIME_OUT
-217  | PIN_GUARD_4_ACTIVE_STATE
-221  | PIN_GUARD_5_PIN_NR
-222  | PIN_GUARD_5_TIME_OUT
-223  | PIN_GUARD_5_ACTIVE_STATE
+ID  | Name                              | Unit      | Notes
+----| ----------------------------------| ----------| ---------------------------------------
+2   | PARAM_CONFIG_OK                   | 0 / 1     | 
+3   | PARAM_USE_EEPROM                  | 0 / 1     | 
+4   | PARAM_E_STOP_ON_MOV_ERR           | 0 / 1     | 
+5   | PARAM_MOV_NR_RETRY                | integer   | 
+11  | MOVEMENT_TIMEOUT_X                | seconds   | 
+12  | MOVEMENT_TIMEOUT_Y                | seconds   | 
+13  | MOVEMENT_TIMEOUT_Z                | seconds   | 
+15  | MOVEMENT_KEEP_ACTIVE_X            | 0 / 1     | 
+16  | MOVEMENT_KEEP_ACTIVE_Y            | 0 / 1     | 
+17  | MOVEMENT_KEEP_ACTIVE_Z            | 0 / 1     | 
+18  | MOVEMENT_HOME_AT_BOOT_X           | 0 / 1     | 
+19  | MOVEMENT_HOME_AT_BOOT_Y           | 0 / 1     | 
+20  | MOVEMENT_HOME_AT_BOOT_Z           | 0 / 1     | 
+21  | MOVEMENT_INVERT_ENDPOINTS_X       | 0 / 1     | switch ends
+22  | MOVEMENT_INVERT_ENDPOINTS_Y       | 0 / 1     | switch ends
+23  | MOVEMENT_INVERT_ENDPOINTS_Z       | 0 / 1     | switch ends
+25  | MOVEMENT_ENABLE_ENDPOINTS_X       | 0 / 1     | 
+26  | MOVEMENT_ENABLE_ENDPOINTS_Y       | 0 / 1     | 
+27  | MOVEMENT_ENABLE_ENDPOINTS_Z       | 0 / 1     | 
+31  | MOVEMENT_INVERT_MOTOR_X           | 0 / 1     | 
+32  | MOVEMENT_INVERT_MOTOR_Y           | 0 / 1     | 
+33  | MOVEMENT_INVERT_MOTOR_Z           | 0 / 1     | 
+36  | MOVEMENT_SECONDARY_MOTOR_X        | 0 / 1     | 
+37  | MOVEMENT_SECONDARY_MOTOR_INVERT_X | 0 / 1     | 
+41  | MOVEMENT_STEPS_ACC_DEC_X          | steps     | 
+42  | MOVEMENT_STEPS_ACC_DEC_Y          | steps     | 
+43  | MOVEMENT_STEPS_ACC_DEC_Z          | steps     | 
+45  | MOVEMENT_STOP_AT_HOME_X           | 0 / 1     | 
+46  | MOVEMENT_STOP_AT_HOME_Y           | 0 / 1     | 
+47  | MOVEMENT_STOP_AT_HOME_Z           | 0 / 1     | 
+51  | MOVEMENT_HOME_UP_X                | 0 / 1     | 
+52  | MOVEMENT_HOME_UP_Y                | 0 / 1     | 
+53  | MOVEMENT_HOME_UP_Z                | 0 / 1     | 
+55  | MOVEMENT_STEP_PER_MM_X            | steps     | 
+56  | MOVEMENT_STEP_PER_MM_Y            | steps     | 
+57  | MOVEMENT_STEP_PER_MM_Z            | steps     | 
+61  | MOVEMENT_MIN_SPD_X                | steps/s   | 
+62  | MOVEMENT_MIN_SPD_Y                | steps/s   | 
+63  | MOVEMENT_MIN_SPD_Z                | steps/s   | 
+65  | MOVEMENT_HOME_SPD_X               | steps/s   | 
+66  | MOVEMENT_HOME_SPD_Y               | steps/s   | 
+67  | MOVEMENT_HOME_SPD_Z               | steps/s   | 
+71  | MOVEMENT_MAX_SPD_X                | steps/s   | 
+72  | MOVEMENT_MAX_SPD_Y                | steps/s   | 
+73  | MOVEMENT_MAX_SPD_Z                | steps/s   | 
+75  | MOVEMENT_INVERT_2_ENDPOINTS_X     | 0 / 1     | switch NO and NC
+76  | MOVEMENT_INVERT_2_ENDPOINTS_Y     | 0 / 1     | switch NO and NC
+77  | MOVEMENT_INVERT_2_ENDPOINTS_Z     | 0 / 1     | switch NO and NC
+81  | MOVEMENT_MOTOR_CURRENT_X          | milliamps | TMC2130 only
+82  | MOVEMENT_MOTOR_CURRENT_Y          | milliamps | TMC2130 only
+83  | MOVEMENT_MOTOR_CURRENT_Z          | milliamps | TMC2130 only
+85  | MOVEMENT_STALL_SENSITIVITY_X      | integer   | Express only
+86  | MOVEMENT_STALL_SENSITIVITY_Y      | integer   | Express only
+87  | MOVEMENT_STALL_SENSITIVITY_Z      | integer   | Express only
+91  | MOVEMENT_MICROSTEPS_X             | integer   | TMC2130 only
+92  | MOVEMENT_MICROSTEPS_Y             | integer   | TMC2130 only
+93  | MOVEMENT_MICROSTEPS_Z             | integer   | TMC2130 only
+101 | ENCODER_ENABLED_X                 | 0 / 1     | enables stall detection on Express
+102 | ENCODER_ENABLED_Y                 | 0 / 1     | enables stall detection on Express
+103 | ENCODER_ENABLED_Z                 | 0 / 1     | enables stall detection on Express
+105 | ENCODER_TYPE_X                    | 0         | differential channels disabled
+106 | ENCODER_TYPE_Y                    | 0         | differential channels disabled
+107 | ENCODER_TYPE_Z                    | 0         | differential channels disabled
+111 | ENCODER_MISSED_STEPS_MAX_X        | steps     | 
+112 | ENCODER_MISSED_STEPS_MAX_Y        | steps     | 
+113 | ENCODER_MISSED_STEPS_MAX_Z        | steps     | 
+115 | ENCODER_SCALING_X                 | integer   | `10000*motor/encoder` (except Express)
+116 | ENCODER_SCALING_Y                 | integer   | `10000*motor/encoder` (except Express)
+117 | ENCODER_SCALING_Z                 | integer   | `10000*motor/encoder` (except Express)
+121 | ENCODER_MISSED_STEPS_DECAY_X      | steps     | 1-99
+122 | ENCODER_MISSED_STEPS_DECAY_Y      | steps     | 1-99
+123 | ENCODER_MISSED_STEPS_DECAY_Z      | steps     | 1-99
+125 | ENCODER_USE_FOR_POS_X             | 0 / 1     | except Express
+126 | ENCODER_USE_FOR_POS_Y             | 0 / 1     | except Express
+127 | ENCODER_USE_FOR_POS_Z             | 0 / 1     | except Express
+131 | ENCODER_INVERT_X                  | 0 / 1     | except Express
+132 | ENCODER_INVERT_Y                  | 0 / 1     | except Express
+133 | ENCODER_INVERT_Z                  | 0 / 1     | except Express
+141 | MOVEMENT_AXIS_NR_STEPS_X          | steps     | 0 = limit disabled
+142 | MOVEMENT_AXIS_NR_STEPS_Y          | steps     | 0 = limit disabled
+143 | MOVEMENT_AXIS_NR_STEPS_Z          | steps     | 0 = limit disabled
+145 | MOVEMENT_STOP_AT_MAX_X            | 0 / 1     | 
+146 | MOVEMENT_STOP_AT_MAX_Y            | 0 / 1     | 
+147 | MOVEMENT_STOP_AT_MAX_Z            | 0 / 1     | 
+201 | PIN_GUARD_1_PIN_NR                | integer   | 
+202 | PIN_GUARD_1_TIME_OUT              | seconds   | 
+203 | PIN_GUARD_1_ACTIVE_STATE          | 0 / 1     | 
+205 | PIN_GUARD_2_PIN_NR                | integer   | 
+206 | PIN_GUARD_2_TIME_OUT              | seconds   | 
+207 | PIN_GUARD_2_ACTIVE_STATE          | 0 / 1     | 
+211 | PIN_GUARD_3_PIN_NR                | integer   | 
+212 | PIN_GUARD_3_TIME_OUT              | seconds   | 
+213 | PIN_GUARD_3_ACTIVE_STATE          | 0 / 1     | 
+215 | PIN_GUARD_4_PIN_NR                | integer   | 
+216 | PIN_GUARD_4_TIME_OUT              | seconds   | 
+217 | PIN_GUARD_4_ACTIVE_STATE          | 0 / 1     | 
+221 | PIN_GUARD_5_PIN_NR                | integer   | 
+222 | PIN_GUARD_5_TIME_OUT              | seconds   | 
+223 | PIN_GUARD_5_ACTIVE_STATE          | 0 / 1     | 
 
-IMPORTANT
-=========
+Pin Numbering
+-------------
 
-Farmbot will NOT move until the configuration has been approved.
-To approve manually, send 'F22 P2 V1 Q0'
+### RAMPS 1.4 (for other boards, see [/src/pins.h](/src/pins.h))
 
-To move, use the command 'G00 X0 Y0 Z0 Q0' where you type in the coordinates just after X, Y and Z.
+Tag              |Pin Nr|Comment
+-----------------|------|-------
+X_STEP_PIN       |  54  | X axis step signal
+X_DIR_PIN        |  55  | X axis direction choice
+X_ENABLE_PIN     |  38  | X axis enable
+X_MIN_PIN        |   3  | X axis end stop at home position
+X_MAX_PIN        |   2  | X axis end stop at far position
+X_ENCDR_A        |  16  | X axis encoder A channel
+X_ENCDR_B        |  17  | X axis encoder B channel
+X_ENCDR_A_Q      |  31  | X axis encoder A channel for quarature (not implemented)
+X_ENCDR_B_Q      |  33  | X axis encoder B channel for quarature (not implemented)
+Y_STEP_PIN       |  60  | Y axis step signal
+Y_DIR_PIN        |  61  | Y axis direction choice
+Y_ENABLE_PIN     |  56  | Y axis enable
+Y_MIN_PIN        |  14  | Y axis end stop at home position
+Y_MAX_PIN        |  15  | Y axis end stop at far position
+Y_ENCDR_A        |  23  | Y axis encoder A channel
+Y_ENCDR_B        |  25  | Y axis encoder B channel
+Y_ENCDR_A_Q      |  35  | Y axis encoder A channel for quarature (not implemented)
+Y_ENCDR_B_Q      |  37  | Y axis encoder B channel for quarature (not implemented)
+Z_STEP_PIN       |  46  | Z axis step signal
+Z_DIR_PIN        |  48  | Z axis direction choice
+Z_ENABLE_PIN     |  62  | Z axis enable
+Z_MIN_PIN        |  18  | Z axis end stop at home position
+Z_MAX_PIN        |  19  | Z axis end stop at far position
+Z_ENCDR_A        |  27  | Z axis encoder A channel
+Z_ENCDR_B        |  29  | Z axis encoder B channel
+Z_ENCDR_A_Q      |  39  | Z axis encoder A channel for quarature (not implemented)
+Z_ENCDR_B_Q      |  41  | Z axis encoder B channel for quarature (not implemented)
+LED_PIN          |  13  | on board LED
+FAN_PIN          |   9  | RAMPS board fan pin
+HEATER_0_PIN     |  10  | RAMPS board heating pin 0
+HEATER_1_PIN     |   8  | RAMPS board heating pin 1
+SERVO_0_PIN      |   4  | Servo motor 0 signal pin
+SERVO_1_PIN      |   5  | Servo motor 1 signal pin
+SERVO_2_PIN      |   6  | Servo motor 2 signal pin
+SERVO_3_PIN      |  11  | Servo motor 3 signal pin

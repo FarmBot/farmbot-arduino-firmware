@@ -522,7 +522,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
   // Let the interrupt handle all the movements
   while ((axisActive[0] || axisActive[1] || axisActive[2]) && !emergencyStop)
   {
-    #if defined(FARMDUINO_V14)
+    #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
     checkEncoders();
     #endif
 
@@ -741,7 +741,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
         case 1:
           serialBuffer += CurrentState::getInstance()->getPosition();
           serialBuffer += CurrentState::getInstance()->getQAndNewLine();
-          #if defined(FARMDUINO_V14)
+          #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
             getEncoderReport();
           #endif
           break;
@@ -765,14 +765,14 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
 
       serialMessageNr++;
 
-      #if !defined(FARMDUINO_EXP_V20) && !defined(FARMDUINO_V30)
+      #if !defined(FARMDUINO_EXP_V20)
       if (serialMessageNr > 1)
       {
         serialMessageNr = 0;
       }
       #endif
 
-      #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+      #if defined(FARMDUINO_EXP_V20)
       
       if (serialMessageNr > 2)
       {
@@ -928,7 +928,7 @@ int Movement::calibrateAxis(int axis)
   loadMotorSettings();
   loadEncoderSettings();
 
-  //unsigned long timeStart             = millis();
+  unsigned long timeStart = millis();
 
   bool movementDone = false;
 
@@ -1004,7 +1004,7 @@ int Movement::calibrateAxis(int axis)
     break;
   default:
     Serial.print("R99 Calibration error: invalid axis selected\r\n");
-    error = 1;
+    error = ERR_CALIBRATION_ERROR;
     CurrentState::getInstance()->setLastError(error);
     return error;
   }
@@ -1014,7 +1014,7 @@ int Movement::calibrateAxis(int axis)
   if (calibAxis->endStopMin() || calibAxis->endStopMax())
   {
     Serial.print("R99 Calibration error: end stop active before start\r\n");
-    error = 1;
+    error = ERR_CALIBRATION_ERROR;
     CurrentState::getInstance()->setLastError(error);
     return error;
   }
@@ -1053,11 +1053,46 @@ int Movement::calibrateAxis(int axis)
   while (!movementDone && error == 0)
   {
 
-    #if defined(FARMDUINO_V14)
+    #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
       checkEncoders();
     #endif
 
     checkAxisVsEncoder(calibAxis, calibEncoder, &motorConsMissedSteps[axis], &motorLastPosition[axis], &motorConsEncoderLastPosition[axis], &motorConsEncoderUseForPos[axis], &motorConsMissedStepsDecay[axis], &motorConsEncoderEnabled[axis]);
+
+    // Check timeouts
+    if (!movementDone && ((millis() >= timeStart && millis() - timeStart > timeOut[axis] * 1000) || (millis() < timeStart && millis() > timeOut[axis] * 1000)))
+    {
+      calibAxis->disableMotor();
+      switch (axis)
+      {
+      case 0:
+        Serial.print(COMM_REPORT_TIMEOUT_X);
+        CurrentState::getInstance()->printQAndNewLine();
+        Serial.print("R99 timeout X axis\r\n");
+        error = ERR_TIMEOUT;
+        CurrentState::getInstance()->setLastError(error);
+        return error;
+      case 1:
+        Serial.print(COMM_REPORT_TIMEOUT_Y);
+        CurrentState::getInstance()->printQAndNewLine();
+        Serial.print("R99 timeout Y axis\r\n");
+        error = ERR_TIMEOUT;
+        CurrentState::getInstance()->setLastError(error);
+        return error;
+      case 2:
+        Serial.print(COMM_REPORT_TIMEOUT_Z);
+        CurrentState::getInstance()->printQAndNewLine();
+        Serial.print("R99 timeout Z axis\r\n");
+        error = ERR_TIMEOUT;
+        CurrentState::getInstance()->setLastError(error);
+        return error;
+      default:
+        Serial.print("R99 Calibration error: invalid axis selected\r\n");
+        error = ERR_CALIBRATION_ERROR;
+        CurrentState::getInstance()->setLastError(error);
+        return error;
+      }
+    }
 
     // Check if there is an emergency stop command
     if (Serial.available() > 0)
@@ -1070,7 +1105,7 @@ int Movement::calibrateAxis(int axis)
         CurrentState::getInstance()->setEmergencyStop();
         Serial.print(COMM_REPORT_EMERGENCY_STOP);
         CurrentState::getInstance()->printQAndNewLine();
-        error = 1;
+        error = ERR_EMERGENCY_STOP;
       }
     }
 
@@ -1175,6 +1210,8 @@ int Movement::calibrateAxis(int axis)
   Serial.print(" calibrating length");
   Serial.print("\r\n");
 
+  timeStart = millis();
+
   stepsCount = 0;
   movementDone = false;
   *missedSteps = 0;
@@ -1195,11 +1232,46 @@ int Movement::calibrateAxis(int axis)
   while (!movementDone && error == 0)
   {
 
-    #if defined(FARMDUINO_V14)
+    #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
        checkEncoders();
     #endif
 
     checkAxisVsEncoder(calibAxis, calibEncoder, &motorConsMissedSteps[axis], &motorLastPosition[axis], &motorConsEncoderLastPosition[axis], &motorConsEncoderUseForPos[axis], &motorConsMissedStepsDecay[axis], &motorConsEncoderEnabled[axis]);
+
+    // Check timeouts
+    if (!movementDone && ((millis() >= timeStart && millis() - timeStart > timeOut[axis] * 1000) || (millis() < timeStart && millis() > timeOut[axis] * 1000)))
+    {
+      calibAxis->disableMotor();
+      switch (axis)
+      {
+      case 0:
+        Serial.print(COMM_REPORT_TIMEOUT_X);
+        CurrentState::getInstance()->printQAndNewLine();
+        Serial.print("R99 timeout X axis\r\n");
+        error = ERR_TIMEOUT;
+        CurrentState::getInstance()->setLastError(error);
+        return error;
+      case 1:
+        Serial.print(COMM_REPORT_TIMEOUT_Y);
+        CurrentState::getInstance()->printQAndNewLine();
+        Serial.print("R99 timeout Y axis\r\n");
+        error = ERR_TIMEOUT;
+        CurrentState::getInstance()->setLastError(error);
+        return error;
+      case 2:
+        Serial.print(COMM_REPORT_TIMEOUT_Z);
+        CurrentState::getInstance()->printQAndNewLine();
+        Serial.print("R99 timeout Z axis\r\n");
+        error = ERR_TIMEOUT;
+        CurrentState::getInstance()->setLastError(error);
+        return error;
+      default:
+        Serial.print("R99 Calibration error: invalid axis selected\r\n");
+        error = ERR_CALIBRATION_ERROR;
+        CurrentState::getInstance()->setLastError(error);
+        return error;
+      }
+    }
 
     // Check if there is an emergency stop command
     if (Serial.available() > 0)
@@ -1212,7 +1284,7 @@ int Movement::calibrateAxis(int axis)
         CurrentState::getInstance()->setEmergencyStop();
         Serial.print(COMM_REPORT_EMERGENCY_STOP);
         CurrentState::getInstance()->printQAndNewLine();
-        error = 1;
+        error = ERR_EMERGENCY_STOP;
       }
     }
 
@@ -1686,7 +1758,7 @@ bool Movement::endStopsReached()
 void Movement::storePosition()
 {
 
-#if !defined(FARMDUINO_EXP_V20) &&  !defined(FARMDUINO_V30)
+#if !defined(FARMDUINO_EXP_V20)
   if (motorConsEncoderEnabled[0])
   {
     CurrentState::getInstance()->setX(encoderX.currentPosition());
@@ -1715,7 +1787,7 @@ void Movement::storePosition()
   }
 #endif
 
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+#if defined(FARMDUINO_EXP_V20)
   CurrentState::getInstance()->setX(axisX.currentPosition());
   CurrentState::getInstance()->setY(axisY.currentPosition());
   CurrentState::getInstance()->setZ(axisZ.currentPosition());

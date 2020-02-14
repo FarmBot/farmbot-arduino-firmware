@@ -9,6 +9,8 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
+  const char SOFTWARE_VERSION[] = "6.5.8\0";
+
   const int LOGGING = 0;
 
   const int INCOMING_CMD_BUF_SIZE = 100;
@@ -224,8 +226,6 @@
 
   const long STATUS_GENERAL_DEFAULT = 0;
 
-//const char SOFTWARE_VERSION[] = "4.0.2\0";
-
 #define NSS_PIN 22 
 #define READ_ENA_PIN 49
 #define NULL 0
@@ -240,22 +240,28 @@ enum MdlSpiEncoders
 };
 #endif /* CONFIG_H_ */
 
-#if defined(RAMPS_V14) && !defined(SOFTWARE_VERSION)
-#define SOFTWARE_VERSION "6.5.0.R\0"
+#if defined(RAMPS_V14) && !defined(SOFTWARE_VERSION_SUFFIX)
+#define SOFTWARE_VERSION_SUFFIX ".R.genesisK12\0"
 #endif
 
-#if defined(FARMDUINO_V10) && !defined(SOFTWARE_VERSION)
-#define SOFTWARE_VERSION "6.5.0.F\0"
+#if defined(FARMDUINO_V10) && !defined(SOFTWARE_VERSION_SUFFIX)
+#define SOFTWARE_VERSION_SUFFIX ".F.genesisK13\0"
 #endif
 
-#if defined(FARMDUINO_V14) && !defined(SOFTWARE_VERSION)
-#define SOFTWARE_VERSION "6.5.0.G\0"
+#if defined(FARMDUINO_V14) && !defined(SOFTWARE_VERSION_SUFFIX)
+#define SOFTWARE_VERSION_SUFFIX ".G.genesisK14\0"
 #endif
 
-#if defined(FARMDUINO_V30) && !defined(SOFTWARE_VERSION)
-#define SOFTWARE_VERSION "6.5.0.H\0"
+#if defined(FARMDUINO_V30) && !defined(SOFTWARE_VERSION_SUFFIX)
+#define SOFTWARE_VERSION_SUFFIX ".H.genesisK15\0"
 #endif
 
-#if defined(FARMDUINO_EXP_V20) && !defined(SOFTWARE_VERSION)
-#define SOFTWARE_VERSION "6.5.0.E\0"
+#if defined(FARMDUINO_EXP_V20) && !defined(SOFTWARE_VERSION_SUFFIX)
+#define SOFTWARE_VERSION_SUFFIX ".E.expressK10\0"
+#endif
+
+#ifndef FARMBOT_BOARD_ID
+#define SOFTWARE_COMMIT ""
+#else
+#include "CommitSHA.h"
 #endif

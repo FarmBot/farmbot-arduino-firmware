@@ -12,7 +12,7 @@ $(TARGET_farmduino_v10_BUILD_DIR)/farmduino_v10.eep: $(TARGET_farmduino_v10_BUIL
 $(TARGET_farmduino_v10_BUILD_DIR)/farmduino_v10.elf: $(TARGET_farmduino_v10_OBJ)
 	$(CC) -w -Os -g -flto -fuse-linker-plugin -Wl,--gc-sections,--relax -mmcu=atmega2560 -o $@ $(TARGET_farmduino_v10_OBJ) $(DEPS_OBJ) $(DEP_CORE_LDFLAGS)
 
-$(TARGET_farmduino_v10_BUILD_DIR)/%.o: $(FBARDUINO_FIRMWARE_SRC_DIR)/%.cpp
+$(TARGET_farmduino_v10_BUILD_DIR)/%.o: $(FBARDUINO_FIRMWARE_SRC_DIR)/%.cpp $(HEADERS)
 	$(CXX) $(CXX_FLAGS) -DFARMBOT_BOARD_ID=1 $(DEPS_CFLAGS) $< -o $@
 
 $(TARGET_farmduino_v10_BUILD_DIR):

@@ -29,7 +29,6 @@
   #elif FARMBOT_BOARD_ID == 3
     #define FARMDUINO_EXP_V20
   #elif FARMBOT_BOARD_ID == 4
-    #define FARMDUINO_EXP_V20
     #define FARMDUINO_V30
   #endif
 

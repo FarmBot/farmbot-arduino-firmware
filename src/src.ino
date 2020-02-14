@@ -32,7 +32,7 @@ void setup()
   loadMovementSetting();
   startMotor();
   startPinGuard();
-  startServo();
+  //startServo();
   startInterrupt();
   initLastAction();
   homeOnBoot();

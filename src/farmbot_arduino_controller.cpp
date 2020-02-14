@@ -296,7 +296,7 @@ void checkParamsChanged()
 void checkEncoders()
 {
   
-  #if defined(FARMDUINO_V14)
+  #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
     // Check encoders out of interrupt for farmduino 1.4
     Movement::getInstance()->checkEncoders();
   #endif
@@ -594,6 +594,20 @@ void setPinInputOutput()
   digitalWrite(SERVO_1_PIN, LOW);
   digitalWrite(SERVO_2_PIN, LOW);
   digitalWrite(SERVO_3_PIN, LOW);
+
+  #if defined(FARMDUINO_V30)
+
+    reportingPeriod = 500;
+
+    pinMode(READ_ENA_PIN, INPUT_PULLUP);
+    pinMode(NSS_PIN, OUTPUT);
+    digitalWrite(NSS_PIN, HIGH);
+
+    SPI.setBitOrder(MSBFIRST);
+    SPI.setDataMode(SPI_MODE0);
+    SPI.setClockDivider(SPI_CLOCK_DIV4);
+    SPI.begin();
+  #endif
 }
 #endif
 
@@ -631,7 +645,7 @@ void startInterrupt()
   //  Serial.println("set timer");
   //      TIMSK2 = (TIMSK2 & B11111110) | 0x01; // Enable timer overflow
   //      TCCR2B = (TCCR2B & B11111000) | 0x01; // Set divider to 1
-  //      OCR2A = 4; // Set overflow to 4 for total of 64 µs
+  //      OCR2A = 4; // Set overflow to 4 for total of 64 Âµs
   //#endif
 }
 

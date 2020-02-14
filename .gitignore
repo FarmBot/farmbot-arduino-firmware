@@ -43,3 +43,4 @@ bin
 src.ino.cpp
 src.ino.mega.hex
 src.ino.with_bootloader.mega.hex
+src/CommitSHA.h
