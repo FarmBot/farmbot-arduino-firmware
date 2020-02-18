@@ -587,7 +587,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
       }
       else
       {
-        error = ERR_STALL_DETECTED;
+        error = ERR_STALL_DETECTED_X;
       }
     }
 
@@ -605,7 +605,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
       }
       else
       {
-        error = ERR_STALL_DETECTED;
+        error = ERR_STALL_DETECTED_Y;
       }
     }
 
@@ -624,7 +624,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
       }
       else
       {
-        error = ERR_STALL_DETECTED;
+        error = ERR_STALL_DETECTED_Z;
       }
     }
 
