@@ -20,6 +20,7 @@ ParameterList::ParameterList()
   // unless the eeprom is disabled with a parameter
 
   int paramChangeNr = 0;
+  int tmcParamChangeNr = 0;
 
   int paramVersion = readValueEeprom(0);
   if (paramVersion <= 0)
@@ -78,6 +79,28 @@ int ParameterList::writeValue(int id, long value)
   else
   {
     paramChangeNr = 0;
+  }
+
+  if (tmcParamChangeNr < 9999)
+  {
+    if (
+      id == 81 ||
+      id == 82 ||
+      id == 83 ||
+      id == 85 ||
+      id == 86 ||
+      id == 87 ||
+      id == 91 ||
+      id == 92 ||
+      id == 93
+    )
+    {
+      tmcParamChangeNr++;
+    }
+  }
+  else
+  {
+    tmcParamChangeNr = 0;
   }
 
   // Check if the value is a valid parameter
@@ -145,6 +168,11 @@ long ParameterList::getValue(int id)
 int ParameterList::paramChangeNumber()
 {
   return paramChangeNr;
+}
+
+int ParameterList::tmcParamChangeNumber()
+{
+  return tmcParamChangeNr;
 }
 
 // ===== eeprom handling ====

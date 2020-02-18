@@ -28,6 +28,7 @@ unsigned long pinGuardLastCheck;
 unsigned long pinGuardCurrentTime;
 
 int lastParamChangeNr = 0;
+int lastTmcParamChangeNr = 0;
 
 // Blink led routine used for testing
 bool blink = false;
@@ -285,7 +286,11 @@ void checkParamsChanged()
 
 
     #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
-      Movement::getInstance()->loadSettingsTMC2130();
+      if (lastTmcParamChangeNr != ParameterList::getInstance()->tmcParamChangeNumber())
+      {
+        lastTmcParamChangeNr = ParameterList::getInstance()->tmcParamChangeNumber();
+        Movement::getInstance()->loadSettingsTMC2130();
+      }
     #endif
 
     Movement::getInstance()->loadSettings();
