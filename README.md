@@ -113,16 +113,16 @@ G-Codes
 Code type|Number|Parameters|Function
 ---------|------|----------|--------
 _G_      |      |          |_G-Code, the codes working the same as a 3D printer_
-G        |00    |X Y Z S   |Move to location at given speed for axis (don't have to be a straight line), in absolute coordinates
-G        |01    |X Y Z S   |Move to location on a straight line (not implemented)
-G        |28    |          |Move home all axis
+G        |00    |X Y Z A B C|Move to location at given speed for axis (don't have to be a straight line), in absolute coordinates
+G        |01    |X Y Z A B C|Move to location on a straight line (not implemented)
+G        |28    |          |Move home all axis (Z, Y, X axis order)
 _F_      |      |          |_Farm commands, commands specially added for FarmBot_
 F        |01    |T         |Dose amount of water using time in millisecond (not implemented)
 F        |02    |N         |Dose amount of water using flow meter that measures pulses (not implemented)
 F        |09    |          |Reset emergency stop
-F        |11    |          |Home X axis (find 0) __*__
-F        |12    |          |Home Y axis (find 0) __*__
-F        |13    |          |Home Z axis (find 0) __*__
+F        |11    |          |Home X axis (find 0, 3 attempts) __*__
+F        |12    |          |Home Y axis (find 0, 3 attempts) __*__
+F        |13    |          |Home Z axis (find 0, 3 attempts) __*__
 F        |14    |          |Calibrate X axis (measure length + find 0) __*__
 F        |15    |          |Calibrate Y axis (measure length + find 0) __*__
 F        |16    |          |Calibrate Z axis (measure length + find 0) __*__
@@ -130,8 +130,8 @@ F        |20    |          |List all parameters and value
 F        |21    |P         |Read parameter
 F        |22    |P V       |Write parameter
 F        |23    |P V       |Update parameter (during calibration)
-F        |31    |P         |Read status
-F        |32    |P V       |Write status
+F        |31    |P         |Read status (not enabled)
+F        |32    |P V       |Write status (not enabled)
 F        |41    |P V M     |Set a value V on an arduino pin in mode M (digital=0/analog=1)
 F        |42    |P M       |Read a value from an arduino pin P in mode M (digital=0/analog=1)
 F        |43    |P M       |Set the I/O mode M (input=0/output=1) of a pin P in arduino
@@ -171,7 +171,7 @@ R        |17    | Z               |Firmware used a different Z coordinate than g
 R        |20    |                 |Report all paramaters complete
 R        |21    |P V              |Report parameter value
 R        |23    |P V              |Report updated parameter (during calibration)
-R        |31    |P V              |Report status value
+R        |31    |P V              |Report status value (not enabled)
 R        |41    |P V              |Report pin value
 R        |71    |                 |X axis timeout
 R        |72    |                 |Y axis timeout
@@ -183,7 +183,7 @@ R        |84    |X Y Z            |Report encoder position scaled
 R        |85    |X Y Z            |Report encoder position raw
 R        |87    |                 |Emergency lock
 R        |88    |                 |No config (see [configuration approval](#important))
-R        |89    |X Y Z            |Report axis motor load (TMC2130)
+R        |89    |X Y Z            |Report axis motor load (TMC2130) (not enabled)
 R        |99    |                 |Debug message
 
 Error codes (R03)
