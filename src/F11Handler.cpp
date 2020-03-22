@@ -32,9 +32,11 @@ int F11Handler::execute(Command *command)
   }
 
   int homeIsUp = ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_X);
-  int A = 10; // move away coordinates
+  int A = 10 * CurrentState::getInstance()->getStepsPerMmX(); // move away coordinates
   int execution;
   bool emergencyStop;
+
+  bool homingComplete = false;
 
   if (homeIsUp == 1)
   {
@@ -47,26 +49,32 @@ int F11Handler::execute(Command *command)
   double Y = CurrentState::getInstance()->getY() / (float)ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_Y);
   double Z = CurrentState::getInstance()->getZ() / (float)ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_Z);
 
-  // Move to home position. Then 3 times move away and move to home again.
-  for (int stepNr = 0; stepNr < 7; stepNr++)
-  {
-    switch (stepNr)
-    {
-      case 0: Movement::getInstance()->moveToCoords(0, Y, Z, 0, 0, 0, true, false, false); break;
-      case 1: Movement::getInstance()->moveToCoords(A, Y, Z, 0, 0, 0, false, false, false); break;
-      case 2: Movement::getInstance()->moveToCoords(0, Y, Z, 0, 0, 0, true, false, false); break;
-      case 3: Movement::getInstance()->moveToCoords(A, Y, Z, 0, 0, 0, false, false, false); break;
-      case 4: Movement::getInstance()->moveToCoords(0, Y, Z, 0, 0, 0, true, false, false); break;
-      case 5: Movement::getInstance()->moveToCoords(A, Y, Z, 0, 0, 0, false, false, false); break;
-      case 6: Movement::getInstance()->moveToCoords(0, Y, Z, 0, 0, 0, true, false, false); break;
-    }
+  // Move to home position
+  Movement::getInstance()->moveToCoords(0, Y, Z, 0, 0, 0, false, false, false);
+  execution = CurrentState::getInstance()->getLastError();
+  emergencyStop = CurrentState::getInstance()->isEmergencyStop();
+  if (emergencyStop || execution != 0) { homingComplete = true; }
 
+  // After the first home, keep moving away and home back
+  // until there is no deviation in positions
+  while (!homingComplete)
+  {
+    // Move away from the home position
+    Movement::getInstance()->moveToCoords(A, Y, Z, 0, 0, 0, false, false, false);
     execution = CurrentState::getInstance()->getLastError();
     emergencyStop = CurrentState::getInstance()->isEmergencyStop();
+    if (emergencyStop || execution != 0) { break; }
 
-    if (emergencyStop || execution != 0)
+    // Home again
+    Movement::getInstance()->moveToCoords(0, Y, Z, 0, 0, 0, true, false, false);
+    execution = CurrentState::getInstance()->getLastError();
+    emergencyStop = CurrentState::getInstance()->isEmergencyStop();
+    if (emergencyStop || execution != 0) { break; }
+
+    // Home position cannot drift more than 5 milimeter otherwise no valid home pos
+    if (CurrentState::getInstance()->getHomeMissedStepsXscaled() < 5)
     {
-      break;
+      homingComplete = true;
     }
   }
 
@@ -74,5 +82,6 @@ int F11Handler::execute(Command *command)
   {
     CurrentState::getInstance()->print();
   }
+
   return 0;
 }
