@@ -36,6 +36,17 @@ public:
   void setY(long);
   void setZ(long);
 
+  long getHomeMissedStepsX();
+  long getHomeMissedStepsY();
+  long getHomeMissedStepsZ();
+  long getHomeMissedStepsXscaled();
+  long getHomeMissedStepsYscaled();
+  long getHomeMissedStepsZscaled();
+  void setHomeMissedStepsX(long);
+  void setHomeMissedStepsY(long);
+  void setHomeMissedStepsZ(long);
+
+
   int getLastError();
   void setLastError(int error);
 
@@ -57,6 +68,10 @@ public:
   bool isEmergencyStop();
 
   void setStepsPerMm(long stepsX, long stepsY, long stepsZ);
+  long getStepsPerMmX();
+  long getStepsPerMmY();
+  long getStepsPerMmZ();
+
 
 private:
   CurrentState();
@@ -68,6 +83,19 @@ private:
   long stepsPerMmZ = 1;
 
   int errorCode = 0;
+
+  long x = 0;
+  long y = 0;
+  long z = 0;
+  unsigned int speed = 0;
+  bool endStopState[3][2];
+  long Q = 0;
+  int lastError = 0;
+
+  long homeMissedStepX = 0;
+  long homeMissedStepY = 0;
+  long homeMissedStepZ = 0;
+
 
   bool emergencyStop = false;
 };

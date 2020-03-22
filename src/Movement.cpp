@@ -426,6 +426,9 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
   destinationPoint[1] = yDest;
   destinationPoint[2] = zDest;
 
+  long homeMissedSteps[3] = { 0, 0, 0 };
+
+
   motorConsMissedSteps[0] = 0;
   motorConsMissedSteps[1] = 0;
   motorConsMissedSteps[2] = 0;
@@ -557,6 +560,20 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
       axisX.checkMovement();
       checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsEncoderLastPosition[0], &motorConsEncoderUseForPos[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
       axisX.resetStepDone();
+
+      // While homing and being at the place where home is supposed to be
+      // start counting how many steps are taken before the motor is deactivated
+      if (
+          xHome == true &&
+          (
+            (homeIsUp[0] == false && currentPoint[0] <= 0) ||
+            (homeIsUp[0] == true  && currentPoint[0] >= 0)
+          )
+        )
+      {
+        homeMissedSteps[0]++;
+      }
+
     }
 
     if (axisY.isStepDone())
@@ -564,6 +581,20 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
       axisY.checkMovement();
       checkAxisVsEncoder(&axisY, &encoderY, &motorConsMissedSteps[1], &motorLastPosition[1], &motorConsEncoderLastPosition[1], &motorConsEncoderUseForPos[1], &motorConsMissedStepsDecay[1], &motorConsEncoderEnabled[1]);
       axisY.resetStepDone();
+
+      // While homing and being at the place where home is supposed to be
+      // start counting how many steps are taken before the motor is deactivated
+      if (
+          yHome == true &&
+          (
+            (homeIsUp[1] == false && currentPoint[1] <= 0) ||
+            (homeIsUp[1] == true  && currentPoint[1] >= 0)
+          )
+        )
+      {
+        homeMissedSteps[1]++;
+      }
+
     }
 
     if (axisZ.isStepDone())
@@ -571,6 +602,20 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
       axisZ.checkMovement();
       checkAxisVsEncoder(&axisZ, &encoderZ, &motorConsMissedSteps[2], &motorLastPosition[2], &motorConsEncoderLastPosition[2], &motorConsEncoderUseForPos[2], &motorConsMissedStepsDecay[2], &motorConsEncoderEnabled[2]);
       axisZ.resetStepDone();
+
+      // While homing and being at the place where home is supposed to be
+      // start counting how many steps are taken before the motor is deactivated
+      if (
+            zHome == true &&
+            (
+              (homeIsUp[2] == false && currentPoint[2] <= 0) ||
+              (homeIsUp[2] == true  && currentPoint[2] >= 0)
+            )
+        )
+      {
+        homeMissedSteps[2]++;
+      }
+
     }
 
     if (axisX.isAxisActive() && motorConsMissedSteps[0] > motorConsMissedStepsMax[0])
@@ -841,6 +886,10 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
   CurrentState::getInstance()->setX(currentPoint[0]);
   CurrentState::getInstance()->setY(currentPoint[1]);
   CurrentState::getInstance()->setZ(currentPoint[2]);
+
+  CurrentState::getInstance()->setHomeMissedStepsX(homeMissedSteps[0]);
+  CurrentState::getInstance()->setHomeMissedStepsY(homeMissedSteps[1]);
+  CurrentState::getInstance()->setHomeMissedStepsZ(homeMissedSteps[2]);
 
   storeEndStops();
   reportEndStops();

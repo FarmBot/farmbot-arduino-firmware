@@ -8,13 +8,6 @@
 #include "CurrentState.h"
 
 static CurrentState *instance;
-long x = 0;
-long y = 0;
-long z = 0;
-unsigned int speed = 0;
-bool endStopState[3][2];
-long Q = 0;
-int lastError = 0;
 
 CurrentState *CurrentState::getInstance()
 {
@@ -30,6 +23,11 @@ CurrentState::CurrentState()
   x = 0;
   y = 0;
   z = 0;
+
+  homeMissedStepX = 0;
+  homeMissedStepY = 0;
+  homeMissedStepZ = 0;
+
   speed = 0;
   Q = 0;
   lastError = 0;
@@ -71,6 +69,54 @@ void CurrentState::setZ(long newZ)
   z = newZ;
 }
 
+long CurrentState::getHomeMissedStepsX()
+{
+  return homeMissedStepX;
+}
+
+long CurrentState::getHomeMissedStepsXscaled()
+{
+  return homeMissedStepX / stepsPerMmX;
+}
+
+long CurrentState::getHomeMissedStepsY()
+{
+  return homeMissedStepY;
+}
+
+long CurrentState::getHomeMissedStepsYscaled()
+{
+  return homeMissedStepY / stepsPerMmY;
+}
+
+long CurrentState::getHomeMissedStepsZ()
+{
+  return homeMissedStepZ;
+}
+
+long CurrentState::getHomeMissedStepsZscaled()
+{
+  return homeMissedStepZ / stepsPerMmZ;
+}
+
+void CurrentState::setHomeMissedStepsX(long newX)
+{
+  homeMissedStepX = newX;
+}
+
+void CurrentState::setHomeMissedStepsY(long newY)
+{
+  homeMissedStepY = newY;
+}
+
+void CurrentState::setHomeMissedStepsZ(long newZ)
+{
+  homeMissedStepZ = newZ;
+}
+
+
+
+
 int CurrentState::getLastError()
 {
   return lastError;
@@ -91,6 +137,21 @@ void CurrentState::setStepsPerMm(long stepsX, long stepsY, long stepsZ)
   stepsPerMmX = stepsX;
   stepsPerMmY = stepsY;
   stepsPerMmZ = stepsZ;
+}
+
+long CurrentState::getStepsPerMmX()
+{
+  return stepsPerMmX;
+}
+
+long CurrentState::getStepsPerMmY()
+{
+  return stepsPerMmY;
+}
+
+long CurrentState::getStepsPerMmZ()
+{
+  return stepsPerMmZ;
 }
 
 void CurrentState::storeEndStops()
