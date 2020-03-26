@@ -32,7 +32,7 @@ int F12Handler::execute(Command *command)
   }
 
   int homeIsUp = ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Y);
-  int A = 10 * CurrentState::getInstance()->getStepsPerMmY(); // move away coordinates
+  int A = 10; // move away coordinates
   int execution;
   bool emergencyStop;
   bool homingComplete = false;
@@ -71,6 +71,21 @@ int F12Handler::execute(Command *command)
     execution = CurrentState::getInstance()->getLastError();
     emergencyStop = CurrentState::getInstance()->isEmergencyStop();
     if (emergencyStop || execution != 0) { break; }
+
+    Serial.print("R99 homing displaced");
+    Serial.print(" X ");
+    Serial.print(CurrentState::getInstance()->getHomeMissedStepsX());
+    Serial.print(" / ");
+    Serial.print(CurrentState::getInstance()->getHomeMissedStepsXscaled());
+    Serial.print(" Y ");
+    Serial.print(CurrentState::getInstance()->getHomeMissedStepsY());
+    Serial.print(" / ");
+    Serial.print(CurrentState::getInstance()->getHomeMissedStepsYscaled());
+    Serial.print(" Z ");
+    Serial.print(CurrentState::getInstance()->getHomeMissedStepsZ());
+    Serial.print(" / ");
+    Serial.print(CurrentState::getInstance()->getHomeMissedStepsZscaled());
+    Serial.print("\r\n");
 
     // Compare postition before and after verify homing
     if (CurrentState::getInstance()->getHomeMissedStepsYscaled() < 5)

@@ -428,7 +428,6 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
 
   long homeMissedSteps[3] = { 0, 0, 0 };
 
-
   motorConsMissedSteps[0] = 0;
   motorConsMissedSteps[1] = 0;
   motorConsMissedSteps[2] = 0;
