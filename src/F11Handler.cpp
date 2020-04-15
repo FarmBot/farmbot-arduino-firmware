@@ -32,6 +32,9 @@ int F11Handler::execute(Command *command)
   }
 
   int homeIsUp = ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_X);
+  int stepsMerMM = ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_X);
+  int missedStepsMax = ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_X);
+
   int A = 10; // move away coordinates
   int execution;
   bool emergencyStop;
@@ -49,25 +52,36 @@ int F11Handler::execute(Command *command)
   long Y = CurrentState::getInstance()->getY();
   long Z = CurrentState::getInstance()->getZ();
 
-  // Move to home position
-  Movement::getInstance()->moveToCoords(0, Y, Z, 0, 0, 0, false, false, false);
-  execution = CurrentState::getInstance()->getLastError();
-  emergencyStop = CurrentState::getInstance()->isEmergencyStop();
-  if (emergencyStop || execution != 0) { homingComplete = true; }
+  bool firstMove = true;
+  int goodConsecutiveHomings = 0;
 
   // After the first home, keep moving away and home back
   // until there is no deviation in positions
   while (!homingComplete)
   {
+    if (firstMove)
+    {
+      firstMove = false;
+
+      // Move to home position
+      Movement::getInstance()->moveToCoords(0, Y, Z, 0, 0, 0, false, false, false);
+      //execution = CurrentState::getInstance()->getLastError();
+      execution = 0;
+      emergencyStop = CurrentState::getInstance()->isEmergencyStop();
+      if (emergencyStop || execution != 0) { homingComplete = true; }
+    }
+
     // Move away from the home position
     Movement::getInstance()->moveToCoords(A, Y, Z, 0, 0, 0, false, false, false);
-    execution = CurrentState::getInstance()->getLastError();
+    //execution = CurrentState::getInstance()->getLastError();
+    execution = 0;
     emergencyStop = CurrentState::getInstance()->isEmergencyStop();
     if (emergencyStop || execution != 0) { break; }
 
     // Home again
     Movement::getInstance()->moveToCoords(0, Y, Z, 0, 0, 0, true, false, false);
-    execution = CurrentState::getInstance()->getLastError();
+    //execution = CurrentState::getInstance()->getLastError();
+    execution = 0;
     emergencyStop = CurrentState::getInstance()->isEmergencyStop();
     if (emergencyStop || execution != 0) { break; }
 
@@ -87,9 +101,18 @@ int F11Handler::execute(Command *command)
     Serial.print("\r\n");
 
     // Home position cannot drift more than 5 milimeter otherwise no valid home pos
-    if (CurrentState::getInstance()->getHomeMissedStepsXscaled() < 5)
+    if (CurrentState::getInstance()->getHomeMissedStepsXscaled() < (5 + missedStepsMax * stepsMerMM))
     {
-      homingComplete = true;
+      goodConsecutiveHomings++;
+      if (goodConsecutiveHomings >= 3)
+      {
+        homingComplete = true;
+        CurrentState::getInstance()->setX(0);
+      }
+    }
+    else
+    {
+      goodConsecutiveHomings = 0;
     }
   }
 
