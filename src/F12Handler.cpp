@@ -32,8 +32,14 @@ int F12Handler::execute(Command *command)
   }
 
   int homeIsUp = ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Y);
-  int stepsMerMM = ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_Y);
+  int stepsPerMM = ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_Y);
   int missedStepsMax = ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_Y);
+
+  if (stepsPerMM <= 0)
+  {
+    missedStepsMax = 0;
+    stepsPerMM = 1;
+  }
 
   int A = 10; // move away coordinates
   int execution;
@@ -102,7 +108,7 @@ int F12Handler::execute(Command *command)
     Serial.print("\r\n");
 
     // Compare postition before and after verify homing, accounting for missed steps detecting stall
-    if (CurrentState::getInstance()->getHomeMissedStepsYscaled() < (5 + missedStepsMax * stepsMerMM))
+    if (CurrentState::getInstance()->getHomeMissedStepsYscaled() < (5 + missedStepsMax / stepsPerMM))
     {
       goodConsecutiveHomings++;
       if (goodConsecutiveHomings >= 3)

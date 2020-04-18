@@ -34,8 +34,14 @@ int F13Handler::execute(Command *command)
   Movement::getInstance()->moveToCoords(0, 0, 0, 0, 0, 0, false, false, true);
 
   int homeIsUp = ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_Z);
-  int stepsMerMM = ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_Z);
+  int stepsPerMM = ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_Z);
   int missedStepsMax = ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_Z);
+
+  if (stepsPerMM <= 0)
+  {
+    missedStepsMax = 0;
+    stepsPerMM = 1;
+  }
 
   int A = 10; // move away coordinates
   int execution;
@@ -103,7 +109,7 @@ int F13Handler::execute(Command *command)
     Serial.print("\r\n");
 
     // Compare postition before and after verify homing
-    if (CurrentState::getInstance()->getHomeMissedStepsZscaled() < (5 + missedStepsMax * stepsMerMM))
+    if (CurrentState::getInstance()->getHomeMissedStepsZscaled() < (5 + missedStepsMax / stepsPerMM))
     {
       goodConsecutiveHomings++;
       if (goodConsecutiveHomings >= 3)
