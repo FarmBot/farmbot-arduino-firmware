@@ -981,7 +981,7 @@ int Movement::calibrateAxis(int axis)
   bool movementDone = false;
 
   int paramValueInt = 0;
-  int stepsCount = 0;
+  long stepsCount = 0;
   int incomingByte = 0;
   int error = 0;
 

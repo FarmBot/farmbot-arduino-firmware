@@ -32,8 +32,14 @@ int F11Handler::execute(Command *command)
   }
 
   int homeIsUp = ParameterList::getInstance()->getValue(MOVEMENT_HOME_UP_X);
-  int stepsMerMM = ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_X);
+  int stepsPerMM = ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_X);
   int missedStepsMax = ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_X);
+
+  if (stepsPerMM <= 0)
+  {
+    missedStepsMax = 0;
+    stepsPerMM = 1;
+  }
 
   int A = 10; // move away coordinates
   int execution;
@@ -101,7 +107,7 @@ int F11Handler::execute(Command *command)
     Serial.print("\r\n");
 
     // Home position cannot drift more than 5 milimeter otherwise no valid home pos
-    if (CurrentState::getInstance()->getHomeMissedStepsXscaled() < (5 + missedStepsMax * stepsMerMM))
+    if (CurrentState::getInstance()->getHomeMissedStepsXscaled() < (5 + missedStepsMax / stepsPerMM))
     {
       goodConsecutiveHomings++;
       if (goodConsecutiveHomings >= 3)
