@@ -89,6 +89,9 @@ public:
   void activateDebugPrint();
   void test();
 
+  unsigned long getNrOfSteps();
+  void resetNrOfSteps();
+
   char channelLabel;
   bool movementStarted;
 
@@ -166,6 +169,7 @@ private:
   unsigned long stepOnTick      = 0;
   unsigned long stepOffTick     = 0;
   unsigned long axisSpeed       = 0;
+  unsigned long movementSteps   = 0;
 
   bool axisActive           = false;
   bool movementUp           = false;

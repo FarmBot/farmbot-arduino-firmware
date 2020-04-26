@@ -35,6 +35,10 @@ int F11Handler::execute(Command *command)
   int stepsPerMM = ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_X);
   int missedStepsMax = ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_X);
 
+  #if defined(FARMDUINO_EXP_V20)
+    missedStepsMax += ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_X);
+  #endif
+
   if (stepsPerMM <= 0)
   {
     missedStepsMax = 0;

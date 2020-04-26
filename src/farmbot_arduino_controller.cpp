@@ -635,18 +635,9 @@ void startInterrupt()
   // Interrupt management code library written by Paul Stoffregen
   // The default time 100 micro seconds
 
-  //#if !defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
-    Timer1.attachInterrupt(interrupt);
-    Timer1.initialize(MOVEMENT_INTERRUPT_SPEED);
-    Timer1.start();
-  //#endif
-
-  //#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
-  //  Serial.println("set timer");
-  //      TIMSK2 = (TIMSK2 & B11111110) | 0x01; // Enable timer overflow
-  //      TCCR2B = (TCCR2B & B11111000) | 0x01; // Set divider to 1
-  //      OCR2A = 4; // Set overflow to 4 for total of 64 µs
-  //#endif
+  Timer1.attachInterrupt(interrupt);
+  Timer1.initialize(MOVEMENT_INTERRUPT_SPEED);
+  Timer1.start();
 }
 
 void homeOnBoot()
@@ -751,34 +742,12 @@ void startServo()
 
 #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
 
-/**/
-//static Trinamic_TMC2130 controllerTMC2130_X(X_CHIP_SELECT);
-//static Trinamic_TMC2130 controllerTMC2130_Y(Y_CHIP_SELECT);
-//static Trinamic_TMC2130 controllerTMC2130_Z(Z_CHIP_SELECT);
-//static Trinamic_TMC2130 controllerTMC2130_E(E_CHIP_SELECT);
-
 void loadTMC2130drivers()
 {
   Serial.print(COMM_REPORT_COMMENT);
   Serial.print(SPACE);
   Serial.print("Load TMC drivers");
   Serial.print(CRLF);
-
-  /**/
-  //TMC2130X.init();
-  //TMC2130Y.init();
-  //TMC2130Z.init();
-  //TMC2130E.init();
-
-  //Trinamic_TMC2130 controllerTMC2130_X = Trinamic_TMC2130(X_CHIP_SELECT);
-  //Trinamic_TMC2130 controllerTMC2130_Y = Trinamic_TMC2130(Y_CHIP_SELECT);
-  //Trinamic_TMC2130 controllerTMC2130_Z = Trinamic_TMC2130(Z_CHIP_SELECT);
-  //Trinamic_TMC2130 controllerTMC2130_E = Trinamic_TMC2130(E_CHIP_SELECT);
-
-  //TMC2130X = &controllerTMC2130_X;
-  //TMC2130Y = &controllerTMC2130_Y;
-  //TMC2130Z = &controllerTMC2130_Z;
-  //TMC2130E = &controllerTMC2130_E;
 }
 
 void loadTMC2130parameters()

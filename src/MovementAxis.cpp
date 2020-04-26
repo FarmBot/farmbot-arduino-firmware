@@ -274,6 +274,11 @@ unsigned int MovementAxis::calculateSpeed(long sourcePosition, long currentPosit
   return newSpeed;
 }
 
+void MovementAxis::resetNrOfSteps()
+{
+  movementSteps = 0;
+}
+
 void MovementAxis::checkAxisDirection()
 {
 
@@ -400,6 +405,7 @@ void MovementAxis::setTicks()
 void MovementAxis::setStepAxis()
 {
 
+  movementSteps++;
   stepIsOn = true;
 
   if (movementUp)
@@ -733,6 +739,11 @@ unsigned long MovementAxis::getLength(long l1, long l2)
   {
     return l2 - l1;
   }
+}
+
+unsigned long MovementAxis::getNrOfSteps()
+{
+  return movementSteps;
 }
 
 bool MovementAxis::endStopsReached()
