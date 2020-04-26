@@ -509,6 +509,10 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
     axisActive[2] = zHome;
   }
 
+  axisX.resetNrOfSteps();
+  axisY.resetNrOfSteps();
+  axisZ.resetNrOfSteps();
+
   axisX.checkMovement();
   axisY.checkMovement();
   axisZ.checkMovement();
@@ -1530,17 +1534,26 @@ void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, 
     stallGuard = status & FB_TMC_SPISTATUS_STALLGUARD_MASK ? true : false;
     standStill = status & FB_TMC_SPISTATUS_STANDSTILL_MASK ? true : false;
 
-    if (stallGuard || standStill) {
-      // In case of stall detection, count this as a missed step
+    // Reset every hunderd steps, so the missed steps represents the number of missed steps 
+    // out of every hundred steps done
+    if (axis->getNrOfSteps() % 100 == 0)
+    {
+      *missedSteps = 0;
+    }
+
+    if (stallGuard || standStill && axis->getNrOfSteps() >= *encoderStepDecay) {
+      // In case of stall detection, count this as a missed step. But ignore the first 500 steps
+
       (*missedSteps)++;
+
       axis->setCurrentPosition(*lastPosition);
     }
     else {
-      // Decrease amount of missed steps if there are no missed step
-      if (*missedSteps > 0)
-      {
-        (*missedSteps) -= (*encoderStepDecay);
-      }
+    //  // Decrease amount of missed steps if there are no missed step
+    //  if (*missedSteps > 0)
+    //  {
+    //    (*missedSteps) -= (*encoderStepDecay);
+    //  }
       *lastPosition = axis->currentPosition();
       encoder->setPosition(axis->currentPosition());
     }
