@@ -1546,17 +1546,21 @@ void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, 
 
       (*missedSteps)++;
 
-      axis->setCurrentPosition(*lastPosition);
+      //axis->setCurrentPosition(*lastPosition);
     }
-    else {
+    //else {
     //  // Decrease amount of missed steps if there are no missed step
     //  if (*missedSteps > 0)
     //  {
     //    (*missedSteps) -= (*encoderStepDecay);
     //  }
-      *lastPosition = axis->currentPosition();
-      encoder->setPosition(axis->currentPosition());
-    }
+    //  *lastPosition = axis->currentPosition();
+    //  encoder->setPosition(axis->currentPosition());
+    //}
+
+    *lastPosition = axis->currentPosition();
+    encoder->setPosition(axis->currentPosition());
+
   }
 
   //
