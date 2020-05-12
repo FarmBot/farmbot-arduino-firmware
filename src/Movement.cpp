@@ -218,68 +218,88 @@ void Movement::loadSettings()
 
   void Movement::loadSettingsTMC2130()
   {
+    loadSettingsTMC2130_X();
+    loadSettingsTMC2130_Y();
+    loadSettingsTMC2130_Z();
+
     /**/
+    //int motorCurrentX;
+    //int stallSensitivityX;
+    //int microStepsX;
+
+    //int motorCurrentY;
+    //int stallSensitivityY;
+    //int microStepsY;
+
+    //int motorCurrentZ;
+    //int stallSensitivityZ;
+    //int microStepsZ;
+
+    //motorCurrentX = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_X);
+    //stallSensitivityX = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_X);
+    //microStepsX = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_X);
+
+    //motorCurrentY = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Y);
+    //stallSensitivityY = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Y);
+    //microStepsY = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Y);
+
+    //motorCurrentZ = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Z);
+    //stallSensitivityZ = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Z);
+    //microStepsZ = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Z);
+
+    //if (microStepsX <= 0) { microStepsX = 1; }
+    //if (microStepsY <= 0) { microStepsY = 1; }
+    //if (microStepsZ <= 0) { microStepsZ = 1; }
+
+
+    //axisX.loadSettingsTMC2130(motorCurrentX, stallSensitivityX, microStepsX);
+    //axisY.loadSettingsTMC2130(motorCurrentY, stallSensitivityY, microStepsY);
+    //axisZ.loadSettingsTMC2130(motorCurrentZ, stallSensitivityZ, microStepsZ);
+  }
+
+  void Movement::loadSettingsTMC2130_X()
+  {
     int motorCurrentX;
     int stallSensitivityX;
     int microStepsX;
-
-    int motorCurrentY;
-    int stallSensitivityY;
-    int microStepsY;
-
-    int motorCurrentZ;
-    int stallSensitivityZ;
-    int microStepsZ;
 
     motorCurrentX = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_X);
     stallSensitivityX = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_X);
     microStepsX = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_X);
 
+    if (microStepsX <= 0) { microStepsX = 1; }
+
+
+    axisX.loadSettingsTMC2130(motorCurrentX, stallSensitivityX, microStepsX);
+  }
+
+  void Movement::loadSettingsTMC2130_Y()
+  {
+    int motorCurrentY;
+    int stallSensitivityY;
+    int microStepsY;
+
     motorCurrentY = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Y);
     stallSensitivityY = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Y);
     microStepsY = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Y);
+
+    if (microStepsY <= 0) { microStepsY = 1; }
+
+    axisY.loadSettingsTMC2130(motorCurrentY, stallSensitivityY, microStepsY);
+  }
+
+  void Movement::loadSettingsTMC2130_Z()
+  {
+    int motorCurrentZ;
+    int stallSensitivityZ;
+    int microStepsZ;
 
     motorCurrentZ = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Z);
     stallSensitivityZ = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Z);
     microStepsZ = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Z);
 
-    /**/
-    
-    //Serial.print("=X=>");
-    //Serial.print(" ");
-    //Serial.print(microStepsX);
-    //Serial.print(" ");
-    //Serial.print(motorCurrentX);
-    //Serial.print(" ");
-    //Serial.print(stallSensitivityX);
-    //Serial.println(" ");
-
-    //Serial.print("=Y=>");
-    //Serial.print(" ");
-    //Serial.print(microStepsY);
-    //Serial.print(" ");
-    //Serial.print(motorCurrentY);
-    //Serial.print(" ");
-    //Serial.print(stallSensitivityY);
-    //Serial.println(" ");
-
-    //Serial.print("=Z=>");
-    //Serial.print(" ");
-    //Serial.print(microStepsZ);
-    //Serial.print(" ");
-    //Serial.print(motorCurrentZ);
-    //Serial.print(" ");
-    //Serial.print(stallSensitivityZ);
-    //Serial.println(" ");
-    
-
-    if (microStepsX <= 0) { microStepsX = 1; }
-    if (microStepsY <= 0) { microStepsY = 1; }
     if (microStepsZ <= 0) { microStepsZ = 1; }
 
-
-    axisX.loadSettingsTMC2130(motorCurrentX, stallSensitivityX, microStepsX);
-    axisY.loadSettingsTMC2130(motorCurrentY, stallSensitivityY, microStepsY);
     axisZ.loadSettingsTMC2130(motorCurrentZ, stallSensitivityZ, microStepsZ);
   }
 
@@ -621,11 +641,30 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
 
     }
 
-    if (axisX.isAxisActive() && motorConsMissedSteps[0] > motorConsMissedStepsMax[0])
+    #if defined(FARMDUINO_EXP_V20)
+    if (axisX.isAxisActive() && 
+      axisX.missedStepHistory[0] >= motorConsMissedStepsMax[0] &&
+      axisX.missedStepHistory[1] >= motorConsMissedStepsMax[0] &&
+      axisX.missedStepHistory[2] >= motorConsMissedStepsMax[0] &&
+      axisX.missedStepHistory[3] >= motorConsMissedStepsMax[0] &&
+      axisX.missedStepHistory[4] >= motorConsMissedStepsMax[0] )
+    #else
+    if (axisX.isAxisActive() && motorConsMissedSteps[0] >= motorConsMissedStepsMax[0])
+    #endif
     {
       axisX.deactivateAxis();
+
       serialBuffer += "R99";
-      serialBuffer += " deactivate motor X due to missed steps";
+      serialBuffer += " deactivate motor X due to ";
+      if (axisX.isDriverError())
+      {
+        serialBuffer += "driver error";
+      }
+      else
+      {
+
+        serialBuffer += "missed steps";
+      }
       serialBuffer += "\r\n";
 
       if (xHome)
@@ -639,13 +678,41 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
       }
     }
 
-    if (axisY.isAxisActive() && motorConsMissedSteps[1] > motorConsMissedStepsMax[1])
+    #if defined(FARMDUINO_EXP_V20)
+    if (axisY.isAxisActive() &&
+      axisY.missedStepHistory[0] >= motorConsMissedStepsMax[1] &&
+      axisY.missedStepHistory[1] >= motorConsMissedStepsMax[1] &&
+      axisY.missedStepHistory[2] >= motorConsMissedStepsMax[1] &&
+      axisY.missedStepHistory[3] >= motorConsMissedStepsMax[1] &&
+      axisY.missedStepHistory[4] >= motorConsMissedStepsMax[1])
+    #else
+    if (axisY.isAxisActive() && motorConsMissedSteps[1] >= motorConsMissedStepsMax[1])
+    #endif
     {
       axisY.deactivateAxis();
+
       serialBuffer += "R99";
-      serialBuffer += " deactivate motor Y due to missed steps";
+      serialBuffer += " deactivate motor Y due to ";
+      if (axisY.isDriverError()) 
+      {
+        serialBuffer += "driver error";
+      }
+      else
+      {
+
+        serialBuffer += "missed steps";
+      }
       serialBuffer += "\r\n";
-      
+
+      serialBuffer += "R99";
+      serialBuffer += " S";
+      serialBuffer += axisY.getNrOfSteps();
+      serialBuffer += " MS ";
+      serialBuffer += motorConsMissedSteps[1];
+      serialBuffer += " MSM ";
+      serialBuffer += motorConsMissedStepsMax[1];
+      serialBuffer += "\r\n";
+
       if (yHome)
       {
         encoderY.setPosition(0);
@@ -657,12 +724,30 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
       }
     }
 
-    if (axisZ.isAxisActive() && motorConsMissedSteps[2] > motorConsMissedStepsMax[2])
+    #if defined(FARMDUINO_EXP_V20)
+    if (axisZ.isAxisActive() &&
+      axisZ.missedStepHistory[0] >= motorConsMissedStepsMax[2] &&
+      axisZ.missedStepHistory[1] >= motorConsMissedStepsMax[2] &&
+      axisZ.missedStepHistory[2] >= motorConsMissedStepsMax[2] &&
+      axisZ.missedStepHistory[3] >= motorConsMissedStepsMax[2] &&
+      axisZ.missedStepHistory[4] >= motorConsMissedStepsMax[2])
+    #else
+    if (axisZ.isAxisActive() && motorConsMissedSteps[2] >= motorConsMissedStepsMax[2])
+    #endif
     {
       axisZ.deactivateAxis();
 
       serialBuffer += "R99";
-      serialBuffer += " deactivate motor Z due to missed steps";
+      serialBuffer += " deactivate motor Z due to ";
+      if (axisZ.isDriverError())
+      {
+        serialBuffer += "driver error";
+      }
+      else
+      {
+
+        serialBuffer += "missed steps";
+      }
       serialBuffer += "\r\n";
 
       if (zHome)
@@ -910,6 +995,36 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
   reportStatus(&axisZ, axisSubStep[2]);
 
   disableMotors();
+
+  #if defined(FARMDUINO_EXP_V20)
+  if (axisX.isDriverError())
+  {
+    Serial.print("R99 reset motor X\r\n");
+    delay(100);
+    axisX.initTMC2130();
+    loadSettingsTMC2130_X();
+    delay(100);
+  }
+
+  if (axisY.isDriverError())
+  {
+    Serial.print("R99 reset motor Y\r\n");
+    delay(100);
+    axisY.initTMC2130();
+    loadSettingsTMC2130_Y();
+    delay(100);
+  }
+
+  if (axisZ.isDriverError())
+  {
+    Serial.print("R99 reset motor Z\r\n");
+    delay(100);
+    axisZ.initTMC2130();
+    loadSettingsTMC2130_Z();
+    delay(100);
+  }
+
+  #endif
 
   if (emergencyStop)
   {
@@ -1525,52 +1640,71 @@ void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, 
   /**/
   bool stallGuard = false;
   bool standStill = false;
+  bool driverError = false;
+
   uint8_t status = 0;
+
+  axis->readDriverStatus();
 
   if (*encoderEnabled) {    
 
-    status = axis->getStatus();
+    //status = axis->getStatus();
+    //stallGuard = status & FB_TMC_SPISTATUS_STALLGUARD_MASK ? true : false;
+    //standStill = status & FB_TMC_SPISTATUS_STANDSTILL_MASK ? true : false;
+    //driverError = status & FB_TMC_SPISTATUS_ERROR_MASK ? true : false;
 
-    stallGuard = status & FB_TMC_SPISTATUS_STALLGUARD_MASK ? true : false;
-    standStill = status & FB_TMC_SPISTATUS_STANDSTILL_MASK ? true : false;
+    stallGuard = axis->isStallGuard();
+    standStill = axis->isStandStill();
+    driverError = axis->isDriverError();
+
+    //if (driverError)
+    //{
+    //  Serial.println("R99 DRIVER ERROR !!**");
+    //}
+
+
+    //if (standStill)
+    //{
+    //  Serial.println("R99 STANDSTILL !!**");
+    //}
 
     // Reset every hunderd steps, so the missed steps represents the number of missed steps 
     // out of every hundred steps done
     if (axis->getNrOfSteps() % 100 == 0)
     {
+      // save the history
+      axis->missedStepHistory[4] = axis->missedStepHistory[3];
+      axis->missedStepHistory[3] = axis->missedStepHistory[2];
+      axis->missedStepHistory[2] = axis->missedStepHistory[1];
+      axis->missedStepHistory[1] = axis->missedStepHistory[0];
+      axis->missedStepHistory[0] = *missedSteps;
+
+      // test print
+      Serial.print("R99");
+      Serial.print(" ");
+      Serial.print("S = ");
+      Serial.print(" ");
+      Serial.print(axis->getNrOfSteps());
+      Serial.print(" ");
+      Serial.print("M = ");
+      Serial.print(" ");
+      Serial.print(*missedSteps);
+      Serial.print("\r\n");
+
+      // reset missed steps
       *missedSteps = 0;
     }
 
-    if (stallGuard || standStill && axis->getNrOfSteps() >= *encoderStepDecay) {
-      // In case of stall detection, count this as a missed step. But ignore the first 500 steps
+    if ((stallGuard || standStill || driverError) && axis->getNrOfSteps() >= *encoderStepDecay) {
+      // In case of stall detection, count this as a missed step. But ignore the first steps
 
       (*missedSteps)++;
-
-      //axis->setCurrentPosition(*lastPosition);
     }
-    //else {
-    //  // Decrease amount of missed steps if there are no missed step
-    //  if (*missedSteps > 0)
-    //  {
-    //    (*missedSteps) -= (*encoderStepDecay);
-    //  }
-    //  *lastPosition = axis->currentPosition();
-    //  encoder->setPosition(axis->currentPosition());
-    //}
 
     *lastPosition = axis->currentPosition();
     encoder->setPosition(axis->currentPosition());
 
   }
-
-  //
-  //  //Serial.print(" new last pos ");
-  //  //Serial.print(*lastPosition);
-  //  //Serial.print(" en pos ");
-  //  //Serial.print(encoder->currentPosition());
-  //  //Serial.print("\r\n");
-  //
-  //
 }
 #endif
 
@@ -1700,6 +1834,7 @@ void Movement::loadEncoderSettings()
   motorConsMissedStepsDecay[1] = ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_Y);
   motorConsMissedStepsDecay[2] = ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_Z);
 
+#if !defined(FARMDUINO_EXP_V20)
   motorConsMissedStepsDecay[0] = motorConsMissedStepsDecay[0] / 100;
   motorConsMissedStepsDecay[1] = motorConsMissedStepsDecay[1] / 100;
   motorConsMissedStepsDecay[2] = motorConsMissedStepsDecay[2] / 100;
@@ -1707,6 +1842,7 @@ void Movement::loadEncoderSettings()
   motorConsMissedStepsDecay[0] = min(max(motorConsMissedStepsDecay[0], 0.01), 99);
   motorConsMissedStepsDecay[1] = min(max(motorConsMissedStepsDecay[1], 0.01), 99);
   motorConsMissedStepsDecay[2] = min(max(motorConsMissedStepsDecay[2], 0.01), 99);
+#endif
 
   motorConsEncoderType[0] = ParameterList::getInstance()->getValue(ENCODER_TYPE_X);
   motorConsEncoderType[1] = ParameterList::getInstance()->getValue(ENCODER_TYPE_Y);

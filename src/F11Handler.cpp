@@ -111,7 +111,7 @@ int F11Handler::execute(Command *command)
     Serial.print("\r\n");
 
     // Home position cannot drift more than 5 milimeter otherwise no valid home pos
-    if (CurrentState::getInstance()->getHomeMissedStepsXscaled() < (5 + missedStepsMax / stepsPerMM))
+    if (CurrentState::getInstance()->getHomeMissedStepsXscaled() < (20 + (missedStepsMax * 3) / stepsPerMM))
     {
       goodConsecutiveHomings++;
       if (goodConsecutiveHomings >= 3)
