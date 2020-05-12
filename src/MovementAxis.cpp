@@ -128,7 +128,74 @@ void MovementAxis::loadSettingsTMC2130(int motorCurrent, int  stallSensitivity, 
   }
 }
 
+void MovementAxis::readDriverStatus()
+{
+  TMC2130A->read_REG(FB_TMC_REG_DRV_STATUS, &driverStatus);  
+}
+
+bool MovementAxis::isStallGuard()
+{
+  return ((driverStatus & 0x01000000) != 0);
+}
+
+bool MovementAxis::isStandStill()
+{
+  return ((driverStatus & 0x80000000) != 0);
+}
+
+bool MovementAxis::isDriverError()
+{
+  //uint32_t x = driverStatus;
+  //x = x >> 24;
+
+  //if (x > 1)
+  //{
+  //  Serial.print("R99");
+  //  Serial.print(" ");
+  //  Serial.print("x =");
+  //  Serial.print("");
+  //  Serial.print(x);
+  //  Serial.print("\r\n");
+  //}
+
+  return ((driverStatus & 0x7E000000) != 0);
+}
+
 uint8_t MovementAxis::getStatus() {
+
+  uint32_t gstat = 0;
+  TMC2130A->read_REG(FB_TMC_REG_GSTAT, &gstat);
+
+  uint32_t drvStat = 0;
+  TMC2130A->read_REG(FB_TMC_REG_DRV_STATUS, &drvStat);
+
+
+  //bool drvErr = false;
+
+  //dr = gstat & FB_TMC_ ? true : false;
+
+  if (gstat > 0)
+  {
+    Serial.print("R99");
+    Serial.print(" ");
+    Serial.print(" DRV ERR");
+    Serial.print(" ");
+    Serial.print(gstat);
+    Serial.print("\r\n ");
+  }
+
+  drvStat = drvStat & 0xFF000000;
+
+  if (drvStat > 0)
+  {
+    Serial.print("R99");
+    Serial.print(" ");
+    Serial.print(" DRV STAT");
+    Serial.print(" ");
+    Serial.print(drvStat);
+    Serial.print("\r\n ");
+  }
+
   //return TMC2130X.read_STAT();
   return TMC2130A->read_STAT();
 }

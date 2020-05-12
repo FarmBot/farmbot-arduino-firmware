@@ -114,7 +114,7 @@ int F13Handler::execute(Command *command)
     Serial.print("\r\n");
 
     // Compare postition before and after verify homing
-    if (CurrentState::getInstance()->getHomeMissedStepsZscaled() < (5 + missedStepsMax / stepsPerMM))
+    if (CurrentState::getInstance()->getHomeMissedStepsZscaled() < (20 + (missedStepsMax * 3) / stepsPerMM))
     {
       goodConsecutiveHomings++;
       if (goodConsecutiveHomings >= 3)

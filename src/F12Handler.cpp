@@ -98,21 +98,19 @@ int F12Handler::execute(Command *command)
 
     Serial.print("R99 homing displaced");
     Serial.print(" X ");
-    Serial.print(CurrentState::getInstance()->getHomeMissedStepsX());
-    Serial.print(" / ");
     Serial.print(CurrentState::getInstance()->getHomeMissedStepsXscaled());
     Serial.print(" Y ");
-    Serial.print(CurrentState::getInstance()->getHomeMissedStepsY());
-    Serial.print(" / ");
     Serial.print(CurrentState::getInstance()->getHomeMissedStepsYscaled());
     Serial.print(" Z ");
-    Serial.print(CurrentState::getInstance()->getHomeMissedStepsZ());
-    Serial.print(" / ");
     Serial.print(CurrentState::getInstance()->getHomeMissedStepsZscaled());
+    Serial.print(" M ");
+    Serial.print(missedStepsMax);
+    Serial.print(" M ");
+    Serial.print(stepsPerMM);
     Serial.print("\r\n");
 
     // Compare postition before and after verify homing, accounting for missed steps detecting stall
-    if (CurrentState::getInstance()->getHomeMissedStepsYscaled() < (5 + missedStepsMax / stepsPerMM))
+    if (CurrentState::getInstance()->getHomeMissedStepsYscaled() <= (20 + (missedStepsMax * 3) / stepsPerMM))
     {
       goodConsecutiveHomings++;
       if (goodConsecutiveHomings >= 3)

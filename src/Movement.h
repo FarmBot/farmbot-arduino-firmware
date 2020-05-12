@@ -40,6 +40,9 @@ public:
   #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
     void initTMC2130();
     void loadSettingsTMC2130();
+    void loadSettingsTMC2130_X();
+    void loadSettingsTMC2130_Y();
+    void loadSettingsTMC2130_Z();
   #endif
 
 

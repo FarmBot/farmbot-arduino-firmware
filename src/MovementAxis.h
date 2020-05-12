@@ -100,6 +100,7 @@ public:
   void loadSettingsTMC2130(int motorCurrent, int  stallSensitivity, int microSteps);
   uint16_t getLoad();
 
+
 #endif
 
 #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
@@ -110,7 +111,14 @@ public:
 
   uint8_t getStatus();
 
+  void readDriverStatus();
+  bool isStallGuard();
+  bool isStandStill();
+  bool isDriverError();
+
   unsigned int getLostSteps();
+
+  int missedStepHistory[5] = {0,0,0,0,0};
 
   bool tmcStep = true;
   bool tmcStep2 = true;
@@ -119,6 +127,10 @@ public:
 private:
   int lastCalcLog = 0;
   bool debugPrint = false;
+
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+  uint32_t driverStatus = 0;
+#endif
 
   // pin settings primary motor
   int pinStep;
