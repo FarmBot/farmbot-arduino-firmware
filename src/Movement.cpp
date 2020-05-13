@@ -656,11 +656,13 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
 
       serialBuffer += "R99";
       serialBuffer += " deactivate motor X due to ";
+      #if defined(FARMDUINO_EXP_V20)
       if (axisX.isDriverError())
       {
         serialBuffer += "driver error";
       }
       else
+      #endif
       {
 
         serialBuffer += "missed steps";
@@ -693,11 +695,14 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
 
       serialBuffer += "R99";
       serialBuffer += " deactivate motor Y due to ";
+
+      #if defined(FARMDUINO_EXP_V20)
       if (axisY.isDriverError()) 
       {
         serialBuffer += "driver error";
       }
       else
+      #endif
       {
 
         serialBuffer += "missed steps";
@@ -739,11 +744,14 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
 
       serialBuffer += "R99";
       serialBuffer += " deactivate motor Z due to ";
+
+      #if defined(FARMDUINO_EXP_V20)
       if (axisZ.isDriverError())
       {
         serialBuffer += "driver error";
       }
       else
+      #endif
       {
 
         serialBuffer += "missed steps";
