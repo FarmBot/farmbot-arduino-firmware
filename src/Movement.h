@@ -88,6 +88,8 @@ private:
   int serialMessageNr = 0;
   int serialMessageDelay = 0;
 
+  unsigned long calibrationTicks = 0;
+
   void serialBufferSendNext();
   void serialBufferEmpty();
 
