@@ -26,8 +26,33 @@ jobs:
           paths:
             - ~/arduino-<< parameters.arduino_version >>
       - run:
-          name: Compile
-          command: make
+          name: Create bin directory
+          command: mkdir -p bin
+      - run:
+          name: Compile Genesis v1.2 (RAMPS_V14)
+          command: make dep_core dep_Servo dep_SPI dep_EEPROM target_ramps_v14 remove_temp
+          when: always
+      - run:
+          name: Compile Genesis v1.3 (FARMDUINO_V10)
+          command: make dep_core dep_Servo dep_SPI dep_EEPROM target_farmduino_v10 remove_temp
+          when: always
+      - run:
+          name: Compile Genesis v1.4 (FARMDUINO_V14)
+          command: make dep_core dep_Servo dep_SPI dep_EEPROM target_farmduino_k14 remove_temp
+          when: always
+      - run:
+          name: Compile Genesis v1.5 (FARMDUINO_V30)
+          command: make dep_core dep_Servo dep_SPI dep_EEPROM target_farmduino_k15 remove_temp
+          when: always
+      - run:
+          name: Compile Express v1.0 (FARMDUINO_EXP_V20)
+          command: make dep_core dep_Servo dep_SPI dep_EEPROM target_express_k10 remove_temp
+          when: always
+      - run:
+          name: Compile all
+          command: |
+            make force_clean
+            make
       - run:
           name: Check strings
           command: make strings_test
