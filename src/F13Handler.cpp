@@ -125,6 +125,7 @@ int F13Handler::execute(Command *command)
     }
     else
     {
+      delay(500);
       goodConsecutiveHomings = 0;
     }
   }

@@ -1124,7 +1124,35 @@ int Movement::calibrateAxis(int axis)
   int *axisStatus;
   long *axisStepsPerMm;
 
+  long stepDelay = 0;
+  unsigned long tickDelay = 0;
+  unsigned long nextTick = 0;
+  unsigned long lastTick = 0;
+
   // Prepare for movement
+  tickDelay = (1000.0 * 1000.0 / MOVEMENT_INTERRUPT_SPEED / speedHome[axis] / 2);
+  
+  stepDelay = 100000 / speedHome[axis] / 2;
+
+  Serial.print("R99");
+  Serial.print(" ");
+
+  Serial.print("tick delay");
+  Serial.print(" ");
+  Serial.print(tickDelay);
+  Serial.print(" ");
+
+  Serial.print("MOVEMENT_INTERRUPT_SPEED");
+  Serial.print(" ");
+  Serial.print(MOVEMENT_INTERRUPT_SPEED);
+  Serial.print(" ");
+
+  Serial.print("speedHome[axis]");
+  Serial.print(" ");
+  Serial.print(speedHome[axis]);
+  Serial.print(" ");
+
+  Serial.print("\r\n");
 
   storeEndStops();
   reportEndStops();
@@ -1206,7 +1234,6 @@ int Movement::calibrateAxis(int axis)
   // Move towards home
   calibAxis->enableMotor();
   
-  /**/
   //calibAxis->setDirectionHome();
   calibAxis->setDirectionAway();
 
@@ -1294,8 +1321,12 @@ int Movement::calibrateAxis(int axis)
 
       calibAxis->setStepAxis();
       
-
-      delayMicroseconds(100000 / speedHome[axis] / 2);
+      lastTick = calibrationTicks;
+      nextTick = calibrationTicks + tickDelay;
+      while (calibrationTicks < nextTick && calibrationTicks >= lastTick)
+      {
+        delay(1);
+      }
 
       stepsCount++;
       if (stepsCount % (speedHome[axis] * 3) == 0)
@@ -1325,7 +1356,14 @@ int Movement::calibrateAxis(int axis)
       }
 
       calibAxis->resetMotorStep();
-      delayMicroseconds(100000 / speedHome[axis] / 2);
+
+      //delayMicroseconds(stepDelay);
+      lastTick = calibrationTicks;
+      nextTick = calibrationTicks + tickDelay;
+      while (calibrationTicks < nextTick && calibrationTicks >= lastTick)
+      {
+        delay(1);
+      }
     }
     else
     {
@@ -1482,7 +1520,13 @@ int Movement::calibrateAxis(int axis)
 
       //checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
 
-      delayMicroseconds(100000 / speedHome[axis] / 2);
+      //delayMicroseconds(stepDelay);
+      lastTick = calibrationTicks;
+      nextTick = calibrationTicks + tickDelay;
+      while (calibrationTicks < nextTick && calibrationTicks >= lastTick)
+      {
+        delay(1);
+      }
 
       if (stepsCount % (speedHome[axis] * 3) == 0)
       {
@@ -1498,7 +1542,14 @@ int Movement::calibrateAxis(int axis)
       }
 
       calibAxis->resetMotorStep();
-      delayMicroseconds(100000 / speedHome[axis] / 2);
+      //delayMicroseconds(stepDelay);
+      lastTick = calibrationTicks;
+      nextTick = calibrationTicks + tickDelay;
+      while (calibrationTicks < nextTick && calibrationTicks >= lastTick)
+      {
+        delay(1);
+      }
+
     }
     else
     {
@@ -2046,10 +2097,10 @@ void Movement::handleMovementInterrupt(void)
   #endif
 
   // handle motor timing
-
   axisX.incrementTick();
   axisY.incrementTick();
   axisZ.incrementTick();
+  calibrationTicks++;
 
 }
 
