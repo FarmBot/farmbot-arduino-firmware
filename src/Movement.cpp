@@ -388,6 +388,10 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
   unsigned long currentMillis = 0;
   unsigned long timeStart = millis();
 
+  int highestX = 0;
+  int highestY = 0;
+  int highestZ = 0;
+
   serialMessageNr = 0;
   serialMessageDelay = 0;
 
@@ -596,7 +600,6 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
       {
         homeMissedSteps[0]++;
       }
-
     }
 
     if (axisY.isStepDone())
@@ -617,7 +620,6 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
       {
         homeMissedSteps[1]++;
       }
-
     }
 
     if (axisZ.isStepDone())
@@ -709,14 +711,14 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
       }
       serialBuffer += "\r\n";
 
-      serialBuffer += "R99";
-      serialBuffer += " S";
-      serialBuffer += axisY.getNrOfSteps();
-      serialBuffer += " MS ";
-      serialBuffer += motorConsMissedSteps[1];
-      serialBuffer += " MSM ";
-      serialBuffer += motorConsMissedStepsMax[1];
-      serialBuffer += "\r\n";
+      //serialBuffer += "R99";
+      //serialBuffer += " S";
+      //serialBuffer += axisY.getNrOfSteps();
+      //serialBuffer += " MS ";
+      //serialBuffer += motorConsMissedSteps[1];
+      //serialBuffer += " MSM ";
+      //serialBuffer += motorConsMissedStepsMax[1];
+      //serialBuffer += "\r\n";
 
       if (yHome)
       {
@@ -867,7 +869,6 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
 
     if (serialMessageDelay > 300 && serialBuffer.length() == 0 && serialBufferSending == 0)
     {
-
       //Serial.print("Y-");
       //axisY.test();/**/
 
@@ -898,6 +899,48 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
           //serialBuffer += axisZ.getLoad();
           //serialBuffer += CurrentState::getInstance()->getQAndNewLine();          
           //#endif
+          #if defined(FARMDUINO_EXP_V20)          
+
+          highestX = 0;
+          highestY = 0;
+          highestZ = 0;
+
+          if (axisX.missedStepHistory[0] > highestX) { highestX = axisX.missedStepHistory[0]; }
+          if (axisX.missedStepHistory[1] > highestX) { highestX = axisX.missedStepHistory[1]; }
+          if (axisX.missedStepHistory[2] > highestX) { highestX = axisX.missedStepHistory[2]; }
+          if (axisX.missedStepHistory[3] > highestX) { highestX = axisX.missedStepHistory[3]; }
+          if (axisX.missedStepHistory[4] > highestX) { highestX = axisX.missedStepHistory[4]; }
+
+          if (axisY.missedStepHistory[0] > highestY) { highestY = axisY.missedStepHistory[0]; }
+          if (axisY.missedStepHistory[1] > highestY) { highestY = axisY.missedStepHistory[1]; }
+          if (axisY.missedStepHistory[2] > highestY) { highestY = axisY.missedStepHistory[2]; }
+          if (axisY.missedStepHistory[3] > highestY) { highestY = axisY.missedStepHistory[3]; }
+          if (axisY.missedStepHistory[4] > highestY) { highestY = axisY.missedStepHistory[4]; }
+
+          if (axisZ.missedStepHistory[0] > highestZ) { highestZ = axisZ.missedStepHistory[0]; }
+          if (axisZ.missedStepHistory[1] > highestZ) { highestZ = axisZ.missedStepHistory[1]; }
+          if (axisZ.missedStepHistory[2] > highestZ) { highestZ = axisZ.missedStepHistory[2]; }
+          if (axisZ.missedStepHistory[3] > highestZ) { highestZ = axisZ.missedStepHistory[3]; }
+          if (axisZ.missedStepHistory[4] > highestZ) { highestZ = axisZ.missedStepHistory[4]; }
+
+
+          serialBuffer += "R89";
+          serialBuffer += " U";
+          serialBuffer += axisX.getNrOfSteps();
+          serialBuffer += " X";
+          serialBuffer += highestX;
+          serialBuffer += " V";
+          serialBuffer += (int)(axisY.getNrOfSteps() / 100) * 100 ;
+          serialBuffer += " Y";
+          serialBuffer += highestY;
+          serialBuffer += " W";
+          serialBuffer += axisZ.getNrOfSteps();
+          serialBuffer += " Z";
+          serialBuffer += highestZ;
+          serialBuffer += CurrentState::getInstance()->getQAndNewLine();          
+
+
+          #endif
           break;
 
         default:
@@ -1031,6 +1074,46 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
     loadSettingsTMC2130_Z();
     delay(100);
   }
+
+  // Report back the final missed steps
+  highestX = 0;
+  highestY = 0;
+  highestZ = 0;
+
+  if (axisX.missedStepHistory[0] > highestX) { highestX = axisX.missedStepHistory[0]; }
+  if (axisX.missedStepHistory[1] > highestX) { highestX = axisX.missedStepHistory[1]; }
+  if (axisX.missedStepHistory[2] > highestX) { highestX = axisX.missedStepHistory[2]; }
+  if (axisX.missedStepHistory[3] > highestX) { highestX = axisX.missedStepHistory[3]; }
+  if (axisX.missedStepHistory[4] > highestX) { highestX = axisX.missedStepHistory[4]; }
+
+  if (axisY.missedStepHistory[0] > highestY) { highestY = axisY.missedStepHistory[0]; }
+  if (axisY.missedStepHistory[1] > highestY) { highestY = axisY.missedStepHistory[1]; }
+  if (axisY.missedStepHistory[2] > highestY) { highestY = axisY.missedStepHistory[2]; }
+  if (axisY.missedStepHistory[3] > highestY) { highestY = axisY.missedStepHistory[3]; }
+  if (axisY.missedStepHistory[4] > highestY) { highestY = axisY.missedStepHistory[4]; }
+
+  if (axisZ.missedStepHistory[0] > highestZ) { highestZ = axisZ.missedStepHistory[0]; }
+  if (axisZ.missedStepHistory[1] > highestZ) { highestZ = axisZ.missedStepHistory[1]; }
+  if (axisZ.missedStepHistory[2] > highestZ) { highestZ = axisZ.missedStepHistory[2]; }
+  if (axisZ.missedStepHistory[3] > highestZ) { highestZ = axisZ.missedStepHistory[3]; }
+  if (axisZ.missedStepHistory[4] > highestZ) { highestZ = axisZ.missedStepHistory[4]; }
+
+
+  Serial.print("R89");
+  Serial.print(" U");
+  Serial.print(axisX.getNrOfSteps());
+  Serial.print(" X");
+  Serial.print(highestX);
+  Serial.print(" V");
+  Serial.print((int)(axisY.getNrOfSteps() / 100) * 100);
+  Serial.print(" Y");
+  Serial.print(highestY);
+  Serial.print(" W");
+  Serial.print(axisZ.getNrOfSteps());
+  Serial.print(" Z");
+  Serial.print(highestZ);
+  Serial.print(CurrentState::getInstance()->getQAndNewLine());
+
 
   #endif
 
@@ -1325,7 +1408,7 @@ int Movement::calibrateAxis(int axis)
       nextTick = calibrationTicks + tickDelay;
       while (calibrationTicks < nextTick && calibrationTicks >= lastTick)
       {
-        delay(1);
+        delayMicroseconds(250);
       }
 
       stepsCount++;
@@ -1362,7 +1445,7 @@ int Movement::calibrateAxis(int axis)
       nextTick = calibrationTicks + tickDelay;
       while (calibrationTicks < nextTick && calibrationTicks >= lastTick)
       {
-        delay(1);
+        delayMicroseconds(250);
       }
     }
     else
@@ -1525,7 +1608,7 @@ int Movement::calibrateAxis(int axis)
       nextTick = calibrationTicks + tickDelay;
       while (calibrationTicks < nextTick && calibrationTicks >= lastTick)
       {
-        delay(1);
+        delayMicroseconds(250);
       }
 
       if (stepsCount % (speedHome[axis] * 3) == 0)
@@ -1547,7 +1630,7 @@ int Movement::calibrateAxis(int axis)
       nextTick = calibrationTicks + tickDelay;
       while (calibrationTicks < nextTick && calibrationTicks >= lastTick)
       {
-        delay(1);
+        delayMicroseconds(250);
       }
 
     }
@@ -1739,16 +1822,16 @@ void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, 
       axis->missedStepHistory[0] = *missedSteps;
 
       // test print
-      Serial.print("R99");
-      Serial.print(" ");
-      Serial.print("S = ");
-      Serial.print(" ");
-      Serial.print(axis->getNrOfSteps());
-      Serial.print(" ");
-      Serial.print("M = ");
-      Serial.print(" ");
-      Serial.print(*missedSteps);
-      Serial.print("\r\n");
+      //Serial.print("R99");
+      //Serial.print(" ");
+      //Serial.print("S = ");
+      //Serial.print(" ");
+      //Serial.print(axis->getNrOfSteps());
+      //Serial.print(" ");
+      //Serial.print("M = ");
+      //Serial.print(" ");
+      //Serial.print(*missedSteps);
+      //Serial.print("\r\n");
 
       // reset missed steps
       *missedSteps = 0;
