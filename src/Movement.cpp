@@ -400,6 +400,27 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
   bool emergencyStop = false;
   unsigned int commandSpeed[3];
 
+
+  #if defined(FARMDUINO_EXP_V20)
+  axisX.missedStepHistory[0] = 0;
+  axisX.missedStepHistory[1] = 0;
+  axisX.missedStepHistory[2] = 0;
+  axisX.missedStepHistory[3] = 0;
+  axisX.missedStepHistory[4] = 0;
+
+  axisY.missedStepHistory[0] = 0;
+  axisY.missedStepHistory[1] = 0;
+  axisY.missedStepHistory[2] = 0;
+  axisY.missedStepHistory[3] = 0;
+  axisY.missedStepHistory[4] = 0;
+
+  axisZ.missedStepHistory[0] = 0;
+  axisZ.missedStepHistory[1] = 0;
+  axisZ.missedStepHistory[2] = 0;
+  axisZ.missedStepHistory[3] = 0;
+  axisZ.missedStepHistory[4] = 0;
+  #endif
+
   // if a speed is given in the command, use that instead of the config speed
 
   if (xMaxSpd > 0 && xMaxSpd < speedMax[0])
