@@ -101,9 +101,9 @@ IMPORTANT
 ---------
 
 Farmbot will NOT move until the configuration has been approved.
-To approve manually, send 'F22 P2 V1 Q0'
+To approve manually, send `F22 P2 V1 Q0`
 
-To move, use the command 'G00 X0 Y0 Z0 Q0' where you type in the coordinates just after X, Y and Z.
+To move, use the command `G00 X0 Y0 Z0 Q0` where you type in the coordinates just after `X`, `Y` and `Z`.
 
 G-Codes
 -------
@@ -309,8 +309,8 @@ ID  | Name                              | Unit      | Notes
 82  | MOVEMENT_MOTOR_CURRENT_Y          | milliamps | TMC2130 only
 83  | MOVEMENT_MOTOR_CURRENT_Z          | milliamps | TMC2130 only
 85  | MOVEMENT_STALL_SENSITIVITY_X      | integer   | -63 (high) to +63 (low), Express only
-86  | MOVEMENT_STALL_SENSITIVITY_Y      | integer   | Express only
-87  | MOVEMENT_STALL_SENSITIVITY_Z      | integer   | Express only
+86  | MOVEMENT_STALL_SENSITIVITY_Y      | integer   | -63 (high) to +63 (low), Express only
+87  | MOVEMENT_STALL_SENSITIVITY_Z      | integer   | -63 (high) to +63 (low), Express only
 91  | MOVEMENT_MICROSTEPS_X             | integer   | TMC2130 only
 92  | MOVEMENT_MICROSTEPS_Y             | integer   | TMC2130 only
 93  | MOVEMENT_MICROSTEPS_Z             | integer   | TMC2130 only
