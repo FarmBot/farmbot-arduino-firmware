@@ -183,7 +183,7 @@ R        |84    |X Y Z            |Report encoder position scaled
 R        |85    |X Y Z            |Report encoder position raw
 R        |87    |                 |Emergency lock
 R        |88    |                 |No config (see [configuration approval](#important))
-R        |89    |X Y Z            |Report axis motor load (TMC2130) (not enabled)
+R        |89    |U X V Y W Z      |Report # axis steps (U,V,W) and highest missed steps in last 500 (X,Y,Z)
 R        |99    |                 |Debug message
 
 Error codes (R03)
@@ -308,7 +308,7 @@ ID  | Name                              | Unit      | Notes
 81  | MOVEMENT_MOTOR_CURRENT_X          | milliamps | TMC2130 only
 82  | MOVEMENT_MOTOR_CURRENT_Y          | milliamps | TMC2130 only
 83  | MOVEMENT_MOTOR_CURRENT_Z          | milliamps | TMC2130 only
-85  | MOVEMENT_STALL_SENSITIVITY_X      | integer   | Express only
+85  | MOVEMENT_STALL_SENSITIVITY_X      | integer   | -63 (high) to +63 (low), Express only
 86  | MOVEMENT_STALL_SENSITIVITY_Y      | integer   | Express only
 87  | MOVEMENT_STALL_SENSITIVITY_Z      | integer   | Express only
 91  | MOVEMENT_MICROSTEPS_X             | integer   | TMC2130 only
