@@ -924,7 +924,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
           if (axisZ.missedStepHistory[4] > highestZ) { highestZ = axisZ.missedStepHistory[4]; }
 
 
-          serialBuffer += "R89";
+          serialBuffer += "R99";
           serialBuffer += " U";
           serialBuffer += axisX.getNrOfSteps();
           serialBuffer += " X";
@@ -1099,7 +1099,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
   if (axisZ.missedStepHistory[4] > highestZ) { highestZ = axisZ.missedStepHistory[4]; }
 
 
-  Serial.print("R89");
+  Serial.print("R99");
   Serial.print(" U");
   Serial.print(axisX.getNrOfSteps());
   Serial.print(" X");
