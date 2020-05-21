@@ -1233,10 +1233,34 @@ int Movement::calibrateAxis(int axis)
   unsigned long nextTick = 0;
   unsigned long lastTick = 0;
 
+#if defined(FARMDUINO_EXP_V20)
+  axisX.missedStepHistory[0] = 0;
+  axisX.missedStepHistory[1] = 0;
+  axisX.missedStepHistory[2] = 0;
+  axisX.missedStepHistory[3] = 0;
+  axisX.missedStepHistory[4] = 0;
+
+  axisY.missedStepHistory[0] = 0;
+  axisY.missedStepHistory[1] = 0;
+  axisY.missedStepHistory[2] = 0;
+  axisY.missedStepHistory[3] = 0;
+  axisY.missedStepHistory[4] = 0;
+
+  axisZ.missedStepHistory[0] = 0;
+  axisZ.missedStepHistory[1] = 0;
+  axisZ.missedStepHistory[2] = 0;
+  axisZ.missedStepHistory[3] = 0;
+  axisZ.missedStepHistory[4] = 0;
+#endif
+
   // Prepare for movement
   tickDelay = (1000.0 * 1000.0 / MOVEMENT_INTERRUPT_SPEED / speedHome[axis] / 2);
   
+  #if defined(FARMDUINO_EXP_V20)
+  stepDelay = 1000000 / speedHome[axis] / 4;
+  #else
   stepDelay = 100000 / speedHome[axis] / 2;
+  #endif
 
   Serial.print("R99");
   Serial.print(" ");
@@ -1420,17 +1444,43 @@ int Movement::calibrateAxis(int axis)
     /**/
     //if (((!invertEndStops && !calibAxis->endStopMax()) || (invertEndStops && !calibAxis->endStopMin())) && !movementDone && (*missedSteps < *missedStepsMax))
     //if ((!calibAxis->endStopMin() && !calibAxis->endStopMax()) && !movementDone && (*missedSteps < *missedStepsMax))
+
+    
+    //Serial.print("R99 missed steps max ");
+    //Serial.print(*missedStepsMax);
+    //Serial.print(" * ");
+    //Serial.print(calibAxis->missedStepHistory[0]);
+    //Serial.print(" ");
+    //Serial.print(calibAxis->missedStepHistory[1]);
+    //Serial.print(" ");
+    //Serial.print(calibAxis->missedStepHistory[2]);
+    //Serial.print(" ");
+    //Serial.print(calibAxis->missedStepHistory[3]);
+    //Serial.print(" ");
+    //Serial.print(calibAxis->missedStepHistory[4]);
+    //Serial.print(" ");
+    //Serial.print("\r\n");
+
+#if defined(FARMDUINO_EXP_V20)
+    if (
+        (!calibAxis->endStopMin() && !calibAxis->endStopMax()) && 
+        !movementDone 
+        && 
+        !(
+          calibAxis->missedStepHistory[0] >= *missedStepsMax &&
+          calibAxis->missedStepHistory[1] >= *missedStepsMax &&
+          calibAxis->missedStepHistory[2] >= *missedStepsMax &&
+          calibAxis->missedStepHistory[3] >= *missedStepsMax &&
+          calibAxis->missedStepHistory[4] >= *missedStepsMax
+        )
+      )
+#else
     if ((!calibAxis->endStopMin() && !calibAxis->endStopMax()) && !movementDone && (*missedSteps < *missedStepsMax))
+#endif
     {
 
       calibAxis->setStepAxis();
-      
-      lastTick = calibrationTicks;
-      nextTick = calibrationTicks + tickDelay;
-      while (calibrationTicks < nextTick && calibrationTicks >= lastTick)
-      {
-        delayMicroseconds(250);
-      }
+      delayMicroseconds(stepDelay);
 
       stepsCount++;
       if (stepsCount % (speedHome[axis] * 3) == 0)
@@ -1461,13 +1511,7 @@ int Movement::calibrateAxis(int axis)
 
       calibAxis->resetMotorStep();
 
-      //delayMicroseconds(stepDelay);
-      lastTick = calibrationTicks;
-      nextTick = calibrationTicks + tickDelay;
-      while (calibrationTicks < nextTick && calibrationTicks >= lastTick)
-      {
-        delayMicroseconds(250);
-      }
+      delayMicroseconds(stepDelay);
     }
     else
     {
@@ -1615,8 +1659,21 @@ int Movement::calibrateAxis(int axis)
     /**/
     //if ((!calibAxis->endStopMin() && !calibAxis->endStopMax()) && !movementDone && (*missedSteps < *missedStepsMax))
     //if (((!invertEndStops && !calibAxis->endStopMax()) || (invertEndStops && !calibAxis->endStopMin())) && !movementDone && (*missedSteps < *missedStepsMax))
+#if defined(FARMDUINO_EXP_V20)
+    if (
+        ((!invertEndStops && !calibAxis->endStopMin()) || (invertEndStops && !calibAxis->endStopMax())) && 
+        !movementDone && 
+        !(
+          calibAxis->missedStepHistory[0] >= *missedStepsMax &&
+          calibAxis->missedStepHistory[1] >= *missedStepsMax &&
+          calibAxis->missedStepHistory[2] >= *missedStepsMax &&
+          calibAxis->missedStepHistory[3] >= *missedStepsMax &&
+          calibAxis->missedStepHistory[4] >= *missedStepsMax
+        )
+      )
+#else
     if (((!invertEndStops && !calibAxis->endStopMin()) || (invertEndStops && !calibAxis->endStopMax())) && !movementDone && (*missedSteps < *missedStepsMax))
-
+#endif
     {
 
       calibAxis->setStepAxis();
@@ -1624,13 +1681,7 @@ int Movement::calibrateAxis(int axis)
 
       //checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
 
-      //delayMicroseconds(stepDelay);
-      lastTick = calibrationTicks;
-      nextTick = calibrationTicks + tickDelay;
-      while (calibrationTicks < nextTick && calibrationTicks >= lastTick)
-      {
-        delayMicroseconds(250);
-      }
+      delayMicroseconds(stepDelay);
 
       if (stepsCount % (speedHome[axis] * 3) == 0)
       {
@@ -1646,13 +1697,7 @@ int Movement::calibrateAxis(int axis)
       }
 
       calibAxis->resetMotorStep();
-      //delayMicroseconds(stepDelay);
-      lastTick = calibrationTicks;
-      nextTick = calibrationTicks + tickDelay;
-      while (calibrationTicks < nextTick && calibrationTicks >= lastTick)
-      {
-        delayMicroseconds(250);
-      }
+      delayMicroseconds(stepDelay);
 
     }
     else

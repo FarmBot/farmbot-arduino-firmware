@@ -114,6 +114,7 @@ void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current,
 
   tb->init();
 
+  // Set the micro steps
   switch (microsteps) {
   case 1:
     data = 8;
@@ -143,6 +144,8 @@ void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current,
 
   tb->alter_REG(FB_TMC_REG_CHOPCONF, uint32_t(data) << FB_TMC_CHOPCONF_MRES, FB_TMC_CHOPCONF_MASKS[FB_TMC_CHOPCONF_MRES] << FB_TMC_CHOPCONF_MRES);
 
+  // Set the current
+
   uint16_t mA = current;
   float multiplier = 0.5;
   float RS = 0.11;
@@ -155,18 +158,59 @@ void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current,
   data |= ((uint32_t(16)&FB_TMC_IHOLDDELAY_MASK) << FB_TMC_IHOLDDELAY);
   tb->write_REG(FB_TMC_REG_IHOLD_IRUN, data);
 
-  tb->alter_REG(FB_TMC_REG_CHOPCONF, uint32_t(sensitivity) << FB_TMC_COOLCONF_SGT, FB_TMC_CHOPCONF_MASKS[FB_TMC_COOLCONF_SGT] << FB_TMC_COOLCONF_SGT);
 
+
+
+  /*
+  tb->alter_REG(FB_TMC_REG_CHOPCONF, uint32_t(sensitivity) << FB_TMC_COOLCONF_SGT, FB_TMC_CHOPCONF_MASKS[FB_TMC_COOLCONF_SGT] << FB_TMC_COOLCONF_SGT);
   tb->set_GCONF(FB_TMC_GCONF_I_SCALE_ANALOG, 1);
   tb->alter_REG(FB_TMC_REG_CHOPCONF, uint32_t(3) << FB_TMC_CHOPCONF_TOFF, FB_TMC_CHOPCONF_MASKS[FB_TMC_CHOPCONF_TOFF] << FB_TMC_CHOPCONF_TOFF);
   tb->alter_REG(FB_TMC_REG_CHOPCONF, uint32_t(1) << FB_TMC_CHOPCONF_TBL, FB_TMC_CHOPCONF_MASKS[FB_TMC_CHOPCONF_TBL] << FB_TMC_CHOPCONF_TBL);
-  tb->set_GCONF(FB_TMC_GCONF_DIAG1_STALL, 1);
-  tb->set_GCONF(FB_TMC_GCONF_DIAG1_ONSTATE, 1);
+  tb->set_GCONF(FB_TMC_GCONF_DIAG1_STALL, 1); // even afgezet voor test
+  tb->set_GCONF(FB_TMC_GCONF_DIAG1_ONSTATE, 1); // even afgezet voor test
 
   tb->write_REG(FB_TMC_REG_TCOOLTHRS, 0xFFFFF & FB_TMC_TCOOLTHRS_MASK);
   tb->write_REG(FB_TMC_REG_THIGH, 0xFFFFF & FB_TMC_THIGH_MASK);
   tb->alter_REG(FB_TMC_REG_CHOPCONF, uint32_t(5) << FB_TMC_COOLCONF_SEMIN, FB_TMC_CHOPCONF_MASKS[FB_TMC_COOLCONF_SEMIN] << FB_TMC_COOLCONF_SEMIN);
   tb->alter_REG(FB_TMC_REG_CHOPCONF, uint32_t(15) << FB_TMC_COOLCONF_SEMAX, FB_TMC_CHOPCONF_MASKS[FB_TMC_COOLCONF_SEMAX] << FB_TMC_COOLCONF_SEMAX);
+*/
+
+  // om later te testen in dcStep modus
+
+  // DirectX for test
+  //tb->alter_REG(FB_TMC_REG_XDIRECT, uint32_t(248) << FB_TMC_XDIRECT_COIL_A, FB_TMC_XDIRECT_COIL_A_MASK << FB_TMC_XDIRECT_COIL_A);
+  //tb->alter_REG(FB_TMC_REG_XDIRECT, uint32_t(248) << FB_TMC_XDIRECT_COIL_B, FB_TMC_XDIRECT_COIL_B_MASK << FB_TMC_XDIRECT_COIL_B);
+
+  // set to dcStep mode
+  tb->alter_REG(FB_TMC_REG_CHOPCONF, uint32_t(1) << FB_TMC_CHOPCONF_VHIGHFS,  FB_TMC_CHOPCONF_MASKS[FB_TMC_CHOPCONF_VHIGHFS]  << FB_TMC_CHOPCONF_VHIGHFS);
+  tb->alter_REG(FB_TMC_REG_CHOPCONF, uint32_t(1) << FB_TMC_CHOPCONF_VHIGHCHM, FB_TMC_CHOPCONF_MASKS[FB_TMC_CHOPCONF_VHIGHCHM] << FB_TMC_CHOPCONF_VHIGHCHM);
+  tb->alter_REG(FB_TMC_REG_CHOPCONF, uint32_t(8) << FB_TMC_CHOPCONF_TOFF,     FB_TMC_CHOPCONF_MASKS[FB_TMC_CHOPCONF_TOFF]     << FB_TMC_CHOPCONF_TOFF);
+
+  // Set minimum speed
+  tb->write_REG(FB_TMC_REG_VDCMIN,    uint32_t(0) & FB_TMC_VDCMIN_MASK);
+  tb->write_REG(FB_TMC_REG_TCOOLTHRS, uint32_t(0) & FB_TMC_TCOOLTHRS_MASK);
+  
+
+  // Set maximum speed
+  tb->write_REG(FB_TMC_REG_TCOOLTHRS, 0xFFFFF & FB_TMC_TCOOLTHRS_MASK);
+
+  // Set sensitivity
+  tb->alter_REG(FB_TMC_REG_DCCTRL, uint32_t(1024) << FB_TMC_DCCTRL_DC_TIME, FB_TMC_DCCTRL_DC_TIME_MASK);
+  tb->alter_REG(FB_TMC_REG_DCCTRL, uint32_t(256) << FB_TMC_DCCTRL_DC_SG, FB_TMC_DCCTRL_DC_SG_MASK);
+  tb->alter_REG(FB_TMC_REG_CHOPCONF, uint32_t(sensitivity) << FB_TMC_COOLCONF_SGT, FB_TMC_CHOPCONF_MASKS[FB_TMC_COOLCONF_SGT] << FB_TMC_COOLCONF_SGT);
+
+  // Set chopper
+  tb->alter_REG(FB_TMC_REG_CHOPCONF, uint32_t(8) << FB_TMC_CHOPCONF_TOFF, FB_TMC_CHOPCONF_MASKS[FB_TMC_CHOPCONF_TOFF] << FB_TMC_CHOPCONF_TOFF);
+
+  // enable diagnostics
+  tb->set_GCONF(FB_TMC_GCONF_DIAG0_STALL, 1);
+  tb->set_GCONF(FB_TMC_GCONF_DIAG0_ERROR, 1);
+
+  tb->set_GCONF(FB_TMC_GCONF_DIAG1_STALL, 0);
+  tb->set_GCONF(FB_TMC_GCONF_DIAG1_INDEX, 0);
+  tb->set_GCONF(FB_TMC_GCONF_DIAG1_ONSTATE, 0);
+
+  tb->set_GCONF(FB_TMC_GCONF_DIAG1_STEPS_SKIPPED, 0);
 
   /* // 2020-05-15 copy of settings before experiments
   tb->write_REG(FB_TMC_REG_TCOOLTHRS, 0xFFFFF & FB_TMC_TCOOLTHRS_MASK);
