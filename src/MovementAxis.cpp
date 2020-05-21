@@ -163,6 +163,24 @@ bool MovementAxis::isDriverError()
 
 uint8_t MovementAxis::getStatus() {
 
+  /**/
+  // Nog test
+  uint32_t missed_step = 0;
+  TMC2130A->read_REG(FB_TMC_REG_LOST_STEPS, &missed_step);
+
+  if (missed_step > 0)
+  {
+    Serial.print("R99");
+    Serial.print(" ");
+    Serial.print(" MIS STPR");
+    Serial.print(" ");
+    Serial.print(missed_step);
+    Serial.print("\r\n ");
+  }
+
+
+
+  // Read status from driver
   uint32_t gstat = 0;
   TMC2130A->read_REG(FB_TMC_REG_GSTAT, &gstat);
 
