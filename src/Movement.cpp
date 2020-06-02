@@ -665,12 +665,15 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
     }
 
     #if defined(FARMDUINO_EXP_V20)
-    if (axisX.isAxisActive() && 
-      axisX.missedStepHistory[0] >= motorConsMissedStepsMax[0] &&
-      axisX.missedStepHistory[1] >= motorConsMissedStepsMax[0] &&
-      axisX.missedStepHistory[2] >= motorConsMissedStepsMax[0] &&
-      axisX.missedStepHistory[3] >= motorConsMissedStepsMax[0] &&
-      axisX.missedStepHistory[4] >= motorConsMissedStepsMax[0] )
+    if 
+    (
+      axisX.isAxisActive()
+      && axisX.missedStepHistory[0] >= motorConsMissedStepsMax[0]
+      //&& axisX.missedStepHistory[1] >= motorConsMissedStepsMax[0]
+      //&& axisX.missedStepHistory[2] >= motorConsMissedStepsMax[0]
+      //&& axisX.missedStepHistory[3] >= motorConsMissedStepsMax[0]
+      //&& axisX.missedStepHistory[4] >= motorConsMissedStepsMax[0] 
+    )
     #else
     if (axisX.isAxisActive() && motorConsMissedSteps[0] >= motorConsMissedStepsMax[0])
     #endif
@@ -704,12 +707,15 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
     }
 
     #if defined(FARMDUINO_EXP_V20)
-    if (axisY.isAxisActive() &&
-      axisY.missedStepHistory[0] >= motorConsMissedStepsMax[1] &&
-      axisY.missedStepHistory[1] >= motorConsMissedStepsMax[1] &&
-      axisY.missedStepHistory[2] >= motorConsMissedStepsMax[1] &&
-      axisY.missedStepHistory[3] >= motorConsMissedStepsMax[1] &&
-      axisY.missedStepHistory[4] >= motorConsMissedStepsMax[1])
+    if 
+    (
+      axisY.isAxisActive()
+      && axisY.missedStepHistory[0] >= motorConsMissedStepsMax[1] 
+      //&& axisY.missedStepHistory[1] >= motorConsMissedStepsMax[1]
+      //&& axisY.missedStepHistory[2] >= motorConsMissedStepsMax[1]
+      //&& axisY.missedStepHistory[3] >= motorConsMissedStepsMax[1]
+      //&& axisY.missedStepHistory[4] >= motorConsMissedStepsMax[1]
+    )
     #else
     if (axisY.isAxisActive() && motorConsMissedSteps[1] >= motorConsMissedStepsMax[1])
     #endif
@@ -753,12 +759,15 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
     }
 
     #if defined(FARMDUINO_EXP_V20)
-    if (axisZ.isAxisActive() &&
-      axisZ.missedStepHistory[0] >= motorConsMissedStepsMax[2] &&
-      axisZ.missedStepHistory[1] >= motorConsMissedStepsMax[2] &&
-      axisZ.missedStepHistory[2] >= motorConsMissedStepsMax[2] &&
-      axisZ.missedStepHistory[3] >= motorConsMissedStepsMax[2] &&
-      axisZ.missedStepHistory[4] >= motorConsMissedStepsMax[2])
+    if 
+    (
+      axisZ.isAxisActive()
+      && axisZ.missedStepHistory[0] >= motorConsMissedStepsMax[2]
+      //&& axisZ.missedStepHistory[1] >= motorConsMissedStepsMax[2]
+      //&& axisZ.missedStepHistory[2] >= motorConsMissedStepsMax[2]
+      //&& axisZ.missedStepHistory[3] >= motorConsMissedStepsMax[2]
+      //&& axisZ.missedStepHistory[4] >= motorConsMissedStepsMax[2]
+    )
     #else
     if (axisZ.isAxisActive() && motorConsMissedSteps[2] >= motorConsMissedStepsMax[2])
     #endif
@@ -1903,7 +1912,8 @@ void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, 
       *missedSteps = 0;
     }
 
-    if ((stallGuard || standStill || driverError) && axis->getNrOfSteps() >= *encoderStepDecay) {
+    //if ((stallGuard || standStill || driverError) && axis->getNrOfSteps() >= *encoderStepDecay) {
+    if (stallGuard || standStill || driverError) {
       // In case of stall detection, count this as a missed step. But ignore the first steps
 
       (*missedSteps)++;
