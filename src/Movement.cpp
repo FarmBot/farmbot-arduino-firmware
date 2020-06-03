@@ -1043,6 +1043,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
   reportStatus(&axisX, axisSubStep[0]);
   reportStatus(&axisY, axisSubStep[1]);
   reportStatus(&axisZ, axisSubStep[2]);
+  serialBufferEmpty();
 
   disableMotors();
 
@@ -1074,6 +1075,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
   reportStatus(&axisX, axisSubStep[0]);
   reportStatus(&axisY, axisSubStep[1]);
   reportStatus(&axisZ, axisSubStep[2]);
+  serialBufferEmpty();
 
   disableMotors();
 
