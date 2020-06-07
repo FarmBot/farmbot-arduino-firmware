@@ -1263,10 +1263,12 @@ int Movement::calibrateAxis(int axis)
 #endif
 
   // Prepare for movement
-  tickDelay = (1000.0 * 1000.0 / MOVEMENT_INTERRUPT_SPEED / speedHome[axis] / 2);
+  //tickDelay = (1000.0 * 1000.0 / MOVEMENT_INTERRUPT_SPEED / speedHome[axis] / 2);
+  tickDelay = (1000.0 * 1000.0 / MOVEMENT_INTERRUPT_SPEED / speedHome[axis] / 4);
   
   #if defined(FARMDUINO_EXP_V20)
-  stepDelay = 1000000 / speedHome[axis] / 4;
+  //stepDelay = 1000000 / speedHome[axis] / 4;
+  stepDelay = 1000000 / speedHome[axis] / 2;
   #else
   stepDelay = 100000 / speedHome[axis] / 2;
   #endif
@@ -1476,11 +1478,11 @@ int Movement::calibrateAxis(int axis)
         !movementDone 
         && 
         !(
-          calibAxis->missedStepHistory[0] >= *missedStepsMax &&
-          calibAxis->missedStepHistory[1] >= *missedStepsMax &&
-          calibAxis->missedStepHistory[2] >= *missedStepsMax &&
-          calibAxis->missedStepHistory[3] >= *missedStepsMax &&
-          calibAxis->missedStepHistory[4] >= *missedStepsMax
+          calibAxis->missedStepHistory[0] >= *missedStepsMax //&&
+          //calibAxis->missedStepHistory[1] >= *missedStepsMax &&
+          //calibAxis->missedStepHistory[2] >= *missedStepsMax &&
+          //calibAxis->missedStepHistory[3] >= *missedStepsMax &&
+          //calibAxis->missedStepHistory[4] >= *missedStepsMax
         )
       )
 #else
@@ -1673,11 +1675,11 @@ int Movement::calibrateAxis(int axis)
         ((!invertEndStops && !calibAxis->endStopMin()) || (invertEndStops && !calibAxis->endStopMax())) && 
         !movementDone && 
         !(
-          calibAxis->missedStepHistory[0] >= *missedStepsMax &&
-          calibAxis->missedStepHistory[1] >= *missedStepsMax &&
-          calibAxis->missedStepHistory[2] >= *missedStepsMax &&
-          calibAxis->missedStepHistory[3] >= *missedStepsMax &&
-          calibAxis->missedStepHistory[4] >= *missedStepsMax
+          calibAxis->missedStepHistory[0] >= *missedStepsMax //&&
+          //calibAxis->missedStepHistory[1] >= *missedStepsMax &&
+          //calibAxis->missedStepHistory[2] >= *missedStepsMax &&
+          //calibAxis->missedStepHistory[3] >= *missedStepsMax &&
+          //calibAxis->missedStepHistory[4] >= *missedStepsMax
         )
       )
 #else
