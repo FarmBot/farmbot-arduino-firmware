@@ -117,7 +117,7 @@ int F13Handler::execute(Command *command)
     if (CurrentState::getInstance()->getHomeMissedStepsZscaled() < (20 + (missedStepsMax * 3) / stepsPerMM))
     {
       goodConsecutiveHomings++;
-      if (goodConsecutiveHomings >= 3)
+      if (goodConsecutiveHomings >= 2)
       {
         homingComplete = true;
         CurrentState::getInstance()->setZ(0);
