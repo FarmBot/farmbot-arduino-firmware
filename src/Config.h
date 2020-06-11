@@ -9,7 +9,7 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-  const char SOFTWARE_VERSION[] = "6.5.27\0";
+  const char SOFTWARE_VERSION[] = "6.5.28\0";
 
   const int LOGGING = 0;
 
