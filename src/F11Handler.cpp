@@ -114,7 +114,7 @@ int F11Handler::execute(Command *command)
     if (CurrentState::getInstance()->getHomeMissedStepsXscaled() < (20 + (missedStepsMax * 3) / stepsPerMM))
     {
       goodConsecutiveHomings++;
-      if (goodConsecutiveHomings >= 3)
+      if (goodConsecutiveHomings >= 2)
       {
         homingComplete = true;
         CurrentState::getInstance()->setX(0);

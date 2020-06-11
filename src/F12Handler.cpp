@@ -113,7 +113,7 @@ int F12Handler::execute(Command *command)
     if (CurrentState::getInstance()->getHomeMissedStepsYscaled() <= (20 + (missedStepsMax * 3) / stepsPerMM))
     {
       goodConsecutiveHomings++;
-      if (goodConsecutiveHomings >= 3)
+      if (goodConsecutiveHomings >= 2)
       {
         homingComplete = true;
         CurrentState::getInstance()->setY(0);
