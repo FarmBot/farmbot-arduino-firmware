@@ -71,8 +71,6 @@ int F11Handler::execute(Command *command)
   {
     if (firstMove)
     {
-      firstMove = false;
-
       // Move to home position
       Movement::getInstance()->moveToCoords(0, Y, Z, 0, 0, 0, false, false, false);
       //execution = CurrentState::getInstance()->getLastError();
@@ -111,10 +109,10 @@ int F11Handler::execute(Command *command)
     Serial.print("\r\n");
 
     // Home position cannot drift more than 5 milimeter otherwise no valid home pos
-    if (CurrentState::getInstance()->getHomeMissedStepsXscaled() < (20 + (missedStepsMax * 3) / stepsPerMM))
+    if (CurrentState::getInstance()->getHomeMissedStepsXscaled() < (20 + (missedStepsMax) / stepsPerMM))
     {
       goodConsecutiveHomings++;
-      if (goodConsecutiveHomings >= 2)
+      if (goodConsecutiveHomings >= 1)
       {
         homingComplete = true;
         CurrentState::getInstance()->setX(0);
@@ -125,6 +123,8 @@ int F11Handler::execute(Command *command)
       delay(500);
       goodConsecutiveHomings = 0;
     }
+
+    firstMove = false;
   }
 
   if (LOGGING)

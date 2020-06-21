@@ -74,8 +74,6 @@ int F13Handler::execute(Command *command)
   {
     if (firstMove)
     {
-      firstMove = false;
-
       // Move to home position. 
       Movement::getInstance()->moveToCoords(X, Y, 0, 0, 0, 0, false, false, false);
       //execution = CurrentState::getInstance()->getLastError();
@@ -114,10 +112,10 @@ int F13Handler::execute(Command *command)
     Serial.print("\r\n");
 
     // Compare postition before and after verify homing
-    if (CurrentState::getInstance()->getHomeMissedStepsZscaled() < (20 + (missedStepsMax * 3) / stepsPerMM))
+    if (CurrentState::getInstance()->getHomeMissedStepsZscaled() < (20 + (missedStepsMax) / stepsPerMM))
     {
       goodConsecutiveHomings++;
-      if (goodConsecutiveHomings >= 2)
+      if (goodConsecutiveHomings >= 1)
       {
         homingComplete = true;
         CurrentState::getInstance()->setZ(0);
@@ -128,6 +126,8 @@ int F13Handler::execute(Command *command)
       delay(500);
       goodConsecutiveHomings = 0;
     }
+
+    firstMove = false;
   }
 
   if (LOGGING)
