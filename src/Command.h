@@ -10,6 +10,7 @@ enum CommandCodeEnum
   G00 = 0,
   G01 = 1,
   G28 = 28,
+  //Command::getGCodeEnum does not handle all
   F01 = 101,
   F02 = 102,
   F03 = 103,
