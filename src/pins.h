@@ -315,7 +315,7 @@
   #define UTM_K -1
   #define UTM_L -1
     // Available digital pins: 2,3,18,19,38,42,43,44,45,46,47,48,49
-    // Available analog pins: 0,1,2,3,4,6,7,8
+    // Available analog pins: 6,7,8
 
   #define LED_PIN 13
 
@@ -325,6 +325,13 @@
   #define VACUUM_PIN 9
   #define PERIPHERAL_4_PIN 10
   #define PERIPHERAL_5_PIN 12
+
+    // Peripheral current sensors
+  #define LIGHTING_CURRENT_PIN 54 // A0
+  #define WATER_CURRENT_PIN 55 // A1
+  #define VACUUM_CURRENT_PIN 58  // A4
+  #define PERIPHERAL_4_CURRENT_PIN 57 // A3
+  #define PERIPHERAL_5_CURRENT_PIN 56 // A2
 
     // Auxiliary motors
   #define AUX_STEP_PIN 40
