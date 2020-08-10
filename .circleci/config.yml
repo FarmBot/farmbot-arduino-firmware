@@ -6,7 +6,7 @@ jobs:
     parameters:
       arduino_version:
         description: "Arduino version"
-        default: "1.8.12"
+        default: "1.8.13"
         type: string
     steps:
       - checkout
