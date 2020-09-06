@@ -35,7 +35,7 @@ public:
 #endif
 
   void loadPinNumbers(int step, int dir, int enable, int min, int max, int step2, int dir2, int enable2);
-  void loadMotorSettings(long speedMax, long speedMin, long speedHome, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv, bool endStInv, bool endStInv2, long interruptSpeed, bool motor2Enbl, bool motor2Inv, bool endStEnbl, bool stopAtHome, long maxSize, bool stopAtMax);
+  void loadMotorSettings(long speedMax, long speedMaxHome, long speedMin, long speedMinHome, long speedHome, long stepsAcc, long stepsAccHome, long timeOut, bool homeIsUp, bool motorInv, bool endStInv, bool endStInv2, long interruptSpeed, bool motor2Enbl, bool motor2Inv, bool endStEnbl, bool stopAtHome, long maxSize, bool stopAtMax);
   bool loadCoordinates(long sourcePoint, long destinationPoint, bool home);
   void setMaxSpeed(long speed);
 
@@ -153,10 +153,16 @@ private:
 
   // motor settings
   long motorSpeedMax        = 300;    // maximum speed in steps per second
+  long motorSpeedMaxHome    = 300;    // maximum speed in steps per second
   long motorSpeedMin        = 50;     // minimum speed in steps per second
+  long motorSpeedMinHome    = 50;     // minimum speed in steps per second
   long motorSpeedHome       = 50;     // homing speed in steps per second
   long motorStepsAcc        = 300;    // number of steps used for acceleration
+  long motorStepsAccHome    = 300;    // number of steps used for acceleration
   long motorTimeOut         = 120;    // timeout in seconds
+
+
+
   bool motorHomeIsUp        = false;  // direction to move when reached 0 on axis but no end stop detected while homing
   bool motorMotorInv        = false;  // invert motor direction
   bool motorMotor2Enl       = false;  // enable secondary motor

@@ -1941,9 +1941,17 @@ void Movement::loadMotorSettings()
   speedMax[1] = ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Y);
   speedMax[2] = ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Z);
 
+  speedMaxHome[0] = ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_X);
+  speedMaxHome[1] = ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Y);
+  speedMaxHome[2] = ParameterList::getInstance()->getValue(MOVEMENT_MAX_SPD_Z2);
+
   speedMin[0] = ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_X);
   speedMin[1] = ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Y);
   speedMin[2] = ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Z);
+
+  speedMinHome[0] = ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_X);
+  speedMinHome[1] = ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Y);
+  speedMinHome[2] = ParameterList::getInstance()->getValue(MOVEMENT_MIN_SPD_Z2);
 
   speedHome[0] = ParameterList::getInstance()->getValue(MOVEMENT_HOME_SPEED_X);
   speedHome[1] = ParameterList::getInstance()->getValue(MOVEMENT_HOME_SPEED_Y);
@@ -1952,6 +1960,10 @@ void Movement::loadMotorSettings()
   stepsAcc[0] = ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_X);
   stepsAcc[1] = ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Y);
   stepsAcc[2] = ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Z);
+
+  stepsAccHome[0] = ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_X);
+  stepsAccHome[1] = ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Y);
+  stepsAccHome[2] = ParameterList::getInstance()->getValue(MOVEMENT_STEPS_ACC_DEC_Z2);
 
   motorInv[0] = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_X));
   motorInv[1] = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_INVERT_MOTOR_Y));
@@ -2018,9 +2030,9 @@ void Movement::loadMotorSettings()
 
   CurrentState::getInstance()->setStepsPerMm(stepsPerMm[0], stepsPerMm[1], stepsPerMm[2]);
 
-  axisX.loadMotorSettings(speedMax[0], speedMin[0], speedHome[0], stepsAcc[0], timeOut[0], homeIsUp[0], motorInv[0], endStInv[0], endStInv2[0], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[0], motor2Inv[0], endStEnbl[0], motorStopAtHome[0], motorMaxSize[0], motorStopAtMax[0]);
-  axisY.loadMotorSettings(speedMax[1], speedMin[1], speedHome[1], stepsAcc[1], timeOut[1], homeIsUp[1], motorInv[1], endStInv[1], endStInv2[1], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[1], motor2Inv[1], endStEnbl[1], motorStopAtHome[1], motorMaxSize[1], motorStopAtMax[1]);
-  axisZ.loadMotorSettings(speedMax[2], speedMin[2], speedHome[2], stepsAcc[2], timeOut[2], homeIsUp[2], motorInv[2], endStInv[2], endStInv2[2], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[2], motor2Inv[2], endStEnbl[2], motorStopAtHome[2], motorMaxSize[2], motorStopAtMax[2]);
+  axisX.loadMotorSettings(speedMax[0], speedMax[0], speedMin[0], speedMin[0], speedHome[0], stepsAcc[0], stepsAcc[0], timeOut[0], homeIsUp[0], motorInv[0], endStInv[0], endStInv2[0], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[0], motor2Inv[0], endStEnbl[0], motorStopAtHome[0], motorMaxSize[0], motorStopAtMax[0]);
+  axisY.loadMotorSettings(speedMax[1], speedMax[1], speedMin[1], speedMin[1], speedHome[1], stepsAcc[1], stepsAcc[1], timeOut[1], homeIsUp[1], motorInv[1], endStInv[1], endStInv2[1], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[1], motor2Inv[1], endStEnbl[1], motorStopAtHome[1], motorMaxSize[1], motorStopAtMax[1]);
+  axisZ.loadMotorSettings(speedMax[2], speedMaxHome[2], speedMin[2], speedMinHome[2], speedHome[2], stepsAcc[2], stepsAccHome[2], timeOut[2], homeIsUp[2], motorInv[2], endStInv[2], endStInv2[2], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[2], motor2Inv[2], endStEnbl[2], motorStopAtHome[2], motorMaxSize[2], motorStopAtMax[2]);
 
   /**/
 
