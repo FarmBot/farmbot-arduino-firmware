@@ -386,6 +386,9 @@ void ParameterList::loadDefaultValue(int id)
   case MOVEMENT_STEPS_ACC_DEC_Z:
     paramValues[id] = MOVEMENT_STEPS_ACC_DEC_Z_DEFAULT;
     break;
+  case MOVEMENT_STEPS_ACC_DEC_Z2:
+    paramValues[id] = MOVEMENT_STEPS_ACC_DEC_Z2_DEFAULT;
+    break;
 
   case MOVEMENT_STOP_AT_HOME_X:
     paramValues[id] = MOVEMENT_STOP_AT_HOME_X_DEFAULT;
@@ -426,6 +429,9 @@ void ParameterList::loadDefaultValue(int id)
   case MOVEMENT_MIN_SPD_Z:
     paramValues[id] = MOVEMENT_MIN_SPD_Z_DEFAULT;
     break;
+  case MOVEMENT_MIN_SPD_Z2:
+    paramValues[id] = MOVEMENT_MIN_SPD_Z2_DEFAULT;
+    break;
 
   case MOVEMENT_HOME_SPEED_X:
     paramValues[id] = MOVEMENT_HOME_SPEED_X_DEFAULT;
@@ -445,6 +451,9 @@ void ParameterList::loadDefaultValue(int id)
     break;
   case MOVEMENT_MAX_SPD_Z:
     paramValues[id] = MOVEMENT_MAX_SPD_Z_DEFAULT;
+    break;
+  case MOVEMENT_MAX_SPD_Z2:
+    paramValues[id] = MOVEMENT_MAX_SPD_Z2_DEFAULT;
     break;
 
   case MOVEMENT_INVERT_2_ENDPOINTS_X:
@@ -660,6 +669,7 @@ bool ParameterList::validParam(int id)
   case MOVEMENT_STEPS_ACC_DEC_X:
   case MOVEMENT_STEPS_ACC_DEC_Y:
   case MOVEMENT_STEPS_ACC_DEC_Z:
+  case MOVEMENT_STEPS_ACC_DEC_Z2:
   case MOVEMENT_STOP_AT_HOME_X:
   case MOVEMENT_STOP_AT_HOME_Y:
   case MOVEMENT_STOP_AT_HOME_Z:
@@ -672,12 +682,14 @@ bool ParameterList::validParam(int id)
   case MOVEMENT_MIN_SPD_X:
   case MOVEMENT_MIN_SPD_Y:
   case MOVEMENT_MIN_SPD_Z:
+  case MOVEMENT_MIN_SPD_Z2:
   case MOVEMENT_HOME_SPEED_X:
   case MOVEMENT_HOME_SPEED_Y:
   case MOVEMENT_HOME_SPEED_Z:
   case MOVEMENT_MAX_SPD_X:
   case MOVEMENT_MAX_SPD_Y:
   case MOVEMENT_MAX_SPD_Z:
+  case MOVEMENT_MAX_SPD_Z2:
   case MOVEMENT_MOTOR_CURRENT_X:
   case MOVEMENT_MOTOR_CURRENT_Y:
   case MOVEMENT_MOTOR_CURRENT_Z:

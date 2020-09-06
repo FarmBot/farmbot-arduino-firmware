@@ -114,11 +114,13 @@
   const long MOVEMENT_STEPS_ACC_DEC_X_DEFAULT = 300;
   const long MOVEMENT_STEPS_ACC_DEC_Y_DEFAULT = 300;
   const long MOVEMENT_STEPS_ACC_DEC_Z_DEFAULT = 300;
+  const long MOVEMENT_STEPS_ACC_DEC_Z2_DEFAULT = 300;
 
   // Minimum speed in steps per second
   const long MOVEMENT_MIN_SPD_X_DEFAULT = 50;
   const long MOVEMENT_MIN_SPD_Y_DEFAULT = 50;
   const long MOVEMENT_MIN_SPD_Z_DEFAULT = 50;
+  const long MOVEMENT_MIN_SPD_Z2_DEFAULT = 50;
 
   // Speed used for homing and calibration
   const long MOVEMENT_HOME_SPEED_X_DEFAULT = 50;
@@ -129,6 +131,7 @@
   const long MOVEMENT_MAX_SPD_X_DEFAULT = 400;
   const long MOVEMENT_MAX_SPD_Y_DEFAULT = 400;
   const long MOVEMENT_MAX_SPD_Z_DEFAULT = 400;
+  const long MOVEMENT_MAX_SPD_Z2_DEFAULT = 400;
 
   // switch the end contacts from NO to NC
   const long MOVEMENT_INVERT_2_ENDPOINTS_X_DEFAULT = 0;

@@ -383,7 +383,14 @@ void MovementAxis::checkAxisDirection()
   if (coordCurrentPoint == 0)
   {
     // Go slow when theoretical end point reached but there is no end stop siganl
-    axisSpeed = motorSpeedMin;
+    if (movementToHome)
+    {
+      axisSpeed = motorSpeedMinHome;
+    }
+    else
+    {
+      axisSpeed = motorSpeedMin;
+    }
   }
 }
 
@@ -419,10 +426,19 @@ void MovementAxis::checkMovement()
     // If end stop reached or the encoder doesn't move anymore, stop moving motor, otherwise set the timing for the next step
     if ((coordHomeAxis && !endStopAxisReached(false)) || (!coordHomeAxis && !endStopAxisReached(!movementToHome)))
     {
-
       // Get the axis speed, in steps per second
-      axisSpeed = calculateSpeed(coordSourcePoint, coordCurrentPoint, coordDestinationPoint,
-                                 motorSpeedMin, motorSpeedMax, motorStepsAcc);
+      // Calculate using different speeds for home or other direction
+
+      if (movementToHome)
+      {
+        axisSpeed = calculateSpeed(coordSourcePoint, coordCurrentPoint, coordDestinationPoint,
+          motorSpeedMinHome, motorSpeedMaxHome, motorStepsAccHome);
+      }
+      else
+      {
+        axisSpeed = calculateSpeed(coordSourcePoint, coordCurrentPoint, coordDestinationPoint,
+          motorSpeedMin, motorSpeedMax, motorStepsAcc);
+      }
 
     }
     else
@@ -557,15 +573,22 @@ void MovementAxis::MovementAxis::loadPinNumbers(int step, int dir, int enable, i
 }
 
 void MovementAxis::loadMotorSettings(
-    long speedMax, long speedMin, long speedHome, long stepsAcc, long timeOut, bool homeIsUp, bool motorInv,
+    long speedMax, long speedMaxHome, long speedMin, long speedMinHome, long speedHome, long stepsAcc, long stepsAccHome,
+    long timeOut, bool homeIsUp, bool motorInv,
     bool endStInv, bool endStInv2, long interruptSpeed, bool motor2Enbl, bool motor2Inv, bool endStEnbl,
     bool stopAtHome, long maxSize, bool stopAtMax)
 {
 
   motorSpeedMax = speedMax;
-  motorSpeedMin = speedMin;
-  motorSpeedHome = speedHome;
+  motorSpeedMin = speedMin;  
   motorStepsAcc = stepsAcc;
+
+  motorSpeedMaxHome = speedMaxHome;
+  motorSpeedMinHome = speedMinHome;
+  motorStepsAccHome = stepsAccHome;
+
+  motorSpeedHome = speedHome;
+
   motorTimeOut = timeOut;
   motorHomeIsUp = homeIsUp;
   motorMotorInv = motorInv;
