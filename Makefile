@@ -10,8 +10,8 @@ ARDUINO_INSTALL_DIR ?= $(HOME)/arduino-1.8.13
 
 # Get current commit SHA
 COMMIT_SHA := $(shell git -C $(FBARDUINO_FIRMWARE_SRC_DIR)/.. rev-parse --short=8 HEAD)
-MODIFIER := $(shell echo $$(if [ -z "$$(git -C $(FBARDUINO_FIRMWARE_SRC_DIR)/.. status -s -uall)" ];then echo "";else echo "+";fi))
-CREATE_COMMIT_SHA_H := $(shell echo -e "\#ifndef COMMIT_SHA_H_\n\#define COMMIT_SHA_H_\n\#define SOFTWARE_COMMIT \"-$(COMMIT_SHA)$(MODIFIER)\"\n\#endif" > $(FBARDUINO_FIRMWARE_SRC_DIR)/CommitSHA.h)
+MODIFIER := $(shell /bin/echo $$(if [ -z "$$(git -C $(FBARDUINO_FIRMWARE_SRC_DIR)/.. status -s -uall)" ];then /bin/echo "";else /bin/echo "+";fi))
+CREATE_COMMIT_SHA_H := $(shell /bin/echo -e "\#ifndef COMMIT_SHA_H_\n\#define COMMIT_SHA_H_\n\#define SOFTWARE_COMMIT \"-$(COMMIT_SHA)$(MODIFIER)\"\n\#endif" > $(FBARDUINO_FIRMWARE_SRC_DIR)/CommitSHA.h)
 
 # Files to be tracked for make to know to rebuild.
 COPY_INO := $(shell cp $(FBARDUINO_FIRMWARE_SRC_DIR)/src.ino $(FBARDUINO_FIRMWARE_SRC_DIR)/src.ino.cpp)
