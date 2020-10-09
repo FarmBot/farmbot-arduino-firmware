@@ -13,7 +13,7 @@ Development build instructions
 **This firmware is automatically bundled into [FarmBot OS](https://github.com/FarmBot/farmbot_os).
 The following instructions are for isolated Arduino development only.**
 
-**NOTE:** We tag releases when they are stable. The latest version (on master) is not guaranteed to be stable.
+**NOTE:** We tag releases when they are stable. The latest version (on main) is not guaranteed to be stable.
 
 See [releases](https://github.com/FarmBot/farmbot-arduino-firmware/releases) to find a stable release.
 
