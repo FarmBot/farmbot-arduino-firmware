@@ -168,7 +168,7 @@ R        |13    |                 |Z axis homing complete
 R        |15    | X               |Firmware used a different X coordinate than given in move command
 R        |16    | Y               |Firmware used a different Y coordinate than given in move command
 R        |17    | Z               |Firmware used a different Z coordinate than given in move command
-R        |20    |                 |Report all paramaters complete
+R        |20    |                 |Report all parameters complete
 R        |21    |P V              |Report parameter value
 R        |23    |P V              |Report updated parameter (during calibration)
 R        |31    |P V              |Report status value (not enabled)
