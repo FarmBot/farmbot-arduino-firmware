@@ -283,7 +283,8 @@ ID  | Name                              | Unit      | Notes
 37  | MOVEMENT_SECONDARY_MOTOR_INVERT_X | 0 / 1     | 
 41  | MOVEMENT_STEPS_ACC_DEC_X          | steps     | 
 42  | MOVEMENT_STEPS_ACC_DEC_Y          | steps     | 
-43  | MOVEMENT_STEPS_ACC_DEC_Z          | steps     | 
+43  | MOVEMENT_STEPS_ACC_DEC_Z          | steps     | (away from home)
+44  | MOVEMENT_STEPS_ACC_DEC_Z2         | steps     | (toward home)
 45  | MOVEMENT_STOP_AT_HOME_X           | 0 / 1     | 
 46  | MOVEMENT_STOP_AT_HOME_Y           | 0 / 1     | 
 47  | MOVEMENT_STOP_AT_HOME_Z           | 0 / 1     | 
@@ -295,13 +296,15 @@ ID  | Name                              | Unit      | Notes
 57  | MOVEMENT_STEP_PER_MM_Z            | steps     | 
 61  | MOVEMENT_MIN_SPD_X                | steps/s   | 
 62  | MOVEMENT_MIN_SPD_Y                | steps/s   | 
-63  | MOVEMENT_MIN_SPD_Z                | steps/s   | 
+63  | MOVEMENT_MIN_SPD_Z                | steps/s   | (away from home)
+64  | MOVEMENT_MIN_SPD_Z2               | steps/s   | (toward home)
 65  | MOVEMENT_HOME_SPD_X               | steps/s   | 
 66  | MOVEMENT_HOME_SPD_Y               | steps/s   | 
 67  | MOVEMENT_HOME_SPD_Z               | steps/s   | 
 71  | MOVEMENT_MAX_SPD_X                | steps/s   | 
 72  | MOVEMENT_MAX_SPD_Y                | steps/s   | 
-73  | MOVEMENT_MAX_SPD_Z                | steps/s   | 
+73  | MOVEMENT_MAX_SPD_Z                | steps/s   | (away from home)
+74  | MOVEMENT_MAX_SPD_Z2               | steps/s   | (toward home)
 75  | MOVEMENT_INVERT_2_ENDPOINTS_X     | 0 / 1     | switch NO and NC
 76  | MOVEMENT_INVERT_2_ENDPOINTS_Y     | 0 / 1     | switch NO and NC
 77  | MOVEMENT_INVERT_2_ENDPOINTS_Z     | 0 / 1     | switch NO and NC
