@@ -1273,6 +1273,9 @@ int Movement::calibrateAxis(int axis)
   stepDelay = 100000 / speedHome[axis] / 2;
   #endif
 
+  Serial.print("R99 == Calibration start ==\r\n");
+
+  /*
   Serial.print("R99");
   Serial.print(" ");
 
@@ -1292,11 +1295,16 @@ int Movement::calibrateAxis(int axis)
   Serial.print(" ");
 
   Serial.print("\r\n");
+  */
 
   storeEndStops();
   reportEndStops();
 
-  // Select the right axis
+  int calibRetriesMax = 3;
+  int calibRetries = 0;
+
+  // Select the right axis. Store the references to the right axis variables for later use.
+
   MovementAxis *calibAxis;
   MovementEncoder *calibEncoder;
 
@@ -1351,7 +1359,7 @@ int Movement::calibrateAxis(int axis)
     return error;
   }
 
-  // Preliminary checks
+  // Preliminary checks before moving. The bot cannot be at the end stops already.
 
   if (calibAxis->endStopMin() || calibAxis->endStopMax())
   {
@@ -1361,19 +1369,20 @@ int Movement::calibrateAxis(int axis)
     return error;
   }
 
+  // Prepare to start moving
+
   Serial.print("R99");
   Serial.print(" axis ");
   Serial.print(calibAxis->channelLabel);
-  Serial.print(" move to start for calibration");
+  Serial.print(" move to end of axis for calibration");
   Serial.print("\r\n");
 
   *axisStatus = COMM_REPORT_MOVE_STATUS_START_MOTOR;
   reportStatus(calibAxis, axisStatus[0]);
 
-  // Move towards home
-  calibAxis->enableMotor();
-  
-  //calibAxis->setDirectionHome();
+  // Enable the motor and move away from the home position until an end is detected. 
+
+  calibAxis->enableMotor();  
   calibAxis->setDirectionAway();
 
   calibAxis->setCurrentPosition(calibEncoder->currentPosition());
@@ -1381,6 +1390,7 @@ int Movement::calibrateAxis(int axis)
   stepsCount = 0;
   *missedSteps = 0;
   movementDone = false;
+  calibRetries = 0;
 
   motorConsMissedSteps[0] = 0;
   motorConsMissedSteps[1] = 0;
@@ -1391,8 +1401,12 @@ int Movement::calibrateAxis(int axis)
 
   reportCalib(calibAxis, COMM_REPORT_CALIBRATE_STATUS_TO_HOME);
 
+  // Keep stepping the motor until a the end of the axis is found, or a timeout occures.
+
   while (!movementDone && error == 0)
   {
+
+    // Check if end is reached by checking encoders or motor feedback to detect missed steps
 
     #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
       checkEncoders();
@@ -1401,6 +1415,7 @@ int Movement::calibrateAxis(int axis)
     checkAxisVsEncoder(calibAxis, calibEncoder, &motorConsMissedSteps[axis], &motorLastPosition[axis], &motorConsEncoderLastPosition[axis], &motorConsEncoderUseForPos[axis], &motorConsMissedStepsDecay[axis], &motorConsEncoderEnabled[axis]);
 
     // Check timeouts
+
     if (!movementDone && ((millis() >= timeStart && millis() - timeStart > timeOut[axis] * 1000) || (millis() < timeStart && millis() > timeOut[axis] * 1000)))
     {
       calibAxis->disableMotor();
@@ -1411,28 +1426,24 @@ int Movement::calibrateAxis(int axis)
         CurrentState::getInstance()->printQAndNewLine();
         Serial.print("R99 timeout X axis\r\n");
         error = ERR_TIMEOUT;
-        CurrentState::getInstance()->setLastError(error);
-        return error;
       case 1:
         Serial.print(COMM_REPORT_TIMEOUT_Y);
         CurrentState::getInstance()->printQAndNewLine();
         Serial.print("R99 timeout Y axis\r\n");
         error = ERR_TIMEOUT;
-        CurrentState::getInstance()->setLastError(error);
-        return error;
       case 2:
         Serial.print(COMM_REPORT_TIMEOUT_Z);
         CurrentState::getInstance()->printQAndNewLine();
         Serial.print("R99 timeout Z axis\r\n");
         error = ERR_TIMEOUT;
-        CurrentState::getInstance()->setLastError(error);
-        return error;
       default:
         Serial.print("R99 Calibration error: invalid axis selected\r\n");
         error = ERR_CALIBRATION_ERROR;
-        CurrentState::getInstance()->setLastError(error);
-        return error;
       }
+
+      CurrentState::getInstance()->setLastError(error);
+      return error;
+
     }
 
     // Check if there is an emergency stop command
@@ -1452,26 +1463,6 @@ int Movement::calibrateAxis(int axis)
 
     // Move until any end stop is reached or the motor is skipping. That end should be the far end stop. First, ram the end at high speed.
 
-    /**/
-    //if (((!invertEndStops && !calibAxis->endStopMax()) || (invertEndStops && !calibAxis->endStopMin())) && !movementDone && (*missedSteps < *missedStepsMax))
-    //if ((!calibAxis->endStopMin() && !calibAxis->endStopMax()) && !movementDone && (*missedSteps < *missedStepsMax))
-
-    
-    //Serial.print("R99 missed steps max ");
-    //Serial.print(*missedStepsMax);
-    //Serial.print(" * ");
-    //Serial.print(calibAxis->missedStepHistory[0]);
-    //Serial.print(" ");
-    //Serial.print(calibAxis->missedStepHistory[1]);
-    //Serial.print(" ");
-    //Serial.print(calibAxis->missedStepHistory[2]);
-    //Serial.print(" ");
-    //Serial.print(calibAxis->missedStepHistory[3]);
-    //Serial.print(" ");
-    //Serial.print(calibAxis->missedStepHistory[4]);
-    //Serial.print(" ");
-    //Serial.print("\r\n");
-
 #if defined(FARMDUINO_EXP_V20)
     if (
         (!calibAxis->endStopMin() && !calibAxis->endStopMax()) && 
@@ -1486,43 +1477,79 @@ int Movement::calibrateAxis(int axis)
         )
       )
 #else
-    if ((!calibAxis->endStopMin() && !calibAxis->endStopMax()) && !movementDone && (*missedSteps < *missedStepsMax))
+    if ((!calibAxis->endStopMin() && !calibAxis->endStopMax()) && !movementDone)
 #endif
     {
+      // No end stops have been encountered
 
-      calibAxis->setStepAxis();
-      delayMicroseconds(stepDelay);
-
-      stepsCount++;
-      if (stepsCount % (speedHome[axis] * 3) == 0)
+      // If encoder did not detected an end, take a normal step
+      if (*missedSteps < *missedStepsMax)
       {
-        // Periodically send message still active
-        Serial.print(COMM_REPORT_CMD_BUSY);
-        CurrentState::getInstance()->printQAndNewLine();
-      }
+        calibAxis->setStepAxis();
+        delayMicroseconds(stepDelay);
 
-      if (debugMessages)
-      {
-        if (stepsCount % (speedHome[axis] / 6) == 0 /*|| *missedSteps > 3*/)
+        stepsCount++;
+        if (stepsCount % (speedHome[axis] * 3) == 0)
         {
-          Serial.print("R99");
-          Serial.print(" step count ");
-          Serial.print(stepsCount);
-          Serial.print(" missed steps ");
-          Serial.print(*missedSteps);
-          Serial.print(" max steps ");
-          Serial.print(*missedStepsMax);
-          Serial.print(" cur pos mtr ");
-          Serial.print(calibAxis->currentPosition());
-          Serial.print(" cur pos enc ");
-          Serial.print(calibEncoder->currentPosition());
+          // Periodically send message still active
+          Serial.print(COMM_REPORT_CMD_BUSY);
+          CurrentState::getInstance()->printQAndNewLine();
+        }
+
+        if (debugMessages)
+        {
+          if (stepsCount % (speedHome[axis] / 6) == 0 /*|| *missedSteps > 3*/)
+          {
+            Serial.print("R99");
+            Serial.print(" step count ");
+            Serial.print(stepsCount);
+            Serial.print(" missed steps ");
+            Serial.print(*missedSteps);
+            Serial.print(" max steps ");
+            Serial.print(*missedStepsMax);
+            Serial.print(" cur pos mtr ");
+            Serial.print(calibAxis->currentPosition());
+            Serial.print(" cur pos enc ");
+            Serial.print(calibEncoder->currentPosition());
+            Serial.print("\r\n");
+          }
+        }
+
+        calibAxis->resetMotorStep();
+
+        delayMicroseconds(stepDelay);
+      }
+      else
+      {
+        // Encoders detected a bump. Try again. 
+        // After a few tries, assume this is the end of the axis
+
+        if (calibRetries < calibRetriesMax)
+        {
+          calibRetries++;
+          *missedSteps = 0;
+
+          Serial.print("R99 ");
+          Serial.print("calibration retry on bump ");
+          Serial.print(calibRetries);
+          Serial.print("/");
+          Serial.print(calibRetriesMax);
           Serial.print("\r\n");
+
+          delay(1000);
+        }
+        else
+        {
+          movementDone = true;
+          Serial.print("R99 movement done after end stop\r\n");
+
+          // If end stop for home is active, set the position to zero
+          if (calibAxis->endStopMin())
+          {
+            invertEndStops = true;
+          }
         }
       }
-
-      calibAxis->resetMotorStep();
-
-      delayMicroseconds(stepDelay);
     }
     else
     {
@@ -1542,7 +1569,7 @@ int Movement::calibrateAxis(int axis)
   Serial.print("R99");
   Serial.print(" axis ");
   Serial.print(calibAxis->channelLabel);
-  Serial.print(" at starting point");
+  Serial.print(" at axis end");
   Serial.print("\r\n");
 
   // Report back the end stop setting
@@ -1576,10 +1603,18 @@ int Movement::calibrateAxis(int axis)
 
   // Move into the other direction now, and measure the number of steps
 
+  delay(1000);
+
   Serial.print("R99");
   Serial.print(" axis ");
   Serial.print(calibAxis->channelLabel);
   Serial.print(" calibrating length");
+  Serial.print("\r\n");
+
+  Serial.print("R99");
+  Serial.print(" axis ");
+  Serial.print(calibAxis->channelLabel);
+  Serial.print(" move to start of axis for measuring length");
   Serial.print("\r\n");
 
   timeStart = millis();
@@ -1587,16 +1622,16 @@ int Movement::calibrateAxis(int axis)
   stepsCount = 0;
   movementDone = false;
   *missedSteps = 0;
-
-  /**/
-  //calibAxis->setDirectionAway();
-  calibAxis->setDirectionHome();
-
-  calibAxis->setCurrentPosition(calibEncoder->currentPosition());
+  calibRetries = 0;
+  error = 0;
 
   motorConsMissedSteps[0] = 0;
   motorConsMissedSteps[1] = 0;
   motorConsMissedSteps[2] = 0;
+
+  calibAxis->setDirectionHome();
+  calibAxis->setCurrentPosition(calibEncoder->currentPosition());
+
 
   long encoderStartPoint = calibEncoder->currentPosition();
   long encoderEndPoint = calibEncoder->currentPosition();
@@ -1621,29 +1656,25 @@ int Movement::calibrateAxis(int axis)
         CurrentState::getInstance()->printQAndNewLine();
         Serial.print("R99 timeout X axis\r\n");
         error = ERR_TIMEOUT;
-        CurrentState::getInstance()->setLastError(error);
-        return error;
       case 1:
         Serial.print(COMM_REPORT_TIMEOUT_Y);
         CurrentState::getInstance()->printQAndNewLine();
         Serial.print("R99 timeout Y axis\r\n");
         error = ERR_TIMEOUT;
-        CurrentState::getInstance()->setLastError(error);
-        return error;
       case 2:
         Serial.print(COMM_REPORT_TIMEOUT_Z);
         CurrentState::getInstance()->printQAndNewLine();
         Serial.print("R99 timeout Z axis\r\n");
         error = ERR_TIMEOUT;
-        CurrentState::getInstance()->setLastError(error);
-        return error;
       default:
         Serial.print("R99 Calibration error: invalid axis selected\r\n");
         error = ERR_CALIBRATION_ERROR;
-        CurrentState::getInstance()->setLastError(error);
-        return error;
       }
+
+      CurrentState::getInstance()->setLastError(error);
+      return error;
     }
+
 
     // Check if there is an emergency stop command
     if (Serial.available() > 0)
@@ -1667,9 +1698,7 @@ int Movement::calibrateAxis(int axis)
     }
 
     // Move until the end stop is at the home position by detecting the other end stop or missed steps are detected
-    /**/
-    //if ((!calibAxis->endStopMin() && !calibAxis->endStopMax()) && !movementDone && (*missedSteps < *missedStepsMax))
-    //if (((!invertEndStops && !calibAxis->endStopMax()) || (invertEndStops && !calibAxis->endStopMin())) && !movementDone && (*missedSteps < *missedStepsMax))
+
 #if defined(FARMDUINO_EXP_V20)
     if (
         ((!invertEndStops && !calibAxis->endStopMin()) || (invertEndStops && !calibAxis->endStopMax())) && 
@@ -1683,33 +1712,64 @@ int Movement::calibrateAxis(int axis)
         )
       )
 #else
-    if (((!invertEndStops && !calibAxis->endStopMin()) || (invertEndStops && !calibAxis->endStopMax())) && !movementDone && (*missedSteps < *missedStepsMax))
+    if (((!invertEndStops && !calibAxis->endStopMin()) || (invertEndStops && !calibAxis->endStopMax())) && !movementDone)
 #endif
     {
-
-      calibAxis->setStepAxis();
-      stepsCount++;
-
-      //checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
-
-      delayMicroseconds(stepDelay);
-
-      if (stepsCount % (speedHome[axis] * 3) == 0)
+      if (*missedSteps < *missedStepsMax)
       {
-        // Periodically send message still active
-        Serial.print(COMM_REPORT_CMD_BUSY);
-        //Serial.print("\r\n");
-        CurrentState::getInstance()->printQAndNewLine();
+        calibAxis->setStepAxis();
+        stepsCount++;
 
-        Serial.print("R99");
-        Serial.print(" step count: ");
-        Serial.print(stepsCount);
-        Serial.print("\r\n");
+        //checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
+
+        delayMicroseconds(stepDelay);
+
+        if (stepsCount % (speedHome[axis] * 3) == 0)
+        {
+          // Periodically send message still active
+          Serial.print(COMM_REPORT_CMD_BUSY);
+          //Serial.print("\r\n");
+          CurrentState::getInstance()->printQAndNewLine();
+
+          Serial.print("R99");
+          Serial.print(" step count: ");
+          Serial.print(stepsCount);
+          Serial.print("\r\n");
+        }
+
+        calibAxis->resetMotorStep();
+        delayMicroseconds(stepDelay);
       }
+      else
+      {
+        // Encoders detected a bump. Try again. 
+        // After a few tries, assume this is the end of the axis
+        if (calibRetries < calibRetriesMax)
+        {
+          calibRetries++;
+          *missedSteps = 0;
 
-      calibAxis->resetMotorStep();
-      delayMicroseconds(stepDelay);
+          Serial.print("R99 ");
+          Serial.print("calibration retry ");
+          Serial.print(calibRetries);
+          Serial.print("/");
+          Serial.print(calibRetriesMax);
+          Serial.print("\r\n");
 
+          delay(1000);
+        }
+        else
+        {
+          movementDone = true;
+          Serial.print("R99 movement done after slip\r\n");
+
+          // If end stop for home is active, set the position to zero
+          if (calibAxis->endStopMin())
+          {
+            invertEndStops = true;
+          }
+        }
+      }
     }
     else
     {
@@ -1776,6 +1836,10 @@ int Movement::calibrateAxis(int axis)
   reportCalib(calibAxis, COMM_REPORT_CALIBRATE_STATUS_IDLE);
 
   CurrentState::getInstance()->setLastError(error);
+
+  Serial.print("R99 calibration complete\r\n");
+
+
   return error;
 }
 
