@@ -476,6 +476,16 @@ void ParameterList::loadDefaultValue(int id)
     paramValues[id] = MOVEMENT_STOP_AT_MAX_Z_DEFAULT;
     break;
 
+  case MOVEMENT_CALIBRATION_RETRY_X:
+    paramValues[id] = MOVEMENT_CALIBRATION_RETRY_X_DEFAULT;
+    break;
+  case MOVEMENT_CALIBRATION_RETRY_Y:
+    paramValues[id] = MOVEMENT_CALIBRATION_RETRY_Y_DEFAULT;
+    break;
+  case MOVEMENT_CALIBRATION_RETRY_Z:
+    paramValues[id] = MOVEMENT_CALIBRATION_RETRY_Z_DEFAULT;
+    break;
+
   case MOVEMENT_MOTOR_CURRENT_X:
     paramValues[id] = MOVEMENT_MOTOR_CURRENT_X_DEFAULT;
     break;
@@ -726,6 +736,9 @@ bool ParameterList::validParam(int id)
   case MOVEMENT_STOP_AT_MAX_X:
   case MOVEMENT_STOP_AT_MAX_Y:
   case MOVEMENT_STOP_AT_MAX_Z:
+  case MOVEMENT_CALIBRATION_RETRY_X:
+  case MOVEMENT_CALIBRATION_RETRY_Y:
+  case MOVEMENT_CALIBRATION_RETRY_Z:
   case PIN_GUARD_1_PIN_NR:
   case PIN_GUARD_1_TIME_OUT:
   case PIN_GUARD_1_ACTIVE_STATE:
