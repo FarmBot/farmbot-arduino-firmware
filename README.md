@@ -344,6 +344,9 @@ ID  | Name                              | Unit      | Notes
 145 | MOVEMENT_STOP_AT_MAX_X            | 0 / 1     | 
 146 | MOVEMENT_STOP_AT_MAX_Y            | 0 / 1     | 
 147 | MOVEMENT_STOP_AT_MAX_Z            | 0 / 1     | 
+161 | MOVEMENT_CALIBRATION_RETRY_X      | integer   |
+162 | MOVEMENT_CALIBRATION_RETRY_Y      | integer   |
+163 | MOVEMENT_CALIBRATION_RETRY_Z      | integer   |
 201 | PIN_GUARD_1_PIN_NR                | integer   | 
 202 | PIN_GUARD_1_TIME_OUT              | seconds   | 
 203 | PIN_GUARD_1_ACTIVE_STATE          | 0 / 1     | 
