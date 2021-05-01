@@ -1236,6 +1236,7 @@ int Movement::calibrateAxis(int axis)
   bool *encoderEnabled;
   int *axisStatus;
   long *axisStepsPerMm;
+  long *calibRetriesMax;
 
   long stepDelay = 0;
   unsigned long tickDelay = 0;
@@ -1300,7 +1301,6 @@ int Movement::calibrateAxis(int axis)
   storeEndStops();
   reportEndStops();
 
-  int calibRetriesMax = 3;
   int calibRetries = 0;
 
   // Select the right axis. Store the references to the right axis variables for later use.
@@ -1323,6 +1323,7 @@ int Movement::calibrateAxis(int axis)
     encoderEnabled = &motorConsEncoderEnabled[0];
     axisStatus = &axisSubStep[0];
     axisStepsPerMm = &stepsPerMm[0];
+    calibRetriesMax = &motorCalibRetry[0];
     break;
   case 1:
     calibAxis = &axisY;
@@ -1337,6 +1338,7 @@ int Movement::calibrateAxis(int axis)
     encoderEnabled = &motorConsEncoderEnabled[1];
     axisStatus = &axisSubStep[1];
     axisStepsPerMm = &stepsPerMm[1];
+    calibRetriesMax = &motorCalibRetry[1];
     break;
   case 2:
     calibAxis = &axisZ;
@@ -1351,6 +1353,7 @@ int Movement::calibrateAxis(int axis)
     encoderEnabled = &motorConsEncoderEnabled[2];
     axisStatus = &axisSubStep[2];
     axisStepsPerMm = &stepsPerMm[2];
+    calibRetriesMax = &motorCalibRetry[2];
     break;
   default:
     Serial.print("R99 Calibration error: invalid axis selected\r\n");
@@ -1524,7 +1527,7 @@ int Movement::calibrateAxis(int axis)
         // Encoders detected a bump. Try again. 
         // After a few tries, assume this is the end of the axis
 
-        if (calibRetries < calibRetriesMax)
+        if (calibRetries < *calibRetriesMax)
         {
           calibRetries++;
           *missedSteps = 0;
@@ -1533,7 +1536,7 @@ int Movement::calibrateAxis(int axis)
           Serial.print("calibration retry on bump ");
           Serial.print(calibRetries);
           Serial.print("/");
-          Serial.print(calibRetriesMax);
+          Serial.print(*calibRetriesMax);
           Serial.print("\r\n");
 
           delay(1000);
@@ -1744,7 +1747,7 @@ int Movement::calibrateAxis(int axis)
       {
         // Encoders detected a bump. Try again. 
         // After a few tries, assume this is the end of the axis
-        if (calibRetries < calibRetriesMax)
+        if (calibRetries < *calibRetriesMax)
         {
           calibRetries++;
           *missedSteps = 0;
@@ -1753,7 +1756,7 @@ int Movement::calibrateAxis(int axis)
           Serial.print("calibration retry ");
           Serial.print(calibRetries);
           Serial.print("/");
-          Serial.print(calibRetriesMax);
+          Serial.print(*calibRetriesMax);
           Serial.print("\r\n");
 
           delay(1000);
@@ -2072,6 +2075,10 @@ void Movement::loadMotorSettings()
   motorStopAtMax[0] = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_STOP_AT_MAX_X));
   motorStopAtMax[1] = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_STOP_AT_MAX_Y));
   motorStopAtMax[2] = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_STOP_AT_MAX_Z));
+
+  motorCalibRetry[0] = ParameterList::getInstance()->getValue(MOVEMENT_CALIBRATION_RETRY_X);
+  motorCalibRetry[1] = ParameterList::getInstance()->getValue(MOVEMENT_CALIBRATION_RETRY_Y);
+  motorCalibRetry[2] = ParameterList::getInstance()->getValue(MOVEMENT_CALIBRATION_RETRY_Z);
 
   stepsPerMm[0] = ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_X);
   stepsPerMm[1] = ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_Y);

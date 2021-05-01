@@ -148,6 +148,11 @@
   const long MOVEMENT_STOP_AT_MAX_Y_DEFAULT = 0;
   const long MOVEMENT_STOP_AT_MAX_Z_DEFAULT = 0;
 
+  // The retry when calibrating
+  const long MOVEMENT_CALIBRATION_RETRY_X_DEFAULT = 3;
+  const long MOVEMENT_CALIBRATION_RETRY_Y_DEFAULT = 3;
+  const long MOVEMENT_CALIBRATION_RETRY_Z_DEFAULT = 3;
+
   // motor current (used with TMC2130)
   const long MOVEMENT_MOTOR_CURRENT_X_DEFAULT = 600;
   const long MOVEMENT_MOTOR_CURRENT_Y_DEFAULT = 600;
