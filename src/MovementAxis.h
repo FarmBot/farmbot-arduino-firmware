@@ -97,7 +97,7 @@ public:
 
 #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
   void initTMC2130();
-  void loadSettingsTMC2130(int motorCurrent, int  stallSensitivity, int microSteps);
+  void loadSettingsTMC2130(int motorCurrent, int  stallSensitivity, int microSteps, bool stealth);
   uint16_t getLoad();
 
 

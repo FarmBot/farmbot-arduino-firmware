@@ -262,15 +262,17 @@ void Movement::loadSettings()
     int motorCurrentX;
     int stallSensitivityX;
     int microStepsX;
+    bool stealthX;
 
     motorCurrentX = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_X);
     stallSensitivityX = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_X);
     microStepsX = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_X);
+    stealthX = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_AXIS_STEALTH_X));
 
     if (microStepsX <= 0) { microStepsX = 1; }
 
 
-    axisX.loadSettingsTMC2130(motorCurrentX, stallSensitivityX, microStepsX);
+    axisX.loadSettingsTMC2130(motorCurrentX, stallSensitivityX, microStepsX, stealthX);
   }
 
   void Movement::loadSettingsTMC2130_Y()
@@ -278,14 +280,16 @@ void Movement::loadSettings()
     int motorCurrentY;
     int stallSensitivityY;
     int microStepsY;
+    bool stealthY;
 
     motorCurrentY = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Y);
     stallSensitivityY = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Y);
     microStepsY = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Y);
+    stealthY = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_AXIS_STEALTH_Y));
 
     if (microStepsY <= 0) { microStepsY = 1; }
 
-    axisY.loadSettingsTMC2130(motorCurrentY, stallSensitivityY, microStepsY);
+    axisY.loadSettingsTMC2130(motorCurrentY, stallSensitivityY, microStepsY, stealthY);
   }
 
   void Movement::loadSettingsTMC2130_Z()
@@ -293,14 +297,16 @@ void Movement::loadSettings()
     int motorCurrentZ;
     int stallSensitivityZ;
     int microStepsZ;
+    bool stealthZ;
 
     motorCurrentZ = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Z);
     stallSensitivityZ = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Z);
     microStepsZ = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Z);
+    stealthZ = intToBool(ParameterList::getInstance()->getValue(MOVEMENT_AXIS_STEALTH_Z));
 
     if (microStepsZ <= 0) { microStepsZ = 1; }
 
-    axisZ.loadSettingsTMC2130(motorCurrentZ, stallSensitivityZ, microStepsZ);
+    axisZ.loadSettingsTMC2130(motorCurrentZ, stallSensitivityZ, microStepsZ, stealthZ);
   }
 
 #endif
@@ -1224,6 +1230,7 @@ int Movement::calibrateAxis(int axis)
 
   int paramValueInt = 0;
   long stepsCount = 0;
+  long stepsCountLastStop = 0;
   int incomingByte = 0;
   int error = 0;
 
@@ -1239,6 +1246,7 @@ int Movement::calibrateAxis(int axis)
   int *axisStatus;
   long *axisStepsPerMm;
   long *calibRetriesMax;
+  long *calibRetryDeadzone;
 
   long stepDelay = 0;
   unsigned long tickDelay = 0;
@@ -1326,6 +1334,7 @@ int Movement::calibrateAxis(int axis)
     axisStatus = &axisSubStep[0];
     axisStepsPerMm = &stepsPerMm[0];
     calibRetriesMax = &motorCalibRetry[0];
+    calibRetryDeadzone = &motorCalibRetryDeadzone[0];
     break;
   case 1:
     calibAxis = &axisY;
@@ -1341,6 +1350,7 @@ int Movement::calibrateAxis(int axis)
     axisStatus = &axisSubStep[1];
     axisStepsPerMm = &stepsPerMm[1];
     calibRetriesMax = &motorCalibRetry[1];
+    calibRetryDeadzone = &motorCalibRetryDeadzone[1];
     break;
   case 2:
     calibAxis = &axisZ;
@@ -1356,6 +1366,7 @@ int Movement::calibrateAxis(int axis)
     axisStatus = &axisSubStep[2];
     axisStepsPerMm = &stepsPerMm[2];
     calibRetriesMax = &motorCalibRetry[2];
+    calibRetryDeadzone = &motorCalibRetryDeadzone[2];
     break;
   default:
     Serial.print("R99 Calibration error: invalid axis selected\r\n");
@@ -1490,6 +1501,14 @@ int Movement::calibrateAxis(int axis)
       // If encoder did not detected an end, take a normal step
       if (*missedSteps < *missedStepsMax)
       {
+/**/
+        if ((stepsCount - stepsCountLastStop) > (*missedSteps + *calibRetryDeadzone))
+        {
+          // Out of the dead zone, so that means there are no consecutive
+          // stops. Reset the amount of retries.
+          calibRetries = 0;
+        }
+
         calibAxis->setStepAxis();
         delayMicroseconds(stepDelay);
 
@@ -1528,6 +1547,8 @@ int Movement::calibrateAxis(int axis)
       {
         // Encoders detected a bump. Try again. 
         // After a few tries, assume this is the end of the axis
+        
+        stepsCountLastStop = stepsCount;
 
         if (calibRetries < *calibRetriesMax)
         {
@@ -1625,10 +1646,11 @@ int Movement::calibrateAxis(int axis)
   timeStart = millis();
 
   stepsCount = 0;
+  stepsCountLastStop = 0;
   movementDone = false;
   *missedSteps = 0;
   calibRetries = 0;
-  error = 0;
+  //error = 0;
 
   motorConsMissedSteps[0] = 0;
   motorConsMissedSteps[1] = 0;
@@ -1697,7 +1719,7 @@ int Movement::calibrateAxis(int axis)
     }
 
     // Ignore the missed steps at startup time
-    if (stepsCount < 10)
+    if (stepsCount < *calibRetryDeadzone)
     {
       *missedSteps = 0;
     }
@@ -1725,6 +1747,13 @@ int Movement::calibrateAxis(int axis)
         calibAxis->setStepAxis();
         stepsCount++;
 
+        if ((stepsCount - stepsCountLastStop) > (*missedSteps + *calibRetryDeadzone))
+        {
+          // Out of the dead zone, so that means there are no consecutive
+          // stops. Reset the amount of retries.
+          calibRetries = 0;
+        }
+
         //checkAxisVsEncoder(&axisX, &encoderX, &motorConsMissedSteps[0], &motorLastPosition[0], &motorConsMissedStepsDecay[0], &motorConsEncoderEnabled[0]);
 
         delayMicroseconds(stepDelay);
@@ -1747,6 +1776,8 @@ int Movement::calibrateAxis(int axis)
       }
       else
       {
+        stepsCountLastStop = stepsCount;
+
         // Encoders detected a bump. Try again. 
         // After a few tries, assume this is the end of the axis
         if (calibRetries < *calibRetriesMax)
@@ -2081,6 +2112,10 @@ void Movement::loadMotorSettings()
   motorCalibRetry[0] = ParameterList::getInstance()->getValue(MOVEMENT_CALIBRATION_RETRY_X);
   motorCalibRetry[1] = ParameterList::getInstance()->getValue(MOVEMENT_CALIBRATION_RETRY_Y);
   motorCalibRetry[2] = ParameterList::getInstance()->getValue(MOVEMENT_CALIBRATION_RETRY_Z);
+
+  motorCalibRetryDeadzone[0] = ParameterList::getInstance()->getValue(MOVEMENT_CALIBRATION_DEADZONE_Z);
+  motorCalibRetryDeadzone[1] = ParameterList::getInstance()->getValue(MOVEMENT_CALIBRATION_DEADZONE_Z);
+  motorCalibRetryDeadzone[2] = ParameterList::getInstance()->getValue(MOVEMENT_CALIBRATION_DEADZONE_Z);
 
   stepsPerMm[0] = ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_X);
   stepsPerMm[1] = ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_Y);
