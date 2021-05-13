@@ -347,6 +347,12 @@ ID  | Name                              | Unit      | Notes
 161 | MOVEMENT_CALIBRATION_RETRY_X      | integer   |
 162 | MOVEMENT_CALIBRATION_RETRY_Y      | integer   |
 163 | MOVEMENT_CALIBRATION_RETRY_Z      | integer   |
+165 | MOVEMENT_AXIS_STEALTH_X           | 0 / 1     |
+166 | MOVEMENT_AXIS_STEALTH_Y           | 0 / 1     |
+167 | MOVEMENT_AXIS_STEALTH_Z           | 0 / 1     |
+171 | MOVEMENT_CALIBRATION_DEADZONE_X   | integer   |
+172 | MOVEMENT_CALIBRATION_DEADZONE_Y   | integer   |
+173 | MOVEMENT_CALIBRATION_DEADZONE_Z   | integer   |
 201 | PIN_GUARD_1_PIN_NR                | integer   | 
 202 | PIN_GUARD_1_TIME_OUT              | seconds   | 
 203 | PIN_GUARD_1_ACTIVE_STATE          | 0 / 1     | 
