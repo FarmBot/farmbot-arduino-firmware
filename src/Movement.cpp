@@ -1648,7 +1648,7 @@ int Movement::calibrateAxis(int axis)
   movementDone = false;
   *missedSteps = 0;
   calibRetries = 0;
-  error = 0;
+  //error = 0;
 
   motorConsMissedSteps[0] = 0;
   motorConsMissedSteps[1] = 0;
