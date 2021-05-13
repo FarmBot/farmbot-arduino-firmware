@@ -127,6 +127,7 @@ private:
   long motorMaxSize[3] = { 0, 0, 0};
   bool motorStopAtMax[3] = { false, false, false };
   long motorCalibRetry[3] = { 3, 3, 3 };
+  long motorCalibRetryDeadzone[3] = { 10, 10, 10 };
   bool motorKeepActive[3] = { false, false, false };
   bool motor2Inv[3] = { false, false, false };
   bool motor2Enbl[3] = { false, false, false };
