@@ -92,7 +92,10 @@ int ParameterList::writeValue(int id, long value)
       id == 87 ||
       id == 91 ||
       id == 92 ||
-      id == 93
+      id == 93 ||
+      id == 165 ||
+      id == 166 ||
+      id == 167
     )
     {
       tmcParamChangeNr++;
