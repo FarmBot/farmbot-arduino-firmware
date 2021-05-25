@@ -118,13 +118,13 @@ void MovementAxis::initTMC2130()
   }
 }
 
-void MovementAxis::loadSettingsTMC2130(int motorCurrent, int  stallSensitivity, int microSteps)
+void MovementAxis::loadSettingsTMC2130(int motorCurrent, int  stallSensitivity, int microSteps, bool stealth)
 {
-  loadTMC2130ParametersMotor(TMC2130A, microSteps, motorCurrent, stallSensitivity);
+  loadTMC2130ParametersMotor(TMC2130A, microSteps, motorCurrent, stallSensitivity, stealth);
 
   if (channelLabel == 'X')
   {
-    loadTMC2130ParametersMotor(TMC2130B, microSteps, motorCurrent, stallSensitivity);
+    loadTMC2130ParametersMotor(TMC2130B, microSteps, motorCurrent, stallSensitivity, stealth);
   }
 }
 
@@ -429,16 +429,26 @@ void MovementAxis::checkMovement()
       // Get the axis speed, in steps per second
       // Calculate using different speeds for home or other direction
 
+      long motorSpeed = motorSpeedMax;
+
       if (movementToHome)
       {
-        axisSpeed = calculateSpeed(coordSourcePoint, coordCurrentPoint, coordDestinationPoint,
-          motorSpeedMinHome, motorSpeedMaxHome, motorStepsAccHome);
+        motorSpeed = motorSpeedMaxHome;
+        if (motorSpeedMax < motorSpeedMaxHome)
+        {
+          motorSpeed = motorSpeedMax;
+        }
+        //axisSpeed = calculateSpeed(coordSourcePoint, coordCurrentPoint, coordDestinationPoint,
+        //  motorSpeedMinHome, motorSpeedMaxHome, motorStepsAccHome);
       }
       else
       {
-        axisSpeed = calculateSpeed(coordSourcePoint, coordCurrentPoint, coordDestinationPoint,
-          motorSpeedMin, motorSpeedMax, motorStepsAcc);
+        //axisSpeed = calculateSpeed(coordSourcePoint, coordCurrentPoint, coordDestinationPoint,
+        //  motorSpeedMin, motorSpeedMax, motorStepsAcc);
+        motorSpeed = motorSpeedMax;
       }
+      axisSpeed = calculateSpeed(coordSourcePoint, coordCurrentPoint, coordDestinationPoint,
+        motorSpeedMin, motorSpeed, motorStepsAcc);
 
     }
     else

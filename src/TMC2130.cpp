@@ -11,7 +11,7 @@
 #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
 
 //void loadTMC2130ParametersMotor(Trinamic_TMC2130 *myStepper, int microsteps, int current, int sensitivity)
-void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current, int sensitivity)
+void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current, int sensitivity, bool stealth)
 {
 
   //Serial.print("==>");
@@ -196,12 +196,14 @@ void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current,
   tb->set_GCONF(FB_TMC_GCONF_DIAG1_STEPS_SKIPPED, 1);
   tb->alter_REG(FB_TMC_REG_CHOPCONF, uint32_t(sensitivity) << FB_TMC_COOLCONF_SGT, FB_TMC_CHOPCONF_MASKS[FB_TMC_COOLCONF_SGT] << FB_TMC_COOLCONF_SGT);
 
-  //// Enbable stealth
-  //tb->set_GCONF(FB_TMC_GCONF_EN_PWM_MODE, 1);
-  //tb->alter_REG(FB_TMC_REG_PWMCONF, uint32_t(1) << FB_TMC_PWMCONF_PWM_AUTOSCALE, FB_TMC_PWMCONF_MASKS[FB_TMC_PWMCONF_PWM_AUTOSCALE] << FB_TMC_PWMCONF_PWM_AUTOSCALE);
-  //tb->alter_REG(FB_TMC_REG_PWMCONF, uint32_t(2) << FB_TMC_PWMCONF_PWM_FREQ, FB_TMC_PWMCONF_MASKS[FB_TMC_PWMCONF_PWM_FREQ] << FB_TMC_PWMCONF_PWM_FREQ);
-  //tb->alter_REG(FB_TMC_REG_PWMCONF, uint32_t(0) << FB_TMC_PWMCONF_PWM_GRAD, FB_TMC_PWMCONF_MASKS[FB_TMC_PWMCONF_PWM_GRAD] << FB_TMC_PWMCONF_PWM_GRAD);
-
+  if (stealth)
+  {
+    // Enbable stealth
+    tb->set_GCONF(FB_TMC_GCONF_EN_PWM_MODE, 1);
+    tb->alter_REG(FB_TMC_REG_PWMCONF, uint32_t(1) << FB_TMC_PWMCONF_PWM_AUTOSCALE, FB_TMC_PWMCONF_MASKS[FB_TMC_PWMCONF_PWM_AUTOSCALE] << FB_TMC_PWMCONF_PWM_AUTOSCALE);
+    tb->alter_REG(FB_TMC_REG_PWMCONF, uint32_t(2) << FB_TMC_PWMCONF_PWM_FREQ, FB_TMC_PWMCONF_MASKS[FB_TMC_PWMCONF_PWM_FREQ] << FB_TMC_PWMCONF_PWM_FREQ);
+    tb->alter_REG(FB_TMC_REG_PWMCONF, uint32_t(0) << FB_TMC_PWMCONF_PWM_GRAD, FB_TMC_PWMCONF_MASKS[FB_TMC_PWMCONF_PWM_GRAD] << FB_TMC_PWMCONF_PWM_GRAD);
+  }
 
 
   /*

@@ -92,7 +92,10 @@ int ParameterList::writeValue(int id, long value)
       id == 87 ||
       id == 91 ||
       id == 92 ||
-      id == 93
+      id == 93 ||
+      id == 165 ||
+      id == 166 ||
+      id == 167
     )
     {
       tmcParamChangeNr++;
@@ -476,6 +479,36 @@ void ParameterList::loadDefaultValue(int id)
     paramValues[id] = MOVEMENT_STOP_AT_MAX_Z_DEFAULT;
     break;
 
+  case MOVEMENT_CALIBRATION_RETRY_X:
+    paramValues[id] = MOVEMENT_CALIBRATION_RETRY_X_DEFAULT;
+    break;
+  case MOVEMENT_CALIBRATION_RETRY_Y:
+    paramValues[id] = MOVEMENT_CALIBRATION_RETRY_Y_DEFAULT;
+    break;
+  case MOVEMENT_CALIBRATION_RETRY_Z:
+    paramValues[id] = MOVEMENT_CALIBRATION_RETRY_Z_DEFAULT;
+    break;
+
+  case MOVEMENT_CALIBRATION_DEADZONE_X:
+    paramValues[id] = MOVEMENT_CALIBRATION_DEADZONE_X_DEFAULT;
+    break;
+  case MOVEMENT_CALIBRATION_DEADZONE_Y:
+    paramValues[id] = MOVEMENT_CALIBRATION_DEADZONE_Y_DEFAULT;
+    break;
+  case MOVEMENT_CALIBRATION_DEADZONE_Z:
+    paramValues[id] = MOVEMENT_CALIBRATION_DEADZONE_Z_DEFAULT;
+    break;
+
+  case MOVEMENT_AXIS_STEALTH_X:
+    paramValues[id] = MOVEMENT_AXIS_STEALTH_X_DEFAULT;
+    break;
+  case MOVEMENT_AXIS_STEALTH_Y:
+    paramValues[id] = MOVEMENT_AXIS_STEALTH_Y_DEFAULT;
+    break;
+  case MOVEMENT_AXIS_STEALTH_Z:
+    paramValues[id] = MOVEMENT_AXIS_STEALTH_Z_DEFAULT;
+    break;
+
   case MOVEMENT_MOTOR_CURRENT_X:
     paramValues[id] = MOVEMENT_MOTOR_CURRENT_X_DEFAULT;
     break;
@@ -726,6 +759,15 @@ bool ParameterList::validParam(int id)
   case MOVEMENT_STOP_AT_MAX_X:
   case MOVEMENT_STOP_AT_MAX_Y:
   case MOVEMENT_STOP_AT_MAX_Z:
+  case MOVEMENT_CALIBRATION_RETRY_X:
+  case MOVEMENT_CALIBRATION_RETRY_Y:
+  case MOVEMENT_CALIBRATION_RETRY_Z:
+  case MOVEMENT_AXIS_STEALTH_X:
+  case MOVEMENT_AXIS_STEALTH_Y:
+  case MOVEMENT_AXIS_STEALTH_Z:
+  case MOVEMENT_CALIBRATION_DEADZONE_X:
+  case MOVEMENT_CALIBRATION_DEADZONE_Y:
+  case MOVEMENT_CALIBRATION_DEADZONE_Z:
   case PIN_GUARD_1_PIN_NR:
   case PIN_GUARD_1_TIME_OUT:
   case PIN_GUARD_1_ACTIVE_STATE:

@@ -9,7 +9,7 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-  const char SOFTWARE_VERSION[] = "6.5.31\0";
+  const char SOFTWARE_VERSION[] = "6.5.35\0";
 
   const int LOGGING = 0;
 
@@ -147,6 +147,21 @@
   const long MOVEMENT_STOP_AT_MAX_X_DEFAULT = 0;
   const long MOVEMENT_STOP_AT_MAX_Y_DEFAULT = 0;
   const long MOVEMENT_STOP_AT_MAX_Z_DEFAULT = 0;
+
+  // The retry when calibrating
+  const long MOVEMENT_CALIBRATION_RETRY_X_DEFAULT = 3;
+  const long MOVEMENT_CALIBRATION_RETRY_Y_DEFAULT = 3;
+  const long MOVEMENT_CALIBRATION_RETRY_Z_DEFAULT = 3;
+
+  // deadzone for the retry for the calibration
+  const long MOVEMENT_CALIBRATION_DEADZONE_X_DEFAULT = 10;
+  const long MOVEMENT_CALIBRATION_DEADZONE_Y_DEFAULT = 10;
+  const long MOVEMENT_CALIBRATION_DEADZONE_Z_DEFAULT = 10;
+
+  // use stealth setting or TMC2130
+  const long MOVEMENT_AXIS_STEALTH_X_DEFAULT = 0;
+  const long MOVEMENT_AXIS_STEALTH_Y_DEFAULT = 0;
+  const long MOVEMENT_AXIS_STEALTH_Z_DEFAULT = 0;
 
   // motor current (used with TMC2130)
   const long MOVEMENT_MOTOR_CURRENT_X_DEFAULT = 600;
