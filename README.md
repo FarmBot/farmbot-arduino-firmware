@@ -23,10 +23,10 @@ See [releases](https://github.com/FarmBot/farmbot-arduino-firmware/releases) to 
 git clone  https://github.com/FarmBot/farmbot-arduino-firmware
 ```
 
-**OPTION B:** For stable release v6.4.2:
+**OPTION B:** For stable release v6.5.36:
 
 ```
-git clone -b 'v6.4.2' --single-branch  https://github.com/FarmBot/farmbot-arduino-firmware
+git clone -b 'v6.5.36' --single-branch  https://github.com/FarmBot/farmbot-arduino-firmware
 ```
 
 Options for compiling and uploading:
@@ -257,52 +257,52 @@ Arduino parameter numbers
 
 ID  | Name                              | Unit      | Notes
 ----| ----------------------------------| ----------| ---------------------------------------
-2   | PARAM_CONFIG_OK                   | 0 / 1     | 
-3   | PARAM_USE_EEPROM                  | 0 / 1     | 
-4   | PARAM_E_STOP_ON_MOV_ERR           | 0 / 1     | 
-5   | PARAM_MOV_NR_RETRY                | integer   | 
-11  | MOVEMENT_TIMEOUT_X                | seconds   | 
-12  | MOVEMENT_TIMEOUT_Y                | seconds   | 
-13  | MOVEMENT_TIMEOUT_Z                | seconds   | 
-15  | MOVEMENT_KEEP_ACTIVE_X            | 0 / 1     | 
-16  | MOVEMENT_KEEP_ACTIVE_Y            | 0 / 1     | 
-17  | MOVEMENT_KEEP_ACTIVE_Z            | 0 / 1     | 
-18  | MOVEMENT_HOME_AT_BOOT_X           | 0 / 1     | 
-19  | MOVEMENT_HOME_AT_BOOT_Y           | 0 / 1     | 
-20  | MOVEMENT_HOME_AT_BOOT_Z           | 0 / 1     | 
+2   | PARAM_CONFIG_OK                   | 0 / 1     |
+3   | PARAM_USE_EEPROM                  | 0 / 1     |
+4   | PARAM_E_STOP_ON_MOV_ERR           | 0 / 1     |
+5   | PARAM_MOV_NR_RETRY                | integer   |
+11  | MOVEMENT_TIMEOUT_X                | seconds   |
+12  | MOVEMENT_TIMEOUT_Y                | seconds   |
+13  | MOVEMENT_TIMEOUT_Z                | seconds   |
+15  | MOVEMENT_KEEP_ACTIVE_X            | 0 / 1     |
+16  | MOVEMENT_KEEP_ACTIVE_Y            | 0 / 1     |
+17  | MOVEMENT_KEEP_ACTIVE_Z            | 0 / 1     |
+18  | MOVEMENT_HOME_AT_BOOT_X           | 0 / 1     |
+19  | MOVEMENT_HOME_AT_BOOT_Y           | 0 / 1     |
+20  | MOVEMENT_HOME_AT_BOOT_Z           | 0 / 1     |
 21  | MOVEMENT_INVERT_ENDPOINTS_X       | 0 / 1     | switch ends
 22  | MOVEMENT_INVERT_ENDPOINTS_Y       | 0 / 1     | switch ends
 23  | MOVEMENT_INVERT_ENDPOINTS_Z       | 0 / 1     | switch ends
-25  | MOVEMENT_ENABLE_ENDPOINTS_X       | 0 / 1     | 
-26  | MOVEMENT_ENABLE_ENDPOINTS_Y       | 0 / 1     | 
-27  | MOVEMENT_ENABLE_ENDPOINTS_Z       | 0 / 1     | 
-31  | MOVEMENT_INVERT_MOTOR_X           | 0 / 1     | 
-32  | MOVEMENT_INVERT_MOTOR_Y           | 0 / 1     | 
-33  | MOVEMENT_INVERT_MOTOR_Z           | 0 / 1     | 
-36  | MOVEMENT_SECONDARY_MOTOR_X        | 0 / 1     | 
-37  | MOVEMENT_SECONDARY_MOTOR_INVERT_X | 0 / 1     | 
-41  | MOVEMENT_STEPS_ACC_DEC_X          | steps     | 
-42  | MOVEMENT_STEPS_ACC_DEC_Y          | steps     | 
+25  | MOVEMENT_ENABLE_ENDPOINTS_X       | 0 / 1     |
+26  | MOVEMENT_ENABLE_ENDPOINTS_Y       | 0 / 1     |
+27  | MOVEMENT_ENABLE_ENDPOINTS_Z       | 0 / 1     |
+31  | MOVEMENT_INVERT_MOTOR_X           | 0 / 1     |
+32  | MOVEMENT_INVERT_MOTOR_Y           | 0 / 1     |
+33  | MOVEMENT_INVERT_MOTOR_Z           | 0 / 1     |
+36  | MOVEMENT_SECONDARY_MOTOR_X        | 0 / 1     |
+37  | MOVEMENT_SECONDARY_MOTOR_INVERT_X | 0 / 1     |
+41  | MOVEMENT_STEPS_ACC_DEC_X          | steps     |
+42  | MOVEMENT_STEPS_ACC_DEC_Y          | steps     |
 43  | MOVEMENT_STEPS_ACC_DEC_Z          | steps     | (away from home)
 44  | MOVEMENT_STEPS_ACC_DEC_Z2         | steps     | (toward home)
-45  | MOVEMENT_STOP_AT_HOME_X           | 0 / 1     | 
-46  | MOVEMENT_STOP_AT_HOME_Y           | 0 / 1     | 
-47  | MOVEMENT_STOP_AT_HOME_Z           | 0 / 1     | 
-51  | MOVEMENT_HOME_UP_X                | 0 / 1     | 
-52  | MOVEMENT_HOME_UP_Y                | 0 / 1     | 
-53  | MOVEMENT_HOME_UP_Z                | 0 / 1     | 
-55  | MOVEMENT_STEP_PER_MM_X            | steps     | 
-56  | MOVEMENT_STEP_PER_MM_Y            | steps     | 
-57  | MOVEMENT_STEP_PER_MM_Z            | steps     | 
-61  | MOVEMENT_MIN_SPD_X                | steps/s   | 
-62  | MOVEMENT_MIN_SPD_Y                | steps/s   | 
+45  | MOVEMENT_STOP_AT_HOME_X           | 0 / 1     |
+46  | MOVEMENT_STOP_AT_HOME_Y           | 0 / 1     |
+47  | MOVEMENT_STOP_AT_HOME_Z           | 0 / 1     |
+51  | MOVEMENT_HOME_UP_X                | 0 / 1     |
+52  | MOVEMENT_HOME_UP_Y                | 0 / 1     |
+53  | MOVEMENT_HOME_UP_Z                | 0 / 1     |
+55  | MOVEMENT_STEP_PER_MM_X            | steps     |
+56  | MOVEMENT_STEP_PER_MM_Y            | steps     |
+57  | MOVEMENT_STEP_PER_MM_Z            | steps     |
+61  | MOVEMENT_MIN_SPD_X                | steps/s   |
+62  | MOVEMENT_MIN_SPD_Y                | steps/s   |
 63  | MOVEMENT_MIN_SPD_Z                | steps/s   | (away from home)
 64  | MOVEMENT_MIN_SPD_Z2               | steps/s   | (toward home)
-65  | MOVEMENT_HOME_SPD_X               | steps/s   | 
-66  | MOVEMENT_HOME_SPD_Y               | steps/s   | 
-67  | MOVEMENT_HOME_SPD_Z               | steps/s   | 
-71  | MOVEMENT_MAX_SPD_X                | steps/s   | 
-72  | MOVEMENT_MAX_SPD_Y                | steps/s   | 
+65  | MOVEMENT_HOME_SPD_X               | steps/s   |
+66  | MOVEMENT_HOME_SPD_Y               | steps/s   |
+67  | MOVEMENT_HOME_SPD_Z               | steps/s   |
+71  | MOVEMENT_MAX_SPD_X                | steps/s   |
+72  | MOVEMENT_MAX_SPD_Y                | steps/s   |
 73  | MOVEMENT_MAX_SPD_Z                | steps/s   | (away from home)
 74  | MOVEMENT_MAX_SPD_Z2               | steps/s   | (toward home)
 75  | MOVEMENT_INVERT_2_ENDPOINTS_X     | 0 / 1     | switch NO and NC
@@ -323,9 +323,9 @@ ID  | Name                              | Unit      | Notes
 105 | ENCODER_TYPE_X                    | 0         | differential channels disabled
 106 | ENCODER_TYPE_Y                    | 0         | differential channels disabled
 107 | ENCODER_TYPE_Z                    | 0         | differential channels disabled
-111 | ENCODER_MISSED_STEPS_MAX_X        | steps     | 
-112 | ENCODER_MISSED_STEPS_MAX_Y        | steps     | 
-113 | ENCODER_MISSED_STEPS_MAX_Z        | steps     | 
+111 | ENCODER_MISSED_STEPS_MAX_X        | steps     |
+112 | ENCODER_MISSED_STEPS_MAX_Y        | steps     |
+113 | ENCODER_MISSED_STEPS_MAX_Z        | steps     |
 115 | ENCODER_SCALING_X                 | integer   | `10000*motor/encoder` (except Express)
 116 | ENCODER_SCALING_Y                 | integer   | `10000*motor/encoder` (except Express)
 117 | ENCODER_SCALING_Z                 | integer   | `10000*motor/encoder` (except Express)
@@ -341,9 +341,9 @@ ID  | Name                              | Unit      | Notes
 141 | MOVEMENT_AXIS_NR_STEPS_X          | steps     | 0 = limit disabled
 142 | MOVEMENT_AXIS_NR_STEPS_Y          | steps     | 0 = limit disabled
 143 | MOVEMENT_AXIS_NR_STEPS_Z          | steps     | 0 = limit disabled
-145 | MOVEMENT_STOP_AT_MAX_X            | 0 / 1     | 
-146 | MOVEMENT_STOP_AT_MAX_Y            | 0 / 1     | 
-147 | MOVEMENT_STOP_AT_MAX_Z            | 0 / 1     | 
+145 | MOVEMENT_STOP_AT_MAX_X            | 0 / 1     |
+146 | MOVEMENT_STOP_AT_MAX_Y            | 0 / 1     |
+147 | MOVEMENT_STOP_AT_MAX_Z            | 0 / 1     |
 161 | MOVEMENT_CALIBRATION_RETRY_X      | integer   |
 162 | MOVEMENT_CALIBRATION_RETRY_Y      | integer   |
 163 | MOVEMENT_CALIBRATION_RETRY_Z      | integer   |
@@ -353,21 +353,21 @@ ID  | Name                              | Unit      | Notes
 171 | MOVEMENT_CALIBRATION_DEADZONE_X   | integer   |
 172 | MOVEMENT_CALIBRATION_DEADZONE_Y   | integer   |
 173 | MOVEMENT_CALIBRATION_DEADZONE_Z   | integer   |
-201 | PIN_GUARD_1_PIN_NR                | integer   | 
-202 | PIN_GUARD_1_TIME_OUT              | seconds   | 
-203 | PIN_GUARD_1_ACTIVE_STATE          | 0 / 1     | 
-205 | PIN_GUARD_2_PIN_NR                | integer   | 
-206 | PIN_GUARD_2_TIME_OUT              | seconds   | 
-207 | PIN_GUARD_2_ACTIVE_STATE          | 0 / 1     | 
-211 | PIN_GUARD_3_PIN_NR                | integer   | 
-212 | PIN_GUARD_3_TIME_OUT              | seconds   | 
-213 | PIN_GUARD_3_ACTIVE_STATE          | 0 / 1     | 
-215 | PIN_GUARD_4_PIN_NR                | integer   | 
-216 | PIN_GUARD_4_TIME_OUT              | seconds   | 
-217 | PIN_GUARD_4_ACTIVE_STATE          | 0 / 1     | 
-221 | PIN_GUARD_5_PIN_NR                | integer   | 
-222 | PIN_GUARD_5_TIME_OUT              | seconds   | 
-223 | PIN_GUARD_5_ACTIVE_STATE          | 0 / 1     | 
+201 | PIN_GUARD_1_PIN_NR                | integer   |
+202 | PIN_GUARD_1_TIME_OUT              | seconds   |
+203 | PIN_GUARD_1_ACTIVE_STATE          | 0 / 1     |
+205 | PIN_GUARD_2_PIN_NR                | integer   |
+206 | PIN_GUARD_2_TIME_OUT              | seconds   |
+207 | PIN_GUARD_2_ACTIVE_STATE          | 0 / 1     |
+211 | PIN_GUARD_3_PIN_NR                | integer   |
+212 | PIN_GUARD_3_TIME_OUT              | seconds   |
+213 | PIN_GUARD_3_ACTIVE_STATE          | 0 / 1     |
+215 | PIN_GUARD_4_PIN_NR                | integer   |
+216 | PIN_GUARD_4_TIME_OUT              | seconds   |
+217 | PIN_GUARD_4_ACTIVE_STATE          | 0 / 1     |
+221 | PIN_GUARD_5_PIN_NR                | integer   |
+222 | PIN_GUARD_5_TIME_OUT              | seconds   |
+223 | PIN_GUARD_5_ACTIVE_STATE          | 0 / 1     |
 
 Pin Numbering
 -------------
