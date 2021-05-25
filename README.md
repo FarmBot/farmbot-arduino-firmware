@@ -41,7 +41,7 @@ Options for compiling and uploading:
      * Select _Sketch_ > _Export compiled binary_.
      * The `.hex` file will save to the `src` directory.
  * Make (Linux)
-   * [Download the Arduino 1.8.13 IDE](https://www.arduino.cc/download_handler.php?f=/arduino-1.8.13-linux64.tar.xz) and unpack to the `/home` directory.
+   * [Download the Arduino 1.8.14 IDE](https://www.arduino.cc/download_handler.php?f=/arduino-1.8.14-linux64.tar.xz) and unpack to the `/home` directory.
    * `cd farmbot-arduino-firmware`
    * To compile:
      * `make`
