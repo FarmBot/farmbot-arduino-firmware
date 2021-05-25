@@ -80,7 +80,7 @@ void MovementEncoder::setPosition(long newPosition)
     position = newPosition;
   #endif
 
-  #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
+  #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
     if (newPosition == 0)
     {
       position = newPosition;
@@ -109,7 +109,7 @@ long MovementEncoder::currentPosition()
   }
   else
   {
-    #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
+    #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
       floatScalingFactor = scalingFactor / 40000.0;
       return position * floatScalingFactor * encoderInvert;
     #endif
@@ -131,7 +131,7 @@ void MovementEncoder::checkEncoder(bool channelA, bool channelB, bool channelAQ,
     processEncoder();
   #endif
 
-  #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
+  #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
     processEncoder();
   #endif
 
@@ -173,7 +173,7 @@ void MovementEncoder::processEncoder()
   #endif
 
   // If using farmduino, revision 1.4, use the SPI interface to read from the Motor Dynamics Lab chip
-  #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
+  #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
     const byte read_cmd = 0x0F;
     int readSize = 4;
     long encoderVal = 0;
@@ -314,7 +314,7 @@ void MovementEncoder::checkMissedSteps()
   #endif
 
 /*
-  #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+  #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
 
     if (encoderEnabled) {
       if (axis->stallDetected()) {

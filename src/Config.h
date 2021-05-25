@@ -244,7 +244,7 @@
 
   const long STATUS_GENERAL_DEFAULT = 0;
 
-#define NSS_PIN 22 
+#define NSS_PIN 22
 #define READ_ENA_PIN 49
 #define NULL 0
 
@@ -272,6 +272,10 @@ enum MdlSpiEncoders
 
 #if defined(FARMDUINO_V30) && !defined(SOFTWARE_VERSION_SUFFIX)
 #define SOFTWARE_VERSION_SUFFIX ".H.genesisK15\0"
+#endif
+
+#if defined(FARMDUINO_V32) && !defined(SOFTWARE_VERSION_SUFFIX)
+#define SOFTWARE_VERSION_SUFFIX ".I.genesisK16\0"
 #endif
 
 #if defined(FARMDUINO_EXP_V20) && !defined(SOFTWARE_VERSION_SUFFIX)

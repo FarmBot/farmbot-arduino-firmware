@@ -13,7 +13,7 @@ $(TARGET_farmduino_k16_BUILD_DIR)/farmduino_k16.elf: $(TARGET_farmduino_k16_OBJ)
 	$(CC) -w -Os -g -flto -fuse-linker-plugin -Wl,--gc-sections,--relax -mmcu=atmega2560 -o $@ $(TARGET_farmduino_k16_OBJ) $(DEPS_OBJ) $(DEP_CORE_LDFLAGS)
 
 $(TARGET_farmduino_k16_BUILD_DIR)/%.o: $(FBARDUINO_FIRMWARE_SRC_DIR)/%.cpp $(HEADERS)
-	$(CXX) $(CXX_FLAGS) -DFARMBOT_BOARD_ID=4 $(DEPS_CFLAGS) $< -o $@
+	$(CXX) $(CXX_FLAGS) -DFARMBOT_BOARD_ID=5 $(DEPS_CFLAGS) $< -o $@
 
 $(TARGET_farmduino_k16_BUILD_DIR):
 	$(MKDIR_P) $(TARGET_farmduino_k16_BUILD_DIR)

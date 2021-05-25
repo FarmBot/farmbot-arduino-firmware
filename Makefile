@@ -81,7 +81,7 @@ strings_test: all
 	@strings $(TARGET_farmduino_v10_HEX).bin | grep -q ".F.genesisK13"
 	@strings $(TARGET_farmduino_k14_HEX).bin | grep -q ".G.genesisK14"
 	@strings $(TARGET_farmduino_k15_HEX).bin | grep -q ".H.genesisK15"
-	@strings $(TARGET_farmduino_k16_HEX).bin | grep -q ".H.genesisK15"
+	@strings $(TARGET_farmduino_k16_HEX).bin | grep -q ".I.genesisK16"
 	@strings $(TARGET_express_k10_HEX).bin | grep -q ".E.expressK10"
 
 force_clean: remove_temp

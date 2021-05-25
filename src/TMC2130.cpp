@@ -8,7 +8,7 @@
 
 #include "TMC2130.h"
 
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
 
 //void loadTMC2130ParametersMotor(Trinamic_TMC2130 *myStepper, int microsteps, int current, int sensitivity)
 void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current, int sensitivity, bool stealth)
@@ -235,7 +235,7 @@ void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current,
   // Set minimum speed
   tb->write_REG(FB_TMC_REG_VDCMIN,    uint32_t(0) & FB_TMC_VDCMIN_MASK);
   tb->write_REG(FB_TMC_REG_TCOOLTHRS, uint32_t(0) & FB_TMC_TCOOLTHRS_MASK);
-  
+
 
   // Set maximum speed
   tb->write_REG(FB_TMC_REG_TCOOLTHRS, 0xFFFFF & FB_TMC_TCOOLTHRS_MASK);

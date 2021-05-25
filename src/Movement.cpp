@@ -58,7 +58,7 @@ void Movement::getEncoderReport()
 }
 
 void Movement::reportStatus(MovementAxis *axis, int axisStatus)
-{  
+{
   serialBuffer += COMM_REPORT_CMD_STATUS;
   serialBuffer += " ";
   serialBuffer += axis->channelLabel;
@@ -208,7 +208,7 @@ void Movement::loadSettings()
 
 }
 
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
   void Movement::initTMC2130()
   {
     axisX.initTMC2130();
@@ -315,7 +315,7 @@ void Movement::loadSettings()
 
 void Movement::test()
 {
-  #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+  #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
   //axisX.enableMotor();
   //axisX.setMotorStep();
   //delayMicroseconds(500);
@@ -579,7 +579,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
   // Let the interrupt handle all the movements
   while ((axisActive[0] || axisActive[1] || axisActive[2]) && !emergencyStop)
   {
-    #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
+    #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
     checkEncoders();
     #endif
 
@@ -599,7 +599,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
     //  Serial.print("Y - ");
     //  axisY.test();
     //}
-    //loopCounts++;    
+    //loopCounts++;
 
     checkAxisSubStatus(&axisX, &axisSubStep[0]);
     checkAxisSubStatus(&axisY, &axisSubStep[1]);
@@ -671,14 +671,14 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
     }
 
     #if defined(FARMDUINO_EXP_V20)
-    if 
+    if
     (
       axisX.isAxisActive()
       && axisX.missedStepHistory[0] >= motorConsMissedStepsMax[0]
       //&& axisX.missedStepHistory[1] >= motorConsMissedStepsMax[0]
       //&& axisX.missedStepHistory[2] >= motorConsMissedStepsMax[0]
       //&& axisX.missedStepHistory[3] >= motorConsMissedStepsMax[0]
-      //&& axisX.missedStepHistory[4] >= motorConsMissedStepsMax[0] 
+      //&& axisX.missedStepHistory[4] >= motorConsMissedStepsMax[0]
     )
     #else
     if (axisX.isAxisActive() && motorConsMissedSteps[0] >= motorConsMissedStepsMax[0])
@@ -713,10 +713,10 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
     }
 
     #if defined(FARMDUINO_EXP_V20)
-    if 
+    if
     (
       axisY.isAxisActive()
-      && axisY.missedStepHistory[0] >= motorConsMissedStepsMax[1] 
+      && axisY.missedStepHistory[0] >= motorConsMissedStepsMax[1]
       //&& axisY.missedStepHistory[1] >= motorConsMissedStepsMax[1]
       //&& axisY.missedStepHistory[2] >= motorConsMissedStepsMax[1]
       //&& axisY.missedStepHistory[3] >= motorConsMissedStepsMax[1]
@@ -732,7 +732,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
       serialBuffer += " deactivate motor Y due to ";
 
       #if defined(FARMDUINO_EXP_V20)
-      if (axisY.isDriverError()) 
+      if (axisY.isDriverError())
       {
         serialBuffer += "driver error";
       }
@@ -765,7 +765,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
     }
 
     #if defined(FARMDUINO_EXP_V20)
-    if 
+    if
     (
       axisZ.isAxisActive()
       && axisZ.missedStepHistory[0] >= motorConsMissedStepsMax[2]
@@ -799,7 +799,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
       if (zHome)
       {
         encoderZ.setPosition(0);
-        axisZ.setCurrentPosition(0);        
+        axisZ.setCurrentPosition(0);
       }
       else
       {
@@ -919,13 +919,13 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
         case 1:
           serialBuffer += CurrentState::getInstance()->getPosition();
           serialBuffer += CurrentState::getInstance()->getQAndNewLine();
-          #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
+          #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
             getEncoderReport();
           #endif
           break;
 
         case 2:
-          //#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)          
+          //#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
           //serialBuffer += "R89";
           //serialBuffer += " X";
           //serialBuffer += axisX.getLoad();
@@ -933,9 +933,9 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
           //serialBuffer += axisY.getLoad();
           //serialBuffer += " Z";
           //serialBuffer += axisZ.getLoad();
-          //serialBuffer += CurrentState::getInstance()->getQAndNewLine();          
+          //serialBuffer += CurrentState::getInstance()->getQAndNewLine();
           //#endif
-          #if defined(FARMDUINO_EXP_V20)          
+          #if defined(FARMDUINO_EXP_V20)
 
           highestX = 0;
           highestY = 0;
@@ -973,7 +973,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
           serialBuffer += axisZ.getNrOfSteps();
           serialBuffer += " Z";
           serialBuffer += highestZ;
-          serialBuffer += CurrentState::getInstance()->getQAndNewLine();          
+          serialBuffer += CurrentState::getInstance()->getQAndNewLine();
 
 
           #endif
@@ -993,7 +993,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
       #endif
 
       #if defined(FARMDUINO_EXP_V20)
-      
+
       if (serialMessageNr > 2)
       {
         serialMessageNr = 0;
@@ -1001,7 +1001,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
       #endif
 
       serialBufferSending = 0;
-      
+
       if (debugMessages /*&& debugInterrupt*/)
       {
 
@@ -1276,7 +1276,7 @@ int Movement::calibrateAxis(int axis)
   // Prepare for movement
   //tickDelay = (1000.0 * 1000.0 / MOVEMENT_INTERRUPT_SPEED / speedHome[axis] / 2);
   tickDelay = (1000.0 * 1000.0 / MOVEMENT_INTERRUPT_SPEED / speedHome[axis] / 4);
-  
+
   #if defined(FARMDUINO_EXP_V20)
   //stepDelay = 1000000 / speedHome[axis] / 4;
   stepDelay = 1000000 / speedHome[axis] / 2;
@@ -1396,9 +1396,9 @@ int Movement::calibrateAxis(int axis)
   *axisStatus = COMM_REPORT_MOVE_STATUS_START_MOTOR;
   reportStatus(calibAxis, axisStatus[0]);
 
-  // Enable the motor and move away from the home position until an end is detected. 
+  // Enable the motor and move away from the home position until an end is detected.
 
-  calibAxis->enableMotor();  
+  calibAxis->enableMotor();
   calibAxis->setDirectionAway();
 
   calibAxis->setCurrentPosition(calibEncoder->currentPosition());
@@ -1424,7 +1424,7 @@ int Movement::calibrateAxis(int axis)
 
     // Check if end is reached by checking encoders or motor feedback to detect missed steps
 
-    #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
+    #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
       checkEncoders();
     #endif
 
@@ -1481,9 +1481,9 @@ int Movement::calibrateAxis(int axis)
 
 #if defined(FARMDUINO_EXP_V20)
     if (
-        (!calibAxis->endStopMin() && !calibAxis->endStopMax()) && 
-        !movementDone 
-        && 
+        (!calibAxis->endStopMin() && !calibAxis->endStopMax()) &&
+        !movementDone
+        &&
         !(
           calibAxis->missedStepHistory[0] >= *missedStepsMax //&&
           //calibAxis->missedStepHistory[1] >= *missedStepsMax &&
@@ -1545,9 +1545,9 @@ int Movement::calibrateAxis(int axis)
       }
       else
       {
-        // Encoders detected a bump. Try again. 
+        // Encoders detected a bump. Try again.
         // After a few tries, assume this is the end of the axis
-        
+
         stepsCountLastStop = stepsCount;
 
         if (calibRetries < *calibRetriesMax)
@@ -1666,7 +1666,7 @@ int Movement::calibrateAxis(int axis)
   while (!movementDone && error == 0)
   {
 
-    #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
+    #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
        checkEncoders();
     #endif
 
@@ -1728,8 +1728,8 @@ int Movement::calibrateAxis(int axis)
 
 #if defined(FARMDUINO_EXP_V20)
     if (
-        ((!invertEndStops && !calibAxis->endStopMin()) || (invertEndStops && !calibAxis->endStopMax())) && 
-        !movementDone && 
+        ((!invertEndStops && !calibAxis->endStopMin()) || (invertEndStops && !calibAxis->endStopMax())) &&
+        !movementDone &&
         !(
           calibAxis->missedStepHistory[0] >= *missedStepsMax //&&
           //calibAxis->missedStepHistory[1] >= *missedStepsMax &&
@@ -1778,7 +1778,7 @@ int Movement::calibrateAxis(int axis)
       {
         stepsCountLastStop = stepsCount;
 
-        // Encoders detected a bump. Try again. 
+        // Encoders detected a bump. Try again.
         // After a few tries, assume this is the end of the axis
         if (calibRetries < *calibRetriesMax)
         {
@@ -1919,7 +1919,7 @@ void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, 
 			  Serial.print(*encoderEnabled);
 			  Serial.print("\r\n");
 		  }
-		  
+
     }
 
     // Decrease amount of missed steps if there are no missed step
@@ -1927,7 +1927,7 @@ void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, 
     {
       (*missedSteps) -= (*encoderStepDecay);
     }
-    
+
     // Check if the encoder goes in the wrong direction or nothing moved
     if ((axis->movingUp() && *encoderLastPosition > encoder->currentPositionRaw()) ||
         (!axis->movingUp() && *encoderLastPosition < encoder->currentPositionRaw()))
@@ -1965,7 +1965,7 @@ void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, 
 
   axis->readDriverStatus();
 
-  if (*encoderEnabled) {    
+  if (*encoderEnabled) {
 
     //status = axis->getStatus();
     //stallGuard = status & FB_TMC_SPISTATUS_STALLGUARD_MASK ? true : false;
@@ -1987,7 +1987,7 @@ void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, 
     //  Serial.println("R99 STANDSTILL !!**");
     //}
 
-    // Reset every hunderd steps, so the missed steps represents the number of missed steps 
+    // Reset every hunderd steps, so the missed steps represents the number of missed steps
     // out of every hundred steps done
     if (axis->getNrOfSteps() % 100 == 0)
     {
@@ -2121,7 +2121,7 @@ void Movement::loadMotorSettings()
   stepsPerMm[1] = ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_Y);
   stepsPerMm[2] = ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_Z);
 
-  if (stepsPerMm[0] < 1) 
+  if (stepsPerMm[0] < 1)
   {
     stepsPerMm[0] = 1;
   }
@@ -2145,7 +2145,7 @@ void Movement::loadMotorSettings()
   /**/
 
 /*
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
   loadSettingsTMC2130();
 #endif
 */
