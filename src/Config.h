@@ -71,7 +71,7 @@
   const long PARAM_TEST_DEFAULT = 0;
 
   const long PARAM_CONFIG_OK_DEFAULT = 0;
-  const long PARAM_USE_EEPROM_DEFAULT = 1;
+  const long PARAM_USE_EEPROM_DEFAULT = 0;
   const long PARAM_E_STOP_ON_MOV_ERR_DEFAULT = 0;
   const long PARAM_MOV_NR_RETRY_DEFAULT = 3;
 
