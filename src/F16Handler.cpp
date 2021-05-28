@@ -29,7 +29,7 @@ int F16Handler::execute(Command *command)
 
   if (LOGGING)
   {
-    Serial.print("R99 HOME Z\r\n");
+    Serial.print("R99 CALIBRATE Z\r\n");
   }
 
   ret = Movement::getInstance()->calibrateAxis(2);
