@@ -102,13 +102,8 @@ void MovementAxis::initTMC2130()
   resetMotorStepWrite = &MovementAxis::resetMotorStepWriteDefault;
   resetMotorStepWrite2 = &MovementAxis::resetMotorStepWriteDefault2;
 
-  /**/ // Not using the edge driving now, only standard pulse driving
+  // Not using the edge driving now, only standard pulse driving
   // as edge driving causes issues with stall detection routines
-
-  //setMotorStepWrite = &MovementAxis::setMotorStepWriteTMC2130;
-  //setMotorStepWrite2 = &MovementAxis::setMotorStepWriteTMC2130_2;
-  //resetMotorStepWrite = &MovementAxis::resetMotorStepWriteTMC2130;
-  //resetMotorStepWrite2 = &MovementAxis::resetMotorStepWriteTMC2130_2;
 
   TMC2130A->init();
 
@@ -145,19 +140,6 @@ bool MovementAxis::isStandStill()
 
 bool MovementAxis::isDriverError()
 {
-  //uint32_t x = driverStatus;
-  //x = x >> 24;
-
-  //if (x > 1)
-  //{
-  //  Serial.print("R99");
-  //  Serial.print(" ");
-  //  Serial.print("x =");
-  //  Serial.print("");
-  //  Serial.print(x);
-  //  Serial.print("\r\n");
-  //}
-
   return ((driverStatus & 0x7E000000) != 0);
 }
 

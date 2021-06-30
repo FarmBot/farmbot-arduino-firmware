@@ -1,7 +1,7 @@
 #ifndef FARMBOT_BOARD_ID
 
   // Farmbot using RAMPS board
-  #define RAMPS_V14
+  //#define RAMPS_V14
 
   //#define FARMDUINO_V10
   //#define FARMDUINO_V14
@@ -13,7 +13,7 @@
   //#define FARMDUINO_V32
 
   // Farmbot Express
-  //#define FARMDUINO_EXP_V20
+  #define FARMDUINO_EXP_V20
 
 #else
 
