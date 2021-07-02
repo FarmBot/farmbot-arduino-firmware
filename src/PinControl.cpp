@@ -14,7 +14,7 @@ PinControl *PinControl::getInstance()
 
 PinControl::PinControl()
 {
-  for (int pinNr = 1; pinNr <= 52; pinNr++)
+  for (int pinNr = 1; pinNr <= 69; pinNr++)
   {
     pinWritten[0][pinNr] = false;
     pinWritten[1][pinNr] = false;
@@ -30,7 +30,7 @@ int PinControl::setMode(int pinNr, int mode)
 
 int PinControl::writeValue(int pinNr, int value, int mode)
 {
-  if (pinNr > 0 && pinNr <= 52 && (mode == 0 || mode == 1))
+  if (pinNr > 0 && pinNr <= 69 && (mode == 0 || mode == 1))
   {
     pinWritten[mode][pinNr] = true;
 
@@ -51,7 +51,7 @@ int PinControl::writeValue(int pinNr, int value, int mode)
 // Set all pins that were once used for writing to zero
 void PinControl::resetPinsUsed()
 {
-  for (int pinNr = 1; pinNr <= 52; pinNr++)
+  for (int pinNr = 1; pinNr <= 69; pinNr++)
   {
     if (pinWritten[0][pinNr])
     {
