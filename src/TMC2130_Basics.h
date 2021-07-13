@@ -13,7 +13,7 @@
 
 class TMC2130_Basics {
 public:
-  TMC2130_Basics(uint8_t csPin);
+  TMC2130_Basics(uint8_t csPin, uint8_t axisNumber);
   void init();
   void init_SPI();
 
@@ -26,6 +26,7 @@ public:
   uint8_t set_CHOPCONF(uint8_t position, uint8_t value);
 
   uint8_t getStatus();
+  uint8_t getAxisNumber();
 
   //boolean isReset();
   //boolean isError();
@@ -39,7 +40,8 @@ private:
   uint32_t _pwmconf;
   uint8_t _csPin;
   uint8_t _status;
-  String _debug;
+  uint8_t _axisNumber;
+  //String _debug;
 };
 
 

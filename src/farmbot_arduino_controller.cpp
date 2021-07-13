@@ -1,7 +1,6 @@
 // Do not remove the include below
 #include "farmbot_arduino_controller.h"
 
-/**/
 //#if !defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
 #include "TimerOne.h"
 //#endif
@@ -70,8 +69,6 @@ void interrupt(void)
   }
 }
 //#endif
-
-/**/ // unsigned long intrCounter = 0;
 
 #if defined(FARMDUINO_EXP_V20xxx)
 ISR(TIMER2_OVF_vect) {
