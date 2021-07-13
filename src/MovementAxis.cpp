@@ -75,8 +75,6 @@ void MovementAxis::test()
 
 unsigned int MovementAxis::getLostSteps()
 {
-  /**/
-  //return TMC2130A->get_MSCNT();
   return 0;
 }
 
@@ -145,8 +143,6 @@ bool MovementAxis::isDriverError()
 
 uint8_t MovementAxis::getStatus() {
 
-  /**/
-  // Nog test
   uint32_t missed_step = 0;
   TMC2130A->read_REG(FB_TMC_REG_LOST_STEPS, &missed_step);
 
@@ -202,7 +198,6 @@ uint8_t MovementAxis::getStatus() {
 
 uint16_t MovementAxis::getLoad() {
   //return TMC2130A->sg_result();
-  /**/
   return 0;
 }
 

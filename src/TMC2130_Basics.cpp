@@ -1,10 +1,11 @@
 #include "TMC2130_Basics.h"
 
-TMC2130_Basics::TMC2130_Basics(uint8_t csPin)
+TMC2130_Basics::TMC2130_Basics(uint8_t csPin, uint8_t axisNumber)
 {
   _csPin = csPin;
   _status = 0;
-  _debug = "";
+  _axisNumber = axisNumber;
+  //_debug = "";
 }
 
 // initialize the driver with its CS/SS pin
@@ -146,3 +147,7 @@ uint8_t TMC2130_Basics::getStatus()
   return _status;
 }
 
+uint8_t TMC2130_Basics::getAxisNumber()
+{
+  return _axisNumber;
+}

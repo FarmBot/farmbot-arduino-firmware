@@ -166,8 +166,6 @@ Movement::Movement()
 void Movement::loadSettings()
 {
 
-  /**/ //Serial.println("== load pin numbers ==");
-
   // Load motor settings
 
   axisX.loadPinNumbers(X_STEP_PIN, X_DIR_PIN, X_ENABLE_PIN, X_MIN_PIN, X_MAX_PIN, E_STEP_PIN, E_DIR_PIN, E_ENABLE_PIN);
@@ -178,29 +176,27 @@ void Movement::loadSettings()
   axisSubStep[1] = COMM_REPORT_MOVE_STATUS_IDLE;
   axisSubStep[2] = COMM_REPORT_MOVE_STATUS_IDLE;
 
-  /**/ //Serial.println("== load motor settings ==");
+  // Load motor settings
 
   loadMotorSettings();
 
   // Load encoder settings
 
-  /**/ //Serial.println("== load encoder settings ==");
-
   loadEncoderSettings();
 
-  /**/ //Serial.println("== load mdl encoder settings ==");
+  // Load mdl encoder settings
 
   encoderX.loadMdlEncoderId(_MDL_X1);
   encoderY.loadMdlEncoderId(_MDL_Y);
   encoderZ.loadMdlEncoderId(_MDL_Z);
 
-  /**/ //Serial.println("== load encoder pin numbers ==");
+  // load encoder pin numbers
 
   encoderX.loadPinNumbers(X_ENCDR_A, X_ENCDR_B, X_ENCDR_A_Q, X_ENCDR_B_Q);
   encoderY.loadPinNumbers(Y_ENCDR_A, Y_ENCDR_B, Y_ENCDR_A_Q, Y_ENCDR_B_Q);
   encoderZ.loadPinNumbers(Z_ENCDR_A, Z_ENCDR_B, Z_ENCDR_A_Q, Z_ENCDR_B_Q);
 
-  /**/ //Serial.println("== load encoder load settings 2 ==");
+  // Load encoder settings part 2
 
   encoderX.loadSettings(motorConsEncoderType[0], motorConsEncoderScaling[0], motorConsEncoderInvert[0]);
   encoderY.loadSettings(motorConsEncoderType[1], motorConsEncoderScaling[1], motorConsEncoderInvert[1]);
@@ -221,40 +217,6 @@ void Movement::loadSettings()
     loadSettingsTMC2130_X();
     loadSettingsTMC2130_Y();
     loadSettingsTMC2130_Z();
-
-    /**/
-    //int motorCurrentX;
-    //int stallSensitivityX;
-    //int microStepsX;
-
-    //int motorCurrentY;
-    //int stallSensitivityY;
-    //int microStepsY;
-
-    //int motorCurrentZ;
-    //int stallSensitivityZ;
-    //int microStepsZ;
-
-    //motorCurrentX = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_X);
-    //stallSensitivityX = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_X);
-    //microStepsX = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_X);
-
-    //motorCurrentY = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Y);
-    //stallSensitivityY = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Y);
-    //microStepsY = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Y);
-
-    //motorCurrentZ = ParameterList::getInstance()->getValue(MOVEMENT_MOTOR_CURRENT_Z);
-    //stallSensitivityZ = ParameterList::getInstance()->getValue(MOVEMENT_STALL_SENSITIVITY_Z);
-    //microStepsZ = ParameterList::getInstance()->getValue(MOVEMENT_MICROSTEPS_Z);
-
-    //if (microStepsX <= 0) { microStepsX = 1; }
-    //if (microStepsY <= 0) { microStepsY = 1; }
-    //if (microStepsZ <= 0) { microStepsZ = 1; }
-
-
-    //axisX.loadSettingsTMC2130(motorCurrentX, stallSensitivityX, microStepsX);
-    //axisY.loadSettingsTMC2130(motorCurrentY, stallSensitivityY, microStepsY);
-    //axisZ.loadSettingsTMC2130(motorCurrentZ, stallSensitivityZ, microStepsZ);
   }
 
   void Movement::loadSettingsTMC2130_X()
@@ -333,28 +295,27 @@ void Movement::test()
   //digitalWrite(X_STEP_PIN, HIGH);
   axisX.setMotorStep();
 
-  delayMicroseconds(500);
+  delayMicroseconds(100);
 
   //digitalWrite(X_STEP_PIN, LOW);
   axisX.resetMotorStep();
 
   TMC2130X.read_STAT();
 
-  status_x = TMC2130X.getStatus();
-  stallGuard = status_x & FB_TMC_SPISTATUS_STALLGUARD_MASK ? true : false;
-  standStill = status_x & FB_TMC_SPISTATUS_STANDSTILL_MASK ? true : false;
-  if (stallGuard || standStill) {
-    testA++;
-  }
+  //status_x = TMC2130X.getStatus();
+  //stallGuard = status_x & FB_TMC_SPISTATUS_STALLGUARD_MASK ? true : false;
+  //standStill = status_x & FB_TMC_SPISTATUS_STANDSTILL_MASK ? true : false;
+  //if (stallGuard || standStill) {
+  //  testA++;
+  //}
 
   //if (axisX.stallDetected()) {
   //  testA++;
   //}
 
+  //testB++;
 
-  testB++;
-
-  delayMicroseconds(500);
+  delayMicroseconds(100);
 
 
 
@@ -383,9 +344,6 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
                                  unsigned int xMaxSpd, unsigned int yMaxSpd, unsigned int zMaxSpd,
                                  bool xHome, bool yHome, bool zHome)
 {
-
-  /**/ //Serial.println("AAA");
-  /**/ //test();
 
   long xDest = xDestScaled * stepsPerMm[0];
   long yDest = yDestScaled * stepsPerMm[1];
@@ -582,24 +540,6 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
     #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
     checkEncoders();
     #endif
-
-    /**/
-    //if (loopCounts % 1000 == 0)
-    //{
-    //  Serial.print("R99");
-    //  Serial.print(" missed step ");
-    //  Serial.print(motorConsMissedSteps[1]);
-    //  Serial.print(" axis pos ");
-    //  Serial.print(axisY.currentPosition());
-    //  Serial.print("\r\n");
-
-    //  Serial.print("X - ");
-    //  axisX.test();
-
-    //  Serial.print("Y - ");
-    //  axisY.test();
-    //}
-    //loopCounts++;
 
     checkAxisSubStatus(&axisX, &axisSubStep[0]);
     checkAxisSubStatus(&axisY, &axisSubStep[1]);
@@ -905,9 +845,6 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
 
     if (serialMessageDelay > 300 && serialBuffer.length() == 0 && serialBufferSending == 0)
     {
-      //Serial.print("Y-");
-      //axisY.test();/**/
-
       serialMessageDelay = 0;
 
       switch(serialMessageNr)
@@ -1501,7 +1438,7 @@ int Movement::calibrateAxis(int axis)
       // If encoder did not detected an end, take a normal step
       if (*missedSteps < *missedStepsMax)
       {
-/**/
+
         if ((stepsCount - stepsCountLastStop) > (*missedSteps + *calibRetryDeadzone))
         {
           // Out of the dead zone, so that means there are no consecutive
@@ -1956,7 +1893,7 @@ void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, 
 #if defined(FARMDUINO_EXP_V20)
 void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, float *missedSteps, long *lastPosition, long *encoderLastPosition, int *encoderUseForPos, float *encoderStepDecay, bool *encoderEnabled)
 {
-  /**/
+
   bool stallGuard = false;
   bool standStill = false;
   bool driverError = false;
@@ -1967,25 +1904,9 @@ void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, 
 
   if (*encoderEnabled) {
 
-    //status = axis->getStatus();
-    //stallGuard = status & FB_TMC_SPISTATUS_STALLGUARD_MASK ? true : false;
-    //standStill = status & FB_TMC_SPISTATUS_STANDSTILL_MASK ? true : false;
-    //driverError = status & FB_TMC_SPISTATUS_ERROR_MASK ? true : false;
-
     stallGuard = axis->isStallGuard();
     standStill = axis->isStandStill();
     driverError = axis->isDriverError();
-
-    //if (driverError)
-    //{
-    //  Serial.println("R99 DRIVER ERROR !!**");
-    //}
-
-
-    //if (standStill)
-    //{
-    //  Serial.println("R99 STANDSTILL !!**");
-    //}
 
     // Reset every hunderd steps, so the missed steps represents the number of missed steps
     // out of every hundred steps done
@@ -1997,18 +1918,6 @@ void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, 
       axis->missedStepHistory[2] = axis->missedStepHistory[1];
       axis->missedStepHistory[1] = axis->missedStepHistory[0];
       axis->missedStepHistory[0] = *missedSteps;
-
-      // test print
-      //Serial.print("R99");
-      //Serial.print(" ");
-      //Serial.print("S = ");
-      //Serial.print(" ");
-      //Serial.print(axis->getNrOfSteps());
-      //Serial.print(" ");
-      //Serial.print("M = ");
-      //Serial.print(" ");
-      //Serial.print(*missedSteps);
-      //Serial.print("\r\n");
 
       // reset missed steps
       *missedSteps = 0;
@@ -2141,8 +2050,6 @@ void Movement::loadMotorSettings()
   axisX.loadMotorSettings(speedMax[0], speedMax[0], speedMin[0], speedMin[0], speedHome[0], stepsAcc[0], stepsAcc[0], timeOut[0], homeIsUp[0], motorInv[0], endStInv[0], endStInv2[0], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[0], motor2Inv[0], endStEnbl[0], motorStopAtHome[0], motorMaxSize[0], motorStopAtMax[0]);
   axisY.loadMotorSettings(speedMax[1], speedMax[1], speedMin[1], speedMin[1], speedHome[1], stepsAcc[1], stepsAcc[1], timeOut[1], homeIsUp[1], motorInv[1], endStInv[1], endStInv2[1], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[1], motor2Inv[1], endStEnbl[1], motorStopAtHome[1], motorMaxSize[1], motorStopAtMax[1]);
   axisZ.loadMotorSettings(speedMax[2], speedMaxHome[2], speedMin[2], speedMinHome[2], speedHome[2], stepsAcc[2], stepsAccHome[2], timeOut[2], homeIsUp[2], motorInv[2], endStInv[2], endStInv2[2], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[2], motor2Inv[2], endStEnbl[2], motorStopAtHome[2], motorMaxSize[2], motorStopAtMax[2]);
-
-  /**/
 
 /*
 #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
