@@ -8,7 +8,7 @@
 
 #include "TMC2130.h"
 
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
 
 void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current, int sensitivity, bool stealth)
 {
@@ -101,10 +101,10 @@ void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current,
   {
     tb->alter_REG(FB_TMC_REG_CHOPCONF, uint32_t(3) << FB_TMC_CHOPCONF_TOFF, FB_TMC_CHOPCONF_MASKS[FB_TMC_CHOPCONF_TOFF] << FB_TMC_CHOPCONF_TOFF);
     tb->alter_REG(FB_TMC_REG_CHOPCONF, uint32_t(1) << FB_TMC_CHOPCONF_TBL, FB_TMC_CHOPCONF_MASKS[FB_TMC_CHOPCONF_TBL] << FB_TMC_CHOPCONF_TBL);
-    
+
     tb->alter_REG(FB_TMC_REG_CHOPCONF, uint32_t(0) << FB_TMC_CHOPCONF_HSTRT, FB_TMC_CHOPCONF_MASKS[FB_TMC_CHOPCONF_HSTRT] << FB_TMC_CHOPCONF_HSTRT);
     tb->alter_REG(FB_TMC_REG_CHOPCONF, uint32_t(0) << FB_TMC_CHOPCONF_HEND, FB_TMC_CHOPCONF_MASKS[FB_TMC_CHOPCONF_HEND] << FB_TMC_CHOPCONF_HEND);
-    
+
     tb->alter_REG(FB_TMC_REG_CHOPCONF, uint32_t(0) << FB_TMC_CHOPCONF_CHM, FB_TMC_CHOPCONF_MASKS[FB_TMC_CHOPCONF_CHM] << FB_TMC_CHOPCONF_CHM);
 
     // Disable settings from non-stealth mode

@@ -57,9 +57,9 @@ int F12Handler::execute(Command *command)
 
   int stepNr;
 
-  long X = CurrentState::getInstance()->getX();
-  long Y = CurrentState::getInstance()->getY();
-  long Z = CurrentState::getInstance()->getZ();
+  double X = CurrentState::getInstance()->getX() / (float)ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_X);
+  double Y = CurrentState::getInstance()->getY() / (float)ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_Y);
+  double Z = CurrentState::getInstance()->getZ() / (float)ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_Z);
 
   bool firstMove = true;
   int goodConsecutiveHomings = 0;

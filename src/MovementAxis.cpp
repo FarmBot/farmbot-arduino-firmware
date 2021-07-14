@@ -71,7 +71,7 @@ void MovementAxis::test()
 
 }
 
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
 
 unsigned int MovementAxis::getLostSteps()
 {
@@ -123,7 +123,7 @@ void MovementAxis::loadSettingsTMC2130(int motorCurrent, int  stallSensitivity, 
 
 void MovementAxis::readDriverStatus()
 {
-  TMC2130A->read_REG(FB_TMC_REG_DRV_STATUS, &driverStatus);  
+  TMC2130A->read_REG(FB_TMC_REG_DRV_STATUS, &driverStatus);
 }
 
 bool MovementAxis::isStallGuard()
@@ -233,7 +233,7 @@ unsigned int MovementAxis::calculateSpeed(long sourcePosition, long currentPosit
   // so the calculation code still works after the changes
   staPos = 0;
   endPos = abs(destinationPosition - sourcePosition);
-    
+
   if (sourcePosition < destinationPosition)
   {
     curPos = currentPosition - sourcePosition;
@@ -250,7 +250,7 @@ unsigned int MovementAxis::calculateSpeed(long sourcePosition, long currentPosit
   // Set the homing speed if the position would be out of bounds
   if (
         (curPos < staPos || curPos > endPos)
-        // || 
+        // ||
         // Also limit the speed to a crawl when the move would pass the home position
         // (sourcePosition > 0 && destinationPosition < 0) || (sourcePosition < 0 && destinationPosition > 0)
         // (!motorHomeIsUp && currentPosition <= 0) || (motorHomeIsUp && currentPosition >= 0) ||)
@@ -567,7 +567,7 @@ void MovementAxis::loadMotorSettings(
 {
 
   motorSpeedMax = speedMax;
-  motorSpeedMin = speedMin;  
+  motorSpeedMin = speedMin;
   motorStepsAcc = stepsAcc;
 
   motorSpeedMaxHome = speedMaxHome;
@@ -594,13 +594,13 @@ void MovementAxis::loadMotorSettings(
     setMotorStepWrite = &MovementAxis::setMotorStepWrite54;
     resetMotorStepWrite = &MovementAxis::resetMotorStepWrite54;
   }
-  
+
   if (pinStep == 60)
   {
     setMotorStepWrite = &MovementAxis::setMotorStepWrite60;
     resetMotorStepWrite = &MovementAxis::resetMotorStepWrite60;
   }
-  
+
 
   if (pinStep == 46)
   {
@@ -712,7 +712,7 @@ void MovementAxis::setDirectionUp()
 //#endif
 
 /*
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
 
   // The TMC2130 uses a command to change direction, not a pin
   if (motorMotorInv)
@@ -761,7 +761,7 @@ void MovementAxis::setDirectionDown()
 
   //#endif
 /*
-  #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+  #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
 
   // The TMC2130 uses a command to change direction, not a pin
   if (motorMotorInv)
@@ -1047,15 +1047,15 @@ void MovementAxis::resetMotorStepWrite46()
   PORTL &= B11110111;
 }
 
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
 //// TMC2130 Functions
 
 void MovementAxis::setMotorStepWriteTMC2130()
 {
-  // TMC2130 works on each edge of the step pulse, 
-  // so instead of setting the step bit, 
+  // TMC2130 works on each edge of the step pulse,
+  // so instead of setting the step bit,
   // toggle the bit here
-  
+
   if (tmcStep)
   {
     digitalWrite(pinStep, HIGH);

@@ -1,7 +1,7 @@
 // Do not remove the include below
 #include "farmbot_arduino_controller.h"
 
-//#if !defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+//#if !defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
 #include "TimerOne.h"
 //#endif
 
@@ -27,6 +27,7 @@ unsigned long pinGuardLastCheck;
 unsigned long pinGuardCurrentTime;
 
 int lastParamChangeNr = 0;
+int lastTmcParamChangeNr = 0;
 
 // Blink led routine used for testing
 bool blink = false;
@@ -51,7 +52,7 @@ unsigned long interruptDurationMax = 0;
 bool interruptBusy = false;
 int interruptSecondTimer = 0;
 
-//#if !defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+//#if !defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
 void interrupt(void)
 {
   if (!debugInterrupt)
@@ -281,8 +282,12 @@ void checkParamsChanged()
     }
 
 
-    #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
-      Movement::getInstance()->loadSettingsTMC2130();
+    #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
+      if (lastTmcParamChangeNr != ParameterList::getInstance()->tmcParamChangeNumber())
+      {
+        lastTmcParamChangeNr = ParameterList::getInstance()->tmcParamChangeNumber();
+        Movement::getInstance()->loadSettingsTMC2130();
+      }
     #endif
 
     Movement::getInstance()->loadSettings();
@@ -292,12 +297,12 @@ void checkParamsChanged()
 
 void checkEncoders()
 {
-  
-  #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30)
+
+  #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
     // Check encoders out of interrupt for farmduino 1.4
     Movement::getInstance()->checkEncoders();
   #endif
-  
+
 }
 
 // Set pins input output
@@ -500,7 +505,7 @@ void setPinInputOutput()
 }
 #endif
 
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
 void setPinInputOutput()
 {
   Serial.print(COMM_REPORT_COMMENT);
@@ -563,6 +568,10 @@ void setPinInputOutput()
   pinMode(LIGHTING_PIN, OUTPUT);
   pinMode(PERIPHERAL_4_PIN, OUTPUT);
   pinMode(PERIPHERAL_5_PIN, OUTPUT);
+  #if defined(FARMDUINO_V32)
+    pinMode(ROTARY_TOOL_FORWARD, OUTPUT);
+    pinMode(ROTARY_TOOL_REVERSE, OUTPUT);
+  #endif
 
   digitalWrite(LED_PIN, LOW);
   digitalWrite(VACUUM_PIN, LOW);
@@ -570,6 +579,19 @@ void setPinInputOutput()
   digitalWrite(LIGHTING_PIN, LOW);
   digitalWrite(PERIPHERAL_4_PIN, LOW);
   digitalWrite(PERIPHERAL_5_PIN, LOW);
+  #if defined(FARMDUINO_V32)
+    pinMode(ROTARY_TOOL_FORWARD, LOW);
+    pinMode(ROTARY_TOOL_REVERSE, LOW);
+  #endif
+
+  pinMode(LIGHTING_CURRENT_PIN, INPUT_PULLUP);
+  pinMode(WATER_CURRENT_PIN, INPUT_PULLUP);
+  pinMode(VACUUM_CURRENT_PIN, INPUT_PULLUP);
+  pinMode(PERIPHERAL_4_CURRENT_PIN, INPUT_PULLUP);
+  pinMode(PERIPHERAL_5_CURRENT_PIN, INPUT_PULLUP);
+  #if defined(FARMDUINO_V32)
+    pinMode(ROTARY_TOOL_CURRENT_PIN, INPUT_PULLUP);
+  #endif
 
   pinMode(UTM_C, INPUT_PULLUP);
   pinMode(UTM_D, INPUT_PULLUP);
@@ -592,7 +614,7 @@ void setPinInputOutput()
   digitalWrite(SERVO_2_PIN, LOW);
   digitalWrite(SERVO_3_PIN, LOW);
 
-  #if defined(FARMDUINO_V30)
+  #if defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
 
     reportingPeriod = 500;
 
@@ -737,7 +759,7 @@ void startServo()
   ServoControl::getInstance()->attach();
 }
 
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
 
 void loadTMC2130drivers()
 {
@@ -859,7 +881,7 @@ void runTestForDebug()
 
       Serial.print(">");
       Serial.print(" X = ");
-      Serial.print(missedX);   
+      Serial.print(missedX);
       Serial.print(" Y = ");
       Serial.print(missedY);
       Serial.print(" Z = ");
@@ -900,7 +922,7 @@ void runTestForDebug()
   digitalWrite(Z_STEP_PIN, LOW);
   digitalWrite(E_STEP_PIN, LOW);
   delayMicroseconds(100);
-  
+
   bool stallGuard = false;
   bool standStill = false;
   uint8_t status = 0;
@@ -914,7 +936,7 @@ void runTestForDebug()
   TMC2130Z.read_STAT();
   TMC2130E.read_STAT();
 
-  status = TMC2130X.getStatus(); 
+  status = TMC2130X.getStatus();
   stallGuard = status & FB_TMC_SPISTATUS_STALLGUARD_MASK ? true : false;
   standStill = status & FB_TMC_SPISTATUS_STANDSTILL_MASK ? true : false;
   if (stallGuard || standStill) { missedX++;}
@@ -938,7 +960,7 @@ void runTestForDebug()
   //if (TMC2130X.isStandstill() || TMC2130X.isStallguard()) {missedX++;}
   //if (TMC2130Y.isStandstill() || TMC2130Y.isStallguard()) {missedY++;}
   //if (TMC2130Z.isStandstill() || TMC2130Z.isStallguard()) {missedZ++;}
-  //if (TMC2130E.isStandstill() || TMC2130E.isStallguard()) {missedE++;}  
+  //if (TMC2130E.isStandstill() || TMC2130E.isStallguard()) {missedE++;}
 
   //Movement::getInstance()->test();
   //delayMicroseconds(100);

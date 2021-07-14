@@ -19,7 +19,7 @@ void setup()
 
   readParameters();
 
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
   loadTMC2130drivers();
   startupTmc();
   loadTMC2130parameters();

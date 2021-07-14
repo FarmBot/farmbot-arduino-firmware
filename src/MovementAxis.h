@@ -29,7 +29,7 @@ class MovementAxis
 public:
   MovementAxis();
 
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
   TMC2130_Basics *TMC2130A;
   TMC2130_Basics *TMC2130B;
 #endif
@@ -95,7 +95,7 @@ public:
   char channelLabel;
   bool movementStarted;
 
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
   void initTMC2130();
   void loadSettingsTMC2130(int motorCurrent, int  stallSensitivity, int microSteps, bool stealth);
   uint16_t getLoad();
@@ -103,7 +103,7 @@ public:
 
 #endif
 
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
   void setMotorStepWriteTMC2130();
   void setMotorStepWriteTMC2130_2();
   void resetMotorStepWriteTMC2130();
@@ -128,7 +128,7 @@ private:
   int lastCalcLog = 0;
   bool debugPrint = false;
 
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
   uint32_t driverStatus = 0;
 #endif
 

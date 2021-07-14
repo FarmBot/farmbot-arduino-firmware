@@ -1,3 +1,5 @@
+SHELL = /bin/sh
+
 rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2)$(filter $(subst *,%,$2),$d))
 
 BUILD_DIR ?= $(shell pwd)/_build
@@ -6,12 +8,12 @@ FBARDUINO_FIRMWARE_SRC_DIR ?= src
 FBARDUINO_FIRMWARE_BUILD_DIR ?= $(BUILD_DIR)/sketch
 FBARDUINO_FIRMWARE_LIB_BUILD_DIR ?= $(BUILD_DIR)/libraries
 
-ARDUINO_INSTALL_DIR ?= $(HOME)/arduino-1.8.11
+ARDUINO_INSTALL_DIR ?= $(HOME)/arduino-1.8.14
 
 # Get current commit SHA
 COMMIT_SHA := $(shell git -C $(FBARDUINO_FIRMWARE_SRC_DIR)/.. rev-parse --short=8 HEAD)
-MODIFIER := $(shell echo $$(if [ -z "$$(git -C $(FBARDUINO_FIRMWARE_SRC_DIR)/.. status -s -uall)" ];then echo "";else echo "+";fi))
-CREATE_COMMIT_SHA_H := $(shell echo "\#ifndef COMMIT_SHA_H_\n\#define COMMIT_SHA_H_\n\#define SOFTWARE_COMMIT \"-$(COMMIT_SHA)$(MODIFIER)\"\n\#endif" > $(FBARDUINO_FIRMWARE_SRC_DIR)/CommitSHA.h)
+MODIFIER := $(shell /bin/echo $$(if [ -z "$$(git -C $(FBARDUINO_FIRMWARE_SRC_DIR)/.. status -s -uall)" ];then /bin/echo "";else /bin/echo "+";fi))
+CREATE_COMMIT_SHA_H := $(shell /bin/echo -e "\#ifndef COMMIT_SHA_H_\n\#define COMMIT_SHA_H_\n\#define SOFTWARE_COMMIT \"-$(COMMIT_SHA)$(MODIFIER)\"\n\#endif" > $(FBARDUINO_FIRMWARE_SRC_DIR)/CommitSHA.h)
 
 # Files to be tracked for make to know to rebuild.
 COPY_INO := $(shell cp $(FBARDUINO_FIRMWARE_SRC_DIR)/src.ino $(FBARDUINO_FIRMWARE_SRC_DIR)/src.ino.cpp)
@@ -45,6 +47,7 @@ include lib/targets/ramps_v14.Makefile
 include lib/targets/farmduino_v10.Makefile
 include lib/targets/farmduino_k14.Makefile
 include lib/targets/farmduino_k15.Makefile
+include lib/targets/farmduino_k16.Makefile
 include lib/targets/express_k10.Makefile
 
 .PHONY: all clean strings_test force_clean remove_temp \
@@ -56,26 +59,29 @@ include lib/targets/express_k10.Makefile
 	target_farmduino_v10 target_farmduino_v10_clean \
 	target_farmduino_k14 target_farmduino_k14_clean \
 	target_farmduino_k15 target_farmduino_k15_clean \
+	target_farmduino_k16 target_farmduino_k16_clean \
 	target_express_k10 target_express_k10_clean
 
 DEPS := $(DEP_CORE) $(DEP_SPI) $(DEP_Servo) $(DEP_EEPROM)
 DEPS_OBJ := $(DEP_SPI_OBJ) $(DEP_Servo_OBJ) $(DEP_EEPROM_OBJ)
 DEPS_CFLAGS := $(DEP_CORE_CFLAGS) $(DEP_SPI_CFLAGS) $(DEP_Servo_CFLAGS) $(DEP_EEPROM_CFLAGS)
 
-all: $(BIN_DIR) $(DEPS) target_ramps_v14 target_farmduino_v10 target_farmduino_k14 target_farmduino_k15 target_express_k10 remove_temp
+all: $(BIN_DIR) $(DEPS) target_ramps_v14 target_farmduino_v10 target_farmduino_k14 target_farmduino_k15 target_farmduino_k16 target_express_k10 remove_temp
 
-clean: remove_temp target_ramps_v14_clean target_farmduino_v10_clean target_farmduino_k14_clean target_farmduino_k15_clean target_express_k10_clean
+clean: remove_temp target_ramps_v14_clean target_farmduino_v10_clean target_farmduino_k14_clean target_farmduino_k15_clean target_farmduino_k16_clean target_express_k10_clean
 
 strings_test: all
 	$(OBJ_COPY) -I ihex $(TARGET_ramps_v14_HEX)     -O binary $(TARGET_ramps_v14_HEX).bin
 	$(OBJ_COPY) -I ihex $(TARGET_farmduino_v10_HEX) -O binary $(TARGET_farmduino_v10_HEX).bin
 	$(OBJ_COPY) -I ihex $(TARGET_farmduino_k14_HEX) -O binary $(TARGET_farmduino_k14_HEX).bin
 	$(OBJ_COPY) -I ihex $(TARGET_farmduino_k15_HEX) -O binary $(TARGET_farmduino_k15_HEX).bin
+	$(OBJ_COPY) -I ihex $(TARGET_farmduino_k16_HEX) -O binary $(TARGET_farmduino_k16_HEX).bin
 	$(OBJ_COPY) -I ihex $(TARGET_express_k10_HEX) -O binary $(TARGET_express_k10_HEX).bin
 	@strings $(TARGET_ramps_v14_HEX).bin | grep -q ".R.genesisK12"
 	@strings $(TARGET_farmduino_v10_HEX).bin | grep -q ".F.genesisK13"
 	@strings $(TARGET_farmduino_k14_HEX).bin | grep -q ".G.genesisK14"
 	@strings $(TARGET_farmduino_k15_HEX).bin | grep -q ".H.genesisK15"
+	@strings $(TARGET_farmduino_k16_HEX).bin | grep -q ".I.genesisK16"
 	@strings $(TARGET_express_k10_HEX).bin | grep -q ".E.expressK10"
 
 force_clean: remove_temp

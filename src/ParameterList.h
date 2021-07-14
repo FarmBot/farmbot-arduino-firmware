@@ -208,6 +208,7 @@ public:
   void sendConfigToModules();
 
   int paramChangeNumber();
+  int tmcParamChangeNumber();
 
 private:
   ParameterList();
@@ -215,6 +216,7 @@ private:
   void operator=(ParameterList const &);
 
   int paramChangeNr;
+  int tmcParamChangeNr;
 };
 
 #endif /* PARAMETERLIST_H_ */

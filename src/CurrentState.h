@@ -21,6 +21,9 @@ enum ErrorListEnum
   ERR_INVALID_COMMAND = 14,
   ERR_PARAMS_NOT_OK = 15,
 
+  ERR_STALL_DETECTED_X = 31,
+  ERR_STALL_DETECTED_Y = 32,
+  ERR_STALL_DETECTED_Z = 33,
 };
 
 class CurrentState

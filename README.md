@@ -13,7 +13,7 @@ Development build instructions
 **This firmware is automatically bundled into [FarmBot OS](https://github.com/FarmBot/farmbot_os).
 The following instructions are for isolated Arduino development only.**
 
-**NOTE:** We tag releases when they are stable. The latest version (on master) is not guaranteed to be stable.
+**NOTE:** We tag releases when they are stable. The latest version (on main) is not guaranteed to be stable.
 
 See [releases](https://github.com/FarmBot/farmbot-arduino-firmware/releases) to find a stable release.
 
@@ -23,10 +23,10 @@ See [releases](https://github.com/FarmBot/farmbot-arduino-firmware/releases) to 
 git clone  https://github.com/FarmBot/farmbot-arduino-firmware
 ```
 
-**OPTION B:** For stable release v6.4.2:
+**OPTION B:** For stable release v6.5.36:
 
 ```
-git clone -b 'v6.4.2' --single-branch  https://github.com/FarmBot/farmbot-arduino-firmware
+git clone -b 'v6.5.36' --single-branch  https://github.com/FarmBot/farmbot-arduino-firmware
 ```
 
 Options for compiling and uploading:
@@ -41,7 +41,7 @@ Options for compiling and uploading:
      * Select _Sketch_ > _Export compiled binary_.
      * The `.hex` file will save to the `src` directory.
  * Make (Linux)
-   * [Download the Arduino 1.8.11 IDE](https://www.arduino.cc/download_handler.php?f=/arduino-1.8.11-linux64.tar.xz) and unpack to the `/home` directory.
+   * [Download the Arduino 1.8.14 IDE](https://www.arduino.cc/download_handler.php?f=/arduino-1.8.14-linux64.tar.xz) and unpack to the `/home` directory.
    * `cd farmbot-arduino-firmware`
    * To compile:
      * `make`
@@ -92,6 +92,7 @@ Board Feature Overview
 | FARMDUINO_V10     | Genesis v1.3 |      x       |              |            |                     |
 | FARMDUINO_V14     | Genesis v1.4 |              |      x       |            |                     |
 | FARMDUINO_V30     | Genesis v1.5 |              |      x       |     x      |                     |
+| FARMDUINO_V32     | Genesis v1.6 |              |      x       |     x      |                     |
 | FARMDUINO_EXP_V20 | Express v1.0 |              |              |     x      |          x          |
 
 Codes used for communication
@@ -101,9 +102,9 @@ IMPORTANT
 ---------
 
 Farmbot will NOT move until the configuration has been approved.
-To approve manually, send 'F22 P2 V1 Q0'
+To approve manually, send `F22 P2 V1 Q0`
 
-To move, use the command 'G00 X0 Y0 Z0 Q0' where you type in the coordinates just after X, Y and Z.
+To move, use the command `G00 X0 Y0 Z0 Q0` where you type in the coordinates just after `X`, `Y` and `Z`.
 
 G-Codes
 -------
@@ -113,16 +114,16 @@ G-Codes
 Code type|Number|Parameters|Function
 ---------|------|----------|--------
 _G_      |      |          |_G-Code, the codes working the same as a 3D printer_
-G        |00    |X Y Z S   |Move to location at given speed for axis (don't have to be a straight line), in absolute coordinates
-G        |01    |X Y Z S   |Move to location on a straight line (not implemented)
-G        |28    |          |Move home all axis
+G        |00    |X Y Z A B C|Move to location at given speed for axis (don't have to be a straight line), in absolute coordinates
+G        |01    |X Y Z A B C|Move to location on a straight line (not implemented)
+G        |28    |          |Move home all axis (Z, Y, X axis order)
 _F_      |      |          |_Farm commands, commands specially added for FarmBot_
 F        |01    |T         |Dose amount of water using time in millisecond (not implemented)
 F        |02    |N         |Dose amount of water using flow meter that measures pulses (not implemented)
 F        |09    |          |Reset emergency stop
-F        |11    |          |Home X axis (find 0) __*__
-F        |12    |          |Home Y axis (find 0) __*__
-F        |13    |          |Home Z axis (find 0) __*__
+F        |11    |          |Home X axis (find 0, 3 attempts) __*__
+F        |12    |          |Home Y axis (find 0, 3 attempts) __*__
+F        |13    |          |Home Z axis (find 0, 3 attempts) __*__
 F        |14    |          |Calibrate X axis (measure length + find 0) __*__
 F        |15    |          |Calibrate Y axis (measure length + find 0) __*__
 F        |16    |          |Calibrate Z axis (measure length + find 0) __*__
@@ -130,8 +131,8 @@ F        |20    |          |List all parameters and value
 F        |21    |P         |Read parameter
 F        |22    |P V       |Write parameter
 F        |23    |P V       |Update parameter (during calibration)
-F        |31    |P         |Read status
-F        |32    |P V       |Write status
+F        |31    |P         |Read status (not enabled)
+F        |32    |P V       |Write status (not enabled)
 F        |41    |P V M     |Set a value V on an arduino pin in mode M (digital=0/analog=1)
 F        |42    |P M       |Read a value from an arduino pin P in mode M (digital=0/analog=1)
 F        |43    |P M       |Set the I/O mode M (input=0/output=1) of a pin P in arduino
@@ -168,10 +169,10 @@ R        |13    |                 |Z axis homing complete
 R        |15    | X               |Firmware used a different X coordinate than given in move command
 R        |16    | Y               |Firmware used a different Y coordinate than given in move command
 R        |17    | Z               |Firmware used a different Z coordinate than given in move command
-R        |20    |                 |Report all paramaters complete
+R        |20    |                 |Report all parameters complete
 R        |21    |P V              |Report parameter value
 R        |23    |P V              |Report updated parameter (during calibration)
-R        |31    |P V              |Report status value
+R        |31    |P V              |Report status value (not enabled)
 R        |41    |P V              |Report pin value
 R        |71    |                 |X axis timeout
 R        |72    |                 |Y axis timeout
@@ -183,7 +184,7 @@ R        |84    |X Y Z            |Report encoder position scaled
 R        |85    |X Y Z            |Report encoder position raw
 R        |87    |                 |Emergency lock
 R        |88    |                 |No config (see [configuration approval](#important))
-R        |89    |X Y Z            |Report axis motor load (TMC2130)
+R        |89    |U X V Y W Z      |Report # axis steps (U,V,W) and highest missed steps in last 500 (X,Y,Z)
 R        |99    |                 |Debug message
 
 Error codes (R03)
@@ -257,60 +258,63 @@ Arduino parameter numbers
 
 ID  | Name                              | Unit      | Notes
 ----| ----------------------------------| ----------| ---------------------------------------
-2   | PARAM_CONFIG_OK                   | 0 / 1     | 
-3   | PARAM_USE_EEPROM                  | 0 / 1     | 
-4   | PARAM_E_STOP_ON_MOV_ERR           | 0 / 1     | 
-5   | PARAM_MOV_NR_RETRY                | integer   | 
-11  | MOVEMENT_TIMEOUT_X                | seconds   | 
-12  | MOVEMENT_TIMEOUT_Y                | seconds   | 
-13  | MOVEMENT_TIMEOUT_Z                | seconds   | 
-15  | MOVEMENT_KEEP_ACTIVE_X            | 0 / 1     | 
-16  | MOVEMENT_KEEP_ACTIVE_Y            | 0 / 1     | 
-17  | MOVEMENT_KEEP_ACTIVE_Z            | 0 / 1     | 
-18  | MOVEMENT_HOME_AT_BOOT_X           | 0 / 1     | 
-19  | MOVEMENT_HOME_AT_BOOT_Y           | 0 / 1     | 
-20  | MOVEMENT_HOME_AT_BOOT_Z           | 0 / 1     | 
+2   | PARAM_CONFIG_OK                   | 0 / 1     |
+3   | PARAM_USE_EEPROM                  | 0 / 1     |
+4   | PARAM_E_STOP_ON_MOV_ERR           | 0 / 1     |
+5   | PARAM_MOV_NR_RETRY                | integer   |
+11  | MOVEMENT_TIMEOUT_X                | seconds   |
+12  | MOVEMENT_TIMEOUT_Y                | seconds   |
+13  | MOVEMENT_TIMEOUT_Z                | seconds   |
+15  | MOVEMENT_KEEP_ACTIVE_X            | 0 / 1     |
+16  | MOVEMENT_KEEP_ACTIVE_Y            | 0 / 1     |
+17  | MOVEMENT_KEEP_ACTIVE_Z            | 0 / 1     |
+18  | MOVEMENT_HOME_AT_BOOT_X           | 0 / 1     |
+19  | MOVEMENT_HOME_AT_BOOT_Y           | 0 / 1     |
+20  | MOVEMENT_HOME_AT_BOOT_Z           | 0 / 1     |
 21  | MOVEMENT_INVERT_ENDPOINTS_X       | 0 / 1     | switch ends
 22  | MOVEMENT_INVERT_ENDPOINTS_Y       | 0 / 1     | switch ends
 23  | MOVEMENT_INVERT_ENDPOINTS_Z       | 0 / 1     | switch ends
-25  | MOVEMENT_ENABLE_ENDPOINTS_X       | 0 / 1     | 
-26  | MOVEMENT_ENABLE_ENDPOINTS_Y       | 0 / 1     | 
-27  | MOVEMENT_ENABLE_ENDPOINTS_Z       | 0 / 1     | 
-31  | MOVEMENT_INVERT_MOTOR_X           | 0 / 1     | 
-32  | MOVEMENT_INVERT_MOTOR_Y           | 0 / 1     | 
-33  | MOVEMENT_INVERT_MOTOR_Z           | 0 / 1     | 
-36  | MOVEMENT_SECONDARY_MOTOR_X        | 0 / 1     | 
-37  | MOVEMENT_SECONDARY_MOTOR_INVERT_X | 0 / 1     | 
-41  | MOVEMENT_STEPS_ACC_DEC_X          | steps     | 
-42  | MOVEMENT_STEPS_ACC_DEC_Y          | steps     | 
-43  | MOVEMENT_STEPS_ACC_DEC_Z          | steps     | 
-45  | MOVEMENT_STOP_AT_HOME_X           | 0 / 1     | 
-46  | MOVEMENT_STOP_AT_HOME_Y           | 0 / 1     | 
-47  | MOVEMENT_STOP_AT_HOME_Z           | 0 / 1     | 
-51  | MOVEMENT_HOME_UP_X                | 0 / 1     | 
-52  | MOVEMENT_HOME_UP_Y                | 0 / 1     | 
-53  | MOVEMENT_HOME_UP_Z                | 0 / 1     | 
-55  | MOVEMENT_STEP_PER_MM_X            | steps     | 
-56  | MOVEMENT_STEP_PER_MM_Y            | steps     | 
-57  | MOVEMENT_STEP_PER_MM_Z            | steps     | 
-61  | MOVEMENT_MIN_SPD_X                | steps/s   | 
-62  | MOVEMENT_MIN_SPD_Y                | steps/s   | 
-63  | MOVEMENT_MIN_SPD_Z                | steps/s   | 
-65  | MOVEMENT_HOME_SPD_X               | steps/s   | 
-66  | MOVEMENT_HOME_SPD_Y               | steps/s   | 
-67  | MOVEMENT_HOME_SPD_Z               | steps/s   | 
-71  | MOVEMENT_MAX_SPD_X                | steps/s   | 
-72  | MOVEMENT_MAX_SPD_Y                | steps/s   | 
-73  | MOVEMENT_MAX_SPD_Z                | steps/s   | 
+25  | MOVEMENT_ENABLE_ENDPOINTS_X       | 0 / 1     |
+26  | MOVEMENT_ENABLE_ENDPOINTS_Y       | 0 / 1     |
+27  | MOVEMENT_ENABLE_ENDPOINTS_Z       | 0 / 1     |
+31  | MOVEMENT_INVERT_MOTOR_X           | 0 / 1     |
+32  | MOVEMENT_INVERT_MOTOR_Y           | 0 / 1     |
+33  | MOVEMENT_INVERT_MOTOR_Z           | 0 / 1     |
+36  | MOVEMENT_SECONDARY_MOTOR_X        | 0 / 1     |
+37  | MOVEMENT_SECONDARY_MOTOR_INVERT_X | 0 / 1     |
+41  | MOVEMENT_STEPS_ACC_DEC_X          | steps     |
+42  | MOVEMENT_STEPS_ACC_DEC_Y          | steps     |
+43  | MOVEMENT_STEPS_ACC_DEC_Z          | steps     | (away from home)
+44  | MOVEMENT_STEPS_ACC_DEC_Z2         | steps     | (toward home)
+45  | MOVEMENT_STOP_AT_HOME_X           | 0 / 1     |
+46  | MOVEMENT_STOP_AT_HOME_Y           | 0 / 1     |
+47  | MOVEMENT_STOP_AT_HOME_Z           | 0 / 1     |
+51  | MOVEMENT_HOME_UP_X                | 0 / 1     |
+52  | MOVEMENT_HOME_UP_Y                | 0 / 1     |
+53  | MOVEMENT_HOME_UP_Z                | 0 / 1     |
+55  | MOVEMENT_STEP_PER_MM_X            | steps     |
+56  | MOVEMENT_STEP_PER_MM_Y            | steps     |
+57  | MOVEMENT_STEP_PER_MM_Z            | steps     |
+61  | MOVEMENT_MIN_SPD_X                | steps/s   |
+62  | MOVEMENT_MIN_SPD_Y                | steps/s   |
+63  | MOVEMENT_MIN_SPD_Z                | steps/s   | (away from home)
+64  | MOVEMENT_MIN_SPD_Z2               | steps/s   | (toward home)
+65  | MOVEMENT_HOME_SPD_X               | steps/s   |
+66  | MOVEMENT_HOME_SPD_Y               | steps/s   |
+67  | MOVEMENT_HOME_SPD_Z               | steps/s   |
+71  | MOVEMENT_MAX_SPD_X                | steps/s   |
+72  | MOVEMENT_MAX_SPD_Y                | steps/s   |
+73  | MOVEMENT_MAX_SPD_Z                | steps/s   | (away from home)
+74  | MOVEMENT_MAX_SPD_Z2               | steps/s   | (toward home)
 75  | MOVEMENT_INVERT_2_ENDPOINTS_X     | 0 / 1     | switch NO and NC
 76  | MOVEMENT_INVERT_2_ENDPOINTS_Y     | 0 / 1     | switch NO and NC
 77  | MOVEMENT_INVERT_2_ENDPOINTS_Z     | 0 / 1     | switch NO and NC
 81  | MOVEMENT_MOTOR_CURRENT_X          | milliamps | TMC2130 only
 82  | MOVEMENT_MOTOR_CURRENT_Y          | milliamps | TMC2130 only
 83  | MOVEMENT_MOTOR_CURRENT_Z          | milliamps | TMC2130 only
-85  | MOVEMENT_STALL_SENSITIVITY_X      | integer   | Express only
-86  | MOVEMENT_STALL_SENSITIVITY_Y      | integer   | Express only
-87  | MOVEMENT_STALL_SENSITIVITY_Z      | integer   | Express only
+85  | MOVEMENT_STALL_SENSITIVITY_X      | integer   | -63 (high) to +63 (low), Express only
+86  | MOVEMENT_STALL_SENSITIVITY_Y      | integer   | -63 (high) to +63 (low), Express only
+87  | MOVEMENT_STALL_SENSITIVITY_Z      | integer   | -63 (high) to +63 (low), Express only
 91  | MOVEMENT_MICROSTEPS_X             | integer   | TMC2130 only
 92  | MOVEMENT_MICROSTEPS_Y             | integer   | TMC2130 only
 93  | MOVEMENT_MICROSTEPS_Z             | integer   | TMC2130 only
@@ -320,9 +324,9 @@ ID  | Name                              | Unit      | Notes
 105 | ENCODER_TYPE_X                    | 0         | differential channels disabled
 106 | ENCODER_TYPE_Y                    | 0         | differential channels disabled
 107 | ENCODER_TYPE_Z                    | 0         | differential channels disabled
-111 | ENCODER_MISSED_STEPS_MAX_X        | steps     | 
-112 | ENCODER_MISSED_STEPS_MAX_Y        | steps     | 
-113 | ENCODER_MISSED_STEPS_MAX_Z        | steps     | 
+111 | ENCODER_MISSED_STEPS_MAX_X        | steps     |
+112 | ENCODER_MISSED_STEPS_MAX_Y        | steps     |
+113 | ENCODER_MISSED_STEPS_MAX_Z        | steps     |
 115 | ENCODER_SCALING_X                 | integer   | `10000*motor/encoder` (except Express)
 116 | ENCODER_SCALING_Y                 | integer   | `10000*motor/encoder` (except Express)
 117 | ENCODER_SCALING_Z                 | integer   | `10000*motor/encoder` (except Express)
@@ -338,24 +342,33 @@ ID  | Name                              | Unit      | Notes
 141 | MOVEMENT_AXIS_NR_STEPS_X          | steps     | 0 = limit disabled
 142 | MOVEMENT_AXIS_NR_STEPS_Y          | steps     | 0 = limit disabled
 143 | MOVEMENT_AXIS_NR_STEPS_Z          | steps     | 0 = limit disabled
-145 | MOVEMENT_STOP_AT_MAX_X            | 0 / 1     | 
-146 | MOVEMENT_STOP_AT_MAX_Y            | 0 / 1     | 
-147 | MOVEMENT_STOP_AT_MAX_Z            | 0 / 1     | 
-201 | PIN_GUARD_1_PIN_NR                | integer   | 
-202 | PIN_GUARD_1_TIME_OUT              | seconds   | 
-203 | PIN_GUARD_1_ACTIVE_STATE          | 0 / 1     | 
-205 | PIN_GUARD_2_PIN_NR                | integer   | 
-206 | PIN_GUARD_2_TIME_OUT              | seconds   | 
-207 | PIN_GUARD_2_ACTIVE_STATE          | 0 / 1     | 
-211 | PIN_GUARD_3_PIN_NR                | integer   | 
-212 | PIN_GUARD_3_TIME_OUT              | seconds   | 
-213 | PIN_GUARD_3_ACTIVE_STATE          | 0 / 1     | 
-215 | PIN_GUARD_4_PIN_NR                | integer   | 
-216 | PIN_GUARD_4_TIME_OUT              | seconds   | 
-217 | PIN_GUARD_4_ACTIVE_STATE          | 0 / 1     | 
-221 | PIN_GUARD_5_PIN_NR                | integer   | 
-222 | PIN_GUARD_5_TIME_OUT              | seconds   | 
-223 | PIN_GUARD_5_ACTIVE_STATE          | 0 / 1     | 
+145 | MOVEMENT_STOP_AT_MAX_X            | 0 / 1     |
+146 | MOVEMENT_STOP_AT_MAX_Y            | 0 / 1     |
+147 | MOVEMENT_STOP_AT_MAX_Z            | 0 / 1     |
+161 | MOVEMENT_CALIBRATION_RETRY_X      | integer   |
+162 | MOVEMENT_CALIBRATION_RETRY_Y      | integer   |
+163 | MOVEMENT_CALIBRATION_RETRY_Z      | integer   |
+165 | MOVEMENT_AXIS_STEALTH_X           | 0 / 1     |
+166 | MOVEMENT_AXIS_STEALTH_Y           | 0 / 1     |
+167 | MOVEMENT_AXIS_STEALTH_Z           | 0 / 1     |
+171 | MOVEMENT_CALIBRATION_DEADZONE_X   | integer   |
+172 | MOVEMENT_CALIBRATION_DEADZONE_Y   | integer   |
+173 | MOVEMENT_CALIBRATION_DEADZONE_Z   | integer   |
+201 | PIN_GUARD_1_PIN_NR                | integer   |
+202 | PIN_GUARD_1_TIME_OUT              | seconds   |
+203 | PIN_GUARD_1_ACTIVE_STATE          | 0 / 1     |
+205 | PIN_GUARD_2_PIN_NR                | integer   |
+206 | PIN_GUARD_2_TIME_OUT              | seconds   |
+207 | PIN_GUARD_2_ACTIVE_STATE          | 0 / 1     |
+211 | PIN_GUARD_3_PIN_NR                | integer   |
+212 | PIN_GUARD_3_TIME_OUT              | seconds   |
+213 | PIN_GUARD_3_ACTIVE_STATE          | 0 / 1     |
+215 | PIN_GUARD_4_PIN_NR                | integer   |
+216 | PIN_GUARD_4_TIME_OUT              | seconds   |
+217 | PIN_GUARD_4_ACTIVE_STATE          | 0 / 1     |
+221 | PIN_GUARD_5_PIN_NR                | integer   |
+222 | PIN_GUARD_5_TIME_OUT              | seconds   |
+223 | PIN_GUARD_5_ACTIVE_STATE          | 0 / 1     |
 
 Pin Numbering
 -------------

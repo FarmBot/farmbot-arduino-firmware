@@ -9,7 +9,7 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-  const char SOFTWARE_VERSION[] = "6.5.8\0";
+  const char SOFTWARE_VERSION[] = "6.6.0\0";
 
   const int LOGGING = 0;
 
@@ -71,7 +71,7 @@
   const long PARAM_TEST_DEFAULT = 0;
 
   const long PARAM_CONFIG_OK_DEFAULT = 0;
-  const long PARAM_USE_EEPROM_DEFAULT = 1;
+  const long PARAM_USE_EEPROM_DEFAULT = 0;
   const long PARAM_E_STOP_ON_MOV_ERR_DEFAULT = 0;
   const long PARAM_MOV_NR_RETRY_DEFAULT = 3;
 
@@ -244,7 +244,7 @@
 
   const long STATUS_GENERAL_DEFAULT = 0;
 
-#define NSS_PIN 22 
+#define NSS_PIN 22
 #define READ_ENA_PIN 49
 #define NULL 0
 
@@ -272,6 +272,10 @@ enum MdlSpiEncoders
 
 #if defined(FARMDUINO_V30) && !defined(SOFTWARE_VERSION_SUFFIX)
 #define SOFTWARE_VERSION_SUFFIX ".H.genesisK15\0"
+#endif
+
+#if defined(FARMDUINO_V32) && !defined(SOFTWARE_VERSION_SUFFIX)
+#define SOFTWARE_VERSION_SUFFIX ".I.genesisK16\0"
 #endif
 
 #if defined(FARMDUINO_EXP_V20) && !defined(SOFTWARE_VERSION_SUFFIX)
