@@ -266,8 +266,8 @@
   #define X_CHIP_SELECT 24  // X1_CHIP_SELECT
   #define X_MIN_PIN 69
   #define X_MAX_PIN 68
-  #define X_ENCDR_A 16
-  #define X_ENCDR_B 17
+  #define X_ENCDR_A -1      // N/A
+  #define X_ENCDR_B -1      // N/A
   #define X_ENCDR_A_Q -1    // N/A
   #define X_ENCDR_B_Q -1    // N/A
 
@@ -276,8 +276,8 @@
   #define E_DIR_PIN 30      // X2_DIR_PIN
   #define E_ENABLE_PIN 14   // X2_ENABLE_PIN
   #define E_CHIP_SELECT 29  // X2_CHIP_SELECT
-  #define X2_ENCDR_A 22
-  #define X2_ENCDR_B 39
+  #define X2_ENCDR_A -1     // N/A
+  #define X2_ENCDR_B -1     // N/A
 
     // Y-AXIS
   #define Y_STEP_PIN 32
@@ -286,8 +286,8 @@
   #define Y_CHIP_SELECT 28  // Y_CHIP_SELECT
   #define Y_MIN_PIN 67
   #define Y_MAX_PIN 66
-  #define Y_ENCDR_A 23
-  #define Y_ENCDR_B 24
+  #define Y_ENCDR_A -1      // N/A
+  #define Y_ENCDR_B -1      // N/A
   #define Y_ENCDR_A_Q -1    // N/A
   #define Y_ENCDR_B_Q -1    // N/A
 
@@ -298,8 +298,8 @@
   #define Z_CHIP_SELECT 23  // Z_CHIP_SELECT
   #define Z_MIN_PIN 65
   #define Z_MAX_PIN 64
-  #define Z_ENCDR_A 29
-  #define Z_ENCDR_B 28
+  #define Z_ENCDR_A -1      // N/A
+  #define Z_ENCDR_B -1      // N/A
   #define Z_ENCDR_A_Q -1    // N/A
   #define Z_ENCDR_B_Q -1    // N/A
 
@@ -314,7 +314,7 @@
   #define UTM_J -1
   #define UTM_K -1
   #define UTM_L -1
-    // Available digital pins: 2,3,18,19,38,42,43,44,45,46,47,48,49
+    // Available digital pins: 2,3,16,17,18,19,22,38,39,42,43,44,45,46,47,48,49
     // Available analog pins: 6,7,8
 
   #define LED_PIN 13
@@ -343,13 +343,13 @@
   #define SERVO_2_PIN 6
   #define SERVO_3_PIN 11
 
-    // Encoder X channel A: pin 16, port H1
-  #define ENC_X_A_PORT PINH
-  #define ENC_X_A_BYTE 0x02
+    // Encoder X channel A (disabled, use LED pin): pin 13, port B7
+  #define ENC_X_A_PORT PINB
+  #define ENC_X_A_BYTE 0x80
 
-    // Encoder X channel B: pin 17, port H0
-  #define ENC_X_B_PORT PINH
-  #define ENC_X_B_BYTE 0x01
+    // Encoder X channel B (disabled, use LED pin): pin 13, port B7
+  #define ENC_X_B_PORT PINB
+  #define ENC_X_B_BYTE 0x80
 
     // Encoder X channel A Q (disabled, use LED pin): pin 13, port B7
   #define ENC_X_A_Q_PORT PINB
@@ -359,13 +359,13 @@
   #define ENC_X_B_Q_PORT PINB
   #define ENC_X_B_Q_BYTE 0x80
 
-    // Encoder Y channel A: pin 23, port A1
-  #define ENC_Y_A_PORT PINA
-  #define ENC_Y_A_BYTE 0x02
+    // Encoder Y channel A (disabled, use LED pin): pin 13, port B7
+  #define ENC_Y_A_PORT PINB
+  #define ENC_Y_A_BYTE 0x80
 
-    // Encoder Y channel B: pin 24, port A2
-  #define ENC_Y_B_PORT PINA
-  #define ENC_Y_B_BYTE 0x04
+    // Encoder Y channel B (disabled, use LED pin): pin 13, port B7
+  #define ENC_Y_B_PORT PINB
+  #define ENC_Y_B_BYTE 0x80
 
     // Encoder Y channel A Q (disabled, use LED pin): pin 13, port B7
   #define ENC_Y_A_Q_PORT PINB
@@ -375,13 +375,13 @@
   #define ENC_Y_B_Q_PORT PINB
   #define ENC_Y_B_Q_BYTE 0x80
 
-    // Encoder Z channel A: pin 29, port A7
-  #define ENC_Z_A_PORT PINA
+    // Encoder Z channel A (disabled, use LED pin): pin 13, port B7
+  #define ENC_Z_A_PORT PINB
   #define ENC_Z_A_BYTE 0x80
 
-    // Encoder Z channel B: pin 28, port A6
-  #define ENC_Z_B_PORT PINA
-  #define ENC_Z_B_BYTE 0x40
+    // Encoder Z channel B (disabled, use LED pin): pin 13, port B7
+  #define ENC_Z_B_PORT PINB
+  #define ENC_Z_B_BYTE 0x80
 
     // Encoder Z channel A Q (disabled, use LED pin): pin 13, port B7
   #define ENC_Z_A_Q_PORT PINB
@@ -402,8 +402,8 @@
   #define X_CHIP_SELECT 24  // X1_CHIP_SELECT
   #define X_MIN_PIN 69
   #define X_MAX_PIN 68
-  #define X_ENCDR_A 16
-  #define X_ENCDR_B 17
+  #define X_ENCDR_A -1      // N/A
+  #define X_ENCDR_B -1      // N/A
   #define X_ENCDR_A_Q -1    // N/A
   #define X_ENCDR_B_Q -1    // N/A
 
@@ -412,8 +412,8 @@
   #define E_DIR_PIN 30      // X2_DIR_PIN
   #define E_ENABLE_PIN 14   // X2_ENABLE_PIN
   #define E_CHIP_SELECT 29  // X2_CHIP_SELECT
-  #define X2_ENCDR_A 22
-  #define X2_ENCDR_B 39
+  #define X2_ENCDR_A -1     // N/A
+  #define X2_ENCDR_B -1     // N/A
 
     // Y-AXIS
   #define Y_STEP_PIN 32
@@ -422,8 +422,8 @@
   #define Y_CHIP_SELECT 28  // Y_CHIP_SELECT
   #define Y_MIN_PIN 67
   #define Y_MAX_PIN 66
-  #define Y_ENCDR_A 23
-  #define Y_ENCDR_B 24
+  #define Y_ENCDR_A -1      // N/A
+  #define Y_ENCDR_B -1      // N/A
   #define Y_ENCDR_A_Q -1    // N/A
   #define Y_ENCDR_B_Q -1    // N/A
 
@@ -434,8 +434,8 @@
   #define Z_CHIP_SELECT 23  // Z_CHIP_SELECT
   #define Z_MIN_PIN 65
   #define Z_MAX_PIN 64
-  #define Z_ENCDR_A 29
-  #define Z_ENCDR_B 28
+  #define Z_ENCDR_A -1      // N/A
+  #define Z_ENCDR_B -1      // N/A
   #define Z_ENCDR_A_Q -1    // N/A
   #define Z_ENCDR_B_Q -1    // N/A
 
@@ -450,7 +450,7 @@
   #define UTM_J -1
   #define UTM_K -1
   #define UTM_L -1 // PE
-    // Available digital pins: 18,19,38,42,43,44,45,46,47,48,49
+    // Available digital pins: 16,17,18,19,22,38,39,42,43,44,45,46,47,48,49
     // Available analog pins: 7,8
 
   #define LED_PIN 13
@@ -482,13 +482,13 @@
   #define SERVO_2_PIN 6
   #define SERVO_3_PIN 11
 
-    // Encoder X channel A: pin 16, port H1
-  #define ENC_X_A_PORT PINH
-  #define ENC_X_A_BYTE 0x02
+    // Encoder X channel A (disabled, use LED pin): pin 13, port B7
+  #define ENC_X_A_PORT PINB
+  #define ENC_X_A_BYTE 0x80
 
-    // Encoder X channel B: pin 17, port H0
-  #define ENC_X_B_PORT PINH
-  #define ENC_X_B_BYTE 0x01
+    // Encoder X channel B (disabled, use LED pin): pin 13, port B7
+  #define ENC_X_B_PORT PINB
+  #define ENC_X_B_BYTE 0x80
 
     // Encoder X channel A Q (disabled, use LED pin): pin 13, port B7
   #define ENC_X_A_Q_PORT PINB
@@ -498,13 +498,13 @@
   #define ENC_X_B_Q_PORT PINB
   #define ENC_X_B_Q_BYTE 0x80
 
-    // Encoder Y channel A: pin 23, port A1
-  #define ENC_Y_A_PORT PINA
-  #define ENC_Y_A_BYTE 0x02
+    // Encoder Y channel A (disabled, use LED pin): pin 13, port B7
+  #define ENC_Y_A_PORT PINB
+  #define ENC_Y_A_BYTE 0x80
 
-    // Encoder Y channel B: pin 24, port A2
-  #define ENC_Y_B_PORT PINA
-  #define ENC_Y_B_BYTE 0x04
+    // Encoder Y channel B (disabled, use LED pin): pin 13, port B7
+  #define ENC_Y_B_PORT PINB
+  #define ENC_Y_B_BYTE 0x80
 
     // Encoder Y channel A Q (disabled, use LED pin): pin 13, port B7
   #define ENC_Y_A_Q_PORT PINB
@@ -514,13 +514,13 @@
   #define ENC_Y_B_Q_PORT PINB
   #define ENC_Y_B_Q_BYTE 0x80
 
-    // Encoder Z channel A: pin 29, port A7
-  #define ENC_Z_A_PORT PINA
+    // Encoder Z channel A (disabled, use LED pin): pin 13, port B7
+  #define ENC_Z_A_PORT PINB
   #define ENC_Z_A_BYTE 0x80
 
-    // Encoder Z channel B: pin 28, port A6
-  #define ENC_Z_B_PORT PINA
-  #define ENC_Z_B_BYTE 0x40
+    // Encoder Z channel B (disabled, use LED pin): pin 13, port B7
+  #define ENC_Z_B_PORT PINB
+  #define ENC_Z_B_BYTE 0x80
 
     // Encoder Z channel A Q (disabled, use LED pin): pin 13, port B7
   #define ENC_Z_A_Q_PORT PINB
