@@ -184,7 +184,7 @@
   #define UTM_J -1
   #define UTM_K -1
   #define UTM_L -1
-    // Available digital pins: 2,3,18,19,38,42,43,44,45,46,47,48,49
+    // Available digital pins: 2,3,18,19,38,42,43,44,45,46,47,48
     // Available analog pins: 0,1,2,3,4,6,7,8
 
   #define LED_PIN 13
@@ -314,7 +314,7 @@
   #define UTM_J -1
   #define UTM_K -1
   #define UTM_L -1
-    // Available digital pins: 2,3,16,17,18,19,22,38,39,42,43,44,45,46,47,48,49
+    // Available digital pins: 2,3,16,17,18,19,22,38,39,42,43,44,45,46,47,48
     // Available analog pins: 6,7,8
 
   #define LED_PIN 13
@@ -450,7 +450,7 @@
   #define UTM_J -1
   #define UTM_K -1
   #define UTM_L -1 // PE
-    // Available digital pins: 16,17,18,19,22,38,39,42,43,44,45,46,47,48,49
+    // Available digital pins: 16,17,18,19,22,38,39,42,43,44,45,46,47,48
     // Available analog pins: 7,8
 
   #define LED_PIN 13
