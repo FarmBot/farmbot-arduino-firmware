@@ -15,7 +15,7 @@ class TMC2130_Basics {
 public:
   TMC2130_Basics(uint8_t csPin, uint8_t axisNumber);
   void init();
-  void init_SPI();
+  // void init_SPI();
 
   uint8_t read_STAT();
   uint8_t read_REG(uint8_t address, uint32_t *data);
