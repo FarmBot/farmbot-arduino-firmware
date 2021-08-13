@@ -199,6 +199,9 @@ Value |Description
 4     |Calibration error
 14    |Invalid command
 15    |No config
+31    |Stall detected X axis
+32    |Stall detected Y axis
+33    |Stall detected Z axis
 
 Axis states (R05)
 -----------------
