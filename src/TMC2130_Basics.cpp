@@ -29,7 +29,7 @@ void TMC2130_Basics::init() {
 uint8_t TMC2130_Basics::read_STAT()
 {
   //init_SPI();
-  SPI.beginTransaction(SPISettings(FB_TMC_SPI_CLOCK_DIVIDER, FB_TMC_SPI_BIT_ORDER, FB_TMC_SPI_DATA_MODE));
+  SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV4, FB_TMC_SPI_BIT_ORDER, FB_TMC_SPI_DATA_MODE));
   digitalWrite(_csPin, LOW);
 
   // read address
@@ -50,7 +50,7 @@ uint8_t TMC2130_Basics::read_STAT()
 uint8_t TMC2130_Basics::read_REG(uint8_t address, uint32_t *data)
 {
   // init_SPI();
-  SPI.beginTransaction(SPISettings(FB_TMC_SPI_CLOCK_DIVIDER, FB_TMC_SPI_BIT_ORDER, FB_TMC_SPI_DATA_MODE));
+  SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV4, FB_TMC_SPI_BIT_ORDER, FB_TMC_SPI_DATA_MODE));
   digitalWrite(_csPin, LOW);
 
   // read address
@@ -86,7 +86,7 @@ uint8_t TMC2130_Basics::read_REG(uint8_t address, uint32_t *data)
 // write to a register
 uint8_t TMC2130_Basics::write_REG(uint8_t address, uint32_t data)
 {
-  SPI.beginTransaction(SPISettings(FB_TMC_SPI_CLOCK_DIVIDER, FB_TMC_SPI_BIT_ORDER, FB_TMC_SPI_DATA_MODE));
+  SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV4, FB_TMC_SPI_BIT_ORDER, FB_TMC_SPI_DATA_MODE));
   digitalWrite(_csPin, LOW);
 
   // write address
