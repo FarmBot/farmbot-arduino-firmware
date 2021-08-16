@@ -12,24 +12,23 @@ TMC2130_Basics::TMC2130_Basics(uint8_t csPin, uint8_t axisNumber)
 void TMC2130_Basics::init() {
   pinMode(_csPin, OUTPUT);
   digitalWrite(_csPin, HIGH);
-  // init_SPI();
+  init_SPI();
   read_STAT();
 }
 
 // initialize SPI
-// void TMC2130_Basics::init_SPI() {
-//   SPI.setDataMode(FB_TMC_SPI_DATA_MODE);
-//   SPI.setBitOrder(FB_TMC_SPI_BIT_ORDER);
-//   //SPI.setClockDivider(FB_TMC_SPI_CLOCK_DIVIDER);/**
-//   SPI.setClockDivider(SPI_CLOCK_DIV4);
-//   SPI.begin();
-// }
+ void TMC2130_Basics::init_SPI() {
+   SPI.setDataMode(FB_TMC_SPI_DATA_MODE);
+   SPI.setBitOrder(FB_TMC_SPI_BIT_ORDER);
+   //SPI.setClockDivider(FB_TMC_SPI_CLOCK_DIVIDER);/**
+   SPI.setClockDivider(SPI_CLOCK_DIV4);
+   SPI.begin();
+ }
 
 // read status
 uint8_t TMC2130_Basics::read_STAT()
 {
-  //init_SPI();
-  SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV4, FB_TMC_SPI_BIT_ORDER, FB_TMC_SPI_DATA_MODE));
+  init_SPI();
   digitalWrite(_csPin, LOW);
 
   // read address
@@ -41,7 +40,6 @@ uint8_t TMC2130_Basics::read_STAT()
   }
 
   digitalWrite(_csPin, HIGH);
-  SPI.endTransaction();
 
   return _status;
 }
@@ -49,8 +47,7 @@ uint8_t TMC2130_Basics::read_STAT()
 // read a register
 uint8_t TMC2130_Basics::read_REG(uint8_t address, uint32_t *data)
 {
-  // init_SPI();
-  SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV4, FB_TMC_SPI_BIT_ORDER, FB_TMC_SPI_DATA_MODE));
+   init_SPI();
   digitalWrite(_csPin, LOW);
 
   // read address
@@ -78,7 +75,6 @@ uint8_t TMC2130_Basics::read_REG(uint8_t address, uint32_t *data)
   *data |= SPI.transfer(0x00) & 0xFF;
 
   digitalWrite(_csPin, HIGH);
-  SPI.endTransaction();
 
   return _status;
 }
@@ -86,7 +82,6 @@ uint8_t TMC2130_Basics::read_REG(uint8_t address, uint32_t *data)
 // write to a register
 uint8_t TMC2130_Basics::write_REG(uint8_t address, uint32_t data)
 {
-  SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV4, FB_TMC_SPI_BIT_ORDER, FB_TMC_SPI_DATA_MODE));
   digitalWrite(_csPin, LOW);
 
   // write address
@@ -99,7 +94,6 @@ uint8_t TMC2130_Basics::write_REG(uint8_t address, uint32_t data)
   SPI.transfer((data >> 0UL) & 0xFF);
 
   digitalWrite(_csPin, HIGH);
-  SPI.endTransaction();
 
   return _status;
 }
