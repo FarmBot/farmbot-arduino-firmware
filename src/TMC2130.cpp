@@ -70,7 +70,6 @@ void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current,
 
     tb->set_CHOPCONF(FB_TMC_CHOPCONF_TOFF, 3);
     tb->set_CHOPCONF(FB_TMC_CHOPCONF_HSTRT, 4);
-
     tb->set_CHOPCONF(FB_TMC_CHOPCONF_HEND, 1);
     tb->set_CHOPCONF(FB_TMC_CHOPCONF_TBL, 2);
     tb->set_CHOPCONF(FB_TMC_CHOPCONF_CHM, 0);
