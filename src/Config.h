@@ -123,9 +123,9 @@
   const long MOVEMENT_MIN_SPD_Z2_DEFAULT = 50;
 
   // Speed used for homing and calibration
-  const long MOVEMENT_HOME_SPEED_X_DEFAULT = 400;
-  const long MOVEMENT_HOME_SPEED_Y_DEFAULT = 400;
-  const long MOVEMENT_HOME_SPEED_Z_DEFAULT = 400;
+  const long MOVEMENT_HOME_SPEED_X_DEFAULT = 50;
+  const long MOVEMENT_HOME_SPEED_Y_DEFAULT = 50;
+  const long MOVEMENT_HOME_SPEED_Z_DEFAULT = 50;
 
   // Maximum speed in steps per second
   const long MOVEMENT_MAX_SPD_X_DEFAULT = 400;
@@ -139,29 +139,29 @@
   const long MOVEMENT_INVERT_2_ENDPOINTS_Z_DEFAULT = 0;
 
   // Stop at the home position or continue to other size of axis
-  const long MOVEMENT_STOP_AT_HOME_X_DEFAULT = 1;
-  const long MOVEMENT_STOP_AT_HOME_Y_DEFAULT = 1;
-  const long MOVEMENT_STOP_AT_HOME_Z_DEFAULT = 1;
+  const long MOVEMENT_STOP_AT_HOME_X_DEFAULT = 0;
+  const long MOVEMENT_STOP_AT_HOME_Y_DEFAULT = 0;
+  const long MOVEMENT_STOP_AT_HOME_Z_DEFAULT = 0;
 
   // Stop at the maximum size of the axis
-  const long MOVEMENT_STOP_AT_MAX_X_DEFAULT = 1;
-  const long MOVEMENT_STOP_AT_MAX_Y_DEFAULT = 1;
-  const long MOVEMENT_STOP_AT_MAX_Z_DEFAULT = 1;
+  const long MOVEMENT_STOP_AT_MAX_X_DEFAULT = 0;
+  const long MOVEMENT_STOP_AT_MAX_Y_DEFAULT = 0;
+  const long MOVEMENT_STOP_AT_MAX_Z_DEFAULT = 0;
 
   // The retry when calibrating
-  const long MOVEMENT_CALIBRATION_RETRY_X_DEFAULT = 1;
-  const long MOVEMENT_CALIBRATION_RETRY_Y_DEFAULT = 1;
-  const long MOVEMENT_CALIBRATION_RETRY_Z_DEFAULT = 1;
+  const long MOVEMENT_CALIBRATION_RETRY_X_DEFAULT = 3;
+  const long MOVEMENT_CALIBRATION_RETRY_Y_DEFAULT = 3;
+  const long MOVEMENT_CALIBRATION_RETRY_Z_DEFAULT = 3;
 
   // deadzone for the retry for the calibration
-  const long MOVEMENT_CALIBRATION_DEADZONE_X_DEFAULT = 50;
-  const long MOVEMENT_CALIBRATION_DEADZONE_Y_DEFAULT = 50;
-  const long MOVEMENT_CALIBRATION_DEADZONE_Z_DEFAULT = 250;
+  const long MOVEMENT_CALIBRATION_DEADZONE_X_DEFAULT = 10;
+  const long MOVEMENT_CALIBRATION_DEADZONE_Y_DEFAULT = 10;
+  const long MOVEMENT_CALIBRATION_DEADZONE_Z_DEFAULT = 10;
 
   // use stealth setting or TMC2130
-  const long MOVEMENT_AXIS_STEALTH_X_DEFAULT = 1;
-  const long MOVEMENT_AXIS_STEALTH_Y_DEFAULT = 1;
-  const long MOVEMENT_AXIS_STEALTH_Z_DEFAULT = 1;
+  const long MOVEMENT_AXIS_STEALTH_X_DEFAULT = 0;
+  const long MOVEMENT_AXIS_STEALTH_Y_DEFAULT = 0;
+  const long MOVEMENT_AXIS_STEALTH_Z_DEFAULT = 0;
 
   // motor current (used with TMC2130)
   const long MOVEMENT_MOTOR_CURRENT_X_DEFAULT = 600;
@@ -169,9 +169,9 @@
   const long MOVEMENT_MOTOR_CURRENT_Z_DEFAULT = 600;
 
   // stall sensitivity (used with TMC2130)
-  const long MOVEMENT_STALL_SENSITIVITY_X_DEFAULT = 63;
-  const long MOVEMENT_STALL_SENSITIVITY_Y_DEFAULT = 63;
-  const long MOVEMENT_STALL_SENSITIVITY_Z_DEFAULT = 63;
+  const long MOVEMENT_STALL_SENSITIVITY_X_DEFAULT = 30;
+  const long MOVEMENT_STALL_SENSITIVITY_Y_DEFAULT = 30;
+  const long MOVEMENT_STALL_SENSITIVITY_Z_DEFAULT = 30;
 
   // micro steps setting (used with TMC2130)
   const long MOVEMENT_MICROSTEPS_X_DEFAULT = 0;

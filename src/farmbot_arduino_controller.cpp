@@ -497,6 +497,9 @@ void setPinInputOutput()
     pinMode(NSS_PIN, OUTPUT);
     digitalWrite(NSS_PIN, HIGH);
 
+    SPI.setBitOrder(MSBFIRST);
+    SPI.setDataMode(SPI_MODE0);
+    SPI.setClockDivider(SPI_CLOCK_DIV4);
     SPI.begin();
 #endif
 }
@@ -619,6 +622,9 @@ void setPinInputOutput()
     pinMode(NSS_PIN, OUTPUT);
     digitalWrite(NSS_PIN, HIGH);
 
+    SPI.setBitOrder(MSBFIRST);
+    SPI.setDataMode(SPI_MODE0);
+    SPI.setClockDivider(SPI_CLOCK_DIV4);
     SPI.begin();
   #endif
 }
