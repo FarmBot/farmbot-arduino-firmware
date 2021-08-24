@@ -283,11 +283,13 @@ void checkParamsChanged()
 
 
     #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
+      stopInterrupt();
       if (lastTmcParamChangeNr != ParameterList::getInstance()->tmcParamChangeNumber())
       {
         lastTmcParamChangeNr = ParameterList::getInstance()->tmcParamChangeNumber();
         Movement::getInstance()->loadSettingsTMC2130();
       }
+      restartInterrupt();
     #endif
 
     Movement::getInstance()->loadSettings();
@@ -626,6 +628,7 @@ void setPinInputOutput()
     SPI.setDataMode(SPI_MODE0);
     SPI.setClockDivider(SPI_CLOCK_DIV4);
     SPI.begin();
+
   #endif
 }
 #endif
@@ -656,6 +659,16 @@ void startInterrupt()
 
   Timer1.attachInterrupt(interrupt);
   Timer1.initialize(MOVEMENT_INTERRUPT_SPEED);
+  Timer1.start();
+}
+
+void stopInterrupt()
+{
+  Timer1.stop();
+}
+
+void restartInterrupt()
+{
   Timer1.start();
 }
 

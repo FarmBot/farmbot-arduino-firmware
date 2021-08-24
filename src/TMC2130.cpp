@@ -12,6 +12,7 @@
 
 void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current, int sensitivity, bool stealth)
 {
+  //loadingParameters = true;
 
   uint32_t data = 0;
   uint32_t value = 0;
@@ -95,6 +96,10 @@ void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current,
     tb->set_GCONF(FB_TMC_GCONF_DIAG0_ERROR, 1);
     tb->set_GCONF(FB_TMC_GCONF_DIAG1_STEPS_SKIPPED, 1);
     tb->set_CHOPCONF(FB_TMC_COOLCONF_SGT, sensitivity);
+
+    // Disable stealth
+    tb->set_GCONF(FB_TMC_GCONF_EN_PWM_MODE, 1);
+
   }
 
   if (stealth)
@@ -113,7 +118,11 @@ void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current,
     tb->set_CHOPCONF(FB_TMC_CHOPCONF_VHIGHCHM, 0b00);
     tb->set_CHOPCONF(FB_TMC_CHOPCONF_VHIGHFS, 0b00);
 
-    // Enbable stealth
+    // Disable dcStep settings for non-stealth mode
+    tb->alter_REG(FB_TMC_REG_DCCTRL, uint32_t(0) << FB_TMC_DCCTRL_DC_TIME, FB_TMC_DCCTRL_DC_TIME_MASK << FB_TMC_DCCTRL_DC_TIME);
+    tb->alter_REG(FB_TMC_REG_DCCTRL, uint32_t(0) << FB_TMC_DCCTRL_DC_SG, FB_TMC_DCCTRL_DC_SG_MASK << FB_TMC_DCCTRL_DC_SG);
+
+    // Enable stealth
     tb->alter_REG(FB_TMC_REG_PWMCONF, uint32_t(1) << FB_TMC_PWMCONF_PWM_AUTOSCALE, FB_TMC_PWMCONF_MASKS[FB_TMC_PWMCONF_PWM_AUTOSCALE] << FB_TMC_PWMCONF_PWM_AUTOSCALE);
     tb->alter_REG(FB_TMC_REG_PWMCONF, uint32_t(0) << FB_TMC_PWMCONF_PWM_FREQ, FB_TMC_PWMCONF_MASKS[FB_TMC_PWMCONF_PWM_FREQ] << FB_TMC_PWMCONF_PWM_FREQ);
     tb->alter_REG(FB_TMC_REG_PWMCONF, uint32_t(1) << FB_TMC_PWMCONF_PWM_GRAD, FB_TMC_PWMCONF_MASKS[FB_TMC_PWMCONF_PWM_GRAD] << FB_TMC_PWMCONF_PWM_GRAD);
@@ -121,6 +130,13 @@ void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current,
 
     tb->set_GCONF(FB_TMC_GCONF_EN_PWM_MODE, uint32_t(1));
 
+    // Set up cool conf
+    tb->set_CHOPCONF(FB_TMC_COOLCONF_SEMIN, 1);
+    tb->set_CHOPCONF(FB_TMC_COOLCONF_SEMAX, 2);
+    tb->set_CHOPCONF(FB_TMC_COOLCONF_SEDN, 0b01);
+    tb->set_CHOPCONF(FB_TMC_CHOPCONF_VHIGHCHM, 0b00);
+    tb->set_CHOPCONF(FB_TMC_CHOPCONF_VHIGHFS, 0b00);
+    tb->set_CHOPCONF(FB_TMC_CHOPCONF_TOFF, 8);
 
     // Disable diagnostics
     tb->set_GCONF(FB_TMC_GCONF_DIAG0_ERROR, 0);
@@ -128,6 +144,8 @@ void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current,
     tb->set_CHOPCONF(FB_TMC_COOLCONF_SGT, 0);
 
   }
+
+  //loadingParameters = false;
 
   delay(100);
 }

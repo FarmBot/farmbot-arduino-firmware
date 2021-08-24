@@ -61,6 +61,8 @@ void setup();
   void startPinGuard();
   void startServo();
   void startInterrupt();
+  void stopInterrupt();
+  void restartInterrupt();
   void homeOnBoot();
   void setupTestForDebug();
   void runTestForDebug();
