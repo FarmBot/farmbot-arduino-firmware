@@ -87,11 +87,7 @@ void MovementEncoder::setPosition(long newPosition)
 
       const byte reset_cmd = 0x00;
 
-      #if defined(FARMDUINO_V32)
-        SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV4, MSBFIRST, SPI_MODE3));
-      #else
-        SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV4, MSBFIRST, SPI_MODE0));
-      #endif
+      SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV4, MSBFIRST, SPI_MODE0));
       digitalWrite(NSS_PIN, LOW);
       delayMicroseconds(2);
       SPI.transfer(reset_cmd | (mdlEncoder << mdl_spi_encoder_offset));
@@ -182,11 +178,7 @@ void MovementEncoder::processEncoder()
     int readSize = 4;
     long encoderVal = 0;
 
-    #if defined(FARMDUINO_V32)
-      SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV4, MSBFIRST, SPI_MODE3));
-    #else
-      SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV4, MSBFIRST, SPI_MODE0));
-    #endif
+    SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV4, MSBFIRST, SPI_MODE0));
     digitalWrite(NSS_PIN, LOW);
     delayMicroseconds(2);
     SPI.transfer(read_cmd | (mdlEncoder << mdl_spi_encoder_offset));
