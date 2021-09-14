@@ -152,10 +152,15 @@ enum ParamListEnum
   MOVEMENT_AXIS_STEALTH_Y = 166,
   MOVEMENT_AXIS_STEALTH_Z = 167,
 
-  // deadzone for the retry for the calibration
+  // deadzone for the retry for the calibration for one try
   MOVEMENT_CALIBRATION_DEADZONE_X = 171,
   MOVEMENT_CALIBRATION_DEADZONE_Y = 172,
   MOVEMENT_CALIBRATION_DEADZONE_Z = 173,
+
+  // retry for the calibration in total
+  MOVEMENT_CALIBRATION_RETRY_TOTAL_X = 175,
+  MOVEMENT_CALIBRATION_RETRY_TOTAL_Y = 176,
+  MOVEMENT_CALIBRATION_RETRY_TOTAL_Z = 177,
 
   // pin guard settings
   PIN_GUARD_1_PIN_NR = 201,
