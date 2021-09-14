@@ -357,6 +357,9 @@ ID  | Name                              | Unit      | Notes
 171 | MOVEMENT_CALIBRATION_DEADZONE_X   | integer   |
 172 | MOVEMENT_CALIBRATION_DEADZONE_Y   | integer   |
 173 | MOVEMENT_CALIBRATION_DEADZONE_Z   | integer   |
+175 | MOVEMENT_CALIBRATION_RETRY_TOTAL_X| integer   |
+176 | MOVEMENT_CALIBRATION_RETRY_TOTAL_Y| integer   |
+177 | MOVEMENT_CALIBRATION_RETRY_TOTAL_Z| integer   |
 201 | PIN_GUARD_1_PIN_NR                | integer   |
 202 | PIN_GUARD_1_TIME_OUT              | seconds   |
 203 | PIN_GUARD_1_ACTIVE_STATE          | 0 / 1     |
