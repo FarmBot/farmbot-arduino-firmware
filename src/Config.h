@@ -148,10 +148,15 @@
   const long MOVEMENT_STOP_AT_MAX_Y_DEFAULT = 0;
   const long MOVEMENT_STOP_AT_MAX_Z_DEFAULT = 0;
 
-  // The retry when calibrating
+  // The retry when calibrating for one try
   const long MOVEMENT_CALIBRATION_RETRY_X_DEFAULT = 3;
   const long MOVEMENT_CALIBRATION_RETRY_Y_DEFAULT = 3;
   const long MOVEMENT_CALIBRATION_RETRY_Z_DEFAULT = 3;
+
+  // The retry when calibrating in total
+  const long MOVEMENT_CALIBRATION_RETRY_X_TOTAL_DEFAULT = 10;
+  const long MOVEMENT_CALIBRATION_RETRY_Y_TOTAL_DEFAULT = 10;
+  const long MOVEMENT_CALIBRATION_RETRY_Z_TOTAL_DEFAULT = 10;
 
   // deadzone for the retry for the calibration
   const long MOVEMENT_CALIBRATION_DEADZONE_X_DEFAULT = 10;

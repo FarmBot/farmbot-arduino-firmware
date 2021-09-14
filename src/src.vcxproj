@@ -185,7 +185,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties custom_mega_atmega2560_vm.programmer_name="" config.Release.customdebug_mega_atmega2560_debugger_type="none" vm.programmer_name="avrisp" config.Debug.customdebug_mega_atmega2560_debugger_type="universal" custom_mega_atmega2560_vm.upload.useprogrammer="0" arduino.upload.port="COM3" />
+      <UserProperties custom_mega_atmega2560_vm.programmer_name="" config.Release.customdebug_mega_atmega2560_debugger_type="none" vm.programmer_name="avrisp" config.Debug.customdebug_mega_atmega2560_debugger_type="universal" custom_mega_atmega2560_vm.upload.useprogrammer="0" arduino.upload.port="COM4" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

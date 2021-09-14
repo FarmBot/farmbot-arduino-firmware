@@ -1183,6 +1183,7 @@ int Movement::calibrateAxis(int axis)
   int *axisStatus;
   long *axisStepsPerMm;
   long *calibRetriesMax;
+  long *calibRetriesTotalMax;
   long *calibRetryDeadzone;
 
   long stepDelay = 0;
@@ -1249,6 +1250,7 @@ int Movement::calibrateAxis(int axis)
   reportEndStops();
 
   int calibRetries = 0;
+  int calibRetriesTotal = 0;
 
   // Select the right axis. Store the references to the right axis variables for later use.
 
@@ -1272,6 +1274,7 @@ int Movement::calibrateAxis(int axis)
     axisStepsPerMm = &stepsPerMm[0];
     calibRetriesMax = &motorCalibRetry[0];
     calibRetryDeadzone = &motorCalibRetryDeadzone[0];
+    calibRetriesTotalMax = &motorCalibRetryTotal[0];
     break;
   case 1:
     calibAxis = &axisY;
@@ -1288,6 +1291,7 @@ int Movement::calibrateAxis(int axis)
     axisStepsPerMm = &stepsPerMm[1];
     calibRetriesMax = &motorCalibRetry[1];
     calibRetryDeadzone = &motorCalibRetryDeadzone[1];
+    calibRetriesTotalMax = &motorCalibRetryTotal[1];
     break;
   case 2:
     calibAxis = &axisZ;
@@ -1304,6 +1308,7 @@ int Movement::calibrateAxis(int axis)
     axisStepsPerMm = &stepsPerMm[2];
     calibRetriesMax = &motorCalibRetry[2];
     calibRetryDeadzone = &motorCalibRetryDeadzone[2];
+    calibRetriesTotalMax = &motorCalibRetryTotal[2];
     break;
   default:
     Serial.print("R99 Calibration error: invalid axis selected\r\n");
@@ -1344,6 +1349,7 @@ int Movement::calibrateAxis(int axis)
   *missedSteps = 0;
   movementDone = false;
   calibRetries = 0;
+  calibRetriesTotal = 0;
 
   motorConsMissedSteps[0] = 0;
   motorConsMissedSteps[1] = 0;
@@ -1486,6 +1492,7 @@ int Movement::calibrateAxis(int axis)
         // After a few tries, assume this is the end of the axis
 
         stepsCountLastStop = stepsCount;
+        calibRetriesTotal++;
 
         if (calibRetries < *calibRetriesMax)
         {
@@ -1497,6 +1504,10 @@ int Movement::calibrateAxis(int axis)
           Serial.print(calibRetries);
           Serial.print("/");
           Serial.print(*calibRetriesMax);
+          Serial.print(" of total retry ");
+          Serial.print(calibRetriesTotal);
+          Serial.print("/");
+          Serial.print(*calibRetriesTotalMax);
           Serial.print("\r\n");
 
           delay(1000);
@@ -1511,6 +1522,14 @@ int Movement::calibrateAxis(int axis)
           {
             invertEndStops = true;
           }
+        }
+
+        if (calibRetriesTotal >= *calibRetriesTotalMax)
+        {
+          movementDone = true;
+          error = 1;
+
+          Serial.print("R99 movement done after safety retry count reached\r\n");
         }
       }
     }
@@ -1668,11 +1687,7 @@ int Movement::calibrateAxis(int axis)
         ((!invertEndStops && !calibAxis->endStopMin()) || (invertEndStops && !calibAxis->endStopMax())) &&
         !movementDone &&
         !(
-          calibAxis->missedStepHistory[0] >= *missedStepsMax //&&
-          //calibAxis->missedStepHistory[1] >= *missedStepsMax &&
-          //calibAxis->missedStepHistory[2] >= *missedStepsMax &&
-          //calibAxis->missedStepHistory[3] >= *missedStepsMax &&
-          //calibAxis->missedStepHistory[4] >= *missedStepsMax
+          calibAxis->missedStepHistory[0] >= *missedStepsMax
         )
       )
 #else
@@ -1714,6 +1729,7 @@ int Movement::calibrateAxis(int axis)
       else
       {
         stepsCountLastStop = stepsCount;
+        calibRetriesTotal++;
 
         // Encoders detected a bump. Try again.
         // After a few tries, assume this is the end of the axis
@@ -1727,6 +1743,10 @@ int Movement::calibrateAxis(int axis)
           Serial.print(calibRetries);
           Serial.print("/");
           Serial.print(*calibRetriesMax);
+          Serial.print(" of total retry ");
+          Serial.print(calibRetriesTotal);
+          Serial.print("/");
+          Serial.print(*calibRetriesTotalMax);
           Serial.print("\r\n");
 
           delay(1000);
@@ -1741,6 +1761,13 @@ int Movement::calibrateAxis(int axis)
           {
             invertEndStops = true;
           }
+        }
+
+        if (calibRetriesTotal >= *calibRetriesTotalMax)
+        {
+          movementDone = true;
+          error = 1;
+          Serial.print("R99 movement done after safety retry count reached\r\n");
         }
       }
     }
@@ -2021,6 +2048,10 @@ void Movement::loadMotorSettings()
   motorCalibRetry[0] = ParameterList::getInstance()->getValue(MOVEMENT_CALIBRATION_RETRY_X);
   motorCalibRetry[1] = ParameterList::getInstance()->getValue(MOVEMENT_CALIBRATION_RETRY_Y);
   motorCalibRetry[2] = ParameterList::getInstance()->getValue(MOVEMENT_CALIBRATION_RETRY_Z);
+
+  motorCalibRetryTotal[0] = ParameterList::getInstance()->getValue(MOVEMENT_CALIBRATION_RETRY_TOTAL_X);
+  motorCalibRetryTotal[1] = ParameterList::getInstance()->getValue(MOVEMENT_CALIBRATION_RETRY_TOTAL_Y);
+  motorCalibRetryTotal[2] = ParameterList::getInstance()->getValue(MOVEMENT_CALIBRATION_RETRY_TOTAL_Z);
 
   motorCalibRetryDeadzone[0] = ParameterList::getInstance()->getValue(MOVEMENT_CALIBRATION_DEADZONE_Z);
   motorCalibRetryDeadzone[1] = ParameterList::getInstance()->getValue(MOVEMENT_CALIBRATION_DEADZONE_Z);
