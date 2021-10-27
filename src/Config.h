@@ -36,6 +36,8 @@
   const char COMM_REPORT_COORD_CHANGED_Y[4] = { 'R', '1', '6', '\0' };
   const char COMM_REPORT_COORD_CHANGED_Z[4] = { 'R', '1', '7', '\0' };
 
+  const char COMM_REPORT_PIN_VALUE[4] = { 'R', '6', '1', '\0' };
+
   const char COMM_REPORT_TIMEOUT_X[4] = { 'R', '7', '1', '\0' };
   const char COMM_REPORT_TIMEOUT_Y[4] = { 'R', '7', '2', '\0' };
   const char COMM_REPORT_TIMEOUT_Z[4] = { 'R', '7', '3', '\0' };
@@ -246,6 +248,10 @@
   const long PIN_GUARD_5_PIN_NR_DEFAULT = 0;
   const long PIN_GUARD_5_TIME_OUT_DEFAULT = 60;
   const long PIN_GUARD_5_ACTIVE_STATE_DEFAULT = 1;
+
+  const long PIN_REPORT_1_PIN_NR_DEFAULT = 0;
+  const long PIN_REPORT_2_PIN_NR_DEFAULT = 0;
+
 
   const long STATUS_GENERAL_DEFAULT = 0;
 

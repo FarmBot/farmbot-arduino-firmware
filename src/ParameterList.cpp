@@ -669,6 +669,13 @@ void ParameterList::loadDefaultValue(int id)
     paramValues[id] = PIN_GUARD_5_ACTIVE_STATE_DEFAULT;
     break;
 
+  case PIN_REPORT_1_PIN_NR:
+    paramValues[id] = PIN_REPORT_1_PIN_NR_DEFAULT;
+    break;
+  case PIN_REPORT_2_PIN_NR:
+    paramValues[id] = PIN_REPORT_1_PIN_NR_DEFAULT;
+    break;
+
   default:
     paramValues[id] = 0;
     break;
@@ -796,6 +803,8 @@ bool ParameterList::validParam(int id)
   case PIN_GUARD_5_PIN_NR:
   case PIN_GUARD_5_TIME_OUT:
   case PIN_GUARD_5_ACTIVE_STATE:
+  case PIN_REPORT_1_PIN_NR:
+  case PIN_REPORT_2_PIN_NR:
     return true;
   default:
     return false;
