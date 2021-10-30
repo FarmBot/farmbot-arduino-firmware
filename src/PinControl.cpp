@@ -78,7 +78,7 @@ void PinControl::resetPinsUsed()
   }
 }
 
-int PinControl::readValue(int pinNr, int mode)
+int PinControl::readValue(int pinNr, int mode, bool print = true)
 {
 
   int value = 0;
@@ -95,7 +95,7 @@ int PinControl::readValue(int pinNr, int mode)
     value = analogRead(pinNr);
   }
 
-  if (mode == 0 || mode == 1)
+  if ((mode == 0 || mode == 1) && print)
   {
 
     Serial.print("R41");

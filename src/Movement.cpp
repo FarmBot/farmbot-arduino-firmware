@@ -865,27 +865,33 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
         case 2:
 
           pinNr = ParameterList::getInstance()->getValue(PIN_REPORT_1_PIN_NR);
-          pinValue = PinControl::getInstance()->readValue(pinNr, 1);
+          if (pinNr > 0)
+          {
+            pinValue = PinControl::getInstance()->readValue(pinNr, 1, false);
 
-          serialBuffer += COMM_REPORT_PIN_VALUE;
-          serialBuffer += " P ";
-          serialBuffer += pinNr;
-          serialBuffer += " V ";
-          serialBuffer += pinValue;
-          serialBuffer += "\r\n";
+            serialBuffer += COMM_REPORT_PIN_VALUE;
+            serialBuffer += " P";
+            serialBuffer += pinNr;
+            serialBuffer += " V";
+            serialBuffer += pinValue;
+            serialBuffer += "\r\n";
+          }
           break;
 
         case 3:
 
           pinNr = ParameterList::getInstance()->getValue(PIN_REPORT_2_PIN_NR);
-          pinValue = PinControl::getInstance()->readValue(pinNr, 1);
+          if (pinNr > 0)
+          {
+            pinValue = PinControl::getInstance()->readValue(pinNr, 1, false);
 
-          serialBuffer += COMM_REPORT_PIN_VALUE;
-          serialBuffer += " P ";
-          serialBuffer += pinNr;
-          serialBuffer += " V ";
-          serialBuffer += pinValue;
-          serialBuffer += "\r\n";
+            serialBuffer += COMM_REPORT_PIN_VALUE;
+            serialBuffer += " P";
+            serialBuffer += pinNr;
+            serialBuffer += " V";
+            serialBuffer += pinValue;
+            serialBuffer += "\r\n";
+          }
           break;
 
         case 4:

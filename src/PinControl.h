@@ -23,7 +23,7 @@ public:
 
   int setMode(int pinNr, int mode);
   int writeValue(int pinNr, int value, int mode);
-  int readValue(int pinNr, int mode);
+  int readValue(int pinNr, int mode, bool print = true);
   int writePulse(int pinNr, int valueOne, int valueTwo, long time, int mode);
   void resetPinsUsed();
 
