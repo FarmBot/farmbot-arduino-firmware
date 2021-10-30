@@ -82,6 +82,9 @@ private:
   MovementEncoder encoderZ;
 
   //char serialBuffer[100];
+  int pinNr = 0;
+  int pinValue = 0;
+
   String serialBuffer;
   int serialBufferLength = 0;
   int serialBufferSending = 0;

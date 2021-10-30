@@ -1,4 +1,5 @@
 #include "Movement.h"
+#include "PinControl.h"
 #include "Debug.h"
 #include "Config.h"
 
@@ -862,6 +863,38 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
           break;
 
         case 2:
+
+          pinNr = ParameterList::getInstance()->getValue(PIN_REPORT_1_PIN_NR);
+          if (pinNr > 0)
+          {
+            pinValue = PinControl::getInstance()->readValue(pinNr, 1, false);
+
+            serialBuffer += COMM_REPORT_PIN_VALUE;
+            serialBuffer += " P";
+            serialBuffer += pinNr;
+            serialBuffer += " V";
+            serialBuffer += pinValue;
+            serialBuffer += "\r\n";
+          }
+          break;
+
+        case 3:
+
+          pinNr = ParameterList::getInstance()->getValue(PIN_REPORT_2_PIN_NR);
+          if (pinNr > 0)
+          {
+            pinValue = PinControl::getInstance()->readValue(pinNr, 1, false);
+
+            serialBuffer += COMM_REPORT_PIN_VALUE;
+            serialBuffer += " P";
+            serialBuffer += pinNr;
+            serialBuffer += " V";
+            serialBuffer += pinValue;
+            serialBuffer += "\r\n";
+          }
+          break;
+
+        case 4:
           //#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
           //serialBuffer += "R89";
           //serialBuffer += " X";
@@ -923,7 +956,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
       serialMessageNr++;
 
       #if !defined(FARMDUINO_EXP_V20)
-      if (serialMessageNr > 1)
+      if (serialMessageNr > 3)
       {
         serialMessageNr = 0;
       }
@@ -931,7 +964,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
 
       #if defined(FARMDUINO_EXP_V20)
 
-      if (serialMessageNr > 2)
+      if (serialMessageNr > 4)
       {
         serialMessageNr = 0;
       }

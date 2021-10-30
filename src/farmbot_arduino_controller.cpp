@@ -17,8 +17,12 @@ int incomingCommandPointer = 0;
 
 static GCodeProcessor *gCodeProcessor = new GCodeProcessor();
 
+int pinNr = 0;
+int pinValue = 0;
 int reportingPeriod = 5000;
+int reportingPeriodPins = 500;
 unsigned long lastAction;
+unsigned long lastReportPin;
 unsigned long currentTime;
 unsigned long cycleCounter = 0;
 bool previousEmergencyStop = false;
@@ -105,9 +109,51 @@ void checkPinGuard()
 
 void periodicChecksAndReport()
 {
+  currentTime = millis();
+
+  // If needed, check the pins and report the value
+  if (currentTime < lastReportPin)
+  {
+
+    // If the device timer overruns, reset the idle counter
+    lastReportPin = millis();
+  }
+  else
+  {
+    if ((currentTime - lastReportPin) > reportingPeriodPins)
+    {
+      lastReportPin = millis();
+
+      // Send the periodic report for pin values
+      pinNr = ParameterList::getInstance()->getValue(PIN_REPORT_1_PIN_NR);
+      if (pinNr > 0)
+      {
+        pinValue = PinControl::getInstance()->readValue(pinNr, 1, false);
+        
+        Serial.print(COMM_REPORT_PIN_VALUE);
+        Serial.print(" P");
+        Serial.print(pinNr);
+        Serial.print(" V");
+        Serial.print(pinValue);
+        Serial.println();
+      }
+
+      pinNr = ParameterList::getInstance()->getValue(PIN_REPORT_2_PIN_NR);
+      if (pinNr > 0)
+      {
+        pinValue = PinControl::getInstance()->readValue(pinNr, 1, false);
+
+        Serial.print(COMM_REPORT_PIN_VALUE);
+        Serial.print(" P");
+        Serial.print(pinNr);
+        Serial.print(" V");
+        Serial.print(pinValue);
+        Serial.println();
+      }
+    }
+  }
 
   // Do periodic checks and feedback
-  currentTime = millis();
   if (currentTime < lastAction)
   {
 
