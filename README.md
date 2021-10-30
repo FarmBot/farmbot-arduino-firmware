@@ -174,6 +174,7 @@ R        |21    |P V              |Report parameter value
 R        |23    |P V              |Report updated parameter (during calibration)
 R        |31    |P V              |Report status value (not enabled)
 R        |41    |P V              |Report pin value
+R        |61    |P V              |Report pin monitor analog value
 R        |71    |                 |X axis timeout
 R        |72    |                 |Y axis timeout
 R        |73    |                 |Z axis timeout
@@ -360,6 +361,8 @@ ID  | Name                              | Unit      | Notes
 175 | MOVEMENT_CALIBRATION_RETRY_TOTAL_X| integer   |
 176 | MOVEMENT_CALIBRATION_RETRY_TOTAL_Y| integer   |
 177 | MOVEMENT_CALIBRATION_RETRY_TOTAL_Z| integer   |
+198 | PIN_REPORT_1_PIN_NR               | integer   | reports every 500ms, 0 = disabled
+199 | PIN_REPORT_2_PIN_NR               | integer   | reports every 500ms, 0 = disabled
 201 | PIN_GUARD_1_PIN_NR                | integer   |
 202 | PIN_GUARD_1_TIME_OUT              | seconds   |
 203 | PIN_GUARD_1_ACTIVE_STATE          | 0 / 1     |
