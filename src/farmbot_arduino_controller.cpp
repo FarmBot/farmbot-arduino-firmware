@@ -128,7 +128,7 @@ void periodicChecksAndReport()
       pinNr = ParameterList::getInstance()->getValue(PIN_REPORT_1_PIN_NR);
       if (pinNr > 0)
       {
-        pinValue = PinControl::getInstance()->readValue(pinNr, 1, false);
+        pinValue = analogRead(pinNr);
         
         Serial.print(COMM_REPORT_PIN_VALUE);
         Serial.print(" P");
@@ -141,7 +141,7 @@ void periodicChecksAndReport()
       pinNr = ParameterList::getInstance()->getValue(PIN_REPORT_2_PIN_NR);
       if (pinNr > 0)
       {
-        pinValue = PinControl::getInstance()->readValue(pinNr, 1, false);
+        pinValue = analogRead(pinNr);
 
         Serial.print(COMM_REPORT_PIN_VALUE);
         Serial.print(" P");
