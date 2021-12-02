@@ -145,6 +145,7 @@ F        |82    |          |Report current position
 F        |83    |          |Report software version
 F        |84    |X Y Z     |Set axis current position to zero (yes=1/no=0)
 E        |      |          |Emergency stop
+@        |      |          |Movement abort
 
 __*__ Requires the use of encoders or end stops.
 
@@ -183,6 +184,7 @@ R        |82    |X Y Z            |Report current position
 R        |83    |                 |Report software version
 R        |84    |X Y Z            |Report encoder position scaled
 R        |85    |X Y Z            |Report encoder position raw
+R        |86    |                 |Report movement abort
 R        |87    |                 |Emergency lock
 R        |88    |                 |No config (see [configuration approval](#important))
 R        |89    |U X V Y W Z      |Report # axis steps (U,V,W) and highest missed steps in last 500 (X,Y,Z)
@@ -198,6 +200,7 @@ Value |Description
 2     |Timeout
 3     |Stall detected
 4     |Calibration error
+5     |Movement abort
 14    |Invalid command
 15    |No config
 31    |Stall detected X axis
