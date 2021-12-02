@@ -17,6 +17,7 @@ enum ErrorListEnum
   ERR_TIMEOUT = 2,
   ERR_STALL_DETECTED = 3,
   ERR_CALIBRATION_ERROR = 4,
+  ERR_MOVEMENT_ABORT = 5,
 
   ERR_INVALID_COMMAND = 14,
   ERR_PARAMS_NOT_OK = 15,
@@ -69,6 +70,9 @@ public:
   void setEmergencyStop();
   void resetEmergencyStop();
   bool isEmergencyStop();
+  void setMovementAbort();
+  void resetMovementAbort();
+  bool isMovementAbort();
 
   void setStepsPerMm(long stepsX, long stepsY, long stepsZ);
   long getStepsPerMmX();
@@ -101,6 +105,7 @@ private:
 
 
   bool emergencyStop = false;
+  bool movementAbort = false;
 };
 
 #endif /* CURRENTSTATE_H_ */

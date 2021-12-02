@@ -47,8 +47,8 @@ int F11Handler::execute(Command *command)
 
   int A = 10; // move away coordinates
   int execution;
-  bool emergencyStop;
-
+  bool emergencyStop = false;
+  bool movementAbort = false;
   bool homingComplete = false;
 
   if (homeIsUp == 1)
@@ -76,7 +76,8 @@ int F11Handler::execute(Command *command)
       //execution = CurrentState::getInstance()->getLastError();
       execution = 0;
       emergencyStop = CurrentState::getInstance()->isEmergencyStop();
-      if (emergencyStop || execution != 0) { homingComplete = true; }
+      movementAbort = CurrentState::getInstance()->isMovementAbort();
+      if (movementAbort || emergencyStop || execution != 0) { homingComplete = true; }
     }
 
     // Move away from the home position
@@ -84,14 +85,16 @@ int F11Handler::execute(Command *command)
     //execution = CurrentState::getInstance()->getLastError();
     execution = 0;
     emergencyStop = CurrentState::getInstance()->isEmergencyStop();
-    if (emergencyStop || execution != 0) { break; }
+    movementAbort = CurrentState::getInstance()->isMovementAbort();
+    if (movementAbort || emergencyStop || execution != 0) { break; }
 
     // Home again
     Movement::getInstance()->moveToCoords(0, Y, Z, 0, 0, 0, true, false, false);
     //execution = CurrentState::getInstance()->getLastError();
     execution = 0;
     emergencyStop = CurrentState::getInstance()->isEmergencyStop();
-    if (emergencyStop || execution != 0) { break; }
+    movementAbort = CurrentState::getInstance()->isMovementAbort();
+    if (movementAbort || emergencyStop || execution != 0) { break; }
 
     Serial.print("R99 homing displaced");
     Serial.print(" X ");

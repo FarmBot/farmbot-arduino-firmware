@@ -363,6 +363,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
   int incomingByte = 0;
   int error = 0;
   bool emergencyStop = false;
+  bool movementAbort = false;
   unsigned int commandSpeed[3];
 
 
@@ -532,11 +533,12 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
   axisZ.setTicks();
 
   emergencyStop = CurrentState::getInstance()->isEmergencyStop();
+  movementAbort = CurrentState::getInstance()->isMovementAbort();
 
   unsigned long loopCounts = 0;
 
   // Let the interrupt handle all the movements
-  while ((axisActive[0] || axisActive[1] || axisActive[2]) && !emergencyStop)
+  while ((axisActive[0] || axisActive[1] || axisActive[2]) && !emergencyStop && !movementAbort)
   {
     #if defined(FARMDUINO_V14) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
     checkEncoders();
@@ -826,6 +828,27 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
 
         error = ERR_EMERGENCY_STOP;
       }
+
+      if (incomingByte == 64)
+      {
+        serialBuffer += "R99 movement abort\r\n";
+
+        Serial.print(COMM_REPORT_MOVEMENT_ABORT);
+        CurrentState::getInstance()->printQAndNewLine();
+
+        movementAbort = true;
+
+        axisX.deactivateAxis();
+        axisY.deactivateAxis();
+        axisZ.deactivateAxis();
+
+        axisActive[0] = false;
+        axisActive[1] = false;
+        axisActive[2] = false;
+
+        error = ERR_MOVEMENT_ABORT;
+      }
+
     }
 
     if (error != 0)
@@ -992,19 +1015,19 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
 
   // Send feedback for homing
 
-  if (xHome && !error && !emergencyStop)
+  if (xHome && !error && !emergencyStop && !movementAbort)
   {
     Serial.print(COMM_REPORT_HOMED_X);
     CurrentState::getInstance()->printQAndNewLine();
   }
 
-  if (yHome && !error && !emergencyStop)
+  if (yHome && !error && !emergencyStop && !movementAbort)
   {
     Serial.print(COMM_REPORT_HOMED_Y);
     CurrentState::getInstance()->printQAndNewLine();
   }
 
-  if (zHome && !error && !emergencyStop)
+  if (zHome && !error && !emergencyStop && !movementAbort)
   {
     Serial.print(COMM_REPORT_HOMED_Z);
     CurrentState::getInstance()->printQAndNewLine();
@@ -1129,6 +1152,12 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
   {
     CurrentState::getInstance()->setEmergencyStop();
     error = ERR_EMERGENCY_STOP;
+  }
+
+  if (movementAbort)
+  {
+    CurrentState::getInstance()->setMovementAbort();
+    error = ERR_MOVEMENT_ABORT;
   }
 
   Serial.print("R99 error ");

@@ -280,3 +280,19 @@ bool CurrentState::isEmergencyStop()
 {
   return emergencyStop;
 }
+
+void CurrentState::setMovementAbort()
+{
+  movementAbort = true;
+}
+
+void CurrentState::resetMovementAbort()
+{
+  movementAbort = false;
+}
+
+bool CurrentState::isMovementAbort()
+{
+  return movementAbort;
+}
+

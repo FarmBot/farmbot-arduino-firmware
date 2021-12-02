@@ -44,7 +44,7 @@
 
   const char COMM_REPORT_ENCODER_SCALED[4] = { 'R', '8', '4', '\0' };
   const char COMM_REPORT_ENCODER_RAW[4] = { 'R', '8', '5', '\0' };
-
+  const char COMM_REPORT_MOVEMENT_ABORT[4] = { 'R', '8', '6', '\0' };
   const char COMM_REPORT_EMERGENCY_STOP[4] = { 'R', '8', '7', '\0' };
   const char COMM_REPORT_NO_CONFIG[4] = {'R', '8', '8', '\0'};
   const char COMM_REPORT_COMMENT[4] = {'R', '9', '9', '\0'};
