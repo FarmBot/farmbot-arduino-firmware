@@ -129,7 +129,7 @@ void periodicChecksAndReport()
       if (pinNr > 0)
       {
         pinValue = analogRead(pinNr);
-        
+
         Serial.print(COMM_REPORT_PIN_VALUE);
         Serial.print(" P");
         Serial.print(pinNr);
@@ -671,7 +671,11 @@ void setPinInputOutput()
     digitalWrite(NSS_PIN, HIGH);
 
     SPI.setBitOrder(MSBFIRST);
-    SPI.setDataMode(SPI_MODE0);
+    #if defined(FARMDUINO_V32)
+      SPI.setDataMode(SPI_MODE3);
+    #else
+      SPI.setDataMode(SPI_MODE0);
+    #endif
     SPI.setClockDivider(SPI_CLOCK_DIV4);
     SPI.begin();
 

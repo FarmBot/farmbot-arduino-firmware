@@ -20,7 +20,7 @@
   static TMC2130_Basics TMC2130X(X_CHIP_SELECT, 1);
   static TMC2130_Basics TMC2130Y(Y_CHIP_SELECT, 2);
   static TMC2130_Basics TMC2130Z(Z_CHIP_SELECT, 3);
-  static TMC2130_Basics TMC2130E(E_CHIP_SELECT, 4);  
+  static TMC2130_Basics TMC2130E(E_CHIP_SELECT, 4);
 
   void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current, int sensitivity, bool stealth);
 #endif

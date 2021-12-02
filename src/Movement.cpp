@@ -2343,7 +2343,6 @@ void Movement::setPositionZ(long pos)
 // Handle movement by checking each axis
 void Movement::handleMovementInterrupt(void)
 {
-
   // No need to check the encoders for Farmduino 1.4
   #if defined(RAMPS_V14) || defined(FARMDUINO_V10)
     checkEncoders();
