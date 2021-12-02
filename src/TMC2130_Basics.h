@@ -24,6 +24,7 @@ public:
 
   uint8_t set_GCONF(uint8_t bit, uint8_t value);
   uint8_t set_CHOPCONF(uint8_t position, uint8_t value);
+  uint8_t set_PWMCONF(uint8_t position, uint8_t value);
 
   uint8_t getStatus();
   uint8_t getAxisNumber();

@@ -112,7 +112,7 @@ void MovementAxis::initTMC2130()
 }
 
 void MovementAxis::loadSettingsTMC2130(int motorCurrent, int  stallSensitivity, int microSteps, bool stealth)
-{  
+{
   loadTMC2130ParametersMotor(TMC2130A, microSteps, motorCurrent, stallSensitivity, stealth);
 
   if (channelLabel == 'X')

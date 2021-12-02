@@ -41,7 +41,7 @@ Options for compiling and uploading:
      * Select _Sketch_ > _Export compiled binary_.
      * The `.hex` file will save to the `src` directory.
  * Make (Linux)
-   * [Download the Arduino 1.8.14 IDE](https://www.arduino.cc/download_handler.php?f=/arduino-1.8.14-linux64.tar.xz) and unpack to the `/home` directory.
+   * [Download the Arduino 1.8.16 IDE](https://www.arduino.cc/download_handler.php?f=/arduino-1.8.16-linux64.tar.xz) and unpack to the `/home` directory.
    * `cd farmbot-arduino-firmware`
    * To compile:
      * `make`
@@ -174,6 +174,7 @@ R        |21    |P V              |Report parameter value
 R        |23    |P V              |Report updated parameter (during calibration)
 R        |31    |P V              |Report status value (not enabled)
 R        |41    |P V              |Report pin value
+R        |61    |P V              |Report pin monitor analog value
 R        |71    |                 |X axis timeout
 R        |72    |                 |Y axis timeout
 R        |73    |                 |Z axis timeout
@@ -199,6 +200,9 @@ Value |Description
 4     |Calibration error
 14    |Invalid command
 15    |No config
+31    |Stall detected X axis
+32    |Stall detected Y axis
+33    |Stall detected Z axis
 
 Axis states (R05)
 -----------------
@@ -354,6 +358,11 @@ ID  | Name                              | Unit      | Notes
 171 | MOVEMENT_CALIBRATION_DEADZONE_X   | integer   |
 172 | MOVEMENT_CALIBRATION_DEADZONE_Y   | integer   |
 173 | MOVEMENT_CALIBRATION_DEADZONE_Z   | integer   |
+175 | MOVEMENT_CALIBRATION_RETRY_TOTAL_X| integer   |
+176 | MOVEMENT_CALIBRATION_RETRY_TOTAL_Y| integer   |
+177 | MOVEMENT_CALIBRATION_RETRY_TOTAL_Z| integer   |
+198 | PIN_REPORT_1_PIN_NR               | integer   | reports every 500ms, 0 = disabled
+199 | PIN_REPORT_2_PIN_NR               | integer   | reports every 500ms, 0 = disabled
 201 | PIN_GUARD_1_PIN_NR                | integer   |
 202 | PIN_GUARD_1_TIME_OUT              | seconds   |
 203 | PIN_GUARD_1_ACTIVE_STATE          | 0 / 1     |

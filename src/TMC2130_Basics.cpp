@@ -142,6 +142,14 @@ uint8_t TMC2130_Basics::set_CHOPCONF(uint8_t position, uint8_t value)
   return _status;
 }
 
+// set single bits or values in the pwmconf register (constraining masks are applied if necessary)
+uint8_t TMC2130_Basics::set_PWMCONF(uint8_t position, uint8_t value)
+{
+  alter_REG(FB_TMC_REG_PWMCONF, uint32_t(value) << position, FB_TMC_PWMCONF_MASKS[position] << position);
+
+  return _status;
+}
+
 uint8_t TMC2130_Basics::getStatus()
 {
   return _status;
