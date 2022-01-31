@@ -205,7 +205,7 @@ void Movement::loadSettings()
 
 }
 
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
   void Movement::initTMC2130()
   {
     axisX.initTMC2130();
@@ -278,7 +278,7 @@ void Movement::loadSettings()
 
 void Movement::test()
 {
-  #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
+  #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
   //axisX.enableMotor();
   //axisX.setMotorStep();
   //delayMicroseconds(500);
@@ -367,7 +367,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
   unsigned int commandSpeed[3];
 
 
-  #if defined(FARMDUINO_EXP_V20)
+  #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22)
   axisX.missedStepHistory[0] = 0;
   axisX.missedStepHistory[1] = 0;
   axisX.missedStepHistory[2] = 0;
@@ -613,7 +613,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
 
     }
 
-    #if defined(FARMDUINO_EXP_V20)
+    #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22)
     if
     (
       axisX.isAxisActive()
@@ -631,7 +631,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
 
       serialBuffer += "R99";
       serialBuffer += " deactivate motor X due to ";
-      #if defined(FARMDUINO_EXP_V20)
+      #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22)
       if (axisX.isDriverError())
       {
         serialBuffer += "driver error";
@@ -655,7 +655,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
       }
     }
 
-    #if defined(FARMDUINO_EXP_V20)
+    #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22)
     if
     (
       axisY.isAxisActive()
@@ -674,7 +674,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
       serialBuffer += "R99";
       serialBuffer += " deactivate motor Y due to ";
 
-      #if defined(FARMDUINO_EXP_V20)
+      #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22)
       if (axisY.isDriverError())
       {
         serialBuffer += "driver error";
@@ -707,7 +707,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
       }
     }
 
-    #if defined(FARMDUINO_EXP_V20)
+    #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22)
     if
     (
       axisZ.isAxisActive()
@@ -726,7 +726,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
       serialBuffer += "R99";
       serialBuffer += " deactivate motor Z due to ";
 
-      #if defined(FARMDUINO_EXP_V20)
+      #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22)
       if (axisZ.isDriverError())
       {
         serialBuffer += "driver error";
@@ -918,7 +918,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
           break;
 
         case 4:
-          //#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
+          //#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
           //serialBuffer += "R89";
           //serialBuffer += " X";
           //serialBuffer += axisX.getLoad();
@@ -928,7 +928,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
           //serialBuffer += axisZ.getLoad();
           //serialBuffer += CurrentState::getInstance()->getQAndNewLine();
           //#endif
-          #if defined(FARMDUINO_EXP_V20)
+          #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22)
 
           highestX = 0;
           highestY = 0;
@@ -978,14 +978,14 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
 
       serialMessageNr++;
 
-      #if !defined(FARMDUINO_EXP_V20)
+      #if !(defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22))
       if (serialMessageNr > 3)
       {
         serialMessageNr = 0;
       }
       #endif
 
-      #if defined(FARMDUINO_EXP_V20)
+      #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22)
 
       if (serialMessageNr > 4)
       {
@@ -1078,7 +1078,7 @@ int Movement::moveToCoords(double xDestScaled, double yDestScaled, double zDestS
 
   disableMotors();
 
-  #if defined(FARMDUINO_EXP_V20)
+  #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22)
   if (axisX.isDriverError())
   {
     Serial.print("R99 reset motor X\r\n");
@@ -1253,7 +1253,7 @@ int Movement::calibrateAxis(int axis)
   unsigned long nextTick = 0;
   unsigned long lastTick = 0;
 
-#if defined(FARMDUINO_EXP_V20)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22)
   axisX.missedStepHistory[0] = 0;
   axisX.missedStepHistory[1] = 0;
   axisX.missedStepHistory[2] = 0;
@@ -1277,7 +1277,7 @@ int Movement::calibrateAxis(int axis)
   //tickDelay = (1000.0 * 1000.0 / MOVEMENT_INTERRUPT_SPEED / speedHome[axis] / 2);
   tickDelay = (1000.0 * 1000.0 / MOVEMENT_INTERRUPT_SPEED / speedHome[axis] / 4);
 
-  #if defined(FARMDUINO_EXP_V20)
+  #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22)
   //stepDelay = 1000000 / speedHome[axis] / 4;
   stepDelay = 1000000 / speedHome[axis] / 2;
   #else
@@ -1484,7 +1484,7 @@ int Movement::calibrateAxis(int axis)
 
     // Move until any end stop is reached or the motor is skipping. That end should be the far end stop. First, ram the end at high speed.
 
-#if defined(FARMDUINO_EXP_V20)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22)
     if (
         (!calibAxis->endStopMin() && !calibAxis->endStopMax()) &&
         !movementDone
@@ -1744,7 +1744,7 @@ int Movement::calibrateAxis(int axis)
 
     // Move until the end stop is at the home position by detecting the other end stop or missed steps are detected
 
-#if defined(FARMDUINO_EXP_V20)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22)
     if (
         ((!invertEndStops && !calibAxis->endStopMin()) || (invertEndStops && !calibAxis->endStopMax())) &&
         !movementDone &&
@@ -1908,7 +1908,7 @@ int Movement::calibrateAxis(int axis)
 int debugPrintCount = 0;
 
 // Check encoder to verify the motor is at the right position
-#if !defined(FARMDUINO_EXP_V20)
+#if !(defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22))
 void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, float *missedSteps, long *lastPosition, long *encoderLastPosition, int *encoderUseForPos, float *encoderStepDecay, bool *encoderEnabled)
 {
   if (*encoderEnabled)
@@ -1979,7 +1979,7 @@ void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, 
 }
 #endif
 
-#if defined(FARMDUINO_EXP_V20)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22)
 void Movement::checkAxisVsEncoder(MovementAxis *axis, MovementEncoder *encoder, float *missedSteps, long *lastPosition, long *encoderLastPosition, int *encoderUseForPos, float *encoderStepDecay, bool *encoderEnabled)
 {
 
@@ -2145,7 +2145,7 @@ void Movement::loadMotorSettings()
   axisZ.loadMotorSettings(speedMax[2], speedMaxHome[2], speedMin[2], speedMinHome[2], speedHome[2], stepsAcc[2], stepsAccHome[2], timeOut[2], homeIsUp[2], motorInv[2], endStInv[2], endStInv2[2], MOVEMENT_INTERRUPT_SPEED, motor2Enbl[2], motor2Inv[2], endStEnbl[2], motorStopAtHome[2], motorMaxSize[2], motorStopAtMax[2]);
 
 /*
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
   loadSettingsTMC2130();
 #endif
 */
@@ -2174,7 +2174,7 @@ void Movement::loadEncoderSettings()
   motorConsMissedStepsDecay[1] = ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_Y);
   motorConsMissedStepsDecay[2] = ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_Z);
 
-#if !defined(FARMDUINO_EXP_V20)
+#if !(defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22))
   motorConsMissedStepsDecay[0] = motorConsMissedStepsDecay[0] / 100;
   motorConsMissedStepsDecay[1] = motorConsMissedStepsDecay[1] / 100;
   motorConsMissedStepsDecay[2] = motorConsMissedStepsDecay[2] / 100;
@@ -2299,7 +2299,7 @@ bool Movement::endStopsReached()
 void Movement::storePosition()
 {
 
-#if !defined(FARMDUINO_EXP_V20)
+#if !(defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22))
   if (motorConsEncoderEnabled[0])
   {
     CurrentState::getInstance()->setX(encoderX.currentPosition());
@@ -2328,7 +2328,7 @@ void Movement::storePosition()
   }
 #endif
 
-#if defined(FARMDUINO_EXP_V20)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22)
   CurrentState::getInstance()->setX(axisX.currentPosition());
   CurrentState::getInstance()->setY(axisY.currentPosition());
   CurrentState::getInstance()->setZ(axisZ.currentPosition());

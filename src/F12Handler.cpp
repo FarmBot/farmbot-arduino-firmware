@@ -35,7 +35,7 @@ int F12Handler::execute(Command *command)
   int stepsPerMM = ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_Y);
   int missedStepsMax = ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_Y);
 
-  #if defined(FARMDUINO_EXP_V20)
+  #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22)
     missedStepsMax += ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_Y);
   #endif
 
@@ -119,7 +119,7 @@ int F12Handler::execute(Command *command)
       {
         homingComplete = true;
         CurrentState::getInstance()->setY(0);
-      }      
+      }
     }
     else
     {

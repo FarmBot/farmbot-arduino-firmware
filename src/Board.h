@@ -1,9 +1,12 @@
 #ifndef FARMBOT_BOARD_ID
 
-  // Farmbot using RAMPS board
+  // Farmbot Genesis 1.2 (using RAMPS board)
   #define RAMPS_V14
 
+  // Farmbot Genesis 1.3
   //#define FARMDUINO_V10
+
+  // Farmbot Genesis 1.4
   //#define FARMDUINO_V14
 
   // Farmbot Genesis 1.5
@@ -12,8 +15,11 @@
   // Farmbot Genesis 1.6
   //#define FARMDUINO_V32
 
-  // Farmbot Express
+  // Farmbot Express 1.0
   //#define FARMDUINO_EXP_V20
+
+  // Farmbot Express 1.1
+  //#define FARMDUINO_EXP_V22
 
 #else
 
@@ -23,6 +29,7 @@
   #undef FARMDUINO_V30
   #undef FARMDUINO_V32
   #undef FARMDUINO_EXP_V20
+  #undef FARMDUINO_EXP_V22
 
   #if FARMBOT_BOARD_ID == 0
     #define RAMPS_V14
@@ -36,6 +43,8 @@
     #define FARMDUINO_V30
   #elif FARMBOT_BOARD_ID == 5
     #define FARMDUINO_V32
+  #elif FARMBOT_BOARD_ID == 6
+    #define FARMDUINO_EXP_V22
   #endif
 
 #endif

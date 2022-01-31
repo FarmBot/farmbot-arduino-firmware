@@ -37,7 +37,7 @@ int F13Handler::execute(Command *command)
   int stepsPerMM = ParameterList::getInstance()->getValue(MOVEMENT_STEP_PER_MM_Z);
   int missedStepsMax = ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_MAX_Z);
 
-  #if defined(FARMDUINO_EXP_V20)
+  #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22)
     missedStepsMax += ParameterList::getInstance()->getValue(ENCODER_MISSED_STEPS_DECAY_Z);
   #endif
 
@@ -74,7 +74,7 @@ int F13Handler::execute(Command *command)
   {
     if (firstMove)
     {
-      // Move to home position. 
+      // Move to home position.
       Movement::getInstance()->moveToCoords(X, Y, 0, 0, 0, 0, false, false, false);
       //execution = CurrentState::getInstance()->getLastError();
       execution = 0;

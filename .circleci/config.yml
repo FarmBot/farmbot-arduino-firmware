@@ -53,6 +53,10 @@ jobs:
           command: make dep_core dep_Servo dep_SPI dep_EEPROM target_express_k10 remove_temp
           when: always
       - run:
+          name: Compile Express v1.1 (FARMDUINO_EXP_V22)
+          command: make dep_core dep_Servo dep_SPI dep_EEPROM target_express_k11 remove_temp
+          when: always
+      - run:
           name: Compile all
           command: |
             make force_clean

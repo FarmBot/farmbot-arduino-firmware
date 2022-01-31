@@ -14,7 +14,7 @@
 #include "pins.h"
 #include "Board.h"
 
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
   #include "TMC2130_Basics.h"
 
   static TMC2130_Basics TMC2130X(X_CHIP_SELECT, 1);

@@ -8,7 +8,7 @@
 
 #include "TMC2130.h"
 
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
 
 void loadTMC2130ParametersMotor(TMC2130_Basics *tb, int microsteps, int current, int sensitivity, bool stealth)
 {

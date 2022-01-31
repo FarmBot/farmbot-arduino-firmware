@@ -37,7 +37,7 @@ public:
   void handleMovementInterrupt();
   void checkEncoders();
 
-  #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
+  #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
     void initTMC2130();
     void loadSettingsTMC2130();
     void loadSettingsTMC2130_X();
@@ -130,7 +130,7 @@ private:
   long motorMaxSize[3] = { 0, 0, 0};
   bool motorStopAtMax[3] = { false, false, false };
   long motorCalibRetry[3] = { 3, 3, 3 };
-  long motorCalibRetryTotal[3] = { 10, 10, 10 };  
+  long motorCalibRetryTotal[3] = { 10, 10, 10 };
   long motorCalibRetryDeadzone[3] = { 10, 10, 10 };
   bool motorKeepActive[3] = { false, false, false };
   bool motor2Inv[3] = { false, false, false };

@@ -1,7 +1,7 @@
 // Do not remove the include below
 #include "farmbot_arduino_controller.h"
 
-//#if !defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
+//#if !(defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22)) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
 #include "TimerOne.h"
 //#endif
 
@@ -56,7 +56,7 @@ unsigned long interruptDurationMax = 0;
 bool interruptBusy = false;
 int interruptSecondTimer = 0;
 
-//#if !defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
+//#if !(defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22)) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
 void interrupt(void)
 {
   if (!debugInterrupt)
@@ -75,7 +75,7 @@ void interrupt(void)
 }
 //#endif
 
-#if defined(FARMDUINO_EXP_V20xxx)
+#if defined(FARMDUINO_EXP_V20xxx) || defined(FARMDUINO_EXP_V22xxx)
 ISR(TIMER2_OVF_vect) {
 
   if (interruptBusy == false)
@@ -328,7 +328,7 @@ void checkParamsChanged()
     }
 
 
-    #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
+    #if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22) || defined(FARMDUINO_EXP_V22) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
       stopInterrupt();
       if (lastTmcParamChangeNr != ParameterList::getInstance()->tmcParamChangeNumber())
       {
@@ -553,7 +553,7 @@ void setPinInputOutput()
 }
 #endif
 
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
 void setPinInputOutput()
 {
   Serial.print(COMM_REPORT_COMMENT);
@@ -602,20 +602,24 @@ void setPinInputOutput()
   digitalWrite(E_DIR_PIN, LOW);
   digitalWrite(E_STEP_PIN, LOW);
 
-  pinMode(AUX_STEP_PIN, OUTPUT);
-  pinMode(AUX_DIR_PIN, OUTPUT);
-  pinMode(AUX_ENABLE_PIN, OUTPUT);
+  #if defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
+    pinMode(AUX_STEP_PIN, OUTPUT);
+    pinMode(AUX_DIR_PIN, OUTPUT);
+    pinMode(AUX_ENABLE_PIN, OUTPUT);
 
   digitalWrite(AUX_STEP_PIN, LOW);
   digitalWrite(AUX_DIR_PIN, LOW);
   digitalWrite(AUX_ENABLE_PIN, LOW);
+  #endif
 
   pinMode(LED_PIN, OUTPUT);
   pinMode(VACUUM_PIN, OUTPUT);
   pinMode(WATER_PIN, OUTPUT);
   pinMode(LIGHTING_PIN, OUTPUT);
-  pinMode(PERIPHERAL_4_PIN, OUTPUT);
-  pinMode(PERIPHERAL_5_PIN, OUTPUT);
+  #if defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
+    pinMode(PERIPHERAL_4_PIN, OUTPUT);
+    pinMode(PERIPHERAL_5_PIN, OUTPUT);
+  #endif
   #if defined(FARMDUINO_V32)
     pinMode(ROTARY_TOOL_FORWARD, OUTPUT);
     pinMode(ROTARY_TOOL_REVERSE, OUTPUT);
@@ -625,8 +629,10 @@ void setPinInputOutput()
   digitalWrite(VACUUM_PIN, LOW);
   digitalWrite(WATER_PIN, LOW);
   digitalWrite(LIGHTING_PIN, LOW);
-  digitalWrite(PERIPHERAL_4_PIN, LOW);
-  digitalWrite(PERIPHERAL_5_PIN, LOW);
+  #if defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
+    digitalWrite(PERIPHERAL_4_PIN, LOW);
+    digitalWrite(PERIPHERAL_5_PIN, LOW);
+  #endif
   #if defined(FARMDUINO_V32)
     pinMode(ROTARY_TOOL_FORWARD, LOW);
     pinMode(ROTARY_TOOL_REVERSE, LOW);
@@ -635,14 +641,16 @@ void setPinInputOutput()
   pinMode(LIGHTING_CURRENT_PIN, INPUT_PULLUP);
   pinMode(WATER_CURRENT_PIN, INPUT_PULLUP);
   pinMode(VACUUM_CURRENT_PIN, INPUT_PULLUP);
-  pinMode(PERIPHERAL_4_CURRENT_PIN, INPUT_PULLUP);
-  pinMode(PERIPHERAL_5_CURRENT_PIN, INPUT_PULLUP);
+  #if defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
+    pinMode(PERIPHERAL_4_CURRENT_PIN, INPUT_PULLUP);
+    pinMode(PERIPHERAL_5_CURRENT_PIN, INPUT_PULLUP);
+  #endif
   #if defined(FARMDUINO_V32)
     pinMode(ROTARY_TOOL_CURRENT_PIN, INPUT_PULLUP);
   #endif
 
-  pinMode(UTM_C, INPUT_PULLUP);
-  pinMode(UTM_D, INPUT_PULLUP);
+  if (UTM_C > 0) { pinMode(UTM_C, INPUT_PULLUP); };
+  if (UTM_D > 0) { pinMode(UTM_D, INPUT_PULLUP); };
   if (UTM_E > 0) { pinMode(UTM_E, INPUT_PULLUP); };
   if (UTM_F > 0) { pinMode(UTM_F, INPUT_PULLUP); };
   if (UTM_G > 0) { pinMode(UTM_G, INPUT_PULLUP); };
@@ -822,7 +830,7 @@ void startServo()
   ServoControl::getInstance()->attach();
 }
 
-#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
+#if defined(FARMDUINO_EXP_V20) || defined(FARMDUINO_EXP_V22) || defined(FARMDUINO_V30) || defined(FARMDUINO_V32)
 
 void loadTMC2130drivers()
 {

@@ -23,10 +23,10 @@ See [releases](https://github.com/FarmBot/farmbot-arduino-firmware/releases) to 
 git clone  https://github.com/FarmBot/farmbot-arduino-firmware
 ```
 
-**OPTION B:** For stable release v6.5.36:
+**OPTION B:** For stable release v6.6.20:
 
 ```
-git clone -b 'v6.5.36' --single-branch  https://github.com/FarmBot/farmbot-arduino-firmware
+git clone -b 'v6.6.20' --single-branch  https://github.com/FarmBot/farmbot-arduino-firmware
 ```
 
 Options for compiling and uploading:
@@ -86,14 +86,15 @@ All files are in `/src`
 
 Board Feature Overview
 ======================
-| board             | kit          | pin encoders | SPI encoders | SPI motors | SPI stall detection |
-|:----------------- |:------------ |:------------:|:------------:|:----------:|:-------------------:|
-| RAMPS_V14         | Genesis v1.2 |      x       |              |            |                     |
-| FARMDUINO_V10     | Genesis v1.3 |      x       |              |            |                     |
-| FARMDUINO_V14     | Genesis v1.4 |              |      x       |            |                     |
-| FARMDUINO_V30     | Genesis v1.5 |              |      x       |     x      |                     |
-| FARMDUINO_V32     | Genesis v1.6 |              |      x       |     x      |                     |
-| FARMDUINO_EXP_V20 | Express v1.0 |              |              |     x      |          x          |
+| board             | kit          | pin encoders | SPI encoders | SPI motors | SPI stall detection | peripheral current sensors |
+|:----------------- |:------------ |:------------:|:------------:|:----------:|:-------------------:|:--------------------------:|
+| RAMPS_V14         | Genesis v1.2 |      x       |              |            |                     |                            |
+| FARMDUINO_V10     | Genesis v1.3 |      x       |              |            |                     |                            |
+| FARMDUINO_V14     | Genesis v1.4 |              |      x       |            |                     |                            |
+| FARMDUINO_V30     | Genesis v1.5 |              |      x       |     x      |                     |              x             |
+| FARMDUINO_V32     | Genesis v1.6 |              |      x       |     x      |                     |              x             |
+| FARMDUINO_EXP_V20 | Express v1.0 |              |              |     x      |          x          |                            |
+| FARMDUINO_EXP_V22 | Express v1.1 |              |              |     x      |          x          |                            |
 
 Codes used for communication
 ============================
@@ -142,9 +143,9 @@ F        |52    |E P       |Read value from the tool mount with I2C (not impleme
 F        |61    |P V       |Set the servo on the pin P (only pins 4, 5, 6, and 11) to the requested angle V
 F        |81    |          |Report end stop
 F        |82    |          |Report current position
-F        |83    |          |Report software version
-F        |84    |X Y Z     |Set axis current position to zero (yes=1/no=0)
-E        |      |          |Emergency stop
+F        |83    |          |Report software version
+F        |84    |X Y Z     |Set axis current position to zero (yes=1/no=0)
+E        |      |          |Emergency stop
 @        |      |          |Movement abort
 
 __*__ Requires the use of encoders or end stops.
@@ -424,3 +425,14 @@ SERVO_0_PIN      |   4  | Servo motor 0 signal pin
 SERVO_1_PIN      |   5  | Servo motor 1 signal pin
 SERVO_2_PIN      |   6  | Servo motor 2 signal pin
 SERVO_3_PIN      |  11  | Servo motor 3 signal pin
+
+### Peripheral current sensor pins (Genesis v1.6)
+| peripheral          | peripheral pin | current sensor pin |
+|:------------------- |:--------------:|:------------------:|
+| Lighting            |        7       |      A0 (D54)      |
+| Water               |        8       |      A1 (D55)      |
+| Vacuum              |        9       |      A4 (D58)      |
+| Peripheral 4        |       10       |      A3 (D57)      |
+| Peripheral 5        |       12       |      A2 (D56)      |
+| Rotary Tool Forward |        2       |      A6 (D60)      |
+| Rotary Tool Reverse |        3       |      A6 (D60)      |
