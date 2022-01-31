@@ -9,7 +9,7 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-  const char SOFTWARE_VERSION[] = "6.6.20\0";
+  const char SOFTWARE_VERSION[] = "6.6.21\0";
 
   const int LOGGING = 0;
 
@@ -294,7 +294,7 @@ enum MdlSpiEncoders
 #endif
 
 #if defined(FARMDUINO_EXP_V22) && !defined(SOFTWARE_VERSION_SUFFIX)
-#define SOFTWARE_VERSION_SUFFIX ".E.expressK11\0"
+#define SOFTWARE_VERSION_SUFFIX ".D.expressK11\0"
 #endif
 
 #ifndef FARMBOT_BOARD_ID
