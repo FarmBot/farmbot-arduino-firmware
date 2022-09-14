@@ -694,7 +694,7 @@ void setPinInputOutput()
 // other initialisation functions
 void startSerial()
 {
-  Serial.begin(9600);
+  Serial.begin(57600);
   delay(100);
   while (!Serial);
 
