@@ -86,7 +86,7 @@ int F11Handler::execute(Command *command)
     execution = 0;
     emergencyStop = CurrentState::getInstance()->isEmergencyStop();
     movementAbort = CurrentState::getInstance()->isMovementAbort();
-    if (movementAbort || emergencyStop || execution != 0) { break; }
+    if (movementAbort || emergencyStop || execution != 0) { homingComplete = true; break; }
 
     // Home again
     Movement::getInstance()->moveToCoords(0, Y, Z, 0, 0, 0, true, false, false);
@@ -94,7 +94,7 @@ int F11Handler::execute(Command *command)
     execution = 0;
     emergencyStop = CurrentState::getInstance()->isEmergencyStop();
     movementAbort = CurrentState::getInstance()->isMovementAbort();
-    if (movementAbort || emergencyStop || execution != 0) { break; }
+    if (movementAbort || emergencyStop || execution != 0) { homingComplete = true; break; }
 
     Serial.print("R99 homing displaced");
     Serial.print(" X ");

@@ -285,6 +285,12 @@ void checkSerialInputs()
 
         gCodeProcessor->execute(command);
 
+        if (CurrentState::getInstance()->getLastError() == ERR_MOVEMENT_ABORT)
+        {
+          CurrentState::getInstance()->setLastError(ERR_NO_ERROR);
+          CurrentState::getInstance()->resetMovementAbort();
+        }
+
         free(command);
 
       }
