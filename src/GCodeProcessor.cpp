@@ -32,6 +32,9 @@ int GCodeProcessor::execute(Command *command)
   bool emergencyStop = false;
   emergencyStop = CurrentState::getInstance()->isEmergencyStop();
 
+  bool movementAbort = false;
+  movementAbort = CurrentState::getInstance()->isMovementAbort();
+
   int attempt = 0;
   int maximumAttempts = ParameterList::getInstance()->getValue(PARAM_MOV_NR_RETRY);
 
@@ -139,7 +142,7 @@ int GCodeProcessor::execute(Command *command)
 
   // Execute command with retry
   CurrentState::getInstance()->setLastError(0);
-  while (attempt < 1 || (!emergencyStop && attempt < maximumAttempts && execution != 0 && execution != 2))
+  while (attempt < 1 || (!emergencyStop && !movementAbort && attempt < maximumAttempts && execution != 0 && execution != 2))
   // error 2 is timeout error: stop movement retries
   {
 
@@ -162,6 +165,7 @@ int GCodeProcessor::execute(Command *command)
     handler->execute(command);
     execution = CurrentState::getInstance()->getLastError();
     emergencyStop = CurrentState::getInstance()->isEmergencyStop();
+    movementAbort = CurrentState::getInstance()->isMovementAbort();
 
     if (LOGGING || debugMessages)
     {

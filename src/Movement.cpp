@@ -1467,7 +1467,7 @@ int Movement::calibrateAxis(int axis)
 
     }
 
-    // Check if there is an emergency stop command
+    // Check if there is an emergency stop or movement abort command
     if (Serial.available() > 0)
     {
       incomingByte = Serial.read();
@@ -1480,7 +1480,19 @@ int Movement::calibrateAxis(int axis)
         CurrentState::getInstance()->printQAndNewLine();
         error = ERR_EMERGENCY_STOP;
       }
+
+      if (incomingByte == 64)
+      {
+        Serial.print("R99 movement abort\r\n");
+        movementDone = true;
+        CurrentState::getInstance()->setMovementAbort();
+        Serial.print(COMM_REPORT_MOVEMENT_ABORT);
+        CurrentState::getInstance()->printQAndNewLine();
+        error = ERR_MOVEMENT_ABORT;
+      }
+
     }
+
 
     // Move until any end stop is reached or the motor is skipping. That end should be the far end stop. First, ram the end at high speed.
 
@@ -1721,7 +1733,7 @@ int Movement::calibrateAxis(int axis)
     }
 
 
-    // Check if there is an emergency stop command
+    // Check if there is an emergency stop or movement abort command
     if (Serial.available() > 0)
     {
       incomingByte = Serial.read();
@@ -1733,6 +1745,16 @@ int Movement::calibrateAxis(int axis)
         Serial.print(COMM_REPORT_EMERGENCY_STOP);
         CurrentState::getInstance()->printQAndNewLine();
         error = ERR_EMERGENCY_STOP;
+      }
+
+      if (incomingByte == 64)
+      {
+        Serial.print("R99 movement abort\r\n");
+        movementDone = true;
+        CurrentState::getInstance()->setMovementAbort();
+        Serial.print(COMM_REPORT_MOVEMENT_ABORT);
+        CurrentState::getInstance()->printQAndNewLine();
+        error = ERR_MOVEMENT_ABORT;
       }
     }
 
