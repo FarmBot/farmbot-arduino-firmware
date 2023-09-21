@@ -8,7 +8,7 @@ FBARDUINO_FIRMWARE_SRC_DIR ?= src
 FBARDUINO_FIRMWARE_BUILD_DIR ?= $(BUILD_DIR)/sketch
 FBARDUINO_FIRMWARE_LIB_BUILD_DIR ?= $(BUILD_DIR)/libraries
 
-ARDUINO_INSTALL_DIR ?= $(HOME)/arduino-1.8.16
+ARDUINO_INSTALL_DIR ?= $(HOME)/arduino-1.8.19
 
 # Get current commit SHA
 COMMIT_SHA := $(shell git -C $(FBARDUINO_FIRMWARE_SRC_DIR)/.. rev-parse --short=8 HEAD)
