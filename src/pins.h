@@ -536,6 +536,7 @@
   #define X_DIR_PIN 27      // X1_DIR_PIN
   #define X_ENABLE_PIN 25   // X1_ENABLE_PIN
   #define X_CHIP_SELECT 24  // X1_CHIP_SELECT
+  // #define X1_DIAGNOSTICS 47
   #define X_MIN_PIN 69
   #define X_MAX_PIN 68
   #define X_ENCDR_A -1      // N/A
@@ -548,6 +549,7 @@
   #define E_DIR_PIN 30      // X2_DIR_PIN
   #define E_ENABLE_PIN 14   // X2_ENABLE_PIN
   #define E_CHIP_SELECT 29  // X2_CHIP_SELECT
+  // #define X2_DIAGNOSTICS 46
   #define X2_ENCDR_A -1     // N/A
   #define X2_ENCDR_B -1     // N/A
 
@@ -556,6 +558,7 @@
   #define Y_DIR_PIN 33
   #define Y_ENABLE_PIN 31
   #define Y_CHIP_SELECT 28  // Y_CHIP_SELECT
+  // #define Y_DIAGNOSTICS 45
   #define Y_MIN_PIN 67
   #define Y_MAX_PIN 66
   #define Y_ENCDR_A -1      // N/A
@@ -568,6 +571,7 @@
   #define Z_DIR_PIN 36
   #define Z_ENABLE_PIN 34
   #define Z_CHIP_SELECT 23  // Z_CHIP_SELECT
+  // #define Z_DIAGNOSTICS 39
   #define Z_MIN_PIN 65
   #define Z_MAX_PIN 64
   #define Z_ENCDR_A -1      // N/A
@@ -582,12 +586,12 @@
   #define UTM_F -1
   #define UTM_G -1
   #define UTM_H -1 // rotary tool reverse
-  #define UTM_I -1
-  #define UTM_J -1
+  #define UTM_I -1 // I2C SCL
+  #define UTM_J -1 // I2C SDA
   #define UTM_K -1
   #define UTM_L -1 // PE
-    // Available digital pins: 16,17,18,19,22,38,39,42,43,44,45,46,47,48
-    // Available analog pins: 7,8
+    // Available digital pins: 18, 19, 38, 42 (not exposed on board: 16, 17)
+    // Available analog pins: 7 (D 61), 8 (D 62)
 
   #define LED_PIN 13
 
@@ -607,11 +611,25 @@
   #define PERIPHERAL_4_CURRENT_PIN 57 // A3
   #define PERIPHERAL_5_CURRENT_PIN 56 // A2
   #define ROTARY_TOOL_CURRENT_PIN 60 // A6
+  // #define ROTARY_TOOL_FAULT_INDICATOR_PIN 48
 
     // Auxiliary motors
   #define AUX_STEP_PIN 40
   #define AUX_DIR_PIN 41
   #define AUX_ENABLE_PIN 37
+  // #define AUX_CHIP_SELECT 43
+  // #define AUX_DIAGNOSTICS 44
+
+  // #define I2C_SCL 21
+  // #define I2C_SDA 20
+
+  // #define SPI_MISO 50
+  // #define SPI_MOSI 51
+  // #define SPI_SCK 52
+  // #define SPI_CS 53
+
+  // #define NSS_PIN 22 // STM32_CHIP_SELECT (defined in Config.h)
+  // #define READ_ENA_PIN 49 // STM32_RESET (defined in Config.h)
 
   #define SERVO_0_PIN 4
   #define SERVO_1_PIN 5
