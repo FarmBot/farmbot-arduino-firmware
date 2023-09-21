@@ -640,8 +640,8 @@ void setPinInputOutput()
     digitalWrite(PERIPHERAL_5_PIN, LOW);
   #endif
   #if defined(FARMDUINO_V32)
-    pinMode(ROTARY_TOOL_FORWARD, LOW);
-    pinMode(ROTARY_TOOL_REVERSE, LOW);
+    digitalWrite(ROTARY_TOOL_FORWARD, LOW);
+    digitalWrite(ROTARY_TOOL_REVERSE, LOW);
   #endif
 
   pinMode(LIGHTING_CURRENT_PIN, INPUT_PULLUP);
