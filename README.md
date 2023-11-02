@@ -86,15 +86,15 @@ All files are in `/src`
 
 Board Feature Overview
 ======================
-| board             | kit          | pin encoders | SPI encoders | SPI motors | SPI stall detection | peripheral current sensors |
-|:----------------- |:------------ |:------------:|:------------:|:----------:|:-------------------:|:--------------------------:|
-| RAMPS_V14         | Genesis v1.2 |      x       |              |            |                     |                            |
-| FARMDUINO_V10     | Genesis v1.3 |      x       |              |            |                     |                            |
-| FARMDUINO_V14     | Genesis v1.4 |              |      x       |            |                     |                            |
-| FARMDUINO_V30     | Genesis v1.5 |              |      x       |     x      |                     |              x             |
-| FARMDUINO_V32     | Genesis v1.6 |              |      x       |     x      |                     |              x             |
-| FARMDUINO_EXP_V20 | Express v1.0 |              |              |     x      |          x          |                            |
-| FARMDUINO_EXP_V22 | Express v1.1 |              |              |     x      |          x          |                            |
+| board             | kit                 | pin encoders | SPI encoders | SPI motors | SPI stall detection | peripheral current sensors |
+|:----------------- |:------------------- |:------------:|:------------:|:----------:|:-------------------:|:--------------------------:|
+| RAMPS_V14         | Genesis v1.2        |      x       |              |            |                     |                            |
+| FARMDUINO_V10     | Genesis v1.3        |      x       |              |            |                     |                            |
+| FARMDUINO_V14     | Genesis v1.4        |              |      x       |            |                     |                            |
+| FARMDUINO_V30     | Genesis v1.5        |              |      x       |     x      |                     |              x             |
+| FARMDUINO_V32     | Genesis v1.6 & v1.7 |              |      x       |     x      |                     |              x             |
+| FARMDUINO_EXP_V20 | Express v1.0        |              |              |     x      |          x          |                            |
+| FARMDUINO_EXP_V22 | Express v1.1        |              |              |     x      |          x          |                            |
 
 Codes used for communication
 ============================

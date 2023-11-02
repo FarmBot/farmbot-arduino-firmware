@@ -48,6 +48,7 @@ include lib/targets/farmduino_v10.Makefile
 include lib/targets/farmduino_k14.Makefile
 include lib/targets/farmduino_k15.Makefile
 include lib/targets/farmduino_k16.Makefile
+include lib/targets/farmduino_k17.Makefile
 include lib/targets/express_k10.Makefile
 include lib/targets/express_k11.Makefile
 
@@ -61,6 +62,7 @@ include lib/targets/express_k11.Makefile
 	target_farmduino_k14 target_farmduino_k14_clean \
 	target_farmduino_k15 target_farmduino_k15_clean \
 	target_farmduino_k16 target_farmduino_k16_clean \
+	target_farmduino_k17 target_farmduino_k17_clean \
 	target_express_k10 target_express_k10_clean \
 	target_express_k11 target_express_k11_clean
 
@@ -74,6 +76,7 @@ all: $(BIN_DIR) $(DEPS) \
  target_farmduino_k14 \
  target_farmduino_k15 \
  target_farmduino_k16 \
+ target_farmduino_k17 \
  target_express_k10 \
  target_express_k11 \
  remove_temp
@@ -84,6 +87,7 @@ clean: remove_temp \
  target_farmduino_k14_clean \
  target_farmduino_k15_clean \
  target_farmduino_k16_clean \
+ target_farmduino_k17_clean \
  target_express_k10_clean \
  target_express_k11_clean
 
@@ -93,6 +97,7 @@ strings_test: all
 	$(OBJ_COPY) -I ihex $(TARGET_farmduino_k14_HEX) -O binary $(TARGET_farmduino_k14_HEX).bin
 	$(OBJ_COPY) -I ihex $(TARGET_farmduino_k15_HEX) -O binary $(TARGET_farmduino_k15_HEX).bin
 	$(OBJ_COPY) -I ihex $(TARGET_farmduino_k16_HEX) -O binary $(TARGET_farmduino_k16_HEX).bin
+	$(OBJ_COPY) -I ihex $(TARGET_farmduino_k17_HEX) -O binary $(TARGET_farmduino_k17_HEX).bin
 	$(OBJ_COPY) -I ihex $(TARGET_express_k10_HEX) -O binary $(TARGET_express_k10_HEX).bin
 	$(OBJ_COPY) -I ihex $(TARGET_express_k11_HEX) -O binary $(TARGET_express_k11_HEX).bin
 	@strings $(TARGET_ramps_v14_HEX).bin | grep -q ".R.genesisK12"
@@ -100,6 +105,7 @@ strings_test: all
 	@strings $(TARGET_farmduino_k14_HEX).bin | grep -q ".G.genesisK14"
 	@strings $(TARGET_farmduino_k15_HEX).bin | grep -q ".H.genesisK15"
 	@strings $(TARGET_farmduino_k16_HEX).bin | grep -q ".I.genesisK16"
+	@strings $(TARGET_farmduino_k17_HEX).bin | grep -q ".J.genesisK17"
 	@strings $(TARGET_express_k10_HEX).bin | grep -q ".E.expressK10"
 	@strings $(TARGET_express_k11_HEX).bin | grep -q ".D.expressK11"
 

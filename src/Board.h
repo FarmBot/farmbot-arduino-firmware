@@ -15,6 +15,10 @@
   // Farmbot Genesis 1.6
   //#define FARMDUINO_V32
 
+  // Farmbot Genesis 1.7
+  //#define FARMDUINO_V32
+  //#define K17
+
   // Farmbot Express 1.0
   //#define FARMDUINO_EXP_V20
 
@@ -28,6 +32,7 @@
   #undef FARMDUINO_V14
   #undef FARMDUINO_V30
   #undef FARMDUINO_V32
+  #undef K17
   #undef FARMDUINO_EXP_V20
   #undef FARMDUINO_EXP_V22
 
@@ -43,8 +48,12 @@
     #define FARMDUINO_V30
   #elif FARMBOT_BOARD_ID == 5
     #define FARMDUINO_V32
+    #undef K17
   #elif FARMBOT_BOARD_ID == 6
     #define FARMDUINO_EXP_V22
+  #elif FARMBOT_BOARD_ID == 7
+    #define FARMDUINO_V32
+    #define K17
   #endif
 
 #endif

@@ -285,8 +285,12 @@ enum MdlSpiEncoders
 #define SOFTWARE_VERSION_SUFFIX ".H.genesisK15\0"
 #endif
 
-#if defined(FARMDUINO_V32) && !defined(SOFTWARE_VERSION_SUFFIX)
+#if defined(FARMDUINO_V32) && !defined(K17) && !defined(SOFTWARE_VERSION_SUFFIX)
 #define SOFTWARE_VERSION_SUFFIX ".I.genesisK16\0"
+#endif
+
+#if defined(FARMDUINO_V32) && defined(K17) && !defined(SOFTWARE_VERSION_SUFFIX)
+#define SOFTWARE_VERSION_SUFFIX ".J.genesisK17\0"
 #endif
 
 #if defined(FARMDUINO_EXP_V20) && !defined(SOFTWARE_VERSION_SUFFIX)
