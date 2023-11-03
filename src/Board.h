@@ -25,6 +25,10 @@
   // Farmbot Express 1.1
   //#define FARMDUINO_EXP_V22
 
+  // Farmbot Express 1.2
+  //#define FARMDUINO_EXP_V22
+  //#define K12
+
 #else
 
   #undef RAMPS_V14
@@ -35,6 +39,7 @@
   #undef K17
   #undef FARMDUINO_EXP_V20
   #undef FARMDUINO_EXP_V22
+  #undef K12
 
   #if FARMBOT_BOARD_ID == 0
     #define RAMPS_V14
@@ -51,9 +56,13 @@
     #undef K17
   #elif FARMBOT_BOARD_ID == 6
     #define FARMDUINO_EXP_V22
+    #undef K12
   #elif FARMBOT_BOARD_ID == 7
     #define FARMDUINO_V32
     #define K17
+  #elif FARMBOT_BOARD_ID == 8
+    #define FARMDUINO_EXP_V22
+    #define K12
   #endif
 
 #endif

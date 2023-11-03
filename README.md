@@ -94,7 +94,7 @@ Board Feature Overview
 | FARMDUINO_V30     | Genesis v1.5        |              |      x       |     x      |                     |              x             |
 | FARMDUINO_V32     | Genesis v1.6 & v1.7 |              |      x       |     x      |                     |              x             |
 | FARMDUINO_EXP_V20 | Express v1.0        |              |              |     x      |          x          |                            |
-| FARMDUINO_EXP_V22 | Express v1.1        |              |              |     x      |          x          |                            |
+| FARMDUINO_EXP_V22 | Express v1.1 & v1.2 |              |              |     x      |          x          |                            |
 
 Codes used for communication
 ============================
