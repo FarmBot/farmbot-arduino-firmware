@@ -17,6 +17,9 @@
 #include "G00Handler.h"
 #include "G28Handler.h"
 
+#include "F01Handler.h"   // Edited by Finn
+#include "F02Handler.h"   // Edited by Finn
+
 #include "F09Handler.h"
 
 #include "F11Handler.h"

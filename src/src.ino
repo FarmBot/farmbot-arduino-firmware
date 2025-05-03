@@ -3,7 +3,6 @@
  Created:	11/14/2019 9:51:10 PM
  Author:	Tim Evers
 */
-
 #include "TMC2130_Basics.h"
 #include "farmbot_arduino_controller.h"
 //#include <SPI.h>
@@ -14,7 +13,8 @@
 // the setup function runs once when you press reset or power the board
 void setup()
 {
-  startSerial();
+  Serial.begin(9600);
+  //startSerial();
   setPinInputOutput();
 
   readParameters();
@@ -56,5 +56,5 @@ void loop()
   checkEmergencyStop();
   checkParamsChanged();
   periodicChecksAndReport();
-
+  
 }

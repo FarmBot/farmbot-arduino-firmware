@@ -60,6 +60,7 @@ public:
   long getT();
   long getE();
   long getM();
+  long getN();      // Edited by Finn
   long getQ();
 
   void printQAndNewLine();
@@ -77,6 +78,7 @@ private:
   long element = 0;
   long time = 0;
   long mode = 0;
+  long number = 0;    // Edited by Finn
   long msgQueue = 0;
 };
 
