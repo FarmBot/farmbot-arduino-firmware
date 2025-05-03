@@ -14,7 +14,8 @@
 // the setup function runs once when you press reset or power the board
 void setup()
 {
-  startSerial();
+  // startSerial();
+  Serial.begin(9600);
   setPinInputOutput();
 
   readParameters();

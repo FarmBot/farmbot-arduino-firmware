@@ -39,6 +39,8 @@
 #include "F43Handler.h"
 #include "F44Handler.h"
 
+#include "F52Handler.h"
+
 #include "F61Handler.h"
 
 #include "F81Handler.h"
