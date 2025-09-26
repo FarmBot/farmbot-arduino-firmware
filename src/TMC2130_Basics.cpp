@@ -35,7 +35,8 @@ uint8_t TMC2130_Basics::read_STAT()
   _status = SPI.transfer(0x00);
 
   // flush 4 bytes
-  for (int i = 0; i < 4; i++) {
+  constexpr uint8_t BYTES_TO_FLUSH = 4;
+  for (uint8_t i = 0; i < BYTES_TO_FLUSH; ++i) {
     SPI.transfer(0x00);
   }
 
@@ -54,7 +55,8 @@ uint8_t TMC2130_Basics::read_REG(uint8_t address, uint32_t *data)
   _status = SPI.transfer(address&~FB_TMC_WRITE);
 
   // flush 4 bytes
-  for (int i = 0; i < 4; i++) {
+  constexpr uint8_t BYTES_TO_FLUSH = 4;
+  for (uint8_t i = 0; i < BYTES_TO_FLUSH; ++i) {
     SPI.transfer(0x00);
   }
 
