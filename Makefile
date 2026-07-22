@@ -50,6 +50,7 @@ include lib/targets/farmduino_k15.Makefile
 include lib/targets/farmduino_k16.Makefile
 include lib/targets/farmduino_k17.Makefile
 include lib/targets/farmduino_k18.Makefile
+include lib/targets/farmduino_k19.Makefile
 include lib/targets/express_k10.Makefile
 include lib/targets/express_k11.Makefile
 include lib/targets/express_k12.Makefile
@@ -66,6 +67,7 @@ include lib/targets/express_k12.Makefile
 	target_farmduino_k16 target_farmduino_k16_clean \
 	target_farmduino_k17 target_farmduino_k17_clean \
 	target_farmduino_k18 target_farmduino_k18_clean \
+	target_farmduino_k19 target_farmduino_k19_clean \
 	target_express_k10 target_express_k10_clean \
 	target_express_k11 target_express_k11_clean
 	target_express_k12 target_express_k12_clean
@@ -82,6 +84,7 @@ all: $(BIN_DIR) $(DEPS) \
  target_farmduino_k16 \
  target_farmduino_k17 \
  target_farmduino_k18 \
+ target_farmduino_k19 \
  target_express_k10 \
  target_express_k11 \
  target_express_k12 \
@@ -95,6 +98,7 @@ clean: remove_temp \
  target_farmduino_k16_clean \
  target_farmduino_k17_clean \
  target_farmduino_k18_clean \
+ target_farmduino_k19_clean \
  target_express_k10_clean \
  target_express_k1_clean \
  target_express_k12_clean
@@ -107,6 +111,7 @@ strings_test: all
 	$(OBJ_COPY) -I ihex $(TARGET_farmduino_k16_HEX) -O binary $(TARGET_farmduino_k16_HEX).bin
 	$(OBJ_COPY) -I ihex $(TARGET_farmduino_k17_HEX) -O binary $(TARGET_farmduino_k17_HEX).bin
 	$(OBJ_COPY) -I ihex $(TARGET_farmduino_k18_HEX) -O binary $(TARGET_farmduino_k18_HEX).bin
+	$(OBJ_COPY) -I ihex $(TARGET_farmduino_k19_HEX) -O binary $(TARGET_farmduino_k19_HEX).bin
 	$(OBJ_COPY) -I ihex $(TARGET_express_k10_HEX) -O binary $(TARGET_express_k10_HEX).bin
 	$(OBJ_COPY) -I ihex $(TARGET_express_k11_HEX) -O binary $(TARGET_express_k11_HEX).bin
 	$(OBJ_COPY) -I ihex $(TARGET_express_k12_HEX) -O binary $(TARGET_express_k12_HEX).bin
@@ -117,6 +122,7 @@ strings_test: all
 	@strings $(TARGET_farmduino_k16_HEX).bin | grep -q ".I.genesisK16"
 	@strings $(TARGET_farmduino_k17_HEX).bin | grep -q ".J.genesisK17"
 	@strings $(TARGET_farmduino_k18_HEX).bin | grep -q ".K.genesisK18"
+	@strings $(TARGET_farmduino_k19_HEX).bin | grep -q ".L.genesisK19"
 	@strings $(TARGET_express_k10_HEX).bin | grep -q ".E.expressK10"
 	@strings $(TARGET_express_k11_HEX).bin | grep -q ".D.expressK11"
 	@strings $(TARGET_express_k12_HEX).bin | grep -q ".C.expressK12"

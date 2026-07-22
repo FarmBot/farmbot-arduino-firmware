@@ -57,6 +57,10 @@ jobs:
           command: make dep_core dep_Servo dep_SPI dep_EEPROM target_farmduino_k18 remove_temp
           when: always
       - run:
+          name: Compile Genesis v1.8 (FARMDUINO_V32 K19)
+          command: make dep_core dep_Servo dep_SPI dep_EEPROM target_farmduino_k19 remove_temp
+          when: always
+      - run:
           name: Compile Express v1.0 (FARMDUINO_EXP_V20)
           command: make dep_core dep_Servo dep_SPI dep_EEPROM target_express_k10 remove_temp
           when: always
